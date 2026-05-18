@@ -29,6 +29,7 @@
 
 ## Guardrails
 
+- Every completed change or fix must include a matching update to both `AGENT.md` and this `design.md` file so project rules and design intent stay current.
 - Preserve green/orange FoodOnlines brand contrast.
 - Keep cards to small radius and avoid nested card layouts.
 - Keep homepage usable as first screen, not a marketing-only landing page.
