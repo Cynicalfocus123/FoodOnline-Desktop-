@@ -70,22 +70,15 @@ export function SignupFlow() {
     return (
       <section className="bg-neutral-50 px-4 pb-16 pt-32 sm:px-6">
         <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[28px] border border-neutral-100 bg-white shadow-soft lg:grid-cols-[1.02fr_0.98fr]">
-          <div className="relative min-h-[280px] overflow-hidden bg-neutral-100 sm:min-h-[360px] lg:min-h-full">
+          <div className="relative min-h-[280px] overflow-hidden bg-white sm:min-h-[360px] lg:min-h-full">
             <img
               alt="FoodOnlines shop and order banner"
-              className="absolute inset-0 h-full w-full object-cover object-top"
+              className="absolute inset-0 h-full w-full object-contain object-top lg:object-cover"
               src={signupBannerImage}
             />
           </div>
 
           <div className="p-6 sm:p-8 lg:p-10">
-            <button
-              className="mb-8 text-sm font-bold text-neutral-500 transition hover:text-citrus-500"
-              onClick={backToHome}
-              type="button"
-            >
-              Back to Home
-            </button>
             <h2 className="text-3xl font-black text-ink sm:text-4xl">Create Your Account</h2>
             <p className="mt-3 text-base leading-7 text-neutral-600">
               Finish your {selectedRole} registration with details ready for future backend submission.
