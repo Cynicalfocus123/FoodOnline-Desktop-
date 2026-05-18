@@ -3,7 +3,8 @@ const localAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 export const assets = {
   logo: localAsset("assets/food-online-long-text-cutout.png"),
   heroVideo: localAsset("assets/food-horizontal.mp4"),
-  mobileHeroVideo: localAsset("assets/food-video-mobile.mp4"),
+  mobileHeroEmbed:
+    "https://www.youtube.com/embed/x-ZFmik0geY?autoplay=1&mute=1&loop=1&playlist=x-ZFmik0geY&controls=0&playsinline=1&rel=0",
   heroPoster: localAsset("assets/food-hero-poster.svg"),
   splashVideo:
     "https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4",

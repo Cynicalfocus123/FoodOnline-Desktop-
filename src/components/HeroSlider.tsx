@@ -16,7 +16,7 @@ export function HeroSlider() {
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const [hasVideoStarted, setHasVideoStarted] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
-  const activeVideoSource = isMobileViewport ? assets.mobileHeroVideo : assets.heroVideo;
+  const activeVideoSource = assets.heroVideo;
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -46,6 +46,11 @@ export function HeroSlider() {
   }, []);
 
   useEffect(() => {
+    if (isMobileViewport) {
+      setHasVideoStarted(false);
+      return;
+    }
+
     const videoElement = videoReference.current;
     if (!videoElement) {
       return;
@@ -68,7 +73,7 @@ export function HeroSlider() {
       videoElement.removeEventListener("playing", markVideoReady);
       videoElement.removeEventListener("canplay", markVideoReady);
     };
-  }, [activeVideoSource]);
+  }, [activeVideoSource, isMobileViewport]);
 
   return (
     <section
@@ -76,24 +81,44 @@ export function HeroSlider() {
       className="relative isolate min-h-[760px] overflow-hidden bg-neutral-950 bg-cover bg-center pt-24 text-white"
       style={{ backgroundImage: `url(${assets.heroPoster})` }}
     >
-      <video
-        key={activeVideoSource}
-        ref={videoReference}
-        className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-500 ${
-          hasVideoStarted ? "opacity-100" : "opacity-0"
-        }`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster={assets.heroPoster}
-        preload="auto"
-        disablePictureInPicture
-        tabIndex={-1}
-        aria-hidden="true"
-      >
-        <source src={activeVideoSource} type="video/mp4" />
-      </video>
+      {isMobileViewport ? (
+        <div
+          className={`pointer-events-none absolute inset-0 z-0 overflow-hidden transition-opacity duration-500 ${
+            hasVideoStarted ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <iframe
+            className="absolute left-1/2 top-1/2 h-[118%] w-[210%] max-w-none -translate-x-1/2 -translate-y-1/2 border-0"
+            src={assets.mobileHeroEmbed}
+            title="Food mobile video less mb"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            tabIndex={-1}
+            aria-hidden="true"
+            onLoad={() => setHasVideoStarted(true)}
+          />
+        </div>
+      ) : (
+        <video
+          key={activeVideoSource}
+          ref={videoReference}
+          className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-500 ${
+            hasVideoStarted ? "opacity-100" : "opacity-0"
+          }`}
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster={assets.heroPoster}
+          preload="auto"
+          disablePictureInPicture
+          tabIndex={-1}
+          aria-hidden="true"
+        >
+          <source src={activeVideoSource} type="video/mp4" />
+        </video>
+      )}
       <div className="pointer-events-none absolute inset-0 z-10 bg-neutral-950/20" />
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(255,107,0,0.18),rgba(10,13,16,0.45)_34%,rgba(10,13,16,0.86)_100%)]" />
       <div className="relative z-20 mx-auto flex min-h-[680px] max-w-7xl items-center justify-center px-4 py-16 text-center sm:px-6 sm:py-20">

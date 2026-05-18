@@ -70,7 +70,7 @@ export function Header() {
         <div className="flex items-center gap-3 lg:ml-auto">
           {signupView === "signup" ? (
             <button
-              className="min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500"
+              className="hidden min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:inline-flex lg:items-center"
               onClick={backToHome}
               type="button"
             >
