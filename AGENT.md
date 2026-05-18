@@ -8,3 +8,4 @@
 - Local assets copied into `public/assets`: FoodOnlines logo and Blue Apron hero video.
 - Home page requirements implemented: logo top-left, video-backed main slider, centered splash signup form over Dribbble video, category/deal sections, footer with mission/news/contact.
 - `.gitignore` excludes generated folders: `node_modules/`, `dist/`, `.logs/`, `.vite/`.
+- `README.md` added with run/build commands for the GitHub repo bootstrap.

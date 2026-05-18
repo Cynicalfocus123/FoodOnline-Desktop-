@@ -24,6 +24,7 @@
 - Public behavior is front-end only. Signup stores session UI state; no network submission yet.
 - Target backend architecture remains: REST or GraphQL API, Node/NestJS or Laravel, PostgreSQL, Cloudflare R2 or AWS S3 for media.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
+- README documents local install, dev, and build commands.
 
 ## Guardrails
 
