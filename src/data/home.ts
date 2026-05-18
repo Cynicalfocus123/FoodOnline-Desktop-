@@ -1,7 +1,7 @@
 const localAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 export const assets = {
-  logo: localAsset("assets/logo-transparent.png"),
+  logo: localAsset("assets/food-online-long-text-transparent.png"),
   heroVideo: localAsset("assets/food-horizontal.mp4"),
   splashVideo:
     "https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4",
@@ -11,9 +11,7 @@ export const navItems = ["Home", "Best deals", "Categories", "Company"];
 
 export const slides = [
   {
-    eyebrow: "100% organic feel",
     title: "Fresh food, ready for any night",
-    body: "Build dinner faster with chef-picked boxes, produce, and pantry staples delivered on your schedule.",
   },
   {
     eyebrow: "Black Friday offer",
@@ -63,7 +61,6 @@ export const products = [
 ];
 
 export const footerLinkRows = [
-  ["Privacy", "Terms", "FAQ"],
-  ["Company News", "Our Mission", "Contact Us"],
+  ["Privacy", "Terms", "FAQ", "Company News", "Our Mission", "Contact Us"],
   ["Seller", "Recipe", "Partners"],
 ];

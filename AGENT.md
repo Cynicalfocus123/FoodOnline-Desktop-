@@ -15,3 +15,4 @@
 - GitHub Pages deployment workflow added at `.github/workflows/deploy-pages.yml`; demo URL is `https://cynicalfocus123.github.io/FoodOnline-Desktop-/`.
 - Hero quick-pick panel, prep stat, and green CTA removed; centered hero email registration form added using existing Zustand signup state.
 - Header now uses the transparent logo asset with no text or logo container; standalone splash signup section removed because hero contains signup. Footer now uses three compact link rows.
+- Header now uses the long transparent logo asset at larger size, hero eyebrow/body copy is reduced, and footer link groups are tuned for stacked mobile spacing and touch-safe sizing.
