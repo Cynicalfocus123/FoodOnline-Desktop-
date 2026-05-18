@@ -27,15 +27,6 @@ export function Header() {
     }
   }
 
-  function handleShopClick(event: MouseEvent<HTMLAnchorElement>) {
-    setIsMobileMenuOpen(false);
-
-    if (signupView === "signup") {
-      event.preventDefault();
-      backToHome();
-    }
-  }
-
   function handleMenuToggle() {
     setIsMobileMenuOpen((currentValue) => !currentValue);
   }
@@ -76,7 +67,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 lg:ml-auto">
           {signupView === "signup" ? (
             <button
               className="min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500"
@@ -92,13 +83,6 @@ export function Header() {
             onClick={handleSignupClick}
           >
             Sign up
-          </a>
-          <a
-            className="min-h-12 rounded-md bg-citrus-500 px-4 py-3 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600 sm:px-5"
-            href="#best-deals"
-            onClick={handleShopClick}
-          >
-            Shop now
           </a>
           <button
             aria-controls="mobile-navigation"

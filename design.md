@@ -4,12 +4,12 @@
 
 - Visual reference: clean grocery commerce layout with white space, green/orange accents, product cards, category tiles, and promotional hero blocks.
 - Brand mark: `public/assets/food-online-long-text-cutout.png`, used top-left in fixed header without text, badge, or container.
-- Main slider background video: `public/assets/food-horizontal.mp4`.
+- Main slider background video: `public/assets/food-horizontal.mp4` on desktop and `public/assets/food-video-mobile.mp4` on mobile.
 - Splash signup video: `https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4`.
 
 ## Page Structure
 
-- Fixed modern white header with larger long transparent FoodOnlines logo, desktop navigation, signup shortcut, and shop button.
+- Fixed modern white header with larger long transparent FoodOnlines logo, desktop navigation, and signup shortcut.
 - Full-viewport home hero with background food video, dark overlay, centered offer copy, and one primary Join Us Now CTA.
 - Signup opens into a multi-step app flow: role selection, split brand-and-form layout, then registration complete state.
 - Category strip for common food paths.

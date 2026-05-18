@@ -2,17 +2,56 @@ import { useEffect, useRef, useState } from "react";
 import { assets, slides } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 
+function getIsMobileViewport() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.matchMedia("(max-width: 767px)").matches;
+}
+
 export function HeroSlider() {
   const openSignup = useHomeStore((state) => state.openSignup);
   const slide = slides[0];
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const [hasVideoStarted, setHasVideoStarted] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
+  const activeVideoSource = isMobileViewport ? assets.mobileHeroVideo : assets.heroVideo;
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateViewportMode = (event?: MediaQueryListEvent) => {
+      setIsMobileViewport(event ? event.matches : mediaQuery.matches);
+    };
+
+    updateViewportMode();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateViewportMode);
+
+      return () => {
+        mediaQuery.removeEventListener("change", updateViewportMode);
+      };
+    }
+
+    mediaQuery.addListener(updateViewportMode);
+
+    return () => {
+      mediaQuery.removeListener(updateViewportMode);
+    };
+  }, []);
 
   useEffect(() => {
     const videoElement = videoReference.current;
     if (!videoElement) {
       return;
     }
+
+    setHasVideoStarted(false);
 
     const markVideoReady = () => {
       setHasVideoStarted(true);
@@ -29,7 +68,7 @@ export function HeroSlider() {
       videoElement.removeEventListener("playing", markVideoReady);
       videoElement.removeEventListener("canplay", markVideoReady);
     };
-  }, []);
+  }, [activeVideoSource]);
 
   return (
     <section
@@ -38,6 +77,7 @@ export function HeroSlider() {
       style={{ backgroundImage: `url(${assets.heroPoster})` }}
     >
       <video
+        key={activeVideoSource}
         ref={videoReference}
         className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-500 ${
           hasVideoStarted ? "opacity-100" : "opacity-0"
@@ -52,7 +92,7 @@ export function HeroSlider() {
         tabIndex={-1}
         aria-hidden="true"
       >
-        <source src={assets.heroVideo} type="video/mp4" />
+        <source src={activeVideoSource} type="video/mp4" />
       </video>
       <div className="pointer-events-none absolute inset-0 z-10 bg-neutral-950/20" />
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(255,107,0,0.18),rgba(10,13,16,0.45)_34%,rgba(10,13,16,0.86)_100%)]" />

@@ -1,5 +1,4 @@
 import { FormEvent } from "react";
-import { assets } from "../data/home";
 import { SignupFormValues, SignupRole, useHomeStore } from "../store/homeStore";
 
 const roleOptions: SignupRole[] = ["Customer", "Partners", "Suppliers"];
@@ -69,12 +68,7 @@ export function SignupFlow() {
       <section className="bg-neutral-50 px-4 pb-16 pt-32 sm:px-6">
         <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[28px] border border-neutral-100 bg-white shadow-soft lg:grid-cols-[1.02fr_0.98fr]">
           <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f9ef_0%,#eef7dc_100%)] p-6 sm:p-8 lg:p-10">
-            <img
-              alt="FoodOnlines brand mark"
-              className="block h-16 w-auto object-contain sm:h-20"
-              src={assets.logo}
-            />
-            <h1 className="mt-8 max-w-md text-4xl font-black leading-tight text-ink sm:text-5xl">
+            <h1 className="max-w-md text-4xl font-black leading-tight text-ink sm:text-5xl">
               Smart food signup for every wholesale move.
             </h1>
             <p className="mt-4 max-w-lg text-lg leading-8 text-neutral-600">
