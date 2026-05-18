@@ -70,40 +70,12 @@ export function SignupFlow() {
     return (
       <section className="bg-neutral-50 px-4 pb-16 pt-32 sm:px-6">
         <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[28px] border border-neutral-100 bg-white shadow-soft lg:grid-cols-[1.02fr_0.98fr]">
-          <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f9ef_0%,#eef7dc_100%)] p-6 sm:p-8 lg:p-10">
-            <h1 className="max-w-md text-4xl font-black leading-tight text-ink sm:text-5xl">
-              Smart food signup for every wholesale move.
-            </h1>
-            <p className="mt-4 max-w-lg text-lg leading-8 text-neutral-600">
-              Join FoodOnlines as a {selectedRole} and unlock a cleaner way to source, sell, and grow.
-            </p>
-            <div className="mt-8 grid gap-4 text-left sm:grid-cols-3 lg:grid-cols-1">
-              <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
-                <p className="text-sm font-black text-leaf-700">Fast supplier discovery</p>
-                <p className="mt-1 text-sm leading-6 text-neutral-600">
-                  Source fresh inventory without juggling multiple channels.
-                </p>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
-                <p className="text-sm font-black text-leaf-700">Brand-ready profiles</p>
-                <p className="mt-1 text-sm leading-6 text-neutral-600">
-                  Keep customer, partner, and supplier onboarding structured from day one.
-                </p>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
-                <p className="text-sm font-black text-leaf-700">Future admin delivery</p>
-                <p className="mt-1 text-sm leading-6 text-neutral-600">
-                  Registration payload is already shaped for backend and admin workflows.
-                </p>
-              </div>
-            </div>
-            <div className="mt-8 overflow-hidden rounded-[24px] bg-white/60 p-3 shadow-sm">
-              <img
-                alt="FoodOnlines shop and order banner"
-                className="h-[320px] w-full rounded-[20px] object-cover object-top sm:h-[420px] lg:h-[520px]"
-                src={signupBannerImage}
-              />
-            </div>
+          <div className="relative min-h-[280px] overflow-hidden bg-neutral-100 sm:min-h-[360px] lg:min-h-full">
+            <img
+              alt="FoodOnlines shop and order banner"
+              className="absolute inset-0 h-full w-full object-cover object-top"
+              src={signupBannerImage}
+            />
           </div>
 
           <div className="p-6 sm:p-8 lg:p-10">
