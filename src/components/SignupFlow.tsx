@@ -71,7 +71,7 @@ export function SignupFlow() {
           <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f9ef_0%,#eef7dc_100%)] p-6 sm:p-8 lg:p-10">
             <img
               alt="FoodOnlines brand mark"
-              className="h-16 w-auto object-contain sm:h-20"
+              className="h-16 w-auto object-contain mix-blend-multiply sm:h-20"
               src={assets.logo}
             />
             <h1 className="mt-8 max-w-md text-4xl font-black leading-tight text-ink sm:text-5xl">
