@@ -33,7 +33,7 @@ export function Header() {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-neutral-100 bg-white/95 shadow-sm shadow-neutral-950/5 backdrop-blur-xl">
-      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:gap-10">
         <a
           className="flex items-center"
           href="#home"
@@ -47,7 +47,7 @@ export function Header() {
           />
         </a>
 
-        <nav className="hidden items-center gap-8 text-sm font-semibold text-neutral-700 lg:flex">
+        <nav className="hidden items-center justify-center gap-8 pl-8 text-sm font-semibold text-neutral-700 lg:flex">
           {navItems.map((item) => (
             <a
               className="transition hover:text-citrus-500"
@@ -67,7 +67,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3 lg:ml-auto">
+        <div className="flex items-center gap-3 lg:justify-self-end">
           {signupView === "signup" ? (
             <button
               className="hidden min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:inline-flex lg:items-center"
