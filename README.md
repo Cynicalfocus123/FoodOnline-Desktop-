@@ -16,8 +16,8 @@ Current mock admin login accepts any non-empty `Admin` value and any non-empty p
 
 Documentation split:
 
-- `AGENT.md` and `design.md` = general/public site notes
-- `BACKEND-AGENT.md` and `BACKEND-DESIGNER.md` = admin/backend notes
+- `AGENT.md` = single implementation notes file
+- `design.md` = single design notes file
 
 ## Run
 
