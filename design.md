@@ -3,7 +3,7 @@
 ## Source Direction
 
 - Visual reference: clean grocery commerce layout with white space, green/orange accents, product cards, category tiles, and promotional hero blocks.
-- Brand mark: `public/assets/food-online-long-text-transparent.png`, used top-left in fixed header without text, badge, or container.
+- Brand mark: `public/assets/food-online-long-text-cutout.png`, used top-left in fixed header without text, badge, or container.
 - Main slider background video: `public/assets/food-horizontal.mp4`.
 - Splash signup video: `https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4`.
 

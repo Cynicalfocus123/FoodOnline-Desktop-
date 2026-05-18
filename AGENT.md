@@ -17,3 +17,4 @@
 - Header now uses the transparent logo asset with no text or logo container; standalone splash signup section removed because hero contains signup. Footer now uses three compact link rows.
 - Header now uses the long transparent logo asset at larger size, hero eyebrow/body copy is reduced, and footer link groups are tuned for stacked mobile spacing and touch-safe sizing.
 - Signup now runs as an in-app multi-step flow: hero CTA -> role selection -> split signup form -> completion state, with structured registration payload ready for backend submission later.
+- Logo source file `food-online-long-text-transparent.png` contains opaque white pixels despite its name. Use generated `public/assets/food-online-long-text-cutout.png` for real transparent header rendering.
