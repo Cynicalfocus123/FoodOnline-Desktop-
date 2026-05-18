@@ -1,18 +1,9 @@
-import { FormEvent } from "react";
 import { assets, slides } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 
 export function HeroSlider() {
-  const email = useHomeStore((state) => state.email);
-  const signupStatus = useHomeStore((state) => state.signupStatus);
-  const setEmail = useHomeStore((state) => state.setEmail);
-  const submitSignup = useHomeStore((state) => state.submitSignup);
+  const openSignup = useHomeStore((state) => state.openSignup);
   const slide = slides[0];
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    submitSignup();
-  }
 
   return (
     <section id="home" className="relative min-h-[760px] overflow-hidden pt-24 text-white">
@@ -37,32 +28,13 @@ export function HeroSlider() {
             <p className="mb-4 text-lg font-black leading-7 text-white sm:text-2xl sm:leading-8">
               Register now and join the future of wholesale food
             </p>
-            <form
-              className="mx-auto flex max-w-3xl flex-col gap-3 rounded-md bg-white p-2 shadow-2xl shadow-black/25 sm:flex-row"
-              onSubmit={handleSubmit}
+            <button
+              className="min-h-14 min-w-[220px] rounded-md bg-citrus-500 px-8 text-base font-black text-white shadow-lg shadow-orange-500/25 transition hover:bg-citrus-600 sm:min-w-[260px]"
+              onClick={openSignup}
+              type="button"
             >
-              <label className="sr-only" htmlFor="hero-signup-email">
-                Email address
-              </label>
-              <input
-                id="hero-signup-email"
-                className="min-h-14 w-full flex-1 rounded-md px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:ring-leaf-500 sm:px-5"
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="Email address"
-                type="email"
-                value={email}
-                required
-              />
-              <button
-                className="min-h-14 shrink-0 rounded-md bg-citrus-500 px-8 text-sm font-black text-white transition hover:bg-citrus-600"
-                type="submit"
-              >
-                Register
-              </button>
-            </form>
-            {signupStatus === "saved" ? (
-              <p className="mt-4 text-sm font-bold text-leaf-100">Registration saved for this session.</p>
-            ) : null}
+              Join Us Now
+            </button>
           </div>
         </div>
       </div>

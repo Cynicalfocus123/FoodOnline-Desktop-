@@ -1,6 +1,9 @@
 import { assets, navItems } from "../data/home";
+import { useHomeStore } from "../store/homeStore";
 
 export function Header() {
+  const openSignup = useHomeStore((state) => state.openSignup);
+
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-neutral-100 bg-white/95 shadow-sm shadow-neutral-950/5 backdrop-blur-xl">
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -23,7 +26,11 @@ export function Header() {
         <div className="flex items-center gap-3">
           <a
             className="hidden min-h-12 items-center rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 sm:flex"
-            href="#home"
+            href="#signup"
+            onClick={(event) => {
+              event.preventDefault();
+              openSignup();
+            }}
           >
             Sign up
           </a>

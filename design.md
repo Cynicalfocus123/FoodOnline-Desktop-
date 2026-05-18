@@ -10,7 +10,8 @@
 ## Page Structure
 
 - Fixed modern white header with larger long transparent FoodOnlines logo, desktop navigation, signup shortcut, and shop button.
-- Full-viewport home hero with background food video, dark overlay, centered offer copy, and centered email registration form.
+- Full-viewport home hero with background food video, dark overlay, centered offer copy, and one primary Join Us Now CTA.
+- Signup opens into a multi-step app flow: role selection, split brand-and-form layout, then registration complete state.
 - Category strip for common food paths.
 - Best deals grid with product cards, discount tags, prices, and add-to-cart buttons.
 - Footer has two compact stacked link groups: Privacy/Terms/FAQ/Company News/Our Mission/Contact Us, then Seller/Recipe/Partners.

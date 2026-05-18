@@ -16,6 +16,9 @@ export function Footer() {
             ))}
           </nav>
         ))}
+        <p className="pt-2 text-xs font-semibold text-neutral-400">
+          Copyright foodonlines.com 2002 to 2026
+        </p>
       </div>
     </footer>
   );
