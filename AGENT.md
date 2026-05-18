@@ -21,6 +21,7 @@
 - Signup input handling preserves safe spaces while users type names, contact numbers, and company words, then trims and normalizes cleaned values on final submission.
 - Logo source file `food-online-long-text-transparent.png` contains opaque white pixels despite its name. Use generated `public/assets/food-online-long-text-cutout.png` for real transparent header rendering.
 - Frontend and admin are now fully separated at entry level: public site stays on `index.html` / `src/main.tsx`, while admin uses standalone `admin.html` / `src/admin-main.tsx`. Do not re-add admin buttons, admin route toggles, or mixed admin state into public site UI.
+- Communication rule: after every completed fix + commit + push, always include backend/admin link in final response: `https://cynicalfocus123.github.io/FoodOnline-Desktop-/admin.html`
 
 ## Backend/Admin Notes
 
