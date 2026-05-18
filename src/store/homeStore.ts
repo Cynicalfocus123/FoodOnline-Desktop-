@@ -70,27 +70,39 @@ function normalizeInput(value: string) {
   return value.normalize("NFKC").replace(invisibleCharacterPattern, "");
 }
 
-function sanitizeFreeText(value: string) {
-  return normalizeInput(value)
+function sanitizeFreeText(value: string, shouldNormalizeSpacing = false) {
+  const cleanedValue = normalizeInput(value)
     .replace(htmlTagPattern, " ")
     .replace(dangerousSequencePattern, " ")
-    .replace(/[<>`]/g, "")
-    .replace(repeatedWhitespacePattern, " ")
-    .trim();
+    .replace(/[<>`]/g, "");
+
+  if (!shouldNormalizeSpacing) {
+    return cleanedValue;
+  }
+
+  return cleanedValue.replace(repeatedWhitespacePattern, " ").trim();
 }
 
-function sanitizeFieldValue<K extends keyof SignupFormValues>(field: K, value: SignupFormValues[K]) {
+function sanitizeFieldValue<K extends keyof SignupFormValues>(
+  field: K,
+  value: SignupFormValues[K],
+  shouldNormalizeSpacing = false,
+) {
   switch (field) {
     case "emailAddress":
-      return sanitizeFreeText(value).replace(/\s+/g, "").toLowerCase().slice(0, signupFieldLimits[field]);
+      return sanitizeFreeText(value, true).replace(/\s+/g, "").toLowerCase().slice(0, signupFieldLimits[field]);
     case "contactNumber":
-      return normalizeInput(value)
+      {
+        const cleanedValue = normalizeInput(value)
         .replace(htmlTagPattern, "")
         .replace(dangerousSequencePattern, "")
         .replace(/[^0-9+\-()\s]/g, "")
-        .replace(repeatedWhitespacePattern, " ")
-        .trim()
         .slice(0, signupFieldLimits[field]);
+
+        return shouldNormalizeSpacing
+          ? cleanedValue.replace(repeatedWhitespacePattern, " ").trim()
+          : cleanedValue;
+      }
     case "lineId":
       return normalizeInput(value)
         .replace(htmlTagPattern, "")
@@ -98,7 +110,7 @@ function sanitizeFieldValue<K extends keyof SignupFormValues>(field: K, value: S
         .replace(/[^A-Za-z0-9._@-]/g, "")
         .slice(0, signupFieldLimits[field]);
     default:
-      return sanitizeFreeText(value).slice(0, signupFieldLimits[field]);
+      return sanitizeFreeText(value, shouldNormalizeSpacing).slice(0, signupFieldLimits[field]);
   }
 }
 
@@ -158,12 +170,12 @@ function validateRole(selectedRole: SignupRole | null) {
 
 function sanitizeAndValidateFormValues(formValues: SignupFormValues, requireAllFields: boolean) {
   const cleanedValues: SignupFormValues = {
-    emailAddress: sanitizeFieldValue("emailAddress", formValues.emailAddress),
-    firstName: sanitizeFieldValue("firstName", formValues.firstName),
-    lastName: sanitizeFieldValue("lastName", formValues.lastName),
-    contactNumber: sanitizeFieldValue("contactNumber", formValues.contactNumber),
-    lineId: sanitizeFieldValue("lineId", formValues.lineId),
-    companyName: sanitizeFieldValue("companyName", formValues.companyName),
+    emailAddress: sanitizeFieldValue("emailAddress", formValues.emailAddress, true),
+    firstName: sanitizeFieldValue("firstName", formValues.firstName, true),
+    lastName: sanitizeFieldValue("lastName", formValues.lastName, true),
+    contactNumber: sanitizeFieldValue("contactNumber", formValues.contactNumber, true),
+    lineId: sanitizeFieldValue("lineId", formValues.lineId, true),
+    companyName: sanitizeFieldValue("companyName", formValues.companyName, true),
   };
 
   const fieldErrors: SignupFieldErrors = {};
