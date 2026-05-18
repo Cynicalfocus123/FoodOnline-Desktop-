@@ -4,6 +4,7 @@
 - Use caveman full responses unless user says normal mode.
 - Keep command output capped. Prefer small `Select-Object -First ...` / `Out-String -Width ...` on PowerShell.
 - User wants commit and push after each completed change set without asking.
+- Start every session by following this workflow rule: do not run localhost, browser preview, HTTP local server checks, `npm run dev`, `npm start`, `vite preview`, `next dev`, or any long-running server. Only run safe checks such as `npm run build`, `npm run lint`, `npm test`, or `npx tsc --noEmit`; after safe checks pass, commit and push to the current branch.
 - Stack selected for desktop website: Vite React + TypeScript, Zustand, Tailwind CSS. Backend/API/PostgreSQL/storage are documented as target architecture, not implemented in this frontend-only scaffold.
 - Local assets copied into `public/assets`: FoodOnlines logo and Blue Apron hero video.
 - Home page requirements implemented: logo top-left, video-backed main slider, centered splash signup form over Dribbble video, category/deal sections, footer with mission/news/contact.
