@@ -68,8 +68,8 @@ export function SignupFlow() {
 
   if (signupStep === "form") {
     return (
-      <section className="bg-neutral-50 px-4 pb-16 pt-32 sm:px-6">
-        <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[28px] border border-neutral-100 bg-white shadow-soft lg:grid-cols-[1.02fr_0.98fr]">
+      <section className="bg-neutral-50 px-0 pb-16 pt-32 sm:px-6">
+        <div className="mx-auto grid max-w-7xl overflow-hidden border-y border-neutral-100 bg-white shadow-soft sm:rounded-[28px] sm:border lg:grid-cols-[1.02fr_0.98fr]">
           <div className="relative min-h-[280px] overflow-hidden bg-white sm:min-h-[360px] lg:min-h-full">
             <img
               alt="FoodOnlines shop and order banner"
