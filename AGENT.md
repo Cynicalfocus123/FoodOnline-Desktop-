@@ -4,10 +4,10 @@
 - Use caveman full responses unless user says normal mode.
 - Keep command output capped. Prefer small `Select-Object -First ...` / `Out-String -Width ...` on PowerShell.
 - User wants commit and push after each completed change set without asking.
-- Priority documentation rule: every completed change or fix must update both `AGENT.md` and `design.md` with the relevant project note, design note, or implementation note before build, commit, and push.
+- Documentation split rule: keep general/frontend repo notes in `AGENT.md` and `design.md`; keep backend/admin notes in `BACKEND-AGENT.md` and `BACKEND-DESIGNER.md`.
 - Start every session by following this workflow rule: do not run localhost, browser preview, HTTP local server checks, `npm run dev`, `npm start`, `vite preview`, `next dev`, or any long-running server. Only run safe checks such as `npm run build`, `npm run lint`, `npm test`, or `npx tsc --noEmit`; after safe checks pass, commit and push to the current branch.
 - Permanent Git rule: never ask user to push, never stop with manual push instructions, always run `git status`, `git add .`, `git commit -m "Clear summary of completed change"`, detect branch with `git branch --show-current`, then push automatically with `git push -u origin CURRENT_BRANCH`. If push fails, inspect real git error, fix normal non-destructive issues automatically, retry push, stop only for real merge conflicts or authentication requirements.
-- Stack selected for desktop website: Vite React + TypeScript, Zustand, Tailwind CSS. Backend/API/PostgreSQL/storage are documented as target architecture, not implemented in this frontend-only scaffold.
+- Stack selected for desktop website: Vite React + TypeScript, Zustand, Tailwind CSS.
 - Local assets copied into `public/assets`: FoodOnlines logo and Blue Apron hero video.
 - Home page requirements implemented: logo top-left, video-backed main slider, centered splash signup form over Dribbble video, category/deal sections, footer with mission/news/contact.
 - `.gitignore` excludes generated folders: `node_modules/`, `dist/`, `.logs/`, `.vite/`.
@@ -20,10 +20,4 @@
 - Signup now runs as an in-app multi-step flow: hero CTA -> role selection -> split signup form -> completion state, with structured registration payload ready for backend submission later.
 - Signup input handling preserves safe spaces while users type names, contact numbers, and company words, then trims and normalizes cleaned values on final submission.
 - Logo source file `food-online-long-text-transparent.png` contains opaque white pixels despite its name. Use generated `public/assets/food-online-long-text-cutout.png` for real transparent header rendering.
-- Backend/admin phase direction changed. Real backend target is now Laravel PHP + MySQL only. Do not plan Node/NestJS/PostgreSQL/Mongo/Prisma work unless user explicitly reopens stack choice.
-- Phase 1 admin foundation added inside current frontend repo as mock-only protected UI: admin login screen, protected dashboard shell, Users sidebar tab with Customers/Suppliers/Partners internal tabs, Admin Settings credential rotation screen, overview blueprint for Laravel controllers/routes/middleware/migrations/models, and mock signup request management actions.
-- Admin mock security rules now live in shared frontend helpers: email normalization, strict signup sanitization, generic admin login failures, suspicious password rejection, rate-limit placeholder lockout, local salted hash placeholder for rotated admin password, safe React text rendering only, and no `dangerouslySetInnerHTML` / `eval`.
-- Public signup submissions now flow into admin mock queue through shared schema/state so new registrations appear in admin Users tables without backend network calls.
-- `design.md` existed but `DESIGNER.md` did not. Created `DESIGNER.md` as companion design note file so future UI/admin changes can update both names without workflow confusion.
-- Laravel backend TODO for later real phase: implement server-side auth guard, `Hash::make` / `Hash::check`, CSRF-protected session routes, throttle middleware, audit logs, login logs, Eloquent models, migrations, soft deletes, and MySQL indexes for admin and signup request tables.
-- Admin entry labels now explicitly say `Test Admin Dashboard` in header/footer so repo users know link is for mock admin dashboard and feature testing, not live production admin access.
+- Backend/admin-specific notes moved out of this file into `BACKEND-AGENT.md` and `BACKEND-DESIGNER.md` so public site docs stay less confusing.
