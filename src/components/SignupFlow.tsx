@@ -1,7 +1,10 @@
 import { FormEvent } from "react";
-import { SignupFormValues, SignupRole, useHomeStore } from "../store/homeStore";
-
-const roleOptions: SignupRole[] = ["Customer", "Partners", "Suppliers"];
+import {
+  SignupFormValues,
+  signupFieldLimits,
+  signupRoleOptions,
+  useHomeStore,
+} from "../store/homeStore";
 const marketingImage =
   "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80";
 
@@ -23,6 +26,7 @@ export function SignupFlow() {
   const signupStep = useHomeStore((state) => state.signupStep);
   const selectedRole = useHomeStore((state) => state.selectedRole);
   const formValues = useHomeStore((state) => state.formValues);
+  const fieldErrors = useHomeStore((state) => state.fieldErrors);
   const completedSubmission = useHomeStore((state) => state.completedSubmission);
   const selectRole = useHomeStore((state) => state.selectRole);
   const continueToForm = useHomeStore((state) => state.continueToForm);
@@ -116,18 +120,29 @@ export function SignupFlow() {
               Finish your {selectedRole} registration with details ready for future backend submission.
             </p>
 
-            <form className="mt-8 grid gap-4" onSubmit={handleSubmit}>
+            <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>
               {formFields.map(({ field, label, type, optional }) => (
                 <label className="grid gap-2" htmlFor={field} key={field}>
                   <span className="text-sm font-bold text-neutral-700">{label}</span>
                   <input
-                    className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                    aria-describedby={fieldErrors[field] ? `${field}-error` : undefined}
+                    aria-invalid={fieldErrors[field] ? "true" : "false"}
+                    className={`min-h-14 rounded-md border px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20 ${
+                      fieldErrors[field] ? "border-red-400 bg-red-50/40" : "border-neutral-200"
+                    }`}
                     id={field}
+                    inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
+                    maxLength={signupFieldLimits[field]}
                     onChange={(event) => setFormValue(field, event.target.value)}
                     required={!optional}
                     type={type}
                     value={formValues[field]}
                   />
+                  {fieldErrors[field] ? (
+                    <span className="text-sm font-semibold text-red-600" id={`${field}-error`}>
+                      {fieldErrors[field]}
+                    </span>
+                  ) : null}
                 </label>
               ))}
               <button
@@ -151,7 +166,7 @@ export function SignupFlow() {
           We use your role to shape a better FoodOnlines registration experience for your account.
         </p>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {roleOptions.map((role) => {
+          {signupRoleOptions.map((role) => {
             const isActive = selectedRole === role;
             return (
               <button
@@ -174,6 +189,9 @@ export function SignupFlow() {
             );
           })}
         </div>
+        {fieldErrors.selectedRole ? (
+          <p className="mt-4 text-center text-sm font-semibold text-red-600">{fieldErrors.selectedRole}</p>
+        ) : null}
         <div className="mt-8 flex justify-center">
           <button
             className="min-h-14 min-w-[220px] rounded-md bg-citrus-500 px-8 text-base font-black text-white transition hover:bg-citrus-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
