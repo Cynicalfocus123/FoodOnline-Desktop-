@@ -6,7 +6,12 @@ FoodOnlines desktop homepage built with React, TypeScript, Zustand, and Tailwind
 
 [GitHub Pages demo](https://cynicalfocus123.github.io/FoodOnline-Desktop-/)
 
-Admin dashboard testing entry is labeled `Test Admin Dashboard` inside header and footer. It is mock/testing UI for admin features, not real production backend auth yet.
+Standalone admin mockup link:
+
+- Public site: [https://cynicalfocus123.github.io/FoodOnline-Desktop-/](https://cynicalfocus123.github.io/FoodOnline-Desktop-/)
+- Admin dashboard: [https://cynicalfocus123.github.io/FoodOnline-Desktop-/admin.html](https://cynicalfocus123.github.io/FoodOnline-Desktop-/admin.html)
+
+Admin dashboard is now fully separate from frontend UI. Public pages do not include admin buttons or admin routing hooks.
 
 Documentation split:
 

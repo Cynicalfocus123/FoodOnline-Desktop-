@@ -1,13 +1,11 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { assets, navItems } from "../data/home";
-import { useAdminStore } from "../store/adminStore";
 import { useHomeStore } from "../store/homeStore";
 
 export function Header() {
   const openSignup = useHomeStore((state) => state.openSignup);
   const signupView = useHomeStore((state) => state.signupView);
   const backToHome = useHomeStore((state) => state.backToHome);
-  const openAdminLogin = useAdminStore((state) => state.openAdminLogin);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -87,13 +85,6 @@ export function Header() {
             Sign up
           </a>
           <button
-            className="hidden min-h-12 items-center rounded-md bg-[#112017] px-4 text-sm font-black text-white transition hover:bg-[#183122] lg:inline-flex"
-            onClick={openAdminLogin}
-            type="button"
-          >
-            Test Admin Dashboard
-          </button>
-          <button
             aria-controls="mobile-navigation"
             aria-expanded={isMobileMenuOpen}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -153,16 +144,6 @@ export function Header() {
             >
               Join Us Now
             </a>
-            <button
-              className="flex min-h-12 items-center justify-center rounded-md bg-[#112017] px-4 text-sm font-black text-white transition hover:bg-[#183122]"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                openAdminLogin();
-              }}
-              type="button"
-            >
-              Test Admin Dashboard
-            </button>
           </nav>
         </div>
       ) : null}

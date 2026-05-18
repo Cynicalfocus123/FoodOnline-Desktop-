@@ -21,3 +21,4 @@
 - Signup input handling preserves safe spaces while users type names, contact numbers, and company words, then trims and normalizes cleaned values on final submission.
 - Logo source file `food-online-long-text-transparent.png` contains opaque white pixels despite its name. Use generated `public/assets/food-online-long-text-cutout.png` for real transparent header rendering.
 - Backend/admin-specific notes moved out of this file into `BACKEND-AGENT.md` and `BACKEND-DESIGNER.md` so public site docs stay less confusing.
+- Frontend and admin are now fully separated at entry level: public site stays on `index.html` / `src/main.tsx`, while admin uses standalone `admin.html` / `src/admin-main.tsx`. Do not re-add admin buttons, admin route toggles, or mixed admin state into public site UI.

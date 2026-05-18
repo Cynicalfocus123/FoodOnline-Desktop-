@@ -24,10 +24,9 @@ const requestActions: Array<{
 ];
 
 export function AdminPortal() {
-  const screen = useAdminStore((state) => state.screen);
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
 
-  if (screen === "login" || !isAuthenticated) {
+  if (!isAuthenticated) {
     return <AdminLoginScreen />;
   }
 
@@ -38,7 +37,6 @@ function AdminLoginScreen() {
   const adminEmail = useAdminStore((state) => state.adminEmail);
   const authError = useAdminStore((state) => state.authError);
   const securityMessage = useAdminStore((state) => state.securityMessage);
-  const returnToPublicSite = useAdminStore((state) => state.returnToPublicSite);
   const loginAdmin = useAdminStore((state) => state.loginAdmin);
   const [email, setEmail] = useState(adminEmail);
   const [password, setPassword] = useState("");
@@ -68,7 +66,7 @@ function AdminLoginScreen() {
             </p>
 
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <MetricCard label="Protected screens" value="Login + Dashboard" />
+              <MetricCard label="Standalone entry" value="admin.html" />
               <MetricCard label="User groups" value="Customers / Suppliers / Partners" />
               <MetricCard label="Backend target" value="Laravel + MySQL" />
             </div>
@@ -93,22 +91,19 @@ function AdminLoginScreen() {
                 </p>
                 <h2 className="mt-3 text-3xl font-black text-ink">Enter dashboard</h2>
               </div>
-              <button
-                className="min-h-11 rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-                onClick={returnToPublicSite}
-                type="button"
+              <a
+                className="inline-flex min-h-11 items-center rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
+                href="./"
               >
                 Back to Site
-              </button>
+              </a>
             </div>
 
             <div className="mt-6 rounded-3xl border border-neutral-100 bg-neutral-50 p-5">
               <p className="text-sm font-bold text-neutral-700">
                 Mock admin email: <span className="text-ink">{adminEmail}</span>
               </p>
-              <p className="mt-2 text-sm leading-6 text-neutral-600">
-                {securityMessage}
-              </p>
+              <p className="mt-2 text-sm leading-6 text-neutral-600">{securityMessage}</p>
             </div>
 
             <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
@@ -178,7 +173,6 @@ function AdminDashboard() {
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
   const updateRequestStatus = useAdminStore((state) => state.updateRequestStatus);
-  const returnToPublicSite = useAdminStore((state) => state.returnToPublicSite);
   const logoutAdmin = useAdminStore((state) => state.logoutAdmin);
 
   const filteredUsers = useMemo(
@@ -206,7 +200,7 @@ function AdminDashboard() {
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-200">FoodOnline</p>
           <h1 className="mt-4 text-3xl font-black">Admin Console</h1>
           <p className="mt-3 text-sm leading-7 text-emerald-50/80">
-            Mock backend control room. Safe UI now, Laravel + MySQL later.
+            Standalone mock backend control room. Safe UI now, Laravel + MySQL later.
           </p>
 
           <div className="mt-8 grid gap-3">
@@ -241,13 +235,12 @@ function AdminDashboard() {
           </div>
 
           <div className="mt-8 grid gap-3">
-            <button
-              className="min-h-12 rounded-full border border-white/15 px-4 text-sm font-bold text-white transition hover:border-citrus-400 hover:text-citrus-200"
-              onClick={returnToPublicSite}
-              type="button"
+            <a
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 px-4 text-sm font-bold text-white transition hover:border-citrus-400 hover:text-citrus-200"
+              href="./"
             >
               Back to Site
-            </button>
+            </a>
             <button
               className="min-h-12 rounded-full bg-white px-4 text-sm font-black text-[#112017] transition hover:bg-emerald-100"
               onClick={logoutAdmin}
@@ -267,9 +260,7 @@ function AdminDashboard() {
           </div>
 
           <div className="mt-6">
-            {activeSidebarKey === "overview" ? (
-              <OverviewPanel auditLog={auditLog} />
-            ) : null}
+            {activeSidebarKey === "overview" ? <OverviewPanel auditLog={auditLog} /> : null}
             {activeSidebarKey === "users" ? (
               <UsersPanel
                 activeUsersTab={activeUsersTab}
@@ -286,7 +277,11 @@ function AdminDashboard() {
   );
 }
 
-function OverviewPanel({ auditLog }: { auditLog: Array<{ id: string; action: string; detail: string; createdTimestamp: string }> }) {
+function OverviewPanel({
+  auditLog,
+}: {
+  auditLog: Array<{ id: string; action: string; detail: string; createdTimestamp: string }>;
+}) {
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
       <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
@@ -297,7 +292,7 @@ function OverviewPanel({ auditLog }: { auditLog: Array<{ id: string; action: str
           {laravelMySqlBlueprint.tables.map((table) => (
             <div className="rounded-3xl border border-neutral-100 bg-neutral-50 p-5" key={table.name}>
               <p className="text-lg font-black text-ink">{table.name}</p>
-              <p className="mt-3 text-sm leading-7 text-neutral-600">{table.columns.join(" • ")}</p>
+              <p className="mt-3 text-sm leading-7 text-neutral-600">{table.columns.join(" | ")}</p>
             </div>
           ))}
         </div>

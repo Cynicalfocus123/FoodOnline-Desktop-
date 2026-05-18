@@ -23,7 +23,7 @@ import {
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
-type AdminScreen = "public" | "login" | "dashboard";
+type AdminScreen = "login" | "dashboard";
 
 type AdminStore = {
   screen: AdminScreen;
@@ -41,8 +41,6 @@ type AdminStore = {
   loginAttemptTimestamps: string[];
   lockoutUntil: string | null;
   lastLoginAt: string | null;
-  openAdminLogin: () => void;
-  returnToPublicSite: () => void;
   logoutAdmin: () => void;
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
@@ -86,7 +84,7 @@ function getNextReviewTime(status: AdminRequestStatus) {
 export const useAdminStore = create<AdminStore>()(
   persist(
     (set, get) => ({
-      screen: "public",
+      screen: "login",
       isAuthenticated: false,
       activeSidebarKey: "overview",
       activeUsersTab: "customer",
@@ -98,32 +96,18 @@ export const useAdminStore = create<AdminStore>()(
       passwordSalt: null,
       users: adminSeedUsers,
       auditLog: [
-        createAuditEntry("system.bootstrap", "Admin mockup initialized for Laravel + MySQL planning."),
+        createAuditEntry("system.bootstrap", "Standalone admin mockup initialized for Laravel + MySQL planning."),
       ],
       loginAttemptTimestamps: [],
       lockoutUntil: null,
       lastLoginAt: null,
-      openAdminLogin: () =>
-        set({
-          screen: "login",
-          isAuthenticated: false,
-          authError: null,
-          settingsMessage: null,
-        }),
-      returnToPublicSite: () =>
-        set({
-          screen: "public",
-          isAuthenticated: false,
-          authError: null,
-          settingsMessage: null,
-        }),
       logoutAdmin: () =>
         set((state) => ({
           screen: "login",
           isAuthenticated: false,
           authError: null,
           settingsMessage: "Admin session ended.",
-          auditLog: [createAuditEntry("auth.logout", "Admin signed out from mock dashboard."), ...state.auditLog].slice(
+          auditLog: [createAuditEntry("auth.logout", "Admin signed out from standalone dashboard."), ...state.auditLog].slice(
             0,
             12,
           ),
@@ -185,8 +169,8 @@ export const useAdminStore = create<AdminStore>()(
               createAuditEntry(
                 "auth.failed",
                 shouldLock
-                  ? "Admin login placeholder hit rate-limit lockout window."
-                  : "Admin login placeholder rejected generic credentials.",
+                  ? "Standalone admin login placeholder hit rate-limit lockout window."
+                  : "Standalone admin login placeholder rejected generic credentials.",
               ),
               ...currentState.auditLog,
             ].slice(0, 12),
@@ -204,7 +188,7 @@ export const useAdminStore = create<AdminStore>()(
           lockoutUntil: null,
           lastLoginAt: new Date().toISOString(),
           auditLog: [
-            createAuditEntry("auth.success", "Admin entered protected mock dashboard."),
+            createAuditEntry("auth.success", "Admin entered standalone protected dashboard."),
             ...currentState.auditLog,
           ].slice(0, 12),
         }));
@@ -258,7 +242,7 @@ export const useAdminStore = create<AdminStore>()(
           adminEmail: normalizedEmail,
           passwordSalt: salt,
           passwordHash,
-          securityMessage: "Bootstrap access removed. Mock dashboard now requires hashed local credential check.",
+          securityMessage: "Bootstrap access removed. Standalone admin now requires hashed local credential check.",
           settingsMessage: "Admin email and password updated in mock secure store.",
           auditLog: [
             createAuditEntry("settings.credentials", "Admin rotated email and password placeholder."),
@@ -318,7 +302,7 @@ export const useAdminStore = create<AdminStore>()(
 
         return {
           ...mergedState,
-          screen: "public",
+          screen: "login",
           isAuthenticated: false,
           activeSidebarKey: "overview",
           activeUsersTab: "customer",

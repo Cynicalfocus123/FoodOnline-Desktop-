@@ -27,6 +27,7 @@
 - README documents local install, dev, and build commands.
 - GitHub Pages production build uses `/FoodOnline-Desktop-/` base path for deployed assets.
 - Backend/admin design and security notes now live in `BACKEND-DESIGNER.md` and `BACKEND-AGENT.md` to avoid mixing public site design with admin mockup planning.
+- Public site must not include admin entry buttons or inline admin routing. Standalone admin lives on separate page entry `admin.html`.
 
 ## Guardrails
 
