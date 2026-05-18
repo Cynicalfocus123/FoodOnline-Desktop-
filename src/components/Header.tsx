@@ -21,7 +21,7 @@ export function Header() {
           }}
         >
           <img
-            className="h-24 w-auto max-w-[220px] object-contain mix-blend-multiply sm:max-w-[300px]"
+            className="block h-24 w-auto max-w-[220px] object-contain sm:max-w-[300px]"
             src={assets.logo}
             alt="FoodOnlines logo"
           />
