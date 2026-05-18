@@ -5,8 +5,7 @@ import {
   signupRoleOptions,
   useHomeStore,
 } from "../store/homeStore";
-const marketingImage =
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80";
+import signupBannerImage from "../../site video and content/shop  and order banner.png";
 
 const formFields: Array<{
   field: keyof SignupFormValues;
@@ -100,9 +99,9 @@ export function SignupFlow() {
             </div>
             <div className="mt-8 overflow-hidden rounded-[24px] bg-white/60 p-3 shadow-sm">
               <img
-                alt="Fresh food assortment"
-                className="aspect-[4/3] w-full rounded-[20px] object-cover"
-                src={marketingImage}
+                alt="FoodOnlines shop and order banner"
+                className="h-[320px] w-full rounded-[20px] object-cover object-top sm:h-[420px] lg:h-[520px]"
+                src={signupBannerImage}
               />
             </div>
           </div>
