@@ -4,6 +4,7 @@ import {
   AdminAuditEntry,
   AdminRequestStatus,
   AdminSidebarKey,
+  AdminUserAction,
   AdminUserRecord,
   adminSeedUsers,
 } from "../data/admin";
@@ -40,7 +41,7 @@ type AdminStore = {
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
   loginAdmin: (adminIdentity: string, password: string) => Promise<boolean>;
-  updateRequestStatus: (userId: string, status: AdminRequestStatus) => void;
+  applyUserAction: (userId: string, action: AdminUserAction) => void;
   updateAdminCredentials: (
     currentPassword: string,
     nextEmail: string,
@@ -64,11 +65,42 @@ function createAuditEntry(action: string, detail: string): AdminAuditEntry {
 }
 
 function getNextReviewTime(status: AdminRequestStatus) {
-  if (status === "pending" || status === "archived") {
-    return null;
+  return new Date().toISOString();
+}
+
+function normalizeStoredUsers(users: AdminUserRecord[] | undefined) {
+  if (!users) {
+    return adminSeedUsers;
   }
 
-  return new Date().toISOString();
+  return users
+    .flatMap((user) => {
+      if (user.requestStatus === "approved" || user.requestStatus === "in_review") {
+        return [user];
+      }
+
+      if ((user.requestStatus as string) === "archived") {
+        return [];
+      }
+
+      if ((user.requestStatus as string) === "needs_follow_up") {
+        return [
+          {
+            ...user,
+            requestStatus: "in_review" as const,
+            reviewedAt: user.reviewedAt ?? new Date().toISOString(),
+          },
+        ];
+      }
+
+      return [
+        {
+          ...user,
+          requestStatus: "approved" as const,
+          reviewedAt: user.reviewedAt ?? user.createdTimestamp,
+        },
+      ];
+    });
 }
 
 export const useAdminStore = create<AdminStore>()(
@@ -140,19 +172,27 @@ export const useAdminStore = create<AdminStore>()(
         }));
         return true;
       },
-      updateRequestStatus: (userId, status) =>
+      applyUserAction: (userId, action) =>
         set((state) => ({
-          users: state.users.map((user) =>
-            user.id === userId
-              ? {
-                  ...user,
-                  requestStatus: status,
-                  reviewedAt: getNextReviewTime(status),
-                }
-              : user,
-          ),
+          users:
+            action === "delete"
+              ? state.users.filter((user) => user.id !== userId)
+              : state.users.map((user) =>
+                  user.id === userId
+                    ? {
+                        ...user,
+                        requestStatus: "in_review",
+                        reviewedAt: getNextReviewTime("in_review"),
+                      }
+                    : user,
+                ),
           auditLog: [
-            createAuditEntry("signup.status", `Signup request ${userId} moved to ${status}.`),
+            createAuditEntry(
+              "signup.action",
+              action === "delete"
+                ? `Signup record ${userId} deleted from mock dashboard.`
+                : `Signup record ${userId} moved to in_review.`,
+            ),
             ...state.auditLog,
           ].slice(0, 12),
         })),
@@ -209,11 +249,11 @@ export const useAdminStore = create<AdminStore>()(
               contactNumber: submission.contactNumber,
               lineId: submission.lineId,
               companyName: submission.companyName,
-              requestStatus: "pending",
+              requestStatus: "approved",
               sourceLabel: "Frontend signup",
               createdTimestamp: submission.createdTimestamp,
-              reviewedAt: null,
-              notes: "Captured from public signup flow. Safe text rendering only.",
+              reviewedAt: submission.createdTimestamp,
+              notes: "Captured from public signup flow and approved instantly.",
             },
             ...state.users,
           ],
@@ -246,6 +286,7 @@ export const useAdminStore = create<AdminStore>()(
 
         return {
           ...mergedState,
+          users: normalizeStoredUsers(mergedState.users),
           screen: "login",
           isAuthenticated: false,
           activeSidebarKey: "overview",

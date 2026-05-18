@@ -30,4 +30,6 @@
 - Public signup submissions flow into admin mock queue through shared schema/state so new registrations appear in admin Users tables without backend network calls.
 - Admin is not linked from frontend UI anymore. Access it through direct standalone URL like `/admin.html` so backend/admin stays isolated from public site UX.
 - Current admin login is intentionally permissive for mock testing: any non-empty `Admin` value plus any non-empty password opens dashboard UI. This is temporary mock behavior only and must be replaced by real Laravel auth later.
+- Current admin signup/user flow is instant approval. New frontend signups should enter admin list already approved, with no manual approve step.
+- Admin users table now uses one dropdown action control instead of stacked buttons. Manual actions are reduced to `Move to Review` and `Delete User`.
 - Laravel backend TODO for later real phase: implement server-side auth guard, `Hash::make` / `Hash::check`, CSRF-protected session routes, throttle middleware, audit logs, login logs, Eloquent models, migrations, soft deletes, and MySQL indexes for admin and signup request tables.

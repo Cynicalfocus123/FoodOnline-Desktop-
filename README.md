@@ -13,6 +13,7 @@ Standalone admin mockup link:
 
 Admin dashboard is now fully separate from frontend UI. Public pages do not include admin buttons or admin routing hooks.
 Current mock admin login accepts any non-empty `Admin` value and any non-empty password so the dashboard UI can be tested quickly.
+New signups are approved instantly in the mock admin UI, and row actions now use a dropdown with `Move to Review` and `Delete User`.
 
 Documentation split:
 

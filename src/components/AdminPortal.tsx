@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import {
   AdminRequestStatus,
+  AdminUserAction,
   adminRequestStatusMeta,
   adminRoleTabs,
   adminSecurityChecklist,
@@ -14,13 +15,11 @@ import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 
 const requestActions: Array<{
-  status: AdminRequestStatus;
+  action: AdminUserAction;
   label: string;
 }> = [
-  { status: "in_review", label: "Move To Review" },
-  { status: "approved", label: "Approve" },
-  { status: "needs_follow_up", label: "Needs Follow Up" },
-  { status: "archived", label: "Archive" },
+  { action: "in_review", label: "Move to Review" },
+  { action: "delete", label: "Delete User" },
 ];
 
 export function AdminPortal() {
@@ -124,7 +123,7 @@ function AdminDashboard() {
   const activeUsersTab = useAdminStore((state) => state.activeUsersTab);
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
-  const updateRequestStatus = useAdminStore((state) => state.updateRequestStatus);
+  const applyUserAction = useAdminStore((state) => state.applyUserAction);
   const logoutAdmin = useAdminStore((state) => state.logoutAdmin);
 
   const filteredUsers = useMemo(
@@ -133,17 +132,17 @@ function AdminDashboard() {
   );
 
   const stats = useMemo(() => {
-    const totalPending = users.filter((user) => user.requestStatus === "pending").length;
     const totalApproved = users.filter((user) => user.requestStatus === "approved").length;
     const totalNeedsReview = users.filter((user) => user.requestStatus === "in_review").length;
+    const totalCurrentTab = users.filter((user) => user.selectedRole === activeUsersTab).length;
 
     return {
       totalUsers: users.length,
-      totalPending,
       totalApproved,
       totalNeedsReview,
+      totalCurrentTab,
     };
-  }, [users]);
+  }, [activeUsersTab, users]);
 
   return (
     <main className="min-h-screen bg-[#f5f7f4] text-ink">
@@ -208,9 +207,9 @@ function AdminDashboard() {
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="All signup records" value={String(stats.totalUsers)} light />
-            <MetricCard label="Pending approval" value={String(stats.totalPending)} light />
-            <MetricCard label="Approved" value={String(stats.totalApproved)} light />
+            <MetricCard label="Instantly approved" value={String(stats.totalApproved)} light />
             <MetricCard label="In review" value={String(stats.totalNeedsReview)} light />
+            <MetricCard label="Current role total" value={String(stats.totalCurrentTab)} light />
           </div>
 
           <div className="mt-6">
@@ -219,7 +218,7 @@ function AdminDashboard() {
               <UsersPanel
                 activeUsersTab={activeUsersTab}
                 filteredUsers={filteredUsers}
-                onChangeStatus={updateRequestStatus}
+                onApplyAction={applyUserAction}
                 onChangeTab={setActiveUsersTab}
               />
             ) : null}
@@ -301,12 +300,12 @@ function OverviewPanel({
 function UsersPanel({
   activeUsersTab,
   filteredUsers,
-  onChangeStatus,
+  onApplyAction,
   onChangeTab,
 }: {
   activeUsersTab: SignupRoleKey;
   filteredUsers: ReturnType<typeof useAdminStore.getState>["users"];
-  onChangeStatus: (userId: string, status: AdminRequestStatus) => void;
+  onApplyAction: (userId: string, action: AdminUserAction) => void;
   onChangeTab: (tab: SignupRoleKey) => void;
 }) {
   return (
@@ -382,18 +381,7 @@ function UsersPanel({
                       {user.reviewedAt ? formatDateTime(user.reviewedAt) : "Not reviewed"}
                     </td>
                     <td className="px-4 py-4">
-                      <div className="grid gap-2">
-                        {requestActions.map((action) => (
-                          <button
-                            className="min-h-10 rounded-full border border-neutral-200 px-3 text-xs font-black text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-                            key={`${user.id}-${action.status}`}
-                            onClick={() => onChangeStatus(user.id, action.status)}
-                            type="button"
-                          >
-                            {action.label}
-                          </button>
-                        ))}
-                      </div>
+                      <ActionDropdown userId={user.id} onApplyAction={onApplyAction} />
                     </td>
                   </tr>
                 );
@@ -403,6 +391,42 @@ function UsersPanel({
         </div>
       </div>
     </section>
+  );
+}
+
+function ActionDropdown({
+  userId,
+  onApplyAction,
+}: {
+  userId: string;
+  onApplyAction: (userId: string, action: AdminUserAction) => void;
+}) {
+  const [selectedAction, setSelectedAction] = useState("");
+
+  return (
+    <div className="relative min-w-[180px]">
+      <select
+        className="min-h-11 w-full appearance-none rounded-2xl border border-neutral-200 bg-white px-4 pr-10 text-sm font-bold text-neutral-700 outline-none transition hover:border-citrus-400 focus:border-citrus-500"
+        onChange={(event) => {
+          const nextAction = event.target.value as AdminUserAction | "";
+          setSelectedAction("");
+          if (nextAction) {
+            onApplyAction(userId, nextAction);
+          }
+        }}
+        value={selectedAction}
+      >
+        <option value="">Choose action</option>
+        {requestActions.map((action) => (
+          <option key={`${userId}-${action.action}`} value={action.action}>
+            {action.label}
+          </option>
+        ))}
+      </select>
+      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-neutral-400">
+        v
+      </span>
+    </div>
   );
 }
 

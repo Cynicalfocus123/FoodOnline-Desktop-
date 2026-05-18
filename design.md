@@ -33,6 +33,8 @@
 - Admin phase 1 mockup uses standalone one-card login screen with only `Admin` and `Password` fields.
 - After login, admin shows dark sidebar dashboard with `Overview`, `Users`, and `Admin Settings`.
 - `Users` includes role tabs for `Customers`, `Suppliers`, and `Partners`.
+- Signup users appear approved instantly by default. No separate approval queue UI remains.
+- Action column now uses one styled dropdown control instead of multiple stacked buttons, with only `Move to Review` and `Delete User`.
 - Table design shows all frontend signup fields plus request-management metadata so later Laravel + MySQL backend can map one-to-one into real migrations and admin screens.
 - Security presentation should stay visible in admin design: generic login errors where needed, safe text rendering, archive-not-delete actions, and Laravel handoff notes for CSRF, rate limiting, hashing, and audit logs.
 

@@ -9,7 +9,7 @@ export const adminSidebarItems = [
   {
     key: "users",
     label: "Users",
-    description: "Review signup requests and account intake",
+    description: "Manage approved users and account intake",
   },
   {
     key: "settings",
@@ -26,12 +26,8 @@ export const adminRoleTabs = signupRoles.map((role) => ({
   description: role.description,
 }));
 
-export type AdminRequestStatus =
-  | "pending"
-  | "in_review"
-  | "approved"
-  | "needs_follow_up"
-  | "archived";
+export type AdminRequestStatus = "approved" | "in_review";
+export type AdminUserAction = "in_review" | "delete";
 
 export type AdminUserRecord = {
   id: string;
@@ -63,10 +59,6 @@ export const adminRequestStatusMeta: Record<
     classes: string;
   }
 > = {
-  pending: {
-    label: "Pending",
-    classes: "border-amber-200 bg-amber-50 text-amber-700",
-  },
   in_review: {
     label: "In Review",
     classes: "border-sky-200 bg-sky-50 text-sky-700",
@@ -74,14 +66,6 @@ export const adminRequestStatusMeta: Record<
   approved: {
     label: "Approved",
     classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  },
-  needs_follow_up: {
-    label: "Needs Follow Up",
-    classes: "border-rose-200 bg-rose-50 text-rose-700",
-  },
-  archived: {
-    label: "Archived",
-    classes: "border-neutral-200 bg-neutral-100 text-neutral-600",
   },
 };
 
@@ -110,11 +94,11 @@ export const adminSeedUsers: AdminUserRecord[] = [
     contactNumber: "+1 (415) 555-0193",
     lineId: "maya.ng",
     companyName: "Sunset Pantry Club",
-    requestStatus: "pending",
+    requestStatus: "approved",
     sourceLabel: "Frontend signup",
     createdTimestamp: "2026-05-17T02:22:00.000Z",
-    reviewedAt: null,
-    notes: "Waiting for first admin review.",
+    reviewedAt: "2026-05-17T02:22:00.000Z",
+    notes: "Auto-approved from frontend signup flow.",
   },
   {
     id: "signup-1003",
@@ -140,11 +124,11 @@ export const adminSeedUsers: AdminUserRecord[] = [
     contactNumber: "+63 917 555 6021",
     lineId: "coastharvest",
     companyName: "Coast Harvest Seafoods",
-    requestStatus: "needs_follow_up",
+    requestStatus: "in_review",
     sourceLabel: "Frontend signup",
     createdTimestamp: "2026-05-17T11:05:00.000Z",
     reviewedAt: "2026-05-17T12:10:00.000Z",
-    notes: "Tax document missing. Keep soft-blocked, no delete.",
+    notes: "Manual review flag for supplier onboarding details.",
   },
   {
     id: "signup-1005",
@@ -160,21 +144,6 @@ export const adminSeedUsers: AdminUserRecord[] = [
     createdTimestamp: "2026-05-14T09:30:00.000Z",
     reviewedAt: "2026-05-14T10:25:00.000Z",
     notes: "Approved for delivery integration discovery.",
-  },
-  {
-    id: "signup-1006",
-    selectedRole: "partner",
-    emailAddress: "partnerdesk@payharbor.co",
-    firstName: "Lina",
-    lastName: "Cho",
-    contactNumber: "+82 10 5551 8890",
-    lineId: "payharbor-lina",
-    companyName: "PayHarbor",
-    requestStatus: "archived",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-12T03:12:00.000Z",
-    reviewedAt: "2026-05-13T08:45:00.000Z",
-    notes: "Archived, can restore later if partnership restarts.",
   },
 ];
 
@@ -275,7 +244,7 @@ export const adminSecurityChecklist = [
   "Normalize and validate email before auth; keep login failures generic.",
   "Rate-limit login and prepare Laravel throttle middleware for server phase.",
   "Render all signup fields as plain text only; React escaping stays in place.",
-  "Use soft-delete/archive flow for signup records instead of hard delete.",
+  "Current mock action shows delete control; real backend should still protect destructive operations carefully.",
   "Prepare CSRF, secure cookies, audit logs, and login logs in Laravel backend.",
 ];
 
