@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">FoodOnlines hero poster</title>
+  <desc id="desc">Branded fallback poster for the FoodOnlines homepage hero video.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#101816" />
+      <stop offset="45%" stop-color="#163025" />
+      <stop offset="100%" stop-color="#2d1b12" />
+    </linearGradient>
+    <radialGradient id="glowLeft" cx="30%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#95c11f" stop-opacity=".55" />
+      <stop offset="100%" stop-color="#95c11f" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowRight" cx="70%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#ff6b00" stop-opacity=".42" />
+      <stop offset="100%" stop-color="#ff6b00" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)" />
+  <rect width="1600" height="900" fill="url(#glowLeft)" />
+  <rect width="1600" height="900" fill="url(#glowRight)" />
+
+  <g opacity=".18">
+    <circle cx="240" cy="210" r="110" fill="#95c11f" />
+    <circle cx="1320" cy="190" r="92" fill="#ff6b00" />
+    <circle cx="1260" cy="720" r="150" fill="#95c11f" />
+    <circle cx="360" cy="720" r="130" fill="#ff6b00" />
+  </g>
+
+  <g opacity=".12">
+    <path d="M108 188c138-71 304-91 460-57 115 25 223 79 304 164 54 57 98 124 162 168 94 65 219 91 326 69v124H0V290c33 2 72-1 108-20Z" fill="#ffffff" />
+    <path d="M1540 782c-92-43-200-50-300-20-77 23-146 65-210 115H482c52-83 131-152 229-199 120-57 259-81 391-66 149 17 294 83 438 170Z" fill="#ffffff" />
+  </g>
+
+  <text x="120" y="608" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="700">
+    Fresh food, ready for any night
+  </text>
+  <text x="120" y="734" fill="#95c11f" font-family="Inter, Arial, sans-serif" font-size="112" font-weight="900">
+    Food
+  </text>
+  <text x="405" y="734" fill="#ff6b00" font-family="Inter, Arial, sans-serif" font-size="112" font-weight="900">
+    Onlines
+  </text>
+</svg>
