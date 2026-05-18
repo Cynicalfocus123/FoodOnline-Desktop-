@@ -1,4 +1,4 @@
-import { navItems } from "../data/home";
+import { assets, navItems } from "../data/home";
 
 export function Header() {
   return (
@@ -7,7 +7,7 @@ export function Header() {
         <a className="flex items-center gap-3" href="#home" aria-label="FoodOnlines home">
           <img
             className="h-14 w-14 rounded-md object-contain"
-            src="/assets/app-install-icon.png"
+            src={assets.logo}
             alt="FoodOnlines logo"
           />
           <span className="text-2xl font-black tracking-normal text-ink">

@@ -9,3 +9,5 @@
 - Home page requirements implemented: logo top-left, video-backed main slider, centered splash signup form over Dribbble video, category/deal sections, footer with mission/news/contact.
 - `.gitignore` excludes generated folders: `node_modules/`, `dist/`, `.logs/`, `.vite/`.
 - `README.md` added with run/build commands for the GitHub repo bootstrap.
+- Main hero video now uses `public/assets/food-horizontal.mp4` copied from `site video and content/food (Horizontal).mp4`.
+- GitHub Pages deployment workflow added at `.github/workflows/deploy-pages.yml`; demo URL is `https://cynicalfocus123.github.io/FoodOnline-Desktop-/`.
