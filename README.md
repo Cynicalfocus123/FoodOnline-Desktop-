@@ -6,6 +6,8 @@ FoodOnlines desktop homepage built with React, TypeScript, Zustand, and Tailwind
 
 [GitHub Pages demo](https://cynicalfocus123.github.io/FoodOnline-Desktop-/)
 
+Admin dashboard testing entry is labeled `Test Admin Dashboard` inside header and footer. It is mock/testing UI for admin features, not real production backend auth yet.
+
 ## Run
 
 ```bash

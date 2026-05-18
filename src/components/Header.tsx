@@ -91,7 +91,7 @@ export function Header() {
             onClick={openAdminLogin}
             type="button"
           >
-            Admin
+            Test Admin Dashboard
           </button>
           <button
             aria-controls="mobile-navigation"
@@ -161,7 +161,7 @@ export function Header() {
               }}
               type="button"
             >
-              Admin Login
+              Test Admin Dashboard
             </button>
           </nav>
         </div>

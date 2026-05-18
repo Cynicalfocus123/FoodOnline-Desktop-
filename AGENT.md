@@ -26,3 +26,4 @@
 - Public signup submissions now flow into admin mock queue through shared schema/state so new registrations appear in admin Users tables without backend network calls.
 - `design.md` existed but `DESIGNER.md` did not. Created `DESIGNER.md` as companion design note file so future UI/admin changes can update both names without workflow confusion.
 - Laravel backend TODO for later real phase: implement server-side auth guard, `Hash::make` / `Hash::check`, CSRF-protected session routes, throttle middleware, audit logs, login logs, Eloquent models, migrations, soft deletes, and MySQL indexes for admin and signup request tables.
+- Admin entry labels now explicitly say `Test Admin Dashboard` in header/footer so repo users know link is for mock admin dashboard and feature testing, not live production admin access.

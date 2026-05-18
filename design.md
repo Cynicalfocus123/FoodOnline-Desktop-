@@ -32,6 +32,7 @@
 
 - Phase 1 admin deliverable now lives inside current frontend repo as mock-only UI foundation, not real server logic yet.
 - Public header includes admin entry point that opens separate admin login experience without breaking home/signup flow.
+- Admin entry wording is now explicit: `Test Admin Dashboard`, with matching footer test link and note so users understand it is feature-testing path.
 - Admin login screen uses production-style split layout with Laravel/MySQL backend blueprint messaging and security posture callouts.
 - Admin dashboard uses dark sidebar shell with three navigation sections: Overview, Users, and Admin Settings.
 - `Users` section contains three internal role tabs exactly for `Customers`, `Suppliers`, and `Partners`.
