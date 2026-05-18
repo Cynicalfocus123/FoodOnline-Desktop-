@@ -41,7 +41,7 @@ export function Header() {
           onClick={handleHomeClick}
         >
           <img
-            className="block h-24 w-auto max-w-[220px] object-contain sm:max-w-[300px]"
+            className="block h-20 w-auto max-w-[190px] object-contain sm:max-w-[250px]"
             src={assets.logo}
             alt="FoodOnlines logo"
           />
