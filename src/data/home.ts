@@ -1,7 +1,7 @@
 const localAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 export const assets = {
-  logo: localAsset("assets/app-install-icon.png"),
+  logo: localAsset("assets/logo-transparent.png"),
   heroVideo: localAsset("assets/food-horizontal.mp4"),
   splashVideo:
     "https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4",
@@ -62,8 +62,8 @@ export const products = [
   },
 ];
 
-export const news = [
-  "FoodOnlines expands same-day produce routes across Bangkok.",
-  "New chef-tested meal kits join weekly desktop deals.",
-  "Supplier dashboard pilot improves cold-chain visibility.",
+export const footerLinkRows = [
+  ["Privacy", "Terms", "FAQ"],
+  ["Company News", "Our Mission", "Contact Us"],
+  ["Seller", "Recipe", "Partners"],
 ];

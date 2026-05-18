@@ -1,31 +1,18 @@
-import { news } from "../data/home";
+import { footerLinkRows } from "../data/home";
 
 export function Footer() {
   return (
-    <footer id="company" className="bg-ink px-6 py-16 text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-3">
-        <section>
-          <h2 className="text-xl font-black">Our mission</h2>
-          <p className="mt-4 leading-7 text-white/68">
-            Make fresh food ordering calm, transparent, and fast for every desktop shopper.
-          </p>
-        </section>
-        <section>
-          <h2 className="text-xl font-black">Company news</h2>
-          <ul className="mt-4 space-y-3 text-white/68">
-            {news.map((item) => (
-              <li key={item}>{item}</li>
+    <footer id="company" className="border-t border-neutral-100 bg-white px-6 py-10">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 text-center">
+        {footerLinkRows.map((row) => (
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-bold uppercase tracking-[0.14em] text-neutral-500" key={row.join("-")}>
+            {row.map((link) => (
+              <a className="transition hover:text-citrus-500" href="#company" key={link}>
+                {link}
+              </a>
             ))}
-          </ul>
-        </section>
-        <section>
-          <h2 className="text-xl font-black">Contact us</h2>
-          <div className="mt-4 space-y-3 text-white/68">
-            <p>support@foodonlines.com</p>
-            <p>+66 02 555 0198</p>
-            <p>Bangkok operations desk, daily 8:00-22:00</p>
-          </div>
-        </section>
+          </nav>
+        ))}
       </div>
     </footer>
   );

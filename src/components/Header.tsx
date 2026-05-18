@@ -2,18 +2,14 @@ import { assets, navItems } from "../data/home";
 
 export function Header() {
   return (
-    <header className="fixed left-0 right-0 top-0 z-40 border-b border-white/20 bg-white/88 backdrop-blur-xl">
+    <header className="fixed left-0 right-0 top-0 z-40 border-b border-neutral-100 bg-white/95 shadow-sm shadow-neutral-950/5 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <a className="flex items-center gap-3" href="#home" aria-label="FoodOnlines home">
+        <a className="flex items-center" href="#home" aria-label="FoodOnlines home">
           <img
-            className="h-14 w-14 rounded-md object-contain"
+            className="h-16 w-auto object-contain"
             src={assets.logo}
             alt="FoodOnlines logo"
           />
-          <span className="text-2xl font-black tracking-normal text-ink">
-            <span className="text-leaf-600">Food</span>
-            <span className="text-citrus-500">Onlines</span>
-          </span>
         </a>
 
         <nav className="hidden items-center gap-8 text-sm font-semibold text-neutral-700 lg:flex">
