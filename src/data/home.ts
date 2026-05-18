@@ -14,25 +14,16 @@ export const slides = [
     eyebrow: "100% organic feel",
     title: "Fresh food, ready for any night",
     body: "Build dinner faster with chef-picked boxes, produce, and pantry staples delivered on your schedule.",
-    cta: "Shop weekly picks",
-    stat: "30 min",
-    statLabel: "average prep",
   },
   {
     eyebrow: "Black Friday offer",
     title: "Organic foods up to 50% off",
     body: "Seasonal fruit, vegetables, bakery, dairy, and ready meals with crisp desktop checkout flow.",
-    cta: "Browse offers",
-    stat: "50%",
-    statLabel: "deal ceiling",
   },
   {
     eyebrow: "Local supplier chain",
     title: "Market-fresh groceries without market chaos",
     body: "Track categories, compare deals, and reserve daily essentials before the evening rush.",
-    cta: "Plan basket",
-    stat: "456K",
-    statLabel: "active carts",
   },
 ];
 

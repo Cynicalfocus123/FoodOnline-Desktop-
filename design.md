@@ -10,7 +10,7 @@
 ## Page Structure
 
 - Fixed header with FoodOnlines logo, desktop navigation, signup shortcut, and shop button.
-- Full-viewport home slider with background food video, dark overlay, three manual slide states, offer copy, CTA, and quick pick buttons.
+- Full-viewport home hero with background food video, dark overlay, centered offer copy, and centered email registration form.
 - Center splash section with video backdrop and signup email form in middle.
 - Category strip for common food paths.
 - Best deals grid with product cards, discount tags, prices, and add-to-cart buttons.
@@ -19,7 +19,7 @@
 ## Implementation Notes
 
 - React + TypeScript + Vite.
-- Zustand stores active slide and signup form state.
+- Zustand stores shared signup form state for hero and splash email forms.
 - Tailwind CSS owns responsive layout, colors, spacing, shadows, and buttons.
 - Public behavior is front-end only. Signup stores session UI state; no network submission yet.
 - Target backend architecture remains: REST or GraphQL API, Node/NestJS or Laravel, PostgreSQL, Cloudflare R2 or AWS S3 for media.

@@ -11,3 +11,4 @@
 - `README.md` added with run/build commands for the GitHub repo bootstrap.
 - Main hero video now uses `public/assets/food-horizontal.mp4` copied from `site video and content/food (Horizontal).mp4`.
 - GitHub Pages deployment workflow added at `.github/workflows/deploy-pages.yml`; demo URL is `https://cynicalfocus123.github.io/FoodOnline-Desktop-/`.
+- Hero quick-pick panel, prep stat, and green CTA removed; centered hero email registration form added using existing Zustand signup state.
