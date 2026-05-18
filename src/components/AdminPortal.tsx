@@ -34,130 +34,81 @@ export function AdminPortal() {
 }
 
 function AdminLoginScreen() {
-  const adminEmail = useAdminStore((state) => state.adminEmail);
   const authError = useAdminStore((state) => state.authError);
   const securityMessage = useAdminStore((state) => state.securityMessage);
   const loginAdmin = useAdminStore((state) => state.loginAdmin);
-  const [email, setEmail] = useState(adminEmail);
+  const [adminIdentity, setAdminIdentity] = useState("Mock Admin");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
-    await loginAdmin(email, password);
+    await loginAdmin(adminIdentity, password);
     setIsSubmitting(false);
   }
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(111,191,18,0.20),rgba(248,250,252,1)_42%,rgba(255,255,255,1)_100%)] px-4 py-8 text-ink sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl items-center">
-        <div className="grid w-full gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <section className="rounded-[32px] border border-white/70 bg-[#10231a] p-8 text-white shadow-[0_30px_90px_rgba(16,35,26,0.28)] sm:p-10">
-            <p className="text-sm font-bold uppercase tracking-[0.24em] text-emerald-200">
-              FoodOnline Admin Backend Mockup
-            </p>
-            <h1 className="mt-6 max-w-xl text-4xl font-black leading-tight sm:text-5xl">
-              Security-first admin shell for future Laravel + MySQL backend.
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-emerald-50/90">
-              Phase 1 stays mock-only but already models protected route flow, generic sign-in failures,
-              rate-limit placeholder behavior, safe text rendering, and backend table planning for signup intake.
-            </p>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <MetricCard label="Standalone entry" value="admin.html" />
-              <MetricCard label="User groups" value="Customers / Suppliers / Partners" />
-              <MetricCard label="Backend target" value="Laravel + MySQL" />
-            </div>
-
-            <div className="mt-10 rounded-3xl border border-emerald-400/20 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-emerald-100">
-                Security posture
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl items-center justify-center">
+        <section className="w-full rounded-[32px] border border-neutral-200 bg-white p-8 shadow-soft sm:p-10">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-citrus-500">
+                Admin Sign In
               </p>
-              <div className="mt-4 grid gap-3 text-sm leading-7 text-emerald-50/90">
-                {adminSecurityChecklist.map((item) => (
-                  <p key={item}>{item}</p>
-                ))}
-              </div>
+              <h1 className="mt-3 text-3xl font-black text-ink">Open admin dashboard</h1>
             </div>
-          </section>
+            <a
+              className="inline-flex min-h-11 items-center rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
+              href="./"
+            >
+              Back to Site
+            </a>
+          </div>
 
-          <section className="rounded-[32px] border border-neutral-200 bg-white p-8 shadow-soft sm:p-10">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-citrus-500">
-                  Admin Sign In
-                </p>
-                <h2 className="mt-3 text-3xl font-black text-ink">Enter dashboard</h2>
-              </div>
-              <a
-                className="inline-flex min-h-11 items-center rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-                href="./"
-              >
-                Back to Site
-              </a>
-            </div>
+          <p className="mt-5 text-sm leading-7 text-neutral-600">{securityMessage}</p>
 
-            <div className="mt-6 rounded-3xl border border-neutral-100 bg-neutral-50 p-5">
-              <p className="text-sm font-bold text-neutral-700">
-                Mock admin email: <span className="text-ink">{adminEmail}</span>
+          <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-neutral-700">Admin</span>
+              <input
+                autoComplete="username"
+                className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
+                maxLength={120}
+                onChange={(event) => setAdminIdentity(event.target.value)}
+                type="text"
+                value={adminIdentity}
+              />
+            </label>
+
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-neutral-700">Password</span>
+              <input
+                autoComplete="current-password"
+                className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
+                maxLength={128}
+                onChange={(event) => setPassword(event.target.value)}
+                type="password"
+                value={password}
+              />
+            </label>
+
+            {authError ? (
+              <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+                {authError}
               </p>
-              <p className="mt-2 text-sm leading-6 text-neutral-600">{securityMessage}</p>
-            </div>
+            ) : null}
 
-            <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
-              <label className="grid gap-2">
-                <span className="text-sm font-bold text-neutral-700">Admin email</span>
-                <input
-                  autoComplete="username"
-                  className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-                  inputMode="email"
-                  maxLength={254}
-                  onChange={(event) => setEmail(event.target.value)}
-                  type="email"
-                  value={email}
-                />
-              </label>
-
-              <label className="grid gap-2">
-                <span className="text-sm font-bold text-neutral-700">Password</span>
-                <input
-                  autoComplete="current-password"
-                  className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-                  maxLength={128}
-                  onChange={(event) => setPassword(event.target.value)}
-                  type="password"
-                  value={password}
-                />
-              </label>
-
-              {authError ? (
-                <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
-                  {authError}
-                </p>
-              ) : null}
-
-              <button
-                className="min-h-14 rounded-2xl bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
-                disabled={isSubmitting}
-                type="submit"
-              >
-                {isSubmitting ? "Checking Access..." : "Sign In"}
-              </button>
-            </form>
-
-            <div className="mt-8 rounded-3xl border border-neutral-100 bg-neutral-50 p-5">
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-700">
-                Laravel backend TODO
-              </p>
-              <p className="mt-3 text-sm leading-7 text-neutral-600">
-                Replace client-side placeholder checks with Laravel auth guard, `Hash::check`, CSRF-protected
-                session routes, throttle middleware, secure cookies, and MySQL-backed audit logs.
-              </p>
-            </div>
-          </section>
-        </div>
+            <button
+              className="min-h-14 rounded-2xl bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
+              disabled={isSubmitting}
+              type="submit"
+            >
+              {isSubmitting ? "Opening..." : "Sign In"}
+            </button>
+          </form>
+        </section>
       </div>
     </main>
   );
@@ -165,6 +116,7 @@ function AdminLoginScreen() {
 
 function AdminDashboard() {
   const adminEmail = useAdminStore((state) => state.adminEmail);
+  const sessionAdminLabel = useAdminStore((state) => state.sessionAdminLabel);
   const lastLoginAt = useAdminStore((state) => state.lastLoginAt);
   const users = useAdminStore((state) => state.users);
   const auditLog = useAdminStore((state) => state.auditLog);
@@ -228,7 +180,9 @@ function AdminDashboard() {
 
           <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-bold text-emerald-100">Signed in as</p>
-            <p className="mt-2 break-all text-sm font-semibold text-white">{adminEmail}</p>
+            <p className="mt-2 break-all text-sm font-semibold text-white">
+              {sessionAdminLabel || adminEmail}
+            </p>
             <p className="mt-2 text-xs text-emerald-100/70">
               Last login: {lastLoginAt ? formatDateTime(lastLoginAt) : "First session"}
             </p>

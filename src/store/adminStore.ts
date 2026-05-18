@@ -11,17 +11,13 @@ import { SignupSubmission, SignupRoleKey } from "../lib/registerSchema";
 import {
   createClientId,
   createSalt,
-  genericAdminAuthError,
-  genericAdminLockoutError,
   hashSecret,
   normalizeAdminEmail,
   sanitizeAdminPasswordInput,
+  sanitizeFreeText,
   validateAdminEmail,
   validateAdminPassword,
 } from "../lib/security";
-
-const MAX_LOGIN_ATTEMPTS = 5;
-const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 type AdminScreen = "login" | "dashboard";
 
@@ -34,17 +30,16 @@ type AdminStore = {
   securityMessage: string | null;
   settingsMessage: string | null;
   adminEmail: string;
+  sessionAdminLabel: string | null;
   passwordHash: string | null;
   passwordSalt: string | null;
   users: AdminUserRecord[];
   auditLog: AdminAuditEntry[];
-  loginAttemptTimestamps: string[];
-  lockoutUntil: string | null;
   lastLoginAt: string | null;
   logoutAdmin: () => void;
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
-  loginAdmin: (email: string, password: string) => Promise<boolean>;
+  loginAdmin: (adminIdentity: string, password: string) => Promise<boolean>;
   updateRequestStatus: (userId: string, status: AdminRequestStatus) => void;
   updateAdminCredentials: (
     currentPassword: string,
@@ -56,13 +51,8 @@ type AdminStore = {
 };
 
 const defaultAdminEmail = "ops@foodonline.local";
-const bootstrapSecurityMessage =
-  "Mock bootstrap active. First secure login accepts valid admin email plus strong password, then rotate credentials in Admin Settings.";
-
-function pruneAttempts(timestamps: string[]) {
-  const now = Date.now();
-  return timestamps.filter((timestamp) => now - new Date(timestamp).getTime() <= LOGIN_WINDOW_MS);
-}
+const mockLoginMessage =
+  "Mock admin access active. Enter any admin name and any password to open dashboard UI.";
 
 function createAuditEntry(action: string, detail: string): AdminAuditEntry {
   return {
@@ -89,17 +79,16 @@ export const useAdminStore = create<AdminStore>()(
       activeSidebarKey: "overview",
       activeUsersTab: "customer",
       authError: null,
-      securityMessage: bootstrapSecurityMessage,
+      securityMessage: mockLoginMessage,
       settingsMessage: null,
       adminEmail: defaultAdminEmail,
+      sessionAdminLabel: null,
       passwordHash: null,
       passwordSalt: null,
       users: adminSeedUsers,
       auditLog: [
         createAuditEntry("system.bootstrap", "Standalone admin mockup initialized for Laravel + MySQL planning."),
       ],
-      loginAttemptTimestamps: [],
-      lockoutUntil: null,
       lastLoginAt: null,
       logoutAdmin: () =>
         set((state) => ({
@@ -107,6 +96,7 @@ export const useAdminStore = create<AdminStore>()(
           isAuthenticated: false,
           authError: null,
           settingsMessage: "Admin session ended.",
+          sessionAdminLabel: null,
           auditLog: [createAuditEntry("auth.logout", "Admin signed out from standalone dashboard."), ...state.auditLog].slice(
             0,
             12,
@@ -124,57 +114,14 @@ export const useAdminStore = create<AdminStore>()(
           activeUsersTab: tab,
           authError: null,
         }),
-      loginAdmin: async (email, password) => {
-        const normalizedEmail = normalizeAdminEmail(email);
+      loginAdmin: async (adminIdentity, password) => {
+        const cleanedAdminIdentity = sanitizeFreeText(adminIdentity, true).slice(0, 120);
         const sanitizedPassword = sanitizeAdminPasswordInput(password);
-        const now = Date.now();
-        const state = get();
-        const recentAttempts = pruneAttempts(state.loginAttemptTimestamps);
-        const isLocked = state.lockoutUntil ? new Date(state.lockoutUntil).getTime() > now : false;
 
-        if (isLocked) {
+        if (!cleanedAdminIdentity || !sanitizedPassword) {
           set({
-            authError: genericAdminLockoutError,
-            loginAttemptTimestamps: recentAttempts,
+            authError: "Enter admin name and password.",
           });
-          return false;
-        }
-
-        const isValidInput =
-          validateAdminEmail(normalizedEmail) && validateAdminPassword(sanitizedPassword);
-
-        let isAuthenticated = false;
-
-        if (isValidInput && normalizedEmail === state.adminEmail) {
-          if (state.passwordHash && state.passwordSalt) {
-            const candidateHash = await hashSecret(sanitizedPassword, state.passwordSalt);
-            isAuthenticated = candidateHash === state.passwordHash;
-          } else {
-            // Phase 1 mock only. Real auth must move to Laravel Hash::check on server.
-            isAuthenticated = true;
-          }
-        }
-
-        if (!isAuthenticated) {
-          const failedAttempts = [...recentAttempts, new Date().toISOString()];
-          const shouldLock = failedAttempts.length >= MAX_LOGIN_ATTEMPTS;
-
-          set((currentState) => ({
-            screen: "login",
-            isAuthenticated: false,
-            authError: shouldLock ? genericAdminLockoutError : genericAdminAuthError,
-            loginAttemptTimestamps: failedAttempts,
-            lockoutUntil: shouldLock ? new Date(now + LOGIN_WINDOW_MS).toISOString() : null,
-            auditLog: [
-              createAuditEntry(
-                "auth.failed",
-                shouldLock
-                  ? "Standalone admin login placeholder hit rate-limit lockout window."
-                  : "Standalone admin login placeholder rejected generic credentials.",
-              ),
-              ...currentState.auditLog,
-            ].slice(0, 12),
-          }));
           return false;
         }
 
@@ -184,11 +131,10 @@ export const useAdminStore = create<AdminStore>()(
           activeSidebarKey: "overview",
           authError: null,
           settingsMessage: null,
-          loginAttemptTimestamps: [],
-          lockoutUntil: null,
+          sessionAdminLabel: cleanedAdminIdentity,
           lastLoginAt: new Date().toISOString(),
           auditLog: [
-            createAuditEntry("auth.success", "Admin entered standalone protected dashboard."),
+            createAuditEntry("auth.success", `Mock admin access opened for ${cleanedAdminIdentity}.`),
             ...currentState.auditLog,
           ].slice(0, 12),
         }));
@@ -242,7 +188,7 @@ export const useAdminStore = create<AdminStore>()(
           adminEmail: normalizedEmail,
           passwordSalt: salt,
           passwordHash,
-          securityMessage: "Bootstrap access removed. Standalone admin now requires hashed local credential check.",
+          securityMessage: mockLoginMessage,
           settingsMessage: "Admin email and password updated in mock secure store.",
           auditLog: [
             createAuditEntry("settings.credentials", "Admin rotated email and password placeholder."),
@@ -289,8 +235,6 @@ export const useAdminStore = create<AdminStore>()(
         passwordSalt: state.passwordSalt,
         users: state.users,
         auditLog: state.auditLog,
-        loginAttemptTimestamps: state.loginAttemptTimestamps,
-        lockoutUntil: state.lockoutUntil,
         lastLoginAt: state.lastLoginAt,
         securityMessage: state.securityMessage,
       }),
@@ -308,6 +252,7 @@ export const useAdminStore = create<AdminStore>()(
           activeUsersTab: "customer",
           authError: null,
           settingsMessage: null,
+          sessionAdminLabel: null,
         };
       },
     },
