@@ -5,6 +5,7 @@
 - Keep command output capped. Prefer small `Select-Object -First ...` / `Out-String -Width ...` on PowerShell.
 - User wants commit and push after each completed change set without asking.
 - Single documentation rule: keep one source of truth only. Use `AGENT.md` for repo + backend/admin implementation notes, and `design.md` for repo + backend/admin design notes.
+- Permanent documentation rule: after every meaningful code, deployment, admin, backend, frontend, or design change, update `AGENT.md` and the design notes file before committing. Current design notes file is `design.md`; if a future `designer.md` file is added, update it too.
 - Start every session by following this workflow rule: do not run localhost, browser preview, HTTP local server checks, `npm run dev`, `npm start`, `vite preview`, `next dev`, or any long-running server. Only run safe checks such as `npm run build`, `npm run lint`, `npm test`, or `npx tsc --noEmit`; after safe checks pass, commit and push to the current branch.
 - Permanent Git rule: never ask user to push, never stop with manual push instructions, always run `git status`, `git add .`, `git commit -m "Clear summary of completed change"`, detect branch with `git branch --show-current`, then push automatically with `git push -u origin CURRENT_BRANCH`. If push fails, inspect real git error, fix normal non-destructive issues automatically, retry push, stop only for real merge conflicts or authentication requirements.
 - Stack selected for desktop website: Vite React + TypeScript, Zustand, Tailwind CSS.

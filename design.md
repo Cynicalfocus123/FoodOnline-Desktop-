@@ -43,6 +43,7 @@
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
+- Always update this design notes file whenever dashboard UI/UX, frontend layout, brand styling, deployment-facing frontend output, or admin flow changes. Pair updates with `AGENT.md` before commit/push.
 - Preserve green/orange FoodOnlines brand contrast.
 - Keep cards to small radius and avoid nested card layouts.
 - Keep homepage usable as first screen, not a marketing-only landing page.
