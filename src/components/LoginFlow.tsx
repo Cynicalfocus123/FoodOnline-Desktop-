@@ -13,6 +13,7 @@ export function LoginFlow() {
   const openSignup = useHomeStore((state) => state.openSignup);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -75,14 +76,21 @@ export function LoginFlow() {
 
             <label className="grid gap-2" htmlFor="login-password">
               <span className="text-sm font-bold text-neutral-700">Password</span>
-              <input
-                autoComplete="current-password"
-                className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
-                id="login-password"
-                onChange={(event) => setPassword(event.target.value)}
-                type="password"
-                value={password}
-              />
+              <div className="relative">
+                <input
+                  autoComplete="current-password"
+                  className="min-h-14 w-full rounded-md border border-neutral-200 px-4 pr-14 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                  id="login-password"
+                  onChange={(event) => setPassword(event.target.value)}
+                  type={isPasswordVisible ? "text" : "password"}
+                  value={password}
+                />
+                <PasswordEyeButton
+                  isVisible={isPasswordVisible}
+                  label={isPasswordVisible ? "Hide password" : "Show password"}
+                  onClick={() => setIsPasswordVisible((currentValue) => !currentValue)}
+                />
+              </div>
             </label>
 
             {fieldError ? <p className="text-sm font-semibold text-red-600">{fieldError}</p> : null}
@@ -105,16 +113,52 @@ export function LoginFlow() {
             >
               Need an account? Register
             </button>
-            <button
-              className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
-              onClick={backToHome}
-              type="button"
-            >
-              Continue as Guest
-            </button>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function PasswordEyeButton({
+  isVisible,
+  label,
+  onClick,
+}: {
+  isVisible: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-label={label}
+      className="absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-neutral-500 transition hover:bg-neutral-100 hover:text-leaf-700"
+      onClick={onClick}
+      type="button"
+    >
+      <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        {isVisible ? (
+          <>
+            <path d="M3 3l18 18" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5 0 9 4 10 8a11.8 11.8 0 0 1-3 4.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.6 6.6A12.3 12.3 0 0 0 2 12c1 4 5 8 10 8 1.6 0 3.1-.4 4.4-1.1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </>
+        ) : (
+          <>
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="12" r="3" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }

@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import signupBannerImage from "../../site video and content/shop  and order banner.png";
 import { SignupFormValues, getSignupRoleMeta, signupFieldLimits } from "../lib/registerSchema";
 import { signupRoleOptions, useHomeStore } from "../store/homeStore";
@@ -20,6 +20,10 @@ const formFields: Array<{
 ];
 
 export function SignupFlow() {
+  const [visiblePasswords, setVisiblePasswords] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   const signupStep = useHomeStore((state) => state.signupStep);
   const selectedRole = useHomeStore((state) => state.selectedRole);
   const formValues = useHomeStore((state) => state.formValues);
@@ -31,7 +35,6 @@ export function SignupFlow() {
   const continueToForm = useHomeStore((state) => state.continueToForm);
   const setFormValue = useHomeStore((state) => state.setFormValue);
   const finishSignup = useHomeStore((state) => state.finishSignup);
-  const backToHome = useHomeStore((state) => state.backToHome);
   const openLogin = useHomeStore((state) => state.openLogin);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -62,13 +65,6 @@ export function SignupFlow() {
                 >
                   Go to Login
                 </button>
-                <button
-                  className="min-h-12 rounded-md border border-neutral-200 px-6 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
-                  onClick={backToHome}
-                  type="button"
-                >
-                  Continue as Guest
-                </button>
               </div>
             </div>
           </div>
@@ -91,7 +87,7 @@ export function SignupFlow() {
           <div className="relative hidden min-h-[360px] overflow-hidden bg-white sm:block lg:min-h-full">
             <img
               alt="FoodOnlines shop and order banner"
-              className="absolute inset-0 h-full w-full object-contain object-top lg:object-cover"
+              className="absolute inset-0 h-full w-full object-contain object-top"
               src={signupBannerImage}
             />
           </div>
@@ -110,35 +106,55 @@ export function SignupFlow() {
                 return (
                   <label className="grid gap-2" htmlFor={field} key={field}>
                     <span className="text-sm font-bold text-neutral-700">{label}</span>
-                    <input
-                      aria-describedby={fieldError ? `${field}-error` : undefined}
-                      aria-invalid={fieldError ? "true" : "false"}
-                      className={`min-h-14 rounded-md border px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20 ${
-                        fieldError ? "border-red-400 bg-red-50/40" : "border-neutral-200"
-                      }`}
-                      id={field}
-                      autoComplete={
-                        field === "emailAddress"
-                          ? "email"
-                          : field === "firstName"
-                            ? "given-name"
-                            : field === "lastName"
-                              ? "family-name"
-                              : field === "contactNumber"
-                                ? "tel"
-                                : field === "password"
-                                  ? "new-password"
-                                  : field === "confirmPassword"
+                    <div className="relative">
+                      <input
+                        aria-describedby={fieldError ? `${field}-error` : undefined}
+                        aria-invalid={fieldError ? "true" : "false"}
+                        className={`min-h-14 w-full rounded-md border px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20 ${
+                          type === "password" ? "pr-14" : ""
+                        } ${fieldError ? "border-red-400 bg-red-50/40" : "border-neutral-200"}`}
+                        id={field}
+                        autoComplete={
+                          field === "emailAddress"
+                            ? "email"
+                            : field === "firstName"
+                              ? "given-name"
+                              : field === "lastName"
+                                ? "family-name"
+                                : field === "contactNumber"
+                                  ? "tel"
+                                  : field === "password"
                                     ? "new-password"
-                                    : "off"
-                      }
-                      inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
-                      maxLength={signupFieldLimits[field]}
-                      onChange={(event) => setFormValue(field, event.target.value)}
-                      required={!optional}
-                      type={type}
-                      value={formValues[field]}
-                    />
+                                    : field === "confirmPassword"
+                                      ? "new-password"
+                                      : "off"
+                        }
+                        inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
+                        maxLength={signupFieldLimits[field]}
+                        onChange={(event) => setFormValue(field, event.target.value)}
+                        required={!optional}
+                        type={
+                          field === "password" || field === "confirmPassword"
+                            ? visiblePasswords[field]
+                              ? "text"
+                              : "password"
+                            : type
+                        }
+                        value={formValues[field]}
+                      />
+                      {field === "password" || field === "confirmPassword" ? (
+                        <PasswordEyeButton
+                          isVisible={visiblePasswords[field]}
+                          label={visiblePasswords[field] ? `Hide ${label}` : `Show ${label}`}
+                          onClick={() =>
+                            setVisiblePasswords((currentValue) => ({
+                              ...currentValue,
+                              [field]: !currentValue[field],
+                            }))
+                          }
+                        />
+                      ) : null}
+                    </div>
                     {fieldError ? (
                       <span className="text-sm font-semibold text-red-600" id={`${field}-error`}>
                         {fieldError}
@@ -164,13 +180,6 @@ export function SignupFlow() {
                 type="button"
               >
                 Already have an account? Login
-              </button>
-              <button
-                className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-                onClick={backToHome}
-                type="button"
-              >
-                Continue as Guest
               </button>
             </div>
           </div>
@@ -226,5 +235,48 @@ export function SignupFlow() {
         </div>
       </div>
     </section>
+  );
+}
+
+function PasswordEyeButton({
+  isVisible,
+  label,
+  onClick,
+}: {
+  isVisible: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-label={label}
+      className="absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-neutral-500 transition hover:bg-neutral-100 hover:text-leaf-700"
+      onClick={onClick}
+      type="button"
+    >
+      <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        {isVisible ? (
+          <>
+            <path d="M3 3l18 18" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5 0 9 4 10 8a11.8 11.8 0 0 1-3 4.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.6 6.6A12.3 12.3 0 0 0 2 12c1 4 5 8 10 8 1.6 0 3.1-.4 4.4-1.1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </>
+        ) : (
+          <>
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="12" r="3" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }

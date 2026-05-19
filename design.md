@@ -12,7 +12,7 @@
 - Fixed modern white header with larger long transparent FoodOnlines logo, desktop navigation, and signup shortcut.
 - Full-viewport home hero with background food video, dark overlay, centered offer copy, and one primary Join Us Now CTA.
 - Signup opens into a multi-step app flow: role selection, split brand-and-form layout, then registration complete state.
-- Public auth now stays inside the same visual system: homepage remains the first screen, Register opens the existing split signup layout, Login uses a matching split layout, and Continue as Guest keeps users on the public storefront.
+- Public auth now stays inside the same visual system: homepage remains the first screen, Register opens the existing split signup layout, and Login uses a matching split layout. Register/Login are the main entry flow.
 - Category strip for common food paths.
 - Best deals grid with product cards, discount tags, prices, and add-to-cart buttons.
 - Footer has two compact stacked link groups: Privacy/Terms/FAQ/Company News/Our Mission/Contact Us, then Seller/Recipe/Partners.
@@ -26,7 +26,8 @@
 - Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
-- Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Guests still see Login/Register entry points.
+- Signup and login password fields include compact eye toggles, preserving the current form layout.
+- Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
 - Production build now uses relative asset paths so the frontend can be uploaded safely into `public_html/app/` on cPanel without breaking asset URLs.
@@ -47,6 +48,7 @@
 - Public cPanel output is the `frontend-upload/` folder plus ZIP `foodonlines-main-live-frontend-upload.zip`, containing `index.html` for public, `admin.html` for admin, shared `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
 - Deployment routing must preserve split entries: `index.html` must always load the public `main-*.js` bundle, `admin.html` must always load the admin `admin-*.js` bundle, and `.htaccess` must rewrite `/admin` to `admin.html` while all other SPA paths fall back to public `index.html`.
 - No visual design changes in admin API connection fix. Admin page now calls correct Laravel API host behind the scenes.
+- Frontend auth fix made no redesign changes. Only guest controls were removed, password eye toggles added, signup validation messaging improved, and signup banner sizing aligned with login.
 
 ## Guardrails
 

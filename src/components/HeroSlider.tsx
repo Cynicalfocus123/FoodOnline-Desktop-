@@ -78,7 +78,7 @@ export function HeroSlider() {
     };
   }, [activeVideoSource, isMobileViewport]);
 
-  function continueAsGuest() {
+  function scrollToDeals() {
     document.getElementById("categories")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -154,21 +154,12 @@ export function HeroSlider() {
               </button>
               <button
                 className="min-h-14 min-w-[220px] rounded-md border border-white/70 bg-white/10 px-8 text-base font-black text-white backdrop-blur transition hover:bg-white/20 sm:min-w-[220px]"
-                onClick={currentUser ? continueAsGuest : openLogin}
+                onClick={currentUser ? scrollToDeals : openLogin}
                 type="button"
               >
                 {currentUser ? "Browse Deals" : "Login"}
               </button>
             </div>
-            {!currentUser ? (
-              <button
-                className="mt-4 text-sm font-bold text-white/90 underline-offset-4 transition hover:text-white hover:underline"
-                onClick={continueAsGuest}
-                type="button"
-              >
-                Continue as Guest
-              </button>
-            ) : null}
           </div>
         </div>
       </div>

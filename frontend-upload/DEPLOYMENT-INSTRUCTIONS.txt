@@ -1,11 +1,11 @@
-FoodOnlines Admin API Fix Upload
-================================
+FoodOnlines Frontend Auth Fix Upload
+====================================
 
 ZIP name
-- foodonlines-admin-fix.zip
+- foodonlines-frontend-auth-fix.zip
 
 Upload location
-1. Upload foodonlines-admin-fix.zip into the foodonlines.com domain folder.
+1. Upload foodonlines-frontend-auth-fix.zip into the foodonlines.com domain folder.
 2. Extract and replace only:
    - index.html
    - admin.html
@@ -15,29 +15,36 @@ Upload location
 Do not touch
 - Do not touch backend folder.
 - Do not touch database.
-- Do not change Laravel admin password.
+- Do not change Laravel routes.
+- Do not change admin password.
 
-Routes to test
+What this fixes
+- Removes Continue as Guest controls from public auth flow.
+- Keeps Register and Login as main entry flow.
+- Keeps signup POST pointed at Laravel API.
+- Adds password show/hide buttons to login and signup password fields.
+- Makes signup banner match login banner sizing.
+
+Signup API
+- Base URL: https://www.api.foodonlines.com/api/v1
+- Endpoint: POST /auth/register
+- Full URL: https://www.api.foodonlines.com/api/v1/auth/register
+- Headers: Accept: application/json, Content-Type: application/json
+- Payload keys: account_type, email, first_name, last_name, contact_number, line_id, company_name, password, registered_from
+
+URLs to test
 - https://foodonlines.com/
 - https://foodonlines.com/admin
 - https://foodonlines.com/admin.html
 
-API config
-- Admin page calls: https://www.api.foodonlines.com/api/v1/admin/login
-- API base URL in source: src/lib/runtimeConfig.ts
-- API base URL used by build: https://www.api.foodonlines.com/api/v1
-
-API test
-curl -i -X POST "https://www.api.foodonlines.com/api/v1/admin/login" \
-  -H "Accept: application/json" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"info@foodonlines.com","password":"YOUR_PASSWORD"}'
-
-Expected login response
-- HTTP 200
-- JSON with message, token_type, token, and admin object.
-
-If admin login returns HTML
-- API URL is pointing to frontend, not Laravel backend.
-- Confirm deployed bundle was replaced.
-- Confirm API base URL is https://www.api.foodonlines.com/api/v1.
+Frontend tests
+1. Open https://foodonlines.com/
+2. Confirm homepage loads.
+3. Confirm Continue as Guest button is gone.
+4. Open Register, fill all fields, submit.
+5. Confirm validation errors show beside fields if Laravel rejects input.
+6. Confirm success screen appears after accepted signup.
+7. Confirm Go to Login works.
+8. Confirm password eye toggles work on login, signup password, and signup confirm password.
+9. Confirm signup banner matches login banner sizing.
+10. Confirm https://foodonlines.com/admin still loads.

@@ -173,8 +173,13 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       await submitSignupToBackend(selectedRole, cleanedValues);
     } catch (error) {
       const backendFieldErrors = error instanceof ApiError ? mapRegisterFieldErrors(error) : {};
+      const hasBackendFieldErrors = Object.values(backendFieldErrors).some(Boolean);
       const backendErrorMessage =
-        error instanceof ApiError ? error.message : "Unable to submit registration. Please try again.";
+        error instanceof ApiError
+          ? hasBackendFieldErrors
+            ? "Please fix the highlighted fields and submit again."
+            : error.message
+          : "Unable to submit registration. Please try again.";
 
       set({
         formValues: {
