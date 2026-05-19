@@ -129,6 +129,7 @@ function AdminDashboard() {
   const auditLog = useAdminStore((state) => state.auditLog);
   const activeSidebarKey = useAdminStore((state) => state.activeSidebarKey);
   const activeUsersTab = useAdminStore((state) => state.activeUsersTab);
+  const isLoadingUsers = useAdminStore((state) => state.isLoadingUsers);
   const stats = useAdminStore((state) => state.stats);
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
@@ -211,6 +212,7 @@ function AdminDashboard() {
               <UsersPanel
                 activeUsersTab={activeUsersTab}
                 filteredUsers={filteredUsers}
+                isLoadingUsers={isLoadingUsers}
                 onChangeTab={setActiveUsersTab}
               />
             ) : null}
@@ -278,10 +280,12 @@ function OverviewPanel({
 function UsersPanel({
   activeUsersTab,
   filteredUsers,
+  isLoadingUsers,
   onChangeTab,
 }: {
   activeUsersTab: SignupRoleKey;
   filteredUsers: ReturnType<typeof useAdminStore.getState>["users"];
+  isLoadingUsers: boolean;
   onChangeTab: (tab: SignupRoleKey) => void;
 }) {
   return (
@@ -333,7 +337,13 @@ function UsersPanel({
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {isLoadingUsers ? (
+                <tr className="border-t border-neutral-100">
+                  <td className="px-4 py-8 text-center text-sm font-semibold text-neutral-500" colSpan={adminTableColumns.length}>
+                    Loading live users...
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
                 <tr className="border-t border-neutral-100">
                   <td className="px-4 py-8 text-center text-sm font-semibold text-neutral-500" colSpan={adminTableColumns.length}>
                     No users found
@@ -364,20 +374,7 @@ function UsersPanel({
                         {user.reviewedAt ? formatDateTime(user.reviewedAt) : "Not updated"}
                       </td>
                       <td className="px-4 py-4">
-                        <div className="grid min-w-[180px] gap-2">
-                          <button
-                            className="min-h-10 rounded-full border border-neutral-200 px-3 text-xs font-black text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-                            type="button"
-                          >
-                            View Profile
-                          </button>
-                          <button
-                            className="min-h-10 rounded-full border border-neutral-200 px-3 text-xs font-black text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
-                            type="button"
-                          >
-                            Review Details
-                          </button>
-                        </div>
+                        <AdminUserActionSelect />
                       </td>
                     </tr>
                   );
@@ -388,6 +385,24 @@ function UsersPanel({
         </div>
       </div>
     </section>
+  );
+}
+
+function AdminUserActionSelect() {
+  return (
+    <select
+      aria-label="User actions"
+      className="min-h-10 min-w-[180px] rounded-full border border-neutral-200 bg-white px-3 text-xs font-black text-neutral-700 outline-none transition focus:border-citrus-500"
+      defaultValue=""
+      onChange={(event) => {
+        void event.target.value;
+        event.currentTarget.selectedIndex = 0;
+      }}
+    >
+      <option value="">Actions</option>
+      <option value="move-to-review">Move to Review</option>
+      <option value="delete-user">Delete User</option>
+    </select>
   );
 }
 

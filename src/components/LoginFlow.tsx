@@ -1,0 +1,120 @@
+import { FormEvent, useState } from "react";
+import signupBannerImage from "../../site video and content/shop  and order banner.png";
+import { normalizeUserEmail, sanitizeUserPasswordInput, validateUserEmail, validateUserLoginPassword } from "../lib/security";
+import { useHomeStore } from "../store/homeStore";
+import { usePublicAuthStore } from "../store/publicAuthStore";
+
+export function LoginFlow() {
+  const authError = usePublicAuthStore((state) => state.authError);
+  const clearAuthError = usePublicAuthStore((state) => state.clearAuthError);
+  const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
+  const loginUser = usePublicAuthStore((state) => state.loginUser);
+  const backToHome = useHomeStore((state) => state.backToHome);
+  const openSignup = useHomeStore((state) => state.openSignup);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fieldError, setFieldError] = useState<string | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const cleanedEmail = normalizeUserEmail(email);
+    const cleanedPassword = sanitizeUserPasswordInput(password, true);
+
+    if (!validateUserEmail(cleanedEmail)) {
+      setFieldError("Enter a valid email address.");
+      return;
+    }
+
+    if (!validateUserLoginPassword(cleanedPassword)) {
+      setFieldError("Enter your password.");
+      return;
+    }
+
+    setFieldError(null);
+    clearAuthError();
+
+    const success = await loginUser(cleanedEmail, cleanedPassword);
+    if (success) {
+      backToHome();
+    }
+  }
+
+  return (
+    <section className="bg-neutral-50 px-0 pb-16 pt-32 sm:px-6">
+      <div className="mx-auto grid max-w-7xl overflow-hidden border-y border-neutral-100 bg-white shadow-soft sm:rounded-[28px] sm:border lg:grid-cols-[1.02fr_0.98fr]">
+        <div className="bg-white sm:hidden">
+          <img alt="FoodOnlines shop and order banner" className="block h-auto w-full" src={signupBannerImage} />
+        </div>
+        <div className="relative hidden min-h-[360px] overflow-hidden bg-white sm:block lg:min-h-full">
+          <img
+            alt="FoodOnlines shop and order banner"
+            className="absolute inset-0 h-full w-full object-contain object-top lg:object-cover"
+            src={signupBannerImage}
+          />
+        </div>
+
+        <div className="p-6 sm:p-8 lg:p-10">
+          <h2 className="text-3xl font-black text-ink sm:text-4xl">Welcome Back</h2>
+          <p className="mt-3 text-base leading-7 text-neutral-600">
+            Sign in with your live FoodOnlines account to continue with the public storefront.
+          </p>
+
+          <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>
+            <label className="grid gap-2" htmlFor="login-email">
+              <span className="text-sm font-bold text-neutral-700">Email address</span>
+              <input
+                autoComplete="username"
+                className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                id="login-email"
+                inputMode="email"
+                onChange={(event) => setEmail(event.target.value)}
+                type="email"
+                value={email}
+              />
+            </label>
+
+            <label className="grid gap-2" htmlFor="login-password">
+              <span className="text-sm font-bold text-neutral-700">Password</span>
+              <input
+                autoComplete="current-password"
+                className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                id="login-password"
+                onChange={(event) => setPassword(event.target.value)}
+                type="password"
+                value={password}
+              />
+            </label>
+
+            {fieldError ? <p className="text-sm font-semibold text-red-600">{fieldError}</p> : null}
+            {authError ? <p className="text-sm font-semibold text-red-600">{authError}</p> : null}
+
+            <button
+              className="mt-2 min-h-14 rounded-md bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600"
+              disabled={isSubmittingLogin}
+              type="submit"
+            >
+              {isSubmittingLogin ? "Signing In..." : "Login"}
+            </button>
+          </form>
+
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+            <button
+              className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
+              onClick={openSignup}
+              type="button"
+            >
+              Need an account? Register
+            </button>
+            <button
+              className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+              onClick={backToHome}
+              type="button"
+            >
+              Continue as Guest
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

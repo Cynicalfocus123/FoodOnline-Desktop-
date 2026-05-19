@@ -102,8 +102,16 @@ export const laravelMySqlBlueprint = {
       name: "admin_api_tokens",
       columns: ["id", "user_id", "token_hash unique", "last_used_at nullable", "revoked_at nullable"],
     },
+    {
+      name: "user_api_tokens",
+      columns: ["id", "user_id", "token_hash unique", "last_used_at nullable", "revoked_at nullable"],
+    },
   ],
   routes: [
+    "POST /api/v1/auth/register",
+    "POST /api/v1/auth/login",
+    "POST /api/v1/auth/logout",
+    "GET /api/v1/auth/me",
     "POST /api/v1/admin/login",
     "POST /api/v1/admin/logout",
     "GET /api/v1/admin/me",
@@ -121,6 +129,7 @@ export const laravelMySqlBlueprint = {
 
 export const adminSecurityChecklist = [
   "Admin login calls Laravel API and checks MySQL users table.",
+  "Public registration and login write to and read from the live backend, not mock queue state.",
   "Passwords are verified only on server; frontend never compares passwords.",
   "Bearer tokens are stored by the browser and revoked by backend logout.",
   "Admin API routes require protected admin token middleware.",

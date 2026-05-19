@@ -14,6 +14,7 @@ type ApiAdmin = {
 };
 
 type ApiManagedUser = {
+  account_type?: SignupRoleKey;
   id: string;
   role: SignupRoleKey;
   email: string;
@@ -87,9 +88,11 @@ function createAuditEntry(action: string, detail: string): AdminAuditEntry {
 }
 
 function toAdminUserRecord(user: ApiManagedUser): AdminUserRecord {
+  const resolvedRole = user.account_type ?? user.role;
+
   return {
     id: String(user.id),
-    selectedRole: user.role,
+    selectedRole: resolvedRole,
     emailAddress: user.email,
     firstName: user.first_name ?? "",
     lastName: user.last_name ?? "",
@@ -162,7 +165,9 @@ export const useAdminStore = create<AdminStore>()(
         set({ isLoadingUsers: true });
 
         try {
-          const response = await apiRequest<{ users: ApiManagedUser[] }>(`/admin/users?role=${role}`, { token });
+          const response = await apiRequest<{ users: ApiManagedUser[] }>(`/admin/users?account_type=${role}`, {
+            token,
+          });
           set({
             users: response.users.map(toAdminUserRecord),
             isLoadingUsers: false,

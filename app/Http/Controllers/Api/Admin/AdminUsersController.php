@@ -7,6 +7,7 @@ use App\Http\Resources\Admin\AdminManagedUserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 class AdminUsersController extends Controller
@@ -14,12 +15,15 @@ class AdminUsersController extends Controller
     public function index(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'account_type' => ['nullable', 'string', Rule::in(['customer', 'supplier', 'partner'])],
             'role' => ['nullable', 'string', Rule::in(['customer', 'supplier', 'partner'])],
         ]);
+        $accountType = $validated['account_type'] ?? $validated['role'] ?? null;
+        $accountTypeColumn = Schema::hasColumn('users', 'account_type') ? 'account_type' : 'role';
 
         $users = User::query()
-            ->whereIn('role', ['customer', 'supplier', 'partner'])
-            ->when($validated['role'] ?? null, fn ($query, string $role) => $query->where('role', $role))
+            ->whereIn($accountTypeColumn, ['customer', 'supplier', 'partner'])
+            ->when($accountType, fn ($query, string $role) => $query->where($accountTypeColumn, $role))
             ->latest()
             ->get();
 

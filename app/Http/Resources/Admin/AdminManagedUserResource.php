@@ -14,13 +14,14 @@ class AdminManagedUserResource extends JsonResource
     {
         return [
             'id' => (string) $this->resource->id,
-            'role' => $this->resource->role,
+            'account_type' => $this->resource->account_type ?: $this->resource->role,
+            'role' => $this->resource->account_type ?: $this->resource->role,
             'email' => $this->resource->email,
             'name' => $this->resource->name,
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
-            'phone' => $this->resource->phone,
-            'contact_number' => $this->resource->phone,
+            'phone' => $this->resource->phone ?: $this->resource->contact_number,
+            'contact_number' => $this->resource->contact_number ?: $this->resource->phone,
             'line_id' => $this->resource->line_id,
             'company_name' => $this->resource->company_name,
             'business_type' => $this->resource->business_type,

@@ -1,26 +1,43 @@
+import { useEffect } from "react";
+import { AccountSummary } from "./components/AccountSummary";
 import { CategoryStrip } from "./components/CategoryStrip";
 import { DealsGrid } from "./components/DealsGrid";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
+import { LoginFlow } from "./components/LoginFlow";
 import { SignupFlow } from "./components/SignupFlow";
 import { useHomeStore } from "./store/homeStore";
+import { usePublicAuthStore } from "./store/publicAuthStore";
 
 export default function App() {
-  const signupView = useHomeStore((state) => state.signupView);
+  const siteView = useHomeStore((state) => state.siteView);
+  const hydrateSession = usePublicAuthStore((state) => state.hydrateSession);
+  const hasHydratedSession = usePublicAuthStore((state) => state.hasHydratedSession);
+  const currentUser = usePublicAuthStore((state) => state.currentUser);
+  const token = usePublicAuthStore((state) => state.token);
+
+  useEffect(() => {
+    if (!hasHydratedSession) {
+      void hydrateSession();
+    }
+  }, [hasHydratedSession, hydrateSession, token]);
 
   return (
     <main className="min-h-screen bg-white font-sans text-ink">
       <Header />
-      {signupView === "home" ? (
+      {siteView === "home" ? (
         <>
           <HeroSlider />
+          {currentUser ? <AccountSummary /> : null}
           <CategoryStrip />
           <DealsGrid />
         </>
-      ) : (
+      ) : null}
+      {siteView === "signup" ? (
         <SignupFlow />
-      )}
+      ) : null}
+      {siteView === "login" ? <LoginFlow /> : null}
       <Footer />
     </main>
   );

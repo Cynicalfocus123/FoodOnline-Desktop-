@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin.token' => App\Http\Middleware\AuthenticateAdminToken::class,
+            'user.token' => App\Http\Middleware\AuthenticateUserToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

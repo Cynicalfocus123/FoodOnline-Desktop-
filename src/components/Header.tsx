@@ -1,16 +1,20 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { assets, navItems } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
+import { usePublicAuthStore } from "../store/publicAuthStore";
 
 export function Header() {
   const openSignup = useHomeStore((state) => state.openSignup);
-  const signupView = useHomeStore((state) => state.signupView);
+  const openLogin = useHomeStore((state) => state.openLogin);
+  const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
+  const currentUser = usePublicAuthStore((state) => state.currentUser);
+  const logoutUser = usePublicAuthStore((state) => state.logoutUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [signupView]);
+  }, [siteView]);
 
   function handleSignupClick(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
@@ -18,13 +22,33 @@ export function Header() {
     openSignup();
   }
 
+  function handleLoginClick(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    setIsMobileMenuOpen(false);
+    openLogin();
+  }
+
   function handleHomeClick(event: MouseEvent<HTMLAnchorElement>) {
     setIsMobileMenuOpen(false);
 
-    if (signupView === "signup") {
+    if (siteView !== "home") {
       event.preventDefault();
       backToHome();
     }
+  }
+
+  function handleAccountClick() {
+    setIsMobileMenuOpen(false);
+
+    if (siteView !== "home") {
+      backToHome();
+      window.setTimeout(() => {
+        document.getElementById("account-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 30);
+      return;
+    }
+
+    document.getElementById("account-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function handleMenuToggle() {
@@ -54,7 +78,7 @@ export function Header() {
               href={`#${item.toLowerCase().replaceAll(" ", "-")}`}
               key={item}
               onClick={(event) => {
-                if (item === "Home" && signupView === "signup") {
+                if (item === "Home" && siteView !== "home") {
                   event.preventDefault();
                   backToHome();
                 }
@@ -68,7 +92,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3 lg:justify-self-end">
-          {signupView === "signup" ? (
+          {siteView !== "home" ? (
             <button
               className="hidden min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:inline-flex lg:items-center"
               onClick={backToHome}
@@ -77,13 +101,41 @@ export function Header() {
               Home
             </button>
           ) : null}
-          <a
-            className="hidden min-h-12 items-center rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:flex"
-            href="#signup"
-            onClick={handleSignupClick}
-          >
-            Sign up
-          </a>
+          {currentUser ? (
+            <>
+              <button
+                className="hidden min-h-12 rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-leaf-500 hover:text-leaf-700 lg:inline-flex lg:items-center"
+                onClick={handleAccountClick}
+                type="button"
+              >
+                My Account
+              </button>
+              <button
+                className="hidden min-h-12 items-center rounded-md bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600 lg:inline-flex"
+                onClick={() => void logoutUser()}
+                type="button"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <a
+                className="hidden min-h-12 items-center rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-leaf-500 hover:text-leaf-700 lg:flex"
+                href="#login"
+                onClick={handleLoginClick}
+              >
+                Login
+              </a>
+              <a
+                className="hidden min-h-12 items-center rounded-md bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600 lg:flex"
+                href="#signup"
+                onClick={handleSignupClick}
+              >
+                Register
+              </a>
+            </>
+          )}
           <button
             aria-controls="mobile-navigation"
             aria-expanded={isMobileMenuOpen}
@@ -125,7 +177,7 @@ export function Header() {
                 href={`#${item.toLowerCase().replaceAll(" ", "-")}`}
                 key={item}
                 onClick={(event) => {
-                  if (item === "Home" && signupView === "signup") {
+                  if (item === "Home" && siteView !== "home") {
                     event.preventDefault();
                     backToHome();
                   }
@@ -137,13 +189,41 @@ export function Header() {
               </a>
             ))}
 
-            <a
-              className="mt-2 flex min-h-12 items-center justify-center rounded-md bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
-              href="#signup"
-              onClick={handleSignupClick}
-            >
-              Join Us Now
-            </a>
+            {currentUser ? (
+              <>
+                <button
+                  className="mt-2 flex min-h-12 items-center justify-center rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+                  onClick={handleAccountClick}
+                  type="button"
+                >
+                  My Account
+                </button>
+                <button
+                  className="flex min-h-12 items-center justify-center rounded-md bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
+                  onClick={() => void logoutUser()}
+                  type="button"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  className="mt-2 flex min-h-12 items-center justify-center rounded-md border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+                  href="#login"
+                  onClick={handleLoginClick}
+                >
+                  Login
+                </a>
+                <a
+                  className="flex min-h-12 items-center justify-center rounded-md bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
+                  href="#signup"
+                  onClick={handleSignupClick}
+                >
+                  Register
+                </a>
+              </>
+            )}
           </nav>
         </div>
       ) : null}

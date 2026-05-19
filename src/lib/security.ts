@@ -24,6 +24,7 @@ const strongPasswordPattern = /^(?=.*[A-Za-z])(?=.*\d).{10,72}$/;
 export const genericAdminAuthError = "Unable to sign in with those credentials.";
 export const genericAdminLockoutError =
   "Too many sign-in attempts. Wait for lockout window before trying again.";
+export const genericUserAuthError = "Invalid email or password.";
 
 export function normalizeInput(value: string) {
   return value.normalize("NFKC").replace(invisibleCharacterPattern, "");
@@ -67,6 +68,14 @@ export function sanitizeSignupFieldValue<K extends keyof SignupFormValues>(
         .replace(dangerousSequencePattern, "")
         .replace(/[^A-Za-z0-9._@-]/g, "")
         .slice(0, signupFieldLimits[field]);
+    case "password":
+    case "confirmPassword": {
+      const cleanedValue = normalizeInput(value)
+        .replace(invisibleCharacterPattern, "")
+        .slice(0, signupFieldLimits[field]);
+
+      return shouldNormalizeSpacing ? cleanedValue.trim() : cleanedValue;
+    }
     default:
       return sanitizeFreeText(value, shouldNormalizeSpacing).slice(0, signupFieldLimits[field]);
   }
@@ -76,6 +85,7 @@ export function validateSignupField<K extends keyof SignupFormValues>(
   field: K,
   value: SignupFormValues[K],
   requireValue: boolean,
+  formValues?: SignupFormValues,
 ) {
   if (!value) {
     return requireValue ? "This field is required." : undefined;
@@ -109,6 +119,12 @@ export function validateSignupField<K extends keyof SignupFormValues>(
       return companyNamePattern.test(value)
         ? undefined
         : "Use letters, numbers, spaces, and basic business punctuation only.";
+    case "password":
+      return strongPasswordPattern.test(value)
+        ? undefined
+        : "Use 10 to 72 characters with at least one letter and one number.";
+    case "confirmPassword":
+      return value === formValues?.password ? undefined : "Passwords do not match.";
     default:
       return undefined;
   }
@@ -133,13 +149,15 @@ export function sanitizeAndValidateSignupFormValues(
     contactNumber: sanitizeSignupFieldValue("contactNumber", formValues.contactNumber, true),
     lineId: sanitizeSignupFieldValue("lineId", formValues.lineId, true),
     companyName: sanitizeSignupFieldValue("companyName", formValues.companyName, true),
+    password: sanitizeSignupFieldValue("password", formValues.password, true),
+    confirmPassword: sanitizeSignupFieldValue("confirmPassword", formValues.confirmPassword, true),
   };
 
   const fieldErrors: SignupFieldErrors = {};
 
   (Object.keys(cleanedValues) as Array<keyof SignupFormValues>).forEach((field) => {
     const requireValue = requireAllFields ? field !== "lineId" : false;
-    const error = validateSignupField(field, cleanedValues[field], requireValue);
+    const error = validateSignupField(field, cleanedValues[field], requireValue, cleanedValues);
     if (error) {
       fieldErrors[field] = error;
     }
@@ -151,9 +169,31 @@ export function sanitizeAndValidateSignupFormValues(
 export function createSignupSubmission(roleKey: SignupRoleKey, formValues: SignupFormValues) {
   return {
     selectedRole: roleKey,
-    ...formValues,
+    emailAddress: formValues.emailAddress,
+    firstName: formValues.firstName,
+    lastName: formValues.lastName,
+    contactNumber: formValues.contactNumber,
+    lineId: formValues.lineId,
+    companyName: formValues.companyName,
     createdTimestamp: new Date().toISOString(),
   };
+}
+
+export function normalizeUserEmail(value: string) {
+  return sanitizeFreeText(value, true).replace(/\s+/g, "").toLowerCase().slice(0, 254);
+}
+
+export function sanitizeUserPasswordInput(value: string, trimValue = false) {
+  const cleanedValue = normalizeInput(value).replace(invisibleCharacterPattern, "").slice(0, 72);
+  return trimValue ? cleanedValue.trim() : cleanedValue;
+}
+
+export function validateUserEmail(value: string) {
+  return emailPattern.test(value);
+}
+
+export function validateUserLoginPassword(value: string) {
+  return value.trim() !== "" && value.length <= 72;
 }
 
 export function normalizeAdminEmail(value: string) {

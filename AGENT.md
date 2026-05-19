@@ -23,6 +23,13 @@
 - Logo source file `food-online-long-text-transparent.png` contains opaque white pixels despite its name. Use generated `public/assets/food-online-long-text-cutout.png` for real transparent header rendering.
 - Frontend and admin are now fully separated at entry level: public site stays on `index.html` / `src/main.tsx`, while admin uses standalone `admin.html` / `src/admin-main.tsx`. Do not re-add admin buttons, admin route toggles, or mixed admin state into public site UI.
 - Communication rule: after every completed fix + commit + push, always include backend/admin link in final response: `https://cynicalfocus123.github.io/FoodOnline-Desktop-/admin.html`
+- Main public frontend now uses live Laravel API auth instead of mock-only signup completion. Public registration posts to `POST /api/v1/auth/register`, public login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
+- Frontend API config source is `src/lib/runtimeConfig.ts`. Default production API base URL is `https://foodonlines.com/api/v1`. Production build now uses relative Vite asset paths for safe cPanel subfolder upload.
+- Public signup keeps the latest homepage/header/hero/category/deals/footer design, but now adds minimal live auth UI only: register password fields, login page, guest path, persisted account state, and logout.
+- Public registration source label now sends `registered_from=main_public_frontend` so new records can be identified in backend/admin tables.
+- Public frontend upload output now lives in `frontend-upload/`. ZIP artifact is `D:\Foodonline desktop version\foodonlines-main-live-frontend-upload.zip`.
+- ZIP contents are public-only frontend files: `index.html`, `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`. Admin HTML/backend code are excluded from this ZIP.
+- Safe checks run for this change set: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 
@@ -37,3 +44,6 @@
 - Laravel backend TODO for later real phase: implement server-side auth guard, `Hash::make` / `Hash::check`, CSRF-protected session routes, throttle middleware, audit logs, login logs, Eloquent models, migrations, soft deletes, and MySQL indexes for admin and signup request tables.
 - Laravel backend scaffold now started in repo root with `app/Http`, `app/Models`, `app/Services`, `config/foodonlines.php`, `database/migrations`, `routes/api.php`, `.env.example`, and `deployment/tmdhosting/*`. Current machine still lacks `php`, `composer`, `artisan`, and full Laravel skeleton, so treat these files as organized module code ready to move into real Laravel project root for TMDHosting/cPanel deployment.
 - First real backend endpoint target: `POST /api/v1/auth/register` with snake_case payload fields `account_type`, `email`, `first_name`, `last_name`, `contact_number`, `line_id`, `company_name`, optional `password`, optional `registered_from`.
+- Backend touched for this live-auth pass: `routes/api.php`, `bootstrap/app.php`, `app/Services/Auth/RegisterUserService.php`, `app/Models/User.php`, `app/Http/Resources/Auth/RegisteredUserResource.php`, `app/Http/Resources/Admin/AdminManagedUserResource.php`, `app/Http/Controllers/Api/Admin/AdminUsersController.php`, `app/Http/Controllers/Api/Admin/AdminDashboardController.php`, plus new public auth files for login/me/logout token auth and migration `database/migrations/2026_05_19_210000_create_user_api_tokens_table.php`.
+- Admin users table now reads live backend records by `GET /api/v1/admin/users?account_type=customer|supplier|partner`. Admin dashboard stats also count live backend records through the same account-type mapping.
+- cPanel public frontend first-test upload target is `public_html/app/`. Use the generated `frontend-upload/.htaccess` there and do not overwrite existing backend or backend public `.htaccess`.

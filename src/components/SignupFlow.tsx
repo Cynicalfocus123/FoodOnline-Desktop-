@@ -15,6 +15,8 @@ const formFields: Array<{
   { field: "contactNumber", label: "Contact number", type: "tel" },
   { field: "lineId", label: "Line ID optional", type: "text", optional: true },
   { field: "companyName", label: "Company name", type: "text" },
+  { field: "password", label: "Password", type: "password" },
+  { field: "confirmPassword", label: "Confirm password", type: "password" },
 ];
 
 export function SignupFlow() {
@@ -30,6 +32,7 @@ export function SignupFlow() {
   const setFormValue = useHomeStore((state) => state.setFormValue);
   const finishSignup = useHomeStore((state) => state.finishSignup);
   const backToHome = useHomeStore((state) => state.backToHome);
+  const openLogin = useHomeStore((state) => state.openLogin);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,17 +50,26 @@ export function SignupFlow() {
             <div>
               <h1 className="text-2xl font-black text-ink sm:text-3xl">Registration Complete</h1>
               <p className="mt-2 max-w-xl text-base leading-7 text-neutral-600">
-                Thank you for registering. Your account setup for{" "}
-                {getSignupRoleMeta(completedSubmission.selectedRole).signupLabel} has been captured and is ready
-                for future backend delivery.
+                Thank you for registering. Your{" "}
+                {getSignupRoleMeta(completedSubmission.selectedRole).signupLabel} account has been saved to the live
+                FoodOnlines backend and is ready for sign in.
               </p>
-              <button
-                className="mt-6 min-h-12 rounded-md bg-citrus-500 px-6 text-sm font-black text-white transition hover:bg-citrus-600"
-                onClick={backToHome}
-                type="button"
-              >
-                Back to Home
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  className="min-h-12 rounded-md bg-citrus-500 px-6 text-sm font-black text-white transition hover:bg-citrus-600"
+                  onClick={openLogin}
+                  type="button"
+                >
+                  Go to Login
+                </button>
+                <button
+                  className="min-h-12 rounded-md border border-neutral-200 px-6 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+                  onClick={backToHome}
+                  type="button"
+                >
+                  Continue as Guest
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -88,7 +100,7 @@ export function SignupFlow() {
             <h2 className="text-3xl font-black text-ink sm:text-4xl">Create Your Account</h2>
             <p className="mt-3 text-base leading-7 text-neutral-600">
               Finish your {selectedRole ? getSignupRoleMeta(selectedRole).signupLabel : "selected"} registration
-              with details ready for future backend submission.
+              with the live details required by the FoodOnlines backend.
             </p>
 
             <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>
@@ -105,6 +117,21 @@ export function SignupFlow() {
                         fieldError ? "border-red-400 bg-red-50/40" : "border-neutral-200"
                       }`}
                       id={field}
+                      autoComplete={
+                        field === "emailAddress"
+                          ? "email"
+                          : field === "firstName"
+                            ? "given-name"
+                            : field === "lastName"
+                              ? "family-name"
+                              : field === "contactNumber"
+                                ? "tel"
+                                : field === "password"
+                                  ? "new-password"
+                                  : field === "confirmPassword"
+                                    ? "new-password"
+                                    : "off"
+                      }
                       inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
                       maxLength={signupFieldLimits[field]}
                       onChange={(event) => setFormValue(field, event.target.value)}
@@ -125,10 +152,27 @@ export function SignupFlow() {
                 disabled={isSubmittingSignup}
                 type="submit"
               >
-                {isSubmittingSignup ? "Submitting..." : "Finish"}
+                {isSubmittingSignup ? "Submitting..." : "Create Account"}
               </button>
               {submissionError ? <p className="text-sm font-semibold text-red-600">{submissionError}</p> : null}
             </form>
+
+            <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+              <button
+                className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+                onClick={openLogin}
+                type="button"
+              >
+                Already have an account? Login
+              </button>
+              <button
+                className="rounded-md border border-neutral-200 px-4 py-3 text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
+                onClick={backToHome}
+                type="button"
+              >
+                Continue as Guest
+              </button>
+            </div>
           </div>
         </div>
       </section>

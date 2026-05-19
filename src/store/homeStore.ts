@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { apiRequest, toRegisterPayload } from "../lib/apiClient";
+import { ApiError, apiRequest, toRegisterPayload } from "../lib/apiClient";
 import {
   SignupFieldErrors,
   SignupFormValues,
@@ -15,13 +15,12 @@ import {
   validateSignupField,
   validateSignupRole,
 } from "../lib/security";
-import { useAdminStore } from "./adminStore";
 
-export type SignupView = "home" | "signup";
+export type SiteView = "home" | "signup" | "login";
 export type SignupStep = "role" | "form" | "complete";
 
 type HomeState = {
-  signupView: SignupView;
+  siteView: SiteView;
   signupStep: SignupStep;
   selectedRole: SignupRoleKey | null;
   formValues: SignupFormValues;
@@ -30,6 +29,7 @@ type HomeState = {
   submissionError: string | null;
   isSubmittingSignup: boolean;
   openSignup: () => void;
+  openLogin: () => void;
   backToHome: () => void;
   selectRole: (role: string) => void;
   continueToForm: () => void;
@@ -39,15 +39,28 @@ type HomeState = {
 
 export const signupRoleOptions = signupRoles;
 
-async function submitSignupToBackend(payload: SignupSubmission) {
+async function submitSignupToBackend(selectedRole: SignupRoleKey, formValues: SignupFormValues) {
   await apiRequest("/auth/register", {
     method: "POST",
-    body: toRegisterPayload(payload),
+    body: toRegisterPayload(selectedRole, formValues),
   });
 }
 
+function mapRegisterFieldErrors(error: ApiError): SignupFieldErrors {
+  return {
+    selectedRole: error.fieldErrors.account_type?.[0] ?? error.fieldErrors.role?.[0],
+    emailAddress: error.fieldErrors.email?.[0],
+    firstName: error.fieldErrors.first_name?.[0],
+    lastName: error.fieldErrors.last_name?.[0],
+    contactNumber: error.fieldErrors.contact_number?.[0],
+    lineId: error.fieldErrors.line_id?.[0],
+    companyName: error.fieldErrors.company_name?.[0],
+    password: error.fieldErrors.password?.[0],
+  };
+}
+
 export const useHomeStore = create<HomeState>((set, get) => ({
-  signupView: "home",
+  siteView: "home",
   signupStep: "role",
   selectedRole: null,
   ...getBlankSignupState(),
@@ -56,7 +69,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   isSubmittingSignup: false,
   openSignup: () =>
     set({
-      signupView: "signup",
+      siteView: "signup",
       signupStep: "role",
       selectedRole: null,
       ...getBlankSignupState(),
@@ -64,9 +77,15 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       submissionError: null,
       isSubmittingSignup: false,
     }),
+  openLogin: () =>
+    set({
+      siteView: "login",
+      submissionError: null,
+      completedSubmission: null,
+    }),
   backToHome: () =>
     set({
-      signupView: "home",
+      siteView: "home",
       signupStep: "role",
       selectedRole: null,
       ...getBlankSignupState(),
@@ -114,13 +133,18 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ...state.formValues,
         [field]: cleanedValue,
       };
-      const nextError = validateSignupField(field, cleanedValue, false);
+      const nextError = validateSignupField(field, cleanedValue, false, nextFormValues);
+      const confirmPasswordError =
+        field === "password" || field === "confirmPassword"
+          ? validateSignupField("confirmPassword", nextFormValues.confirmPassword, false, nextFormValues)
+          : state.fieldErrors.confirmPassword;
 
       return {
         formValues: nextFormValues,
         fieldErrors: {
           ...state.fieldErrors,
           [field]: nextError,
+          confirmPassword: confirmPasswordError,
         },
       };
     }),
@@ -146,18 +170,29 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({ isSubmittingSignup: true, submissionError: null });
 
     try {
-      await submitSignupToBackend(payload);
-    } catch {
+      await submitSignupToBackend(selectedRole, cleanedValues);
+    } catch (error) {
+      const backendFieldErrors = error instanceof ApiError ? mapRegisterFieldErrors(error) : {};
+      const backendErrorMessage =
+        error instanceof ApiError ? error.message : "Unable to submit registration. Please try again.";
+
       set({
-        formValues: cleanedValues,
+        formValues: {
+          ...cleanedValues,
+          password: "",
+          confirmPassword: "",
+        },
+        fieldErrors: {
+          ...backendFieldErrors,
+        },
         isSubmittingSignup: false,
-        submissionError: "Unable to submit registration. Please try again.",
+        submissionError: backendErrorMessage,
       });
       return;
     }
 
     set({
-      formValues: cleanedValues,
+      formValues: getBlankSignupState().formValues,
       fieldErrors: {},
       signupStep: "complete",
       completedSubmission: payload,

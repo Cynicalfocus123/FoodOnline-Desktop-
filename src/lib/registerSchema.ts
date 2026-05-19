@@ -28,9 +28,17 @@ export type SignupFormValues = {
   contactNumber: string;
   lineId: string;
   companyName: string;
+  password: string;
+  confirmPassword: string;
 };
 
-export type SignupSubmission = SignupFormValues & {
+export type SignupSubmission = {
+  emailAddress: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  lineId: string;
+  companyName: string;
   selectedRole: SignupRoleKey;
   createdTimestamp: string;
 };
@@ -44,6 +52,8 @@ export const signupFieldLimits: Record<keyof SignupFormValues, number> = {
   contactNumber: 20,
   lineId: 40,
   companyName: 120,
+  password: 72,
+  confirmPassword: 72,
 };
 
 export const initialSignupFormValues: SignupFormValues = {
@@ -53,6 +63,8 @@ export const initialSignupFormValues: SignupFormValues = {
   contactNumber: "",
   lineId: "",
   companyName: "",
+  password: "",
+  confirmPassword: "",
 };
 
 export function getSignupRoleMeta(roleKey: SignupRoleKey) {

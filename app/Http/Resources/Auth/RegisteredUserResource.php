@@ -18,10 +18,12 @@ class RegisteredUserResource extends JsonResource
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
             'company_name' => $this->resource->company_name,
-            'contact_number' => $this->resource->phone,
+            'contact_number' => $this->resource->contact_number ?: $this->resource->phone,
             'line_id' => $this->resource->line_id,
-            'role' => $this->resource->role,
+            'account_type' => $this->resource->account_type ?: $this->resource->role,
+            'role' => $this->resource->account_type ?: $this->resource->role,
             'status' => $this->resource->status,
+            'registered_from' => $this->resource->registered_from,
             'registered_at' => $this->resource->created_at?->toIso8601String(),
         ];
     }
