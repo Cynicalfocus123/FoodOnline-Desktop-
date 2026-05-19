@@ -7,9 +7,6 @@ dist/
 *.zip
 .env
 vendor/
-deployment/tmdhosting/frontend-public/assets/*.mp4
-deployment/tmdhosting/frontend-public/assets/*.png
-deployment/tmdhosting/frontend-public/assets/*.svg
 bootstrap/cache/*.php
 storage/*.key
 storage/framework/cache/*

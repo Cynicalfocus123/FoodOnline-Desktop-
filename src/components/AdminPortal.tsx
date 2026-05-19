@@ -435,7 +435,7 @@ function AdminSettingsPanel() {
           items={[
             "Current password required before settings update.",
             "New password is hashed by Laravel before saving.",
-            "Admin tokens are revoked after password change.",
+            "Admin token is revoked on logout.",
             "Password is never returned to the browser.",
           ]}
         />

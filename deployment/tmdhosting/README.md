@@ -57,6 +57,6 @@ Current workspace still mixes frontend and backend scaffold. For TMDHosting, dep
 
 - Registration email uses `FRONTEND_URL` for CTA target.
 - Registration endpoint accepts optional `password`, but current frontend flow does not send one yet.
-- Admin dashboard posts to the production Laravel API and requires database-backed admin login.
+- Current frontend store still posts to mock admin state. Later frontend wiring should map camelCase form keys into backend snake_case API keys.
 - Email send failure logs warning and does not block registration response.
 - Local preview route stays dev-only: `/dev/preview/emails/registration-success/{role}`.

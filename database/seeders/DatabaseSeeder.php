@@ -8,6 +8,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Keep admin password safe after launch. Run AdminSeeder manually only when creating/resetting admin.
+        $this->call(AdminSeeder::class);
     }
 }

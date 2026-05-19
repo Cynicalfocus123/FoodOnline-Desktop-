@@ -37,8 +37,6 @@ type DashboardStats = {
   active_users: number;
 };
 
-const adminPersistKey = "foodonline-admin-store";
-
 type AdminStore = {
   screen: AdminScreen;
   isAuthenticated: boolean;
@@ -112,15 +110,6 @@ function cleanError(error: unknown, fallback: string) {
   }
 
   return fallback;
-}
-
-function clearStoredAdminSession() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.removeItem(adminPersistKey);
-  window.sessionStorage.removeItem(adminPersistKey);
 }
 
 export const useAdminStore = create<AdminStore>()(
@@ -263,7 +252,7 @@ export const useAdminStore = create<AdminStore>()(
         }
 
         try {
-          const response = await apiRequest<{ admin: ApiAdmin; force_logout?: boolean }>("/admin/settings", {
+          const response = await apiRequest<{ admin: ApiAdmin }>("/admin/settings", {
             method: "PUT",
             token,
             body: {
@@ -274,22 +263,6 @@ export const useAdminStore = create<AdminStore>()(
               password_confirmation: confirmPassword || null,
             },
           });
-
-          if (response.force_logout) {
-            clearStoredAdminSession();
-            set({
-              screen: "login",
-              isAuthenticated: false,
-              authError: "Password changed. Sign in again with new password.",
-              settingsMessage: "Password changed. Sign in again with new password.",
-              token: null,
-              adminEmail: "",
-              adminName: "",
-              users: [],
-              stats: emptyStats,
-            });
-            return true;
-          }
 
           set((state) => ({
             adminEmail: response.admin.email,
@@ -308,7 +281,7 @@ export const useAdminStore = create<AdminStore>()(
       },
     }),
     {
-      name: adminPersistKey,
+      name: "foodonline-admin-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         token: state.token,
