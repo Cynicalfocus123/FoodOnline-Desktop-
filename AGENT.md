@@ -24,13 +24,15 @@
 - Frontend and admin are now fully separated at entry level: public site stays on `index.html` / `src/main.tsx`, while admin uses standalone `admin.html` / `src/admin-main.tsx`. Do not re-add admin buttons, admin route toggles, or mixed admin state into public site UI.
 - Communication rule: after every completed fix + commit + push, always include backend/admin link in final response: `https://cynicalfocus123.github.io/FoodOnline-Desktop-/admin.html`
 - Main public frontend now uses live Laravel API auth instead of mock-only signup completion. Public registration posts to `POST /api/v1/auth/register`, public login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
-- Frontend API config source is `src/lib/runtimeConfig.ts`. Default production API base URL is `https://foodonlines.com/api/v1`. Production build now uses relative Vite asset paths for safe cPanel subfolder upload.
+- Frontend API config source is `src/lib/runtimeConfig.ts`. Default production API base URL is `https://www.api.foodonlines.com/api/v1`. Production build now uses relative Vite asset paths for safe cPanel subfolder upload.
 - Public signup keeps the latest homepage/header/hero/category/deals/footer design, but now adds minimal live auth UI only: register password fields, login page, guest path, persisted account state, and logout.
 - Public registration source label now sends `registered_from=main_public_frontend` so new records can be identified in backend/admin tables.
 - Public frontend upload output now lives in `frontend-upload/`. ZIP artifact is `D:\Foodonline desktop version\foodonlines-main-live-frontend-upload.zip`.
 - ZIP contents are now corrected split-entry deploy files: `index.html` public frontend, `admin.html` admin app, `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
 - Safe checks run for this change set: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Production packaging fix on 2026-05-19: verified `dist/index.html` loads `./assets/main-B2NKpiM4.js` with title `FoodOnlines | Fresh Food Delivery`, while `dist/admin.html` loads `./assets/admin-BMUjBCaR.js` with title `FoodOnlines Admin Dashboard`. `.htaccess` now routes `admin` to `admin.html` and all other SPA paths to public `index.html`.
+- Admin API connection fix on 2026-05-19: admin login now calls `https://www.api.foodonlines.com/api/v1/admin/login` through shared API base `https://www.api.foodonlines.com/api/v1`, using JSON payload `{ email, password }`. No visual design changes made. If an API call receives `text/html`, frontend shows `API URL is pointing to frontend, not Laravel backend. Check API_BASE_URL.`
+- Admin API fix upload ZIP name: `foodonlines-admin-fix.zip`. Build command used: `cmd /c npm run build`. Files changed for this fix: `src/lib/runtimeConfig.ts`, `src/lib/apiClient.ts`, `frontend-upload/.htaccess`, `frontend-upload/DEPLOYMENT-INSTRUCTIONS.txt`, rebuilt `frontend-upload/index.html`, `frontend-upload/admin.html`, and rebuilt `frontend-upload/assets/`.
 
 ## Backend/Admin Notes
 

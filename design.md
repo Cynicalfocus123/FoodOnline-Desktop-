@@ -23,7 +23,7 @@
 - Zustand stores shared signup form state for hero and splash email forms.
 - Tailwind CSS owns responsive layout, colors, spacing, shadows, and buttons.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
-- Public API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://foodonlines.com/api/v1`.
+- Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
 - Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Guests still see Login/Register entry points.
@@ -46,6 +46,7 @@
 - TMDHosting/cPanel deployment design should keep Laravel app outside `public_html`, expose only backend `public/`, and use `.env` for MySQL, mail, app URL, and `FRONTEND_URL`.
 - Public cPanel output is the `frontend-upload/` folder plus ZIP `foodonlines-main-live-frontend-upload.zip`, containing `index.html` for public, `admin.html` for admin, shared `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
 - Deployment routing must preserve split entries: `index.html` must always load the public `main-*.js` bundle, `admin.html` must always load the admin `admin-*.js` bundle, and `.htaccess` must rewrite `/admin` to `admin.html` while all other SPA paths fall back to public `index.html`.
+- No visual design changes in admin API connection fix. Admin page now calls correct Laravel API host behind the scenes.
 
 ## Guardrails
 

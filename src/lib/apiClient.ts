@@ -27,6 +27,11 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (contentType.includes("text/html")) {
+    throw new ApiError("API URL is pointing to frontend, not Laravel backend. Check API_BASE_URL.", response.status);
+  }
 
   const payload = (await response.json().catch(() => ({}))) as {
     errors?: Record<string, string[]>;

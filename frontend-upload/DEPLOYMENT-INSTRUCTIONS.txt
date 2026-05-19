@@ -1,57 +1,43 @@
-FoodOnlines Main Frontend + Admin Upload
-========================================
+FoodOnlines Admin API Fix Upload
+================================
 
 ZIP name
-- foodonlines-main-live-frontend-upload.zip
+- foodonlines-admin-fix.zip
 
 Upload location
-1. Open cPanel File Manager.
-2. Go to public_html/app/
-3. Upload foodonlines-main-live-frontend-upload.zip there.
-4. Extract the ZIP inside public_html/app/
+1. Upload foodonlines-admin-fix.zip into the foodonlines.com domain folder.
+2. Extract and replace only:
+   - index.html
+   - admin.html
+   - assets/
+   - .htaccess
 
-Route split
-- `/` or `/app/` serves `index.html` public frontend.
-- `/admin` or `/app/admin` rewrites to `admin.html` admin app.
+Do not touch
+- Do not touch backend folder.
+- Do not touch database.
+- Do not change Laravel admin password.
 
-Files included
-- index.html
-- admin.html
-- assets/
-- .htaccess
-- DEPLOYMENT-INSTRUCTIONS.txt
+Routes to test
+- https://foodonlines.com/
+- https://foodonlines.com/admin
+- https://foodonlines.com/admin.html
 
-Backend files and folders NOT to touch
-- Do not overwrite Laravel backend files already serving the API.
-- Do not overwrite backend/public/.htaccess
-- Do not move or rename backend app/, bootstrap/, config/, database/, routes/, storage/, vendor/, or .env
+API config
+- Admin page calls: https://www.api.foodonlines.com/api/v1/admin/login
+- API base URL in source: src/lib/runtimeConfig.ts
+- API base URL used by build: https://www.api.foodonlines.com/api/v1
 
-API base URL config
-- Frontend config file: src/lib/runtimeConfig.ts
-- Default API base URL: https://foodonlines.com/api/v1
+API test
+curl -i -X POST "https://www.api.foodonlines.com/api/v1/admin/login" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"info@foodonlines.com","password":"YOUR_PASSWORD"}'
 
-Live endpoints used
-- Register: POST /api/v1/auth/register
-- Login: POST /api/v1/auth/login
-- Current user: GET /api/v1/auth/me
-- Logout: POST /api/v1/auth/logout
-- Admin users: GET /api/v1/admin/users?account_type=customer|supplier|partner
+Expected login response
+- HTTP 200
+- JSON with message, token_type, token, and admin object.
 
-Quick test
-1. Open https://foodonlines.com/app/
-2. Confirm homepage title and public frontend load.
-3. Open https://foodonlines.com/app/admin
-4. Confirm admin app loads separately.
-5. Test public register/login.
-6. Confirm admin Users tabs show new backend records.
-
-If white screen happens
-1. Confirm index.html and admin.html both extracted beside assets/.
-2. Confirm assets/ contains both `main-*.js` and `admin-*.js`.
-3. Hard refresh browser cache.
-4. Check browser Network tab for missing files.
-
-If register/login/admin users fail
-1. Confirm Laravel API routes are live.
-2. Confirm API base URL still points to https://foodonlines.com/api/v1.
-3. Confirm backend CORS/auth/token middleware allow the deployed frontend path.
+If admin login returns HTML
+- API URL is pointing to frontend, not Laravel backend.
+- Confirm deployed bundle was replaced.
+- Confirm API base URL is https://www.api.foodonlines.com/api/v1.
