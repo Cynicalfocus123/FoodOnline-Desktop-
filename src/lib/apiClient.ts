@@ -18,8 +18,20 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
+  const method = options.method ?? "GET";
+  const endpointUrl = `${apiBaseUrl}${path}`;
+  const payloadKeys = options.body && typeof options.body === "object" ? Object.keys(options.body) : [];
+
+  if (import.meta.env.DEV) {
+    console.info("[FoodOnlines API request]", {
+      endpointUrl,
+      method,
+      payloadKeys,
+    });
+  }
+
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    method: options.method ?? "GET",
+    method,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -28,6 +40,14 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const contentType = response.headers.get("content-type") ?? "";
+
+  if (import.meta.env.DEV) {
+    console.info("[FoodOnlines API response]", {
+      endpointUrl,
+      method,
+      status: response.status,
+    });
+  }
 
   if (contentType.includes("text/html")) {
     throw new ApiError("API URL is pointing to frontend, not Laravel backend. Check API_BASE_URL.", response.status);
@@ -39,6 +59,15 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
   };
 
   if (!response.ok) {
+    if (import.meta.env.DEV) {
+      console.warn("[FoodOnlines API error]", {
+        endpointUrl,
+        method,
+        status: response.status,
+        message: payload.message || "Request failed.",
+      });
+    }
+
     throw new ApiError(payload.message || "Request failed.", response.status, payload.errors ?? {});
   }
 
@@ -55,6 +84,7 @@ export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: Signu
     line_id: formValues.lineId || null,
     company_name: formValues.companyName,
     password: formValues.password,
+    password_confirmation: formValues.confirmPassword,
     registered_from: "main_public_frontend",
   };
 }

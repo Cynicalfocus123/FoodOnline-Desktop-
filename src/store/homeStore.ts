@@ -56,6 +56,7 @@ function mapRegisterFieldErrors(error: ApiError): SignupFieldErrors {
     lineId: error.fieldErrors.line_id?.[0],
     companyName: error.fieldErrors.company_name?.[0],
     password: error.fieldErrors.password?.[0],
+    confirmPassword: error.fieldErrors.password_confirmation?.[0],
   };
 }
 

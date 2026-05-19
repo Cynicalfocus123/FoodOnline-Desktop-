@@ -129,6 +129,22 @@ export function SignupFlow() {
                                       ? "new-password"
                                       : "off"
                         }
+                        autoCapitalize={
+                          field === "emailAddress" ||
+                          field === "lineId" ||
+                          field === "password" ||
+                          field === "confirmPassword"
+                            ? "none"
+                            : undefined
+                        }
+                        autoCorrect={
+                          field === "emailAddress" ||
+                          field === "lineId" ||
+                          field === "password" ||
+                          field === "confirmPassword"
+                            ? "off"
+                            : undefined
+                        }
                         inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
                         maxLength={signupFieldLimits[field]}
                         onChange={(event) => setFormValue(field, event.target.value)}

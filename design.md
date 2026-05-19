@@ -27,6 +27,8 @@
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
 - Signup and login password fields include compact eye toggles, preserving the current form layout.
+- Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint and includes both `password` and `password_confirmation` so mobile confirmation values match Laravel validation.
+- Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
 - Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
@@ -49,6 +51,7 @@
 - Deployment routing must preserve split entries: `index.html` must always load the public `main-*.js` bundle, `admin.html` must always load the admin `admin-*.js` bundle, and `.htaccess` must rewrite `/admin` to `admin.html` while all other SPA paths fall back to public `index.html`.
 - No visual design changes in admin API connection fix. Admin page now calls correct Laravel API host behind the scenes.
 - Frontend auth fix made no redesign changes. Only guest controls were removed, password eye toggles added, signup validation messaging improved, and signup banner sizing aligned with login.
+- Mobile signup fix made no visual design changes. It aligned mobile signup with the same shared Laravel registration submit logic, added `password_confirmation`, preserved password eye toggles, and generated cPanel ZIP `foodonlines-mobile-signup-fix.zip`.
 
 ## Guardrails
 
