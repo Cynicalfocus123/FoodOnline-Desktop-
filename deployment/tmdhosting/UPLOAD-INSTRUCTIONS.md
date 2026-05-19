@@ -2,11 +2,16 @@
 
 ## Upload order
 
-1. Upload `foodonlines-backend/` to your cPanel home directory, outside `public_html`.
-2. Upload all files from packaged `public_html/` into your domain `public_html`.
-3. In cPanel, create MySQL database and database user.
-4. In backend folder, copy `.env.example` to `.env`.
-5. Fill `.env` with:
+1. Upload and extract `foodonlines-backend-cpanel-fixed.zip` in `/home/CPANEL_USERNAME`.
+2. Keep `foodonlines-backend/` outside any public web folder.
+3. In cPanel, open `Domains` and find real document root for FoodOnlines domain.
+4. Copy the CONTENTS of `foodonlines-public-entry/` into that FoodOnlines document root.
+5. Do NOT copy whole `foodonlines-public-entry/` folder itself.
+6. Do NOT overwrite another domain's WordPress `public_html`.
+7. ZIP no longer uses folder named `public_html` inside package.
+8. In cPanel, create MySQL database and database user.
+9. In backend folder, copy `.env.example` to `.env`.
+10. Fill `.env` with:
    - `APP_URL`
    - `FRONTEND_URL`
    - `DB_HOST`
@@ -20,22 +25,47 @@
    - `MAIL_PASSWORD`
    - `MAIL_ENCRYPTION`
    - `MAIL_FROM_ADDRESS`
-6. Use SMTP credentials from cPanel email account only.
-7. Run inside backend folder:
+11. Use SMTP credentials from cPanel email account only.
+12. In `index.php`, replace `CPANEL_USERNAME` with your real cPanel username, for example `mstarhol`.
+13. Run inside backend folder:
 
 ```bash
 composer install --optimize-autoloader --no-dev
 php artisan key:generate
 php artisan migrate --force
+php artisan db:seed --class=AdminSeeder
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
 
+## First admin
+
+Set these in `/home/CPANEL_USERNAME/foodonlines-backend/.env` before seeding:
+
+- `ADMIN_NAME="FoodOnlines Admin"`
+- `ADMIN_EMAIL="your real admin email"`
+- `ADMIN_PASSWORD="your real strong password"`
+
+Never commit real admin password.
+
+## Cache reset commands
+
+Run these after config or route changes:
+
+```bash
+php artisan config:clear
+php artisan route:clear
+php artisan cache:clear
+php artisan optimize:clear
+```
+
 ## Public path
 
-- Packaged `public_html/index.php` already points to `../foodonlines-backend`.
-- It also sets Laravel public path to actual shared hosting `public_html`.
+- Packaged files live in `foodonlines-public-entry/`, not `public_html/`.
+- Copy only file contents from `foodonlines-public-entry/` into FoodOnlines domain document root.
+- `index.php` points to `/home/CPANEL_USERNAME/foodonlines-backend`.
+- Replace `CPANEL_USERNAME` with your real cPanel username before going live.
 
 ## Included registration flow
 
@@ -49,4 +79,5 @@ php artisan view:cache
 - No git metadata
 - No `node_modules`
 - No local logs or cache
+- No `public_html` folder inside ZIP
 - No ZIP tracked in git

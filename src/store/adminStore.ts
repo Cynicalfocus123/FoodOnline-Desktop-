@@ -1,26 +1,41 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import {
-  AdminAuditEntry,
-  AdminRequestStatus,
-  AdminSidebarKey,
-  AdminUserAction,
-  AdminUserRecord,
-  adminSeedUsers,
-} from "../data/admin";
-import { SignupSubmission, SignupRoleKey } from "../lib/registerSchema";
-import {
-  createClientId,
-  createSalt,
-  hashSecret,
-  normalizeAdminEmail,
-  sanitizeAdminPasswordInput,
-  sanitizeFreeText,
-  validateAdminEmail,
-  validateAdminPassword,
-} from "../lib/security";
+import { AdminAuditEntry, AdminSidebarKey, AdminUserRecord } from "../data/admin";
+import { ApiError, apiRequest } from "../lib/apiClient";
+import { SignupRoleKey } from "../lib/registerSchema";
 
 type AdminScreen = "login" | "dashboard";
+
+type ApiAdmin = {
+  id: number;
+  name: string;
+  email: string;
+  role: "admin";
+};
+
+type ApiManagedUser = {
+  id: string;
+  role: SignupRoleKey;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  contact_number: string | null;
+  line_id: string | null;
+  company_name: string | null;
+  business_type: string | null;
+  status: string;
+  registered_from: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+type DashboardStats = {
+  total_users: number;
+  customers: number;
+  suppliers: number;
+  partners: number;
+  active_users: number;
+};
 
 type AdminStore = {
   screen: AdminScreen;
@@ -31,76 +46,70 @@ type AdminStore = {
   securityMessage: string | null;
   settingsMessage: string | null;
   adminEmail: string;
-  sessionAdminLabel: string | null;
-  passwordHash: string | null;
-  passwordSalt: string | null;
+  adminName: string;
+  token: string | null;
   users: AdminUserRecord[];
   auditLog: AdminAuditEntry[];
+  stats: DashboardStats;
   lastLoginAt: string | null;
-  logoutAdmin: () => void;
+  isLoadingUsers: boolean;
+  fetchCurrentAdmin: () => Promise<boolean>;
+  fetchUsers: (role?: SignupRoleKey) => Promise<void>;
+  fetchStats: () => Promise<void>;
+  logoutAdmin: () => Promise<void>;
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
-  loginAdmin: (adminIdentity: string, password: string) => Promise<boolean>;
-  applyUserAction: (userId: string, action: AdminUserAction) => void;
+  loginAdmin: (email: string, password: string) => Promise<boolean>;
   updateAdminCredentials: (
     currentPassword: string,
+    nextName: string,
     nextEmail: string,
     nextPassword: string,
     confirmPassword: string,
   ) => Promise<boolean>;
-  ingestSignupSubmission: (submission: SignupSubmission) => void;
 };
 
-const defaultAdminEmail = "ops@foodonline.local";
-const mockLoginMessage =
-  "Mock admin access active. Enter any admin name and any password to open dashboard UI.";
+const emptyStats: DashboardStats = {
+  total_users: 0,
+  customers: 0,
+  suppliers: 0,
+  partners: 0,
+  active_users: 0,
+};
 
 function createAuditEntry(action: string, detail: string): AdminAuditEntry {
   return {
-    id: createClientId("audit"),
+    id: `audit-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     action,
     detail,
     createdTimestamp: new Date().toISOString(),
   };
 }
 
-function getNextReviewTime(status: AdminRequestStatus) {
-  return new Date().toISOString();
+function toAdminUserRecord(user: ApiManagedUser): AdminUserRecord {
+  return {
+    id: String(user.id),
+    selectedRole: user.role,
+    emailAddress: user.email,
+    firstName: user.first_name ?? "",
+    lastName: user.last_name ?? "",
+    contactNumber: user.contact_number ?? "",
+    lineId: user.line_id ?? "",
+    companyName: user.company_name ?? "",
+    requestStatus: user.status === "active" ? "approved" : "in_review",
+    sourceLabel: user.registered_from ?? "database",
+    createdTimestamp: user.created_at ?? new Date().toISOString(),
+    reviewedAt: user.updated_at,
+    notes: user.business_type ? `Business type: ${user.business_type}` : "Database user record.",
+  };
 }
 
-function normalizeStoredUsers(users: AdminUserRecord[] | undefined) {
-  if (!users) {
-    return adminSeedUsers;
+function cleanError(error: unknown, fallback: string) {
+  if (error instanceof ApiError) {
+    return error.status === 401 ? "Invalid admin email or password." : error.message;
   }
 
-  return users
-    .flatMap((user) => {
-      if (user.requestStatus === "approved" || user.requestStatus === "in_review") {
-        return [user];
-      }
-
-      if ((user.requestStatus as string) === "archived") {
-        return [];
-      }
-
-      if ((user.requestStatus as string) === "needs_follow_up") {
-        return [
-          {
-            ...user,
-            requestStatus: "in_review" as const,
-            reviewedAt: user.reviewedAt ?? new Date().toISOString(),
-          },
-        ];
-      }
-
-      return [
-        {
-          ...user,
-          requestStatus: "approved" as const,
-          reviewedAt: user.reviewedAt ?? user.createdTimestamp,
-        },
-      ];
-    });
+  return fallback;
 }
 
 export const useAdminStore = create<AdminStore>()(
@@ -111,191 +120,188 @@ export const useAdminStore = create<AdminStore>()(
       activeSidebarKey: "overview",
       activeUsersTab: "customer",
       authError: null,
-      securityMessage: mockLoginMessage,
+      securityMessage: "Admin login uses Laravel database authentication.",
       settingsMessage: null,
-      adminEmail: defaultAdminEmail,
-      sessionAdminLabel: null,
-      passwordHash: null,
-      passwordSalt: null,
-      users: adminSeedUsers,
-      auditLog: [
-        createAuditEntry("system.bootstrap", "Standalone admin mockup initialized for Laravel + MySQL planning."),
-      ],
+      adminEmail: "",
+      adminName: "",
+      token: null,
+      users: [],
+      auditLog: [],
+      stats: emptyStats,
       lastLoginAt: null,
-      logoutAdmin: () =>
-        set((state) => ({
+      isLoadingUsers: false,
+      fetchCurrentAdmin: async () => {
+        const token = get().token;
+
+        if (!token) {
+          return false;
+        }
+
+        try {
+          const response = await apiRequest<{ admin: ApiAdmin }>("/admin/me", { token });
+          set({
+            screen: "dashboard",
+            isAuthenticated: true,
+            adminEmail: response.admin.email,
+            adminName: response.admin.name,
+            authError: null,
+          });
+          return true;
+        } catch {
+          set({ screen: "login", isAuthenticated: false, token: null });
+          return false;
+        }
+      },
+      fetchUsers: async (role = get().activeUsersTab) => {
+        const token = get().token;
+
+        if (!token) {
+          return;
+        }
+
+        set({ isLoadingUsers: true });
+
+        try {
+          const response = await apiRequest<{ users: ApiManagedUser[] }>(`/admin/users?role=${role}`, { token });
+          set({
+            users: response.users.map(toAdminUserRecord),
+            isLoadingUsers: false,
+            authError: null,
+          });
+        } catch (error) {
+          set({
+            isLoadingUsers: false,
+            authError: cleanError(error, "Unable to load users."),
+          });
+        }
+      },
+      fetchStats: async () => {
+        const token = get().token;
+
+        if (!token) {
+          return;
+        }
+
+        try {
+          const response = await apiRequest<{ stats: DashboardStats }>("/admin/dashboard-stats", { token });
+          set({ stats: response.stats });
+        } catch {
+          set({ stats: emptyStats });
+        }
+      },
+      logoutAdmin: async () => {
+        const token = get().token;
+
+        if (token) {
+          await apiRequest("/admin/logout", { method: "POST", token }).catch(() => undefined);
+        }
+
+        set({
           screen: "login",
           isAuthenticated: false,
           authError: null,
           settingsMessage: "Admin session ended.",
-          sessionAdminLabel: null,
-          auditLog: [createAuditEntry("auth.logout", "Admin signed out from standalone dashboard."), ...state.auditLog].slice(
-            0,
-            12,
-          ),
-        })),
-      setActiveSidebarKey: (key) =>
-        set({
-          activeSidebarKey: key,
-          authError: null,
-          settingsMessage: null,
-        }),
-      setActiveUsersTab: (tab) =>
-        set({
-          activeSidebarKey: "users",
-          activeUsersTab: tab,
-          authError: null,
-        }),
-      loginAdmin: async (adminIdentity, password) => {
-        const cleanedAdminIdentity = sanitizeFreeText(adminIdentity, true).slice(0, 120);
-        const sanitizedPassword = sanitizeAdminPasswordInput(password);
-
-        if (!cleanedAdminIdentity || !sanitizedPassword) {
-          set({
-            authError: "Enter admin name and password.",
+          token: null,
+          adminEmail: "",
+          adminName: "",
+          users: [],
+          stats: emptyStats,
+        });
+      },
+      setActiveSidebarKey: (key) => set({ activeSidebarKey: key, authError: null, settingsMessage: null }),
+      setActiveUsersTab: (tab) => {
+        set({ activeSidebarKey: "users", activeUsersTab: tab, authError: null });
+        void get().fetchUsers(tab);
+      },
+      loginAdmin: async (email, password) => {
+        try {
+          const response = await apiRequest<{ token: string; admin: ApiAdmin }>("/admin/login", {
+            method: "POST",
+            body: { email, password },
           });
+
+          set((state) => ({
+            screen: "dashboard",
+            isAuthenticated: true,
+            activeSidebarKey: "overview",
+            authError: null,
+            settingsMessage: null,
+            token: response.token,
+            adminEmail: response.admin.email,
+            adminName: response.admin.name,
+            lastLoginAt: new Date().toISOString(),
+            auditLog: [
+              createAuditEntry("auth.success", `Admin signed in as ${response.admin.email}.`),
+              ...state.auditLog,
+            ].slice(0, 12),
+          }));
+          await get().fetchStats();
+          await get().fetchUsers(get().activeUsersTab);
+          return true;
+        } catch (error) {
+          set({ authError: cleanError(error, "Unable to sign in.") });
+          return false;
+        }
+      },
+      updateAdminCredentials: async (currentPassword, nextName, nextEmail, nextPassword, confirmPassword) => {
+        const token = get().token;
+
+        if (!token) {
+          set({ settingsMessage: "Admin session expired. Sign in again." });
           return false;
         }
 
-        set((currentState) => ({
-          screen: "dashboard",
-          isAuthenticated: true,
-          activeSidebarKey: "overview",
-          authError: null,
-          settingsMessage: null,
-          sessionAdminLabel: cleanedAdminIdentity,
-          lastLoginAt: new Date().toISOString(),
-          auditLog: [
-            createAuditEntry("auth.success", `Mock admin access opened for ${cleanedAdminIdentity}.`),
-            ...currentState.auditLog,
-          ].slice(0, 12),
-        }));
-        return true;
-      },
-      applyUserAction: (userId, action) =>
-        set((state) => ({
-          users:
-            action === "delete"
-              ? state.users.filter((user) => user.id !== userId)
-              : state.users.map((user) =>
-                  user.id === userId
-                    ? {
-                        ...user,
-                        requestStatus: "in_review",
-                        reviewedAt: getNextReviewTime("in_review"),
-                      }
-                    : user,
-                ),
-          auditLog: [
-            createAuditEntry(
-              "signup.action",
-              action === "delete"
-                ? `Signup record ${userId} deleted from mock dashboard.`
-                : `Signup record ${userId} moved to in_review.`,
-            ),
-            ...state.auditLog,
-          ].slice(0, 12),
-        })),
-      updateAdminCredentials: async (currentPassword, nextEmail, nextPassword, confirmPassword) => {
-        const state = get();
-        const sanitizedCurrentPassword = sanitizeAdminPasswordInput(currentPassword);
-        const sanitizedNextPassword = sanitizeAdminPasswordInput(nextPassword);
-        const sanitizedConfirmPassword = sanitizeAdminPasswordInput(confirmPassword);
-        const normalizedEmail = normalizeAdminEmail(nextEmail);
-
-        const canCheckCurrentPassword =
-          !state.passwordHash ||
-          !state.passwordSalt ||
-          (validateAdminPassword(sanitizedCurrentPassword) &&
-            (await hashSecret(sanitizedCurrentPassword, state.passwordSalt)) === state.passwordHash);
-
-        const isEmailValid = validateAdminEmail(normalizedEmail);
-        const isPasswordValid = validateAdminPassword(sanitizedNextPassword);
-        const passwordsMatch = sanitizedNextPassword === sanitizedConfirmPassword;
-
-        if (!canCheckCurrentPassword || !isEmailValid || !isPasswordValid || !passwordsMatch) {
-          set({
-            settingsMessage:
-              "Security update blocked. Check current password, email format, and new password confirmation.",
-          });
-          return false;
-        }
-
-        const salt = createSalt();
-        const passwordHash = await hashSecret(sanitizedNextPassword, salt);
-
-        set((currentState) => ({
-          adminEmail: normalizedEmail,
-          passwordSalt: salt,
-          passwordHash,
-          securityMessage: mockLoginMessage,
-          settingsMessage: "Admin email and password updated in mock secure store.",
-          auditLog: [
-            createAuditEntry("settings.credentials", "Admin rotated email and password placeholder."),
-            ...currentState.auditLog,
-          ].slice(0, 12),
-        }));
-        return true;
-      },
-      ingestSignupSubmission: (submission) =>
-        set((state) => ({
-          users: [
-            {
-              id: createClientId("signup"),
-              selectedRole: submission.selectedRole,
-              emailAddress: submission.emailAddress,
-              firstName: submission.firstName,
-              lastName: submission.lastName,
-              contactNumber: submission.contactNumber,
-              lineId: submission.lineId,
-              companyName: submission.companyName,
-              requestStatus: "approved",
-              sourceLabel: "Frontend signup",
-              createdTimestamp: submission.createdTimestamp,
-              reviewedAt: submission.createdTimestamp,
-              notes: "Captured from public signup flow and approved instantly.",
+        try {
+          const response = await apiRequest<{ admin: ApiAdmin }>("/admin/settings", {
+            method: "PUT",
+            token,
+            body: {
+              name: nextName,
+              email: nextEmail,
+              current_password: currentPassword,
+              password: nextPassword || null,
+              password_confirmation: confirmPassword || null,
             },
-            ...state.users,
-          ],
-          auditLog: [
-            createAuditEntry(
-              "signup.capture",
-              `New ${submission.selectedRole} signup captured from public frontend into admin queue.`,
-            ),
-            ...state.auditLog,
-          ].slice(0, 12),
-        })),
+          });
+
+          set((state) => ({
+            adminEmail: response.admin.email,
+            adminName: response.admin.name,
+            settingsMessage: "Admin settings updated.",
+            auditLog: [
+              createAuditEntry("settings.credentials", "Admin updated database profile settings."),
+              ...state.auditLog,
+            ].slice(0, 12),
+          }));
+          return true;
+        } catch (error) {
+          set({ settingsMessage: cleanError(error, "Security update blocked. Check current password and fields.") });
+          return false;
+        }
+      },
     }),
     {
       name: "foodonline-admin-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
+        token: state.token,
         adminEmail: state.adminEmail,
-        passwordHash: state.passwordHash,
-        passwordSalt: state.passwordSalt,
-        users: state.users,
-        auditLog: state.auditLog,
+        adminName: state.adminName,
         lastLoginAt: state.lastLoginAt,
         securityMessage: state.securityMessage,
       }),
-      merge: (persistedState, currentState) => {
-        const mergedState = {
-          ...currentState,
-          ...(persistedState as Partial<AdminStore>),
-        };
-
-        return {
-          ...mergedState,
-          users: normalizeStoredUsers(mergedState.users),
-          screen: "login",
-          isAuthenticated: false,
-          activeSidebarKey: "overview",
-          activeUsersTab: "customer",
-          authError: null,
-          settingsMessage: null,
-          sessionAdminLabel: null,
-        };
-      },
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...(persistedState as Partial<AdminStore>),
+        screen: "login",
+        isAuthenticated: false,
+        activeSidebarKey: "overview",
+        activeUsersTab: "customer",
+        authError: null,
+        settingsMessage: null,
+        users: [],
+        stats: emptyStats,
+      }),
     },
   ),
 );

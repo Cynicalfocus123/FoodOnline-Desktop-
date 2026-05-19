@@ -4,17 +4,17 @@ export const adminSidebarItems = [
   {
     key: "overview",
     label: "Overview",
-    description: "Security posture and Laravel handoff",
+    description: "Security and database status",
   },
   {
     key: "users",
     label: "Users",
-    description: "Manage approved users and account intake",
+    description: "Customers, suppliers, and partners",
   },
   {
     key: "settings",
     label: "Admin Settings",
-    description: "Rotate admin email and password",
+    description: "Update admin profile and password",
   },
 ] as const;
 
@@ -27,7 +27,6 @@ export const adminRoleTabs = signupRoles.map((role) => ({
 }));
 
 export type AdminRequestStatus = "approved" | "in_review";
-export type AdminUserAction = "in_review" | "delete";
 
 export type AdminUserRecord = {
   id: string;
@@ -60,92 +59,14 @@ export const adminRequestStatusMeta: Record<
   }
 > = {
   in_review: {
-    label: "In Review",
+    label: "Inactive",
     classes: "border-sky-200 bg-sky-50 text-sky-700",
   },
   approved: {
-    label: "Approved",
+    label: "Active",
     classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
   },
 };
-
-export const adminSeedUsers: AdminUserRecord[] = [
-  {
-    id: "signup-1001",
-    selectedRole: "customer",
-    emailAddress: "suda.kaeo@example.com",
-    firstName: "Suda",
-    lastName: "Kaeo",
-    contactNumber: "+66 81 456 3388",
-    lineId: "sudafresh",
-    companyName: "Bangkok Family Market",
-    requestStatus: "approved",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-16T08:10:00.000Z",
-    reviewedAt: "2026-05-16T10:40:00.000Z",
-    notes: "Repeat household order profile. Safe for launch pilot.",
-  },
-  {
-    id: "signup-1002",
-    selectedRole: "customer",
-    emailAddress: "maya.nguyen@example.com",
-    firstName: "Maya",
-    lastName: "Nguyen",
-    contactNumber: "+1 (415) 555-0193",
-    lineId: "maya.ng",
-    companyName: "Sunset Pantry Club",
-    requestStatus: "approved",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-17T02:22:00.000Z",
-    reviewedAt: "2026-05-17T02:22:00.000Z",
-    notes: "Auto-approved from frontend signup flow.",
-  },
-  {
-    id: "signup-1003",
-    selectedRole: "supplier",
-    emailAddress: "ops@greencratefoods.com",
-    firstName: "Narin",
-    lastName: "Krit",
-    contactNumber: "+66 89 200 1182",
-    lineId: "greencrate.ops",
-    companyName: "Green Crate Foods",
-    requestStatus: "in_review",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-15T04:55:00.000Z",
-    reviewedAt: "2026-05-15T06:15:00.000Z",
-    notes: "Need cold-chain warehouse documents in backend phase.",
-  },
-  {
-    id: "signup-1004",
-    selectedRole: "supplier",
-    emailAddress: "hello@coastharvest.io",
-    firstName: "Elena",
-    lastName: "Santos",
-    contactNumber: "+63 917 555 6021",
-    lineId: "coastharvest",
-    companyName: "Coast Harvest Seafoods",
-    requestStatus: "in_review",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-17T11:05:00.000Z",
-    reviewedAt: "2026-05-17T12:10:00.000Z",
-    notes: "Manual review flag for supplier onboarding details.",
-  },
-  {
-    id: "signup-1005",
-    selectedRole: "partner",
-    emailAddress: "alliances@swiftmile.com",
-    firstName: "Rico",
-    lastName: "Tan",
-    contactNumber: "+65 8123 4456",
-    lineId: "swiftmile-bd",
-    companyName: "SwiftMile Logistics",
-    requestStatus: "approved",
-    sourceLabel: "Frontend signup",
-    createdTimestamp: "2026-05-14T09:30:00.000Z",
-    reviewedAt: "2026-05-14T10:25:00.000Z",
-    notes: "Approved for delivery integration discovery.",
-  },
-];
 
 export const adminTableColumns = [
   "Email",
@@ -154,98 +75,56 @@ export const adminTableColumns = [
   "Contact Number",
   "Line ID",
   "Company Name",
-  "Request Status",
+  "Status",
   "Source",
   "Created",
-  "Reviewed",
-  "Actions",
+  "Updated",
 ] as const;
 
 export const laravelMySqlBlueprint = {
   tables: [
     {
-      name: "admins",
+      name: "users",
       columns: [
         "id",
+        "name",
         "email unique index",
-        "password_hash",
-        "last_login_at nullable",
-        "locked_until nullable",
-        "remember_token nullable",
-        "timestamps",
+        "password hashed",
+        "role index: admin/customer/supplier/partner",
+        "phone nullable",
+        "company_name nullable",
+        "business_type nullable",
+        "status default active",
       ],
     },
     {
-      name: "signup_requests",
-      columns: [
-        "id",
-        "role enum(customer,supplier,partner) index",
-        "email_address index",
-        "first_name",
-        "last_name",
-        "contact_number",
-        "line_id nullable",
-        "company_name",
-        "status enum index",
-        "notes nullable",
-        "reviewed_by nullable foreign key admins.id",
-        "reviewed_at nullable",
-        "timestamps",
-        "softDeletes",
-      ],
-    },
-    {
-      name: "admin_login_logs",
-      columns: [
-        "id",
-        "admin_id nullable",
-        "email_attempted",
-        "ip_address",
-        "user_agent",
-        "was_successful",
-        "created_at",
-      ],
-    },
-    {
-      name: "admin_audit_logs",
-      columns: [
-        "id",
-        "admin_id",
-        "action",
-        "target_type",
-        "target_id",
-        "metadata json",
-        "created_at",
-      ],
+      name: "admin_api_tokens",
+      columns: ["id", "user_id", "token_hash unique", "last_used_at nullable", "revoked_at nullable"],
     },
   ],
   routes: [
-    "POST /admin/login",
-    "POST /admin/logout",
-    "GET /admin/signup-requests",
-    "PATCH /admin/signup-requests/{id}",
-    "PATCH /admin/settings/credentials",
+    "POST /api/v1/admin/login",
+    "POST /api/v1/admin/logout",
+    "GET /api/v1/admin/me",
+    "GET /api/v1/admin/users",
+    "PUT /api/v1/admin/settings",
+    "GET /api/v1/admin/dashboard-stats",
   ],
-  middleware: [
-    "auth admin session guard",
-    "throttle admin login",
-    "csrf for session routes",
-    "audit logging middleware",
-  ],
+  middleware: ["admin.token", "throttle admin login", "Laravel validation requests"],
   validation: [
-    "Request classes for login, signup request filters, and admin settings rotation",
-    "Use Laravel validator rules for email format, role enum, status enum, and max lengths",
-    "Use Hash::check and Hash::make for password handling only on server",
+    "Admin login verifies database user role and hashed password",
+    "Admin settings require current password before profile or password changes",
+    "Registration validates role, email, contact number, Line ID, and company details",
   ],
 };
 
 export const adminSecurityChecklist = [
-  "Never use dangerouslySetInnerHTML or eval in admin UI.",
-  "Normalize and validate email before auth; keep login failures generic.",
-  "Rate-limit login and prepare Laravel throttle middleware for server phase.",
-  "Render all signup fields as plain text only; React escaping stays in place.",
-  "Current mock action shows delete control; real backend should still protect destructive operations carefully.",
-  "Prepare CSRF, secure cookies, audit logs, and login logs in Laravel backend.",
+  "Admin login calls Laravel API and checks MySQL users table.",
+  "Passwords are hashed and verified only on server.",
+  "Bearer tokens are stored hashed in database and revoked on logout.",
+  "Admin API routes require admin token middleware.",
+  "Registration and login routes are rate-limited.",
+  "React renders database text safely as plain text.",
 ];
 
 export function getAdminSummaryLabel(roleKey: SignupRoleKey) {

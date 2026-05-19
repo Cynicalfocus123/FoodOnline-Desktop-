@@ -4,9 +4,12 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-require __DIR__.'/../foodonlines-backend/vendor/autoload.php';
+// Replace CPANEL_USERNAME with your real cPanel username, for example: mstarhol
+$backendBasePath = '/home/CPANEL_USERNAME/foodonlines-backend';
 
-$app = require_once __DIR__.'/../foodonlines-backend/bootstrap/app.php';
+require $backendBasePath.'/vendor/autoload.php';
+
+$app = require_once $backendBasePath.'/bootstrap/app.php';
 $app->usePublicPath(__DIR__);
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);

@@ -5,8 +5,10 @@ This package is organized for TMDHosting / cPanel shared hosting.
 ## Folder placement
 
 1. Upload `foodonlines-backend/` outside `public_html`.
-2. Upload contents of `public_html/` into your domain `public_html`.
-3. Keep `vendor/` excluded from upload if not bundled. Install it on server with Composer.
+2. Open cPanel `Domains` and find FoodOnlines domain document root.
+3. Upload contents of `foodonlines-public-entry/` into that FoodOnlines document root.
+4. Do not upload or extract a `public_html/` folder from this package. Package uses `foodonlines-public-entry/` to avoid collisions with other domains or WordPress installs.
+5. Keep `vendor/` excluded from upload if not bundled. Install it on server with Composer.
 
 ## Required cPanel setup
 
@@ -41,6 +43,7 @@ Run these inside backend folder:
 composer install --optimize-autoloader --no-dev
 php artisan key:generate
 php artisan migrate --force
+php artisan db:seed --class=AdminSeeder
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -49,6 +52,12 @@ php artisan view:cache
 ## API
 
 - `POST /api/v1/auth/register`
+- `POST /api/v1/admin/login`
+- `POST /api/v1/admin/logout`
+- `GET /api/v1/admin/me`
+- `GET /api/v1/admin/users`
+- `PUT /api/v1/admin/settings`
+- `GET /api/v1/admin/dashboard-stats`
 
 ## Security
 
@@ -57,8 +66,26 @@ php artisan view:cache
 - CSRF protection: Laravel session/web middleware for web routes.
 - Validation and sanitization: `RegisterUserRequest`.
 - Password hashing: Laravel `Hash::make`.
-- Rate limiting: auth API route uses throttle middleware.
+- Password verification: Laravel `Hash::check`.
+- Rate limiting: auth and admin login API routes use throttle middleware.
+- Admin protection: hashed bearer tokens in `admin_api_tokens` plus `admin.token` middleware.
 - Secrets: use `.env` only. Do not hardcode credentials.
+
+## First admin
+
+Set these in `.env` before seeding:
+
+```bash
+ADMIN_NAME="FoodOnlines Admin"
+ADMIN_EMAIL="your-admin-email@example.com"
+ADMIN_PASSWORD="your-real-strong-password"
+```
+
+Then run:
+
+```bash
+php artisan db:seed --class=AdminSeeder
+```
 
 ## Email system
 
@@ -73,4 +100,5 @@ php artisan view:cache
 ## Notes
 
 - `composer.lock` is not bundled in this package because this workspace has no Composer runtime to generate a valid lock file. Run Composer on server to resolve production dependencies from `composer.json`.
-- `public_html/index.php` is preconfigured to load backend from sibling folder `../foodonlines-backend` and set Laravel public path to actual `public_html`.
+- `foodonlines-public-entry/index.php` is preconfigured to load backend from `/home/CPANEL_USERNAME/foodonlines-backend`.
+- Replace `CPANEL_USERNAME` with your real cPanel username, for example `mstarhol`.

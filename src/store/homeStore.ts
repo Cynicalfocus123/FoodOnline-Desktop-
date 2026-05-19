@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { apiRequest, toRegisterPayload } from "../lib/apiClient";
 import {
   SignupFieldErrors,
   SignupFormValues,
@@ -26,19 +27,23 @@ type HomeState = {
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
   completedSubmission: ReturnType<typeof createSignupSubmission> | null;
+  submissionError: string | null;
+  isSubmittingSignup: boolean;
   openSignup: () => void;
   backToHome: () => void;
   selectRole: (role: string) => void;
   continueToForm: () => void;
   setFormValue: <K extends keyof SignupFormValues>(field: K, value: SignupFormValues[K]) => void;
-  finishSignup: () => void;
+  finishSignup: () => Promise<void>;
 };
 
 export const signupRoleOptions = signupRoles;
 
-function submitSignupToBackend(payload: SignupSubmission) {
-  // Placeholder for future admin/backend integration.
-  return payload;
+async function submitSignupToBackend(payload: SignupSubmission) {
+  await apiRequest("/auth/register", {
+    method: "POST",
+    body: toRegisterPayload(payload),
+  });
 }
 
 export const useHomeStore = create<HomeState>((set, get) => ({
@@ -47,6 +52,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedRole: null,
   ...getBlankSignupState(),
   completedSubmission: null,
+  submissionError: null,
+  isSubmittingSignup: false,
   openSignup: () =>
     set({
       signupView: "signup",
@@ -54,6 +61,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       selectedRole: null,
       ...getBlankSignupState(),
       completedSubmission: null,
+      submissionError: null,
+      isSubmittingSignup: false,
     }),
   backToHome: () =>
     set({
@@ -62,6 +71,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       selectedRole: null,
       ...getBlankSignupState(),
       completedSubmission: null,
+      submissionError: null,
+      isSubmittingSignup: false,
     }),
   selectRole: (role) =>
     set((state) => ({
@@ -113,7 +124,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         },
       };
     }),
-  finishSignup: () => {
+  finishSignup: async () => {
     const { selectedRole, formValues } = get();
     const roleError = validateSignupRole(selectedRole);
     const { cleanedValues, fieldErrors } = sanitizeAndValidateSignupFormValues(formValues, true);
@@ -132,14 +143,26 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }
 
     const payload = createSignupSubmission(selectedRole, cleanedValues);
-    submitSignupToBackend(payload);
-    useAdminStore.getState().ingestSignupSubmission(payload);
+    set({ isSubmittingSignup: true, submissionError: null });
+
+    try {
+      await submitSignupToBackend(payload);
+    } catch {
+      set({
+        formValues: cleanedValues,
+        isSubmittingSignup: false,
+        submissionError: "Unable to submit registration. Please try again.",
+      });
+      return;
+    }
 
     set({
       formValues: cleanedValues,
       fieldErrors: {},
       signupStep: "complete",
       completedSubmission: payload,
+      isSubmittingSignup: false,
+      submissionError: null,
     });
   },
 }));

@@ -15,7 +15,7 @@ class RegisterUserRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'account_type' => $this->sanitizeSimpleValue('account_type'),
+            'role' => $this->sanitizeSimpleValue('role') ?: $this->sanitizeSimpleValue('account_type'),
             'company_name' => $this->sanitizeTextValue('company_name'),
             'contact_number' => $this->sanitizeContactNumber(),
             'email' => $this->sanitizeEmail(),
@@ -33,7 +33,7 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_type' => [
+            'role' => [
                 'required',
                 'string',
                 Rule::in(config('foodonlines.supported_account_types', ['customer', 'supplier', 'partner'])),
@@ -104,7 +104,7 @@ class RegisterUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'account_type.in' => 'Select Customer, Supplier, or Partner.',
+            'role.in' => 'Select Customer, Supplier, or Partner.',
             'company_name.regex' => 'Use letters, numbers, spaces, and basic business punctuation only.',
             'contact_number.regex' => 'Enter a valid contact number with 7 to 15 digits.',
             'email.email' => 'Enter a valid email address.',

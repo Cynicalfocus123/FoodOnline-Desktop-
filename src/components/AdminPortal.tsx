@@ -1,7 +1,5 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
-  AdminRequestStatus,
-  AdminUserAction,
   adminRequestStatusMeta,
   adminRoleTabs,
   adminSecurityChecklist,
@@ -11,19 +9,27 @@ import {
   laravelMySqlBlueprint,
 } from "../data/admin";
 import { SignupRoleKey } from "../lib/registerSchema";
+import { adminApiBaseUrl } from "../lib/runtimeConfig";
 import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 
-const requestActions: Array<{
-  action: AdminUserAction;
-  label: string;
-}> = [
-  { action: "in_review", label: "Move to Review" },
-  { action: "delete", label: "Delete User" },
-];
-
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
+  const token = useAdminStore((state) => state.token);
+  const fetchCurrentAdmin = useAdminStore((state) => state.fetchCurrentAdmin);
+  const fetchStats = useAdminStore((state) => state.fetchStats);
+  const fetchUsers = useAdminStore((state) => state.fetchUsers);
+
+  useEffect(() => {
+    if (!isAuthenticated && token) {
+      void fetchCurrentAdmin().then((success) => {
+        if (success) {
+          void fetchStats();
+          void fetchUsers();
+        }
+      });
+    }
+  }, [fetchCurrentAdmin, fetchStats, fetchUsers, isAuthenticated, token]);
 
   if (!isAuthenticated) {
     return <AdminLoginScreen />;
@@ -36,14 +42,14 @@ function AdminLoginScreen() {
   const authError = useAdminStore((state) => state.authError);
   const securityMessage = useAdminStore((state) => state.securityMessage);
   const loginAdmin = useAdminStore((state) => state.loginAdmin);
-  const [adminIdentity, setAdminIdentity] = useState("Mock Admin");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
-    await loginAdmin(adminIdentity, password);
+    await loginAdmin(email, password);
     setIsSubmitting(false);
   }
 
@@ -53,9 +59,7 @@ function AdminLoginScreen() {
         <section className="w-full rounded-[32px] border border-neutral-200 bg-white p-8 shadow-soft sm:p-10">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-citrus-500">
-                Admin Sign In
-              </p>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-citrus-500">Admin Sign In</p>
               <h1 className="mt-3 text-3xl font-black text-ink">Open admin dashboard</h1>
             </div>
             <a
@@ -67,17 +71,21 @@ function AdminLoginScreen() {
           </div>
 
           <p className="mt-5 text-sm leading-7 text-neutral-600">{securityMessage}</p>
+          <p className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+            API target: {adminApiBaseUrl}
+          </p>
 
           <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
             <label className="grid gap-2">
-              <span className="text-sm font-bold text-neutral-700">Admin</span>
+              <span className="text-sm font-bold text-neutral-700">Admin email</span>
               <input
                 autoComplete="username"
                 className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-                maxLength={120}
-                onChange={(event) => setAdminIdentity(event.target.value)}
-                type="text"
-                value={adminIdentity}
+                inputMode="email"
+                maxLength={254}
+                onChange={(event) => setEmail(event.target.value)}
+                type="email"
+                value={email}
               />
             </label>
 
@@ -115,15 +123,15 @@ function AdminLoginScreen() {
 
 function AdminDashboard() {
   const adminEmail = useAdminStore((state) => state.adminEmail);
-  const sessionAdminLabel = useAdminStore((state) => state.sessionAdminLabel);
+  const adminName = useAdminStore((state) => state.adminName);
   const lastLoginAt = useAdminStore((state) => state.lastLoginAt);
   const users = useAdminStore((state) => state.users);
   const auditLog = useAdminStore((state) => state.auditLog);
   const activeSidebarKey = useAdminStore((state) => state.activeSidebarKey);
   const activeUsersTab = useAdminStore((state) => state.activeUsersTab);
+  const stats = useAdminStore((state) => state.stats);
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
-  const applyUserAction = useAdminStore((state) => state.applyUserAction);
   const logoutAdmin = useAdminStore((state) => state.logoutAdmin);
 
   const filteredUsers = useMemo(
@@ -131,28 +139,13 @@ function AdminDashboard() {
     [activeUsersTab, users],
   );
 
-  const stats = useMemo(() => {
-    const totalApproved = users.filter((user) => user.requestStatus === "approved").length;
-    const totalNeedsReview = users.filter((user) => user.requestStatus === "in_review").length;
-    const totalCurrentTab = users.filter((user) => user.selectedRole === activeUsersTab).length;
-
-    return {
-      totalUsers: users.length,
-      totalApproved,
-      totalNeedsReview,
-      totalCurrentTab,
-    };
-  }, [activeUsersTab, users]);
-
   return (
     <main className="min-h-screen bg-[#f5f7f4] text-ink">
       <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col lg:flex-row">
         <aside className="border-b border-neutral-200 bg-[#112017] px-5 py-6 text-white lg:min-h-screen lg:w-[290px] lg:border-b-0 lg:border-r lg:px-6">
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-200">FoodOnline</p>
           <h1 className="mt-4 text-3xl font-black">Admin Console</h1>
-          <p className="mt-3 text-sm leading-7 text-emerald-50/80">
-            Standalone mock backend control room. Safe UI now, Laravel + MySQL later.
-          </p>
+          <p className="mt-3 text-sm leading-7 text-emerald-50/80">Laravel + MySQL admin dashboard.</p>
 
           <div className="mt-8 grid gap-3">
             {adminSidebarItems.map((item) => {
@@ -179,11 +172,9 @@ function AdminDashboard() {
 
           <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-bold text-emerald-100">Signed in as</p>
-            <p className="mt-2 break-all text-sm font-semibold text-white">
-              {sessionAdminLabel || adminEmail}
-            </p>
+            <p className="mt-2 break-all text-sm font-semibold text-white">{adminName || adminEmail}</p>
             <p className="mt-2 text-xs text-emerald-100/70">
-              Last login: {lastLoginAt ? formatDateTime(lastLoginAt) : "First session"}
+              Last login: {lastLoginAt ? formatDateTime(lastLoginAt) : "Current session"}
             </p>
           </div>
 
@@ -196,7 +187,7 @@ function AdminDashboard() {
             </a>
             <button
               className="min-h-12 rounded-full bg-white px-4 text-sm font-black text-[#112017] transition hover:bg-emerald-100"
-              onClick={logoutAdmin}
+              onClick={() => void logoutAdmin()}
               type="button"
             >
               Log Out
@@ -206,10 +197,10 @@ function AdminDashboard() {
 
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="All signup records" value={String(stats.totalUsers)} light />
-            <MetricCard label="Instantly approved" value={String(stats.totalApproved)} light />
-            <MetricCard label="In review" value={String(stats.totalNeedsReview)} light />
-            <MetricCard label="Current role total" value={String(stats.totalCurrentTab)} light />
+            <MetricCard label="All users" value={String(stats.total_users)} light />
+            <MetricCard label="Customers" value={String(stats.customers)} light />
+            <MetricCard label="Suppliers" value={String(stats.suppliers)} light />
+            <MetricCard label="Partners" value={String(stats.partners)} light />
           </div>
 
           <div className="mt-6">
@@ -218,7 +209,6 @@ function AdminDashboard() {
               <UsersPanel
                 activeUsersTab={activeUsersTab}
                 filteredUsers={filteredUsers}
-                onApplyAction={applyUserAction}
                 onChangeTab={setActiveUsersTab}
               />
             ) : null}
@@ -238,8 +228,8 @@ function OverviewPanel({
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
       <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
-        <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Laravel Handoff Blueprint</p>
-        <h2 className="mt-3 text-3xl font-black text-ink">Backend map for real admin system</h2>
+        <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Laravel + MySQL</p>
+        <h2 className="mt-3 text-3xl font-black text-ink">Real admin API map</h2>
 
         <div className="mt-8 grid gap-4">
           {laravelMySqlBlueprint.tables.map((table) => (
@@ -251,47 +241,29 @@ function OverviewPanel({
         </div>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-3xl border border-neutral-100 bg-white p-5">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-700">Routes</p>
-            <div className="mt-3 grid gap-2 text-sm leading-7 text-neutral-600">
-              {laravelMySqlBlueprint.routes.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-3xl border border-neutral-100 bg-white p-5">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-700">Middleware + validation</p>
-            <div className="mt-3 grid gap-2 text-sm leading-7 text-neutral-600">
-              {[...laravelMySqlBlueprint.middleware, ...laravelMySqlBlueprint.validation].map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </div>
+          <InfoList title="Routes" items={laravelMySqlBlueprint.routes} />
+          <InfoList title="Security" items={[...laravelMySqlBlueprint.middleware, ...laravelMySqlBlueprint.validation]} />
         </div>
       </section>
 
       <section className="grid gap-6">
-        <div className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Security checks</p>
-          <div className="mt-5 grid gap-3 text-sm leading-7 text-neutral-600">
-            {adminSecurityChecklist.map((item) => (
-              <p key={item}>{item}</p>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Audit preview</p>
+        <InfoCard title="Security checks" items={adminSecurityChecklist} />
+        <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
+          <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Session audit</p>
           <div className="mt-5 grid gap-4">
-            {auditLog.map((entry) => (
-              <div className="rounded-3xl border border-neutral-100 bg-neutral-50 p-4" key={entry.id}>
-                <p className="text-sm font-black text-ink">{entry.action}</p>
-                <p className="mt-2 text-sm leading-6 text-neutral-600">{entry.detail}</p>
-                <p className="mt-2 text-xs font-semibold text-neutral-500">{formatDateTime(entry.createdTimestamp)}</p>
-              </div>
-            ))}
+            {auditLog.length === 0 ? (
+              <p className="text-sm font-semibold text-neutral-500">No local admin session events yet.</p>
+            ) : (
+              auditLog.map((entry) => (
+                <div className="rounded-3xl border border-neutral-100 bg-neutral-50 p-4" key={entry.id}>
+                  <p className="text-sm font-black text-ink">{entry.action}</p>
+                  <p className="mt-2 text-sm leading-6 text-neutral-600">{entry.detail}</p>
+                  <p className="mt-2 text-xs font-semibold text-neutral-500">{formatDateTime(entry.createdTimestamp)}</p>
+                </div>
+              ))
+            )}
           </div>
-        </div>
+        </section>
       </section>
     </div>
   );
@@ -300,12 +272,10 @@ function OverviewPanel({
 function UsersPanel({
   activeUsersTab,
   filteredUsers,
-  onApplyAction,
   onChangeTab,
 }: {
   activeUsersTab: SignupRoleKey;
   filteredUsers: ReturnType<typeof useAdminStore.getState>["users"];
-  onApplyAction: (userId: string, action: AdminUserAction) => void;
   onChangeTab: (tab: SignupRoleKey) => void;
 }) {
   return (
@@ -313,10 +283,9 @@ function UsersPanel({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Users</p>
-          <h2 className="mt-3 text-3xl font-black text-ink">Signup queue and user intake tables</h2>
+          <h2 className="mt-3 text-3xl font-black text-ink">Database users</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
-            All public registration fields render as safe plain text in admin tables. No raw HTML, no direct script
-            execution, no unsafe interpolation.
+            Showing MySQL users by role from protected Laravel admin API.
           </p>
         </div>
         <div className="rounded-3xl border border-neutral-100 bg-neutral-50 px-5 py-4 text-sm font-semibold text-neutral-700">
@@ -346,7 +315,7 @@ function UsersPanel({
 
       <div className="mt-8 overflow-hidden rounded-[28px] border border-neutral-100">
         <div className="overflow-x-auto bg-white">
-          <table className="min-w-[1180px] w-full border-collapse text-left">
+          <table className="min-w-[1080px] w-full border-collapse text-left">
             <thead className="bg-neutral-50">
               <tr>
                 {adminTableColumns.map((column) => (
@@ -357,35 +326,40 @@ function UsersPanel({
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user) => {
-                const statusMeta = adminRequestStatusMeta[user.requestStatus];
-                return (
-                  <tr className="border-t border-neutral-100 align-top" key={user.id}>
-                    <td className="px-4 py-4 text-sm font-semibold text-ink">{user.emailAddress}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{user.firstName}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{user.lastName}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{user.contactNumber}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{user.lineId || "Not provided"}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">
-                      <p className="font-semibold text-ink">{user.companyName}</p>
-                      <p className="mt-1 text-xs leading-5 text-neutral-500">{user.notes}</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusMeta.classes}`}>
-                        {statusMeta.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{user.sourceLabel}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">{formatDateTime(user.createdTimestamp)}</td>
-                    <td className="px-4 py-4 text-sm text-neutral-700">
-                      {user.reviewedAt ? formatDateTime(user.reviewedAt) : "Not reviewed"}
-                    </td>
-                    <td className="px-4 py-4">
-                      <ActionDropdown userId={user.id} onApplyAction={onApplyAction} />
-                    </td>
-                  </tr>
-                );
-              })}
+              {filteredUsers.length === 0 ? (
+                <tr className="border-t border-neutral-100">
+                  <td className="px-4 py-8 text-center text-sm font-semibold text-neutral-500" colSpan={adminTableColumns.length}>
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => {
+                  const statusMeta = adminRequestStatusMeta[user.requestStatus];
+                  return (
+                    <tr className="border-t border-neutral-100 align-top" key={user.id}>
+                      <td className="px-4 py-4 text-sm font-semibold text-ink">{user.emailAddress}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{user.firstName || "Not provided"}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{user.lastName || "Not provided"}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{user.contactNumber || "Not provided"}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{user.lineId || "Not provided"}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">
+                        <p className="font-semibold text-ink">{user.companyName || "Not provided"}</p>
+                        <p className="mt-1 text-xs leading-5 text-neutral-500">{user.notes}</p>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusMeta.classes}`}>
+                          {statusMeta.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{user.sourceLabel}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">{formatDateTime(user.createdTimestamp)}</td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">
+                        {user.reviewedAt ? formatDateTime(user.reviewedAt) : "Not updated"}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -394,48 +368,14 @@ function UsersPanel({
   );
 }
 
-function ActionDropdown({
-  userId,
-  onApplyAction,
-}: {
-  userId: string;
-  onApplyAction: (userId: string, action: AdminUserAction) => void;
-}) {
-  const [selectedAction, setSelectedAction] = useState("");
-
-  return (
-    <div className="relative min-w-[180px]">
-      <select
-        className="min-h-11 w-full appearance-none rounded-2xl border border-neutral-200 bg-white px-4 pr-10 text-sm font-bold text-neutral-700 outline-none transition hover:border-citrus-400 focus:border-citrus-500"
-        onChange={(event) => {
-          const nextAction = event.target.value as AdminUserAction | "";
-          setSelectedAction("");
-          if (nextAction) {
-            onApplyAction(userId, nextAction);
-          }
-        }}
-        value={selectedAction}
-      >
-        <option value="">Choose action</option>
-        {requestActions.map((action) => (
-          <option key={`${userId}-${action.action}`} value={action.action}>
-            {action.label}
-          </option>
-        ))}
-      </select>
-      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-neutral-400">
-        v
-      </span>
-    </div>
-  );
-}
-
 function AdminSettingsPanel() {
   const adminEmail = useAdminStore((state) => state.adminEmail);
+  const adminName = useAdminStore((state) => state.adminName);
   const securityMessage = useAdminStore((state) => state.securityMessage);
   const settingsMessage = useAdminStore((state) => state.settingsMessage);
   const updateAdminCredentials = useAdminStore((state) => state.updateAdminCredentials);
   const [currentPassword, setCurrentPassword] = useState("");
+  const [nextName, setNextName] = useState(adminName);
   const [nextEmail, setNextEmail] = useState(adminEmail);
   const [nextPassword, setNextPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -444,7 +384,7 @@ function AdminSettingsPanel() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
-    const success = await updateAdminCredentials(currentPassword, nextEmail, nextPassword, confirmPassword);
+    const success = await updateAdminCredentials(currentPassword, nextName, nextEmail, nextPassword, confirmPassword);
     setIsSaving(false);
 
     if (success) {
@@ -458,54 +398,14 @@ function AdminSettingsPanel() {
     <section className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
       <div className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
         <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Admin Settings</p>
-        <h2 className="mt-3 text-3xl font-black text-ink">Rotate admin email and password</h2>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
-          Phase 1 stores only salted local hash placeholder data. Future Laravel phase must move credential checks,
-          session cookies, CSRF, throttle middleware, and audit persistence to server.
-        </p>
+        <h2 className="mt-3 text-3xl font-black text-ink">Update admin profile</h2>
 
         <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-neutral-700">Current password</span>
-            <input
-              className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-              maxLength={128}
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              type="password"
-              value={currentPassword}
-            />
-          </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-neutral-700">New admin email</span>
-            <input
-              className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-              inputMode="email"
-              maxLength={254}
-              onChange={(event) => setNextEmail(event.target.value)}
-              type="email"
-              value={nextEmail}
-            />
-          </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-neutral-700">New password</span>
-            <input
-              className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-              maxLength={128}
-              onChange={(event) => setNextPassword(event.target.value)}
-              type="password"
-              value={nextPassword}
-            />
-          </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-neutral-700">Confirm new password</span>
-            <input
-              className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
-              maxLength={128}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              type="password"
-              value={confirmPassword}
-            />
-          </label>
+          <TextInput label="Admin name" maxLength={121} onChange={setNextName} type="text" value={nextName} />
+          <TextInput label="Admin email" maxLength={254} onChange={setNextEmail} type="email" value={nextEmail} />
+          <PasswordInput label="Current password" onChange={setCurrentPassword} value={currentPassword} />
+          <PasswordInput label="New password" onChange={setNextPassword} value={nextPassword} />
+          <PasswordInput label="Confirm new password" onChange={setConfirmPassword} value={confirmPassword} />
 
           {settingsMessage ? (
             <p className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-700">
@@ -518,7 +418,7 @@ function AdminSettingsPanel() {
             disabled={isSaving}
             type="submit"
           >
-            {isSaving ? "Updating..." : "Update Credentials"}
+            {isSaving ? "Updating..." : "Update Settings"}
           </button>
         </form>
       </div>
@@ -526,33 +426,90 @@ function AdminSettingsPanel() {
       <div className="grid gap-6">
         <div className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
           <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Current status</p>
-          <p className="mt-4 break-all text-lg font-black text-ink">{adminEmail}</p>
+          <p className="mt-4 break-all text-lg font-black text-ink">{adminName || adminEmail}</p>
           <p className="mt-3 text-sm leading-7 text-neutral-600">{securityMessage}</p>
+          <p className="mt-3 text-sm font-bold text-emerald-700">API base: {adminApiBaseUrl}</p>
         </div>
-
-        <div className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Server TODO</p>
-          <div className="mt-4 grid gap-3 text-sm leading-7 text-neutral-600">
-            <p>`admins` migration with unique email index and hashed password column.</p>
-            <p>Controller validation via `FormRequest` classes for login and credential rotation.</p>
-            <p>`Hash::make` and `Hash::check` only on server, never client.</p>
-            <p>Protected admin middleware group with secure session cookies and CSRF.</p>
-          </div>
-        </div>
+        <InfoCard
+          title="Server security"
+          items={[
+            "Current password required before settings update.",
+            "New password is hashed by Laravel before saving.",
+            "Admin token is revoked on logout.",
+            "Password is never returned to the browser.",
+          ]}
+        />
       </div>
     </section>
   );
 }
 
-function MetricCard({
+function TextInput({
   label,
+  maxLength,
+  onChange,
+  type,
   value,
-  light = false,
 }: {
   label: string;
+  maxLength: number;
+  onChange: (value: string) => void;
+  type: string;
   value: string;
-  light?: boolean;
 }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm font-bold text-neutral-700">{label}</span>
+      <input
+        className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
+        maxLength={maxLength}
+        onChange={(event) => onChange(event.target.value)}
+        type={type}
+        value={value}
+      />
+    </label>
+  );
+}
+
+function PasswordInput({
+  label,
+  onChange,
+  value,
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  return <TextInput label={label} maxLength={128} onChange={onChange} type="password" value={value} />;
+}
+
+function InfoList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-3xl border border-neutral-100 bg-white p-5">
+      <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-700">{title}</p>
+      <div className="mt-3 grid gap-2 text-sm leading-7 text-neutral-600">
+        {items.map((item) => (
+          <p key={item}>{item}</p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoCard({ title, items }: { title: string; items: string[] }) {
+  return (
+    <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
+      <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">{title}</p>
+      <div className="mt-5 grid gap-3 text-sm leading-7 text-neutral-600">
+        {items.map((item) => (
+          <p key={item}>{item}</p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MetricCard({ label, value, light = false }: { label: string; value: string; light?: boolean }) {
   return (
     <div
       className={`rounded-[28px] border p-5 ${

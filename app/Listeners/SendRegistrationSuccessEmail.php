@@ -45,7 +45,7 @@ class SendRegistrationSuccessEmail
 
     private function resolveAccountType(object $user): string
     {
-        $role = $this->stringValue($user->account_type ?? $user->role ?? $user->user_type ?? null);
+        $role = $this->stringValue($user->role ?? $user->account_type ?? $user->user_type ?? null);
         $normalizedRole = strtolower($role ?? 'customer');
 
         return match ($normalizedRole) {

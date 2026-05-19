@@ -23,15 +23,17 @@ export function SignupFlow() {
   const formValues = useHomeStore((state) => state.formValues);
   const fieldErrors = useHomeStore((state) => state.fieldErrors);
   const completedSubmission = useHomeStore((state) => state.completedSubmission);
+  const isSubmittingSignup = useHomeStore((state) => state.isSubmittingSignup);
+  const submissionError = useHomeStore((state) => state.submissionError);
   const selectRole = useHomeStore((state) => state.selectRole);
   const continueToForm = useHomeStore((state) => state.continueToForm);
   const setFormValue = useHomeStore((state) => state.setFormValue);
   const finishSignup = useHomeStore((state) => state.finishSignup);
   const backToHome = useHomeStore((state) => state.backToHome);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    finishSignup();
+    await finishSignup();
   }
 
   if (signupStep === "complete" && completedSubmission) {
@@ -120,10 +122,12 @@ export function SignupFlow() {
               })}
               <button
                 className="mt-2 min-h-14 rounded-md bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600"
+                disabled={isSubmittingSignup}
                 type="submit"
               >
-                Finish
+                {isSubmittingSignup ? "Submitting..." : "Finish"}
               </button>
+              {submissionError ? <p className="text-sm font-semibold text-red-600">{submissionError}</p> : null}
             </form>
           </div>
         </div>

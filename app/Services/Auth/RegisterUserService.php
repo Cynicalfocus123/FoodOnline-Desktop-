@@ -20,16 +20,16 @@ class RegisterUserService
             $lastName = trim((string) $validated['last_name']);
 
             $user = User::query()->create([
-                'account_type' => (string) $validated['account_type'],
                 'company_name' => trim((string) $validated['company_name']),
-                'contact_number' => trim((string) $validated['contact_number']),
                 'email' => strtolower(trim((string) $validated['email'])),
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'line_id' => $this->nullableString($validated['line_id'] ?? null),
                 'name' => trim($firstName.' '.$lastName),
                 'password' => $this->hashPassword($validated['password'] ?? null),
+                'phone' => trim((string) $validated['contact_number']),
                 'registered_from' => $this->nullableString($validated['registered_from'] ?? 'website') ?? 'website',
+                'role' => (string) $validated['role'],
                 'status' => 'active',
             ]);
 
