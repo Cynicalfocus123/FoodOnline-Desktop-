@@ -27,7 +27,7 @@
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
 - Signup and login password fields include compact eye toggles, preserving the current form layout.
-- Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint and includes both `password` and `password_confirmation` so mobile confirmation values match Laravel validation.
+- Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint with the same payload used by the last known working desktop signup.
 - Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
 - Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
@@ -52,6 +52,7 @@
 - No visual design changes in admin API connection fix. Admin page now calls correct Laravel API host behind the scenes.
 - Frontend auth fix made no redesign changes. Only guest controls were removed, password eye toggles added, signup validation messaging improved, and signup banner sizing aligned with login.
 - Mobile signup fix made no visual design changes. It aligned mobile signup with the same shared Laravel registration submit logic, added `password_confirmation`, preserved password eye toggles, and generated cPanel ZIP `foodonlines-mobile-signup-fix.zip`.
+- Signup regression fix made no visual design changes. It restored the previous working signup payload keys, kept the shared desktop/mobile flow, preserved password eye toggles and banner sizing, improved server error display, and generated cPanel ZIP `foodonlines-signup-regression-fix.zip`.
 
 ## Guardrails
 

@@ -40,23 +40,33 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const contentType = response.headers.get("content-type") ?? "";
+  const responseText = await response.text();
+  const payload = ((): { errors?: Record<string, string[]>; message?: string } => {
+    if (!contentType.includes("application/json") || !responseText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(responseText) as { errors?: Record<string, string[]>; message?: string };
+    } catch {
+      return {};
+    }
+  })();
+  const fallbackMessage = responseText
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
+  const responseMessage = payload.message || fallbackMessage || "Request failed.";
 
   if (import.meta.env.DEV) {
     console.info("[FoodOnlines API response]", {
       endpointUrl,
       method,
       status: response.status,
+      message: responseMessage,
     });
   }
-
-  if (contentType.includes("text/html")) {
-    throw new ApiError("API URL is pointing to frontend, not Laravel backend. Check API_BASE_URL.", response.status);
-  }
-
-  const payload = (await response.json().catch(() => ({}))) as {
-    errors?: Record<string, string[]>;
-    message?: string;
-  };
 
   if (!response.ok) {
     if (import.meta.env.DEV) {
@@ -64,11 +74,11 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
         endpointUrl,
         method,
         status: response.status,
-        message: payload.message || "Request failed.",
+        message: responseMessage,
       });
     }
 
-    throw new ApiError(payload.message || "Request failed.", response.status, payload.errors ?? {});
+    throw new ApiError(`Request failed (${response.status}): ${responseMessage}`, response.status, payload.errors ?? {});
   }
 
   return payload as T;
@@ -84,7 +94,6 @@ export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: Signu
     line_id: formValues.lineId || null,
     company_name: formValues.companyName,
     password: formValues.password,
-    password_confirmation: formValues.confirmPassword,
     registered_from: "main_public_frontend",
   };
 }

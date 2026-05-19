@@ -56,7 +56,6 @@ function mapRegisterFieldErrors(error: ApiError): SignupFieldErrors {
     lineId: error.fieldErrors.line_id?.[0],
     companyName: error.fieldErrors.company_name?.[0],
     password: error.fieldErrors.password?.[0],
-    confirmPassword: error.fieldErrors.password_confirmation?.[0],
   };
 }
 
@@ -175,10 +174,11 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     } catch (error) {
       const backendFieldErrors = error instanceof ApiError ? mapRegisterFieldErrors(error) : {};
       const hasBackendFieldErrors = Object.values(backendFieldErrors).some(Boolean);
+      const firstBackendFieldError = Object.values(backendFieldErrors).find(Boolean);
       const backendErrorMessage =
         error instanceof ApiError
           ? hasBackendFieldErrors
-            ? "Please fix the highlighted fields and submit again."
+            ? (firstBackendFieldError ?? "Please fix the highlighted fields and submit again.")
             : error.message
           : "Unable to submit registration. Please try again.";
 
