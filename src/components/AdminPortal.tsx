@@ -77,7 +77,7 @@ function AdminLoginScreen() {
 
           <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
             <label className="grid gap-2">
-              <span className="text-sm font-bold text-neutral-700">Admin email</span>
+              <span className="text-sm font-bold text-neutral-700">Email</span>
               <input
                 autoComplete="username"
                 className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"

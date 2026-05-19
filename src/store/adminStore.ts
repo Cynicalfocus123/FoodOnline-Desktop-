@@ -106,7 +106,7 @@ function toAdminUserRecord(user: ApiManagedUser): AdminUserRecord {
 
 function cleanError(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
-    return error.status === 401 ? "Invalid admin email or password." : error.message;
+    return error.status === 401 ? "Invalid email or password" : error.message;
   }
 
   return fallback;
