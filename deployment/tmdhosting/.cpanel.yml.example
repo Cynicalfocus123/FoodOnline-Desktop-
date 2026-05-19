@@ -1,0 +1,6 @@
+deployment:
+  tasks:
+    - export APP_ROOT=$HOME/foodonlines-backend
+    - export PUBLIC_ROOT=$HOME/public_html
+    - /bin/mkdir -p $PUBLIC_ROOT
+    - /bin/cp -R $APP_ROOT/public/. $PUBLIC_ROOT/

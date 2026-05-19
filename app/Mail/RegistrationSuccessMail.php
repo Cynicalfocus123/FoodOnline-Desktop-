@@ -90,7 +90,8 @@ class RegistrationSuccessMail extends Mailable
 
     private function resolveFrontendUrl(): string
     {
-        $url = config('app.frontend_url')
+        $url = config('foodonlines.frontend_url')
+            ?: config('app.frontend_url')
             ?: env('FRONTEND_URL')
             ?: config('app.url');
 

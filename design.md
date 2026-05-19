@@ -37,6 +37,8 @@
 - Action column now uses one styled dropdown control instead of multiple stacked buttons, with only `Move to Review` and `Delete User`.
 - Table design shows all frontend signup fields plus request-management metadata so later Laravel + MySQL backend can map one-to-one into real migrations and admin screens.
 - Security presentation should stay visible in admin design: generic login errors where needed, safe text rendering, archive-not-delete actions, and Laravel handoff notes for CSRF, rate limiting, hashing, and audit logs.
+- Backend scaffold now targets Laravel API registration path `POST /api/v1/auth/register`, backed by `users` table fields for `customer`, `supplier`, and `partner` roles plus registration success email dispatch.
+- TMDHosting/cPanel deployment design should keep Laravel app outside `public_html`, expose only backend `public/`, and use `.env` for MySQL, mail, app URL, and `FRONTEND_URL`.
 
 ## Guardrails
 

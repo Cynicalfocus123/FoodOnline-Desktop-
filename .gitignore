@@ -4,3 +4,12 @@ dist/
 .vite/
 *.local
 *.log
+.env
+vendor/
+bootstrap/cache/*.php
+storage/*.key
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/logs/*
