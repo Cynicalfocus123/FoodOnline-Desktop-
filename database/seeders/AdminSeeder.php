@@ -12,11 +12,11 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $name = trim((string) env('ADMIN_NAME', 'FoodOnlines Admin'));
-        $email = strtolower(trim((string) env('ADMIN_EMAIL', '')));
-        $password = (string) env('ADMIN_PASSWORD', '');
-        $contactNumber = trim((string) env('ADMIN_CONTACT_NUMBER', '0000000000'));
-        $companyName = trim((string) env('ADMIN_COMPANY_NAME', 'FoodOnlines.com'));
+        $name = trim((string) config('foodonlines.admin.name', 'FoodOnlines Admin'));
+        $email = strtolower(trim((string) config('foodonlines.admin.email', '')));
+        $password = (string) config('foodonlines.admin.password', '');
+        $contactNumber = trim((string) config('foodonlines.admin.contact_number', '0000000000'));
+        $companyName = trim((string) config('foodonlines.admin.company_name', 'FoodOnlines.com'));
         [$firstName, $lastName] = $this->splitName($name);
 
         if ($email === '') {
