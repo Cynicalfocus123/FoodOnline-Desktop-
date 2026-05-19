@@ -4,6 +4,7 @@ dist/
 .vite/
 *.local
 *.log
+*.zip
 .env
 vendor/
 bootstrap/cache/*.php

@@ -136,7 +136,7 @@
                                     <td style="padding-top:24px; border-top:1px solid #e7ece4;" class="email-footer">
                                         <div style="font-size:13px; line-height:22px; color:#5f655d; text-align:center;">
                                             You are receiving this email because you signed up for an account at FoodOnlines.com.<br>
-                                            If you no longer wish to receive emails from us, you can unsubscribe to opt out.
+                                            You can unsubscribe to opt out.
                                         </div>
                                     </td>
                                 </tr>
