@@ -15,38 +15,44 @@ class AdminSeeder extends Seeder
         $name = trim((string) env('ADMIN_NAME', 'FoodOnlines Admin'));
         $email = strtolower(trim((string) env('ADMIN_EMAIL', '')));
         $password = (string) env('ADMIN_PASSWORD', '');
+        $contactNumber = trim((string) env('ADMIN_CONTACT_NUMBER', '0000000000'));
+        $companyName = trim((string) env('ADMIN_COMPANY_NAME', 'FoodOnlines.com'));
         [$firstName, $lastName] = $this->splitName($name);
 
-        if ($email === '' || $password === '' || $password === 'change-this-password') {
-            throw new RuntimeException('Set ADMIN_EMAIL and a real ADMIN_PASSWORD in .env before running AdminSeeder.');
+        if ($email === '') {
+            throw new RuntimeException('Set ADMIN_EMAIL in .env before running AdminSeeder.');
+        }
+
+        if ($password === '' || $password === 'change-this-password') {
+            throw new RuntimeException('Set ADMIN_PASSWORD to a real value in .env before running AdminSeeder.');
         }
 
         $values = [
             'name' => $name,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'password' => Hash::make($password),
+            'company_name' => $companyName !== '' ? $companyName : 'FoodOnlines.com',
+            'role' => 'admin',
+            'status' => 'active',
+            'registered_from' => 'seeder',
         ];
 
-        if (Schema::hasColumn('users', 'first_name')) {
-            $values['first_name'] = $firstName;
+        if (Schema::hasColumn('users', 'contact_number')) {
+            $values['contact_number'] = $contactNumber !== '' ? $contactNumber : '0000000000';
         }
 
-        if (Schema::hasColumn('users', 'last_name')) {
-            $values['last_name'] = $lastName;
+        if (Schema::hasColumn('users', 'phone')) {
+            $values['phone'] = $contactNumber !== '' ? $contactNumber : '0000000000';
         }
 
-        if (Schema::hasColumn('users', 'role')) {
-            $values['role'] = 'admin';
-        }
+        $allowedColumns = array_filter(
+            $values,
+            static fn (string $column): bool => Schema::hasColumn('users', $column),
+            ARRAY_FILTER_USE_KEY,
+        );
 
-        if (Schema::hasColumn('users', 'status')) {
-            $values['status'] = 'active';
-        }
-
-        if (Schema::hasColumn('users', 'registered_from')) {
-            $values['registered_from'] = 'seeder';
-        }
-
-        User::query()->updateOrCreate(['email' => $email], $values);
+        User::query()->updateOrCreate(['email' => $email], $allowedColumns);
     }
 
     /**
