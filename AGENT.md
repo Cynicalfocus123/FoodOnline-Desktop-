@@ -28,8 +28,9 @@
 - Public signup keeps the latest homepage/header/hero/category/deals/footer design, but now adds minimal live auth UI only: register password fields, login page, guest path, persisted account state, and logout.
 - Public registration source label now sends `registered_from=main_public_frontend` so new records can be identified in backend/admin tables.
 - Public frontend upload output now lives in `frontend-upload/`. ZIP artifact is `D:\Foodonline desktop version\foodonlines-main-live-frontend-upload.zip`.
-- ZIP contents are public-only frontend files: `index.html`, `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`. Admin HTML/backend code are excluded from this ZIP.
+- ZIP contents are now corrected split-entry deploy files: `index.html` public frontend, `admin.html` admin app, `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
 - Safe checks run for this change set: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Production packaging fix on 2026-05-19: verified `dist/index.html` loads `./assets/main-B2NKpiM4.js` with title `FoodOnlines | Fresh Food Delivery`, while `dist/admin.html` loads `./assets/admin-BMUjBCaR.js` with title `FoodOnlines Admin Dashboard`. `.htaccess` now routes `admin` to `admin.html` and all other SPA paths to public `index.html`.
 
 ## Backend/Admin Notes
 

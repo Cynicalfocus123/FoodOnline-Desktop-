@@ -44,7 +44,8 @@
 - Security presentation should stay visible in admin design: generic login errors where needed, safe text rendering, archive-not-delete actions, and Laravel handoff notes for CSRF, rate limiting, hashing, and audit logs.
 - Backend scaffold now targets Laravel API auth paths `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout`, and `GET /api/v1/auth/me`, with admin live users on `GET /api/v1/admin/users?account_type=...`.
 - TMDHosting/cPanel deployment design should keep Laravel app outside `public_html`, expose only backend `public/`, and use `.env` for MySQL, mail, app URL, and `FRONTEND_URL`.
-- Public cPanel output is the `frontend-upload/` folder plus ZIP `foodonlines-main-live-frontend-upload.zip`, containing only `index.html`, `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
+- Public cPanel output is the `frontend-upload/` folder plus ZIP `foodonlines-main-live-frontend-upload.zip`, containing `index.html` for public, `admin.html` for admin, shared `assets/`, `.htaccess`, and `DEPLOYMENT-INSTRUCTIONS.txt`.
+- Deployment routing must preserve split entries: `index.html` must always load the public `main-*.js` bundle, `admin.html` must always load the admin `admin-*.js` bundle, and `.htaccess` must rewrite `/admin` to `admin.html` while all other SPA paths fall back to public `index.html`.
 
 ## Guardrails
 

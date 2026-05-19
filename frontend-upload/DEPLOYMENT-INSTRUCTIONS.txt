@@ -1,5 +1,5 @@
-FoodOnlines Main Public Frontend Upload
-======================================
+FoodOnlines Main Frontend + Admin Upload
+========================================
 
 ZIP name
 - foodonlines-main-live-frontend-upload.zip
@@ -10,70 +10,48 @@ Upload location
 3. Upload foodonlines-main-live-frontend-upload.zip there.
 4. Extract the ZIP inside public_html/app/
 
-Safer first test path
-- https://foodonlines.com/app/
+Route split
+- `/` or `/app/` serves `index.html` public frontend.
+- `/admin` or `/app/admin` rewrites to `admin.html` admin app.
+
+Files included
+- index.html
+- admin.html
+- assets/
+- .htaccess
+- DEPLOYMENT-INSTRUCTIONS.txt
 
 Backend files and folders NOT to touch
 - Do not overwrite Laravel backend files already serving the API.
 - Do not overwrite backend/public/.htaccess
 - Do not move or rename backend app/, bootstrap/, config/, database/, routes/, storage/, vendor/, or .env
-- Do not overwrite admin dashboard deployment unless you intentionally deploy admin separately.
 
 API base URL config
 - Frontend config file: src/lib/runtimeConfig.ts
-- Default API base URL used by this package: https://foodonlines.com/api/v1
+- Default API base URL: https://foodonlines.com/api/v1
 
 Live endpoints used
 - Register: POST /api/v1/auth/register
 - Login: POST /api/v1/auth/login
 - Current user: GET /api/v1/auth/me
 - Logout: POST /api/v1/auth/logout
-- Admin users list: GET /api/v1/admin/users?account_type=customer
-- Admin users list: GET /api/v1/admin/users?account_type=supplier
-- Admin users list: GET /api/v1/admin/users?account_type=partner
+- Admin users: GET /api/v1/admin/users?account_type=customer|supplier|partner
 
-Register test
+Quick test
 1. Open https://foodonlines.com/app/
-2. Click Register.
-3. Create one Customer account.
-4. Create one Supplier account.
-5. Create one Partner account.
-6. Wait for each success message, then go to Login.
+2. Confirm homepage title and public frontend load.
+3. Open https://foodonlines.com/app/admin
+4. Confirm admin app loads separately.
+5. Test public register/login.
+6. Confirm admin Users tabs show new backend records.
 
-Admin test
-1. Log in to the admin dashboard you already use.
-2. Open Users.
-3. Click Customers and confirm the customer record appears.
-4. Click Suppliers and confirm the supplier record appears.
-5. Click Partners and confirm the partner record appears.
-6. Check email, first name, last name, contact number, LINE ID, company name, registered date, status, and source.
+If white screen happens
+1. Confirm index.html and admin.html both extracted beside assets/.
+2. Confirm assets/ contains both `main-*.js` and `admin-*.js`.
+3. Hard refresh browser cache.
+4. Check browser Network tab for missing files.
 
-Login test
-1. Return to https://foodonlines.com/app/
-2. Click Login.
-3. Sign in with one of the new frontend accounts.
-4. Confirm the homepage shows the logged-in account state and Logout.
-5. Click Logout and confirm the session clears.
-
-If the page shows a white screen
-1. Confirm index.html, assets/, and .htaccess extracted directly inside public_html/app/
-2. Confirm the assets folder contains main JS, shared JS, CSS, images, and videos.
-3. Clear browser cache and hard refresh.
-4. Open browser dev tools and check the Network tab for missing JS or CSS files.
-
-If registration does not appear in admin
-1. Confirm the backend API route POST /api/v1/auth/register is live on the server.
-2. Confirm the users table accepts customer, supplier, and partner records.
-3. Confirm the admin endpoint GET /api/v1/admin/users?account_type=... is live and protected with admin auth.
-4. Confirm the latest Laravel migration for user_api_tokens is applied if login works but session refresh does not.
-
-If the API returns CORS, 401, 419, or 500
-- CORS: allow https://foodonlines.com and https://foodonlines.com/app to call the Laravel API.
-- 401: check login credentials, token middleware, and active user status.
-- 419: if the server was changed to session auth, restore API token auth or exempt these API routes correctly.
-- 500: check Laravel logs, .env, database credentials, and whether the new migration has been run.
-
-Notes
-- This upload package is public frontend only.
-- This package does not include node_modules, git files, Laravel backend code, database files, or .env secrets.
-- The included .htaccess is scoped for deployment inside public_html/app/. If you move this frontend to the domain root later, update RewriteBase and the final RewriteRule path from /app/index.html to /index.html.
+If register/login/admin users fail
+1. Confirm Laravel API routes are live.
+2. Confirm API base URL still points to https://foodonlines.com/api/v1.
+3. Confirm backend CORS/auth/token middleware allow the deployed frontend path.
