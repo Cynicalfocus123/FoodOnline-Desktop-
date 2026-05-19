@@ -145,7 +145,9 @@ function AdminDashboard() {
         <aside className="border-b border-neutral-200 bg-[#112017] px-5 py-6 text-white lg:min-h-screen lg:w-[290px] lg:border-b-0 lg:border-r lg:px-6">
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-200">FoodOnline</p>
           <h1 className="mt-4 text-3xl font-black">Admin Console</h1>
-          <p className="mt-3 text-sm leading-7 text-emerald-50/80">Laravel + MySQL admin dashboard.</p>
+          <p className="mt-3 text-sm leading-7 text-emerald-50/80">
+            Live backend control room for customers, suppliers, and partners.
+          </p>
 
           <div className="mt-8 grid gap-3">
             {adminSidebarItems.map((item) => {
@@ -197,7 +199,7 @@ function AdminDashboard() {
 
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="All users" value={String(stats.total_users)} light />
+            <MetricCard label="All signup records" value={String(stats.total_users)} light />
             <MetricCard label="Customers" value={String(stats.customers)} light />
             <MetricCard label="Suppliers" value={String(stats.suppliers)} light />
             <MetricCard label="Partners" value={String(stats.partners)} light />
@@ -228,8 +230,12 @@ function OverviewPanel({
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
       <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
-        <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Laravel + MySQL</p>
-        <h2 className="mt-3 text-3xl font-black text-ink">Real admin API map</h2>
+        <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Live Operations</p>
+        <h2 className="mt-3 text-3xl font-black text-ink">FoodOnlines admin command center</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
+          This restores the original dashboard feel while staying connected to the real Laravel API.
+          Login, users, stats, and settings still come from production backend.
+        </p>
 
         <div className="mt-8 grid gap-4">
           {laravelMySqlBlueprint.tables.map((table) => (
@@ -283,9 +289,10 @@ function UsersPanel({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Users</p>
-          <h2 className="mt-3 text-3xl font-black text-ink">Database users</h2>
+          <h2 className="mt-3 text-3xl font-black text-ink">Signup queue and user intake tables</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
-            Showing MySQL users by role from protected Laravel admin API.
+            All public registration fields render as safe plain text in admin tables. Customer, supplier, and
+            partner tabs read live MySQL-backed API data.
           </p>
         </div>
         <div className="rounded-3xl border border-neutral-100 bg-neutral-50 px-5 py-4 text-sm font-semibold text-neutral-700">
@@ -355,6 +362,22 @@ function UsersPanel({
                       <td className="px-4 py-4 text-sm text-neutral-700">{formatDateTime(user.createdTimestamp)}</td>
                       <td className="px-4 py-4 text-sm text-neutral-700">
                         {user.reviewedAt ? formatDateTime(user.reviewedAt) : "Not updated"}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="grid min-w-[180px] gap-2">
+                          <button
+                            className="min-h-10 rounded-full border border-neutral-200 px-3 text-xs font-black text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
+                            type="button"
+                          >
+                            View Profile
+                          </button>
+                          <button
+                            className="min-h-10 rounded-full border border-neutral-200 px-3 text-xs font-black text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
+                            type="button"
+                          >
+                            Review Details
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

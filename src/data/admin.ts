@@ -4,17 +4,17 @@ export const adminSidebarItems = [
   {
     key: "overview",
     label: "Overview",
-    description: "Security and database status",
+    description: "Security posture and platform health",
   },
   {
     key: "users",
     label: "Users",
-    description: "Customers, suppliers, and partners",
+    description: "Review signup requests and account intake",
   },
   {
     key: "settings",
     label: "Admin Settings",
-    description: "Update admin profile and password",
+    description: "Rotate admin profile and password",
   },
 ] as const;
 
@@ -59,11 +59,11 @@ export const adminRequestStatusMeta: Record<
   }
 > = {
   in_review: {
-    label: "Inactive",
+    label: "In Review",
     classes: "border-sky-200 bg-sky-50 text-sky-700",
   },
   approved: {
-    label: "Active",
+    label: "Approved",
     classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
   },
 };
@@ -78,7 +78,8 @@ export const adminTableColumns = [
   "Status",
   "Source",
   "Created",
-  "Updated",
+  "Reviewed",
+  "Actions",
 ] as const;
 
 export const laravelMySqlBlueprint = {
@@ -120,11 +121,11 @@ export const laravelMySqlBlueprint = {
 
 export const adminSecurityChecklist = [
   "Admin login calls Laravel API and checks MySQL users table.",
-  "Passwords are hashed and verified only on server.",
-  "Bearer tokens are stored hashed in database and revoked on logout.",
-  "Admin API routes require admin token middleware.",
-  "Registration and login routes are rate-limited.",
-  "React renders database text safely as plain text.",
+  "Passwords are verified only on server; frontend never compares passwords.",
+  "Bearer tokens are stored by the browser and revoked by backend logout.",
+  "Admin API routes require protected admin token middleware.",
+  "Registration and login routes stay rate-limited on backend.",
+  "All signup fields render as plain text; React escaping stays in place.",
 ];
 
 export function getAdminSummaryLabel(roleKey: SignupRoleKey) {
