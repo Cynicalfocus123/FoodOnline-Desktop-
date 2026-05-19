@@ -33,7 +33,6 @@
 composer install --optimize-autoloader --no-dev
 php artisan key:generate
 php artisan migrate --force
-php artisan db:seed --class=AdminSeeder
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -48,6 +47,14 @@ Set these in `/home/CPANEL_USERNAME/foodonlines-backend/.env` before seeding:
 - `ADMIN_PASSWORD="your real strong password"`
 
 Never commit real admin password.
+
+Create or intentionally reset first admin only with:
+
+```bash
+php artisan db:seed --class=AdminSeeder --force
+```
+
+Do not run this after changing admin password in dashboard unless you want to reset password back to `.env` `ADMIN_PASSWORD`.
 
 ## Cache reset commands
 

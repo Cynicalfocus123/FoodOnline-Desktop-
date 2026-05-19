@@ -43,7 +43,6 @@ Run these inside backend folder:
 composer install --optimize-autoloader --no-dev
 php artisan key:generate
 php artisan migrate --force
-php artisan db:seed --class=AdminSeeder
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -84,8 +83,10 @@ ADMIN_PASSWORD="your-real-strong-password"
 Then run:
 
 ```bash
-php artisan db:seed --class=AdminSeeder
+php artisan db:seed --class=AdminSeeder --force
 ```
+
+Run this only to create or intentionally reset the admin password. Do not run it again after changing the admin password in the dashboard, because it uses `ADMIN_PASSWORD` from `.env` as the reset password.
 
 ## Email system
 

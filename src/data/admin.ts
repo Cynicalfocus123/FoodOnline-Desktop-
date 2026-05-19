@@ -121,7 +121,7 @@ export const laravelMySqlBlueprint = {
 export const adminSecurityChecklist = [
   "Admin login calls Laravel API and checks MySQL users table.",
   "Passwords are hashed and verified only on server.",
-  "Bearer tokens are stored hashed in database and revoked on logout.",
+  "Bearer tokens are stored hashed and revoked on logout or password change.",
   "Admin API routes require admin token middleware.",
   "Registration and login routes are rate-limited.",
   "React renders database text safely as plain text.",
