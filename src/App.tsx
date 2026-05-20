@@ -23,6 +23,10 @@ export default function App() {
     }
   }, [hasHydratedSession, hydrateSession, token]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [siteView]);
+
   return (
     <main className="min-h-screen bg-white font-sans text-ink">
       <Header />

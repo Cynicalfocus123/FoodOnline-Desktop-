@@ -30,6 +30,7 @@
 - Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint with the same payload used by the last known working desktop signup.
 - Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
 - Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.
+- Public page switches reset scroll position to the top for home, signup, and login so navigation never inherits the previous page's scroll depth.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
 - Production build now uses relative asset paths so the frontend can be uploaded safely into `public_html/app/` on cPanel without breaking asset URLs.
@@ -53,6 +54,7 @@
 - Frontend auth fix made no redesign changes. Only guest controls were removed, password eye toggles added, signup validation messaging improved, and signup banner sizing aligned with login.
 - Mobile signup fix made no visual design changes. It aligned mobile signup with the same shared Laravel registration submit logic, added `password_confirmation`, preserved password eye toggles, and generated cPanel ZIP `foodonlines-mobile-signup-fix.zip`.
 - Signup regression fix made no visual design changes. It restored the previous working signup payload keys, kept the shared desktop/mobile flow, preserved password eye toggles and banner sizing, improved server error display, and generated cPanel ZIP `foodonlines-signup-regression-fix.zip`.
+- Page navigation scroll fix made no visual design changes. It resets scroll to top when switching public SPA pages and generated cPanel ZIP `foodonlines-scroll-top-fix.zip`.
 
 ## Guardrails
 
