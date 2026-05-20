@@ -1,9 +1,10 @@
 <IfModule mod_rewrite.c>
     Options -MultiViews -Indexes
     RewriteEngine On
-    RewriteBase /
+    RewriteBase /app/
 
     RewriteRule ^admin/?$ admin.html [L]
+    RewriteRule ^assets/ - [L]
 
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
