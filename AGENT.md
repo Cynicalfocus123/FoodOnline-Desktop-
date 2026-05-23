@@ -84,6 +84,11 @@
 - Dismiss/localStorage behavior: closing promo with `X` sets persistent frontend dismissal key in localStorage via `src/lib/promoStorage.ts`, hides sticky bar + modal immediately, and keeps promo hidden after refresh until storage key is cleared manually.
 - Build/test commands used for 2026-05-23 promo UI: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo UI: `9f786a4`
+- Promo modal centering tune on 2026-05-23: desktop promo popup was reduced in size and centered more precisely after feedback that it was too large, too high, and too far left.
+- Promo centering files changed for 2026-05-23: `src/components/PromoExperience.tsx` and `src/components/PromoModalDesktop.tsx`.
+- Promo centering fix details: desktop modal max width reduced from the first version, desktop hero art and copy spacing tightened, and overlay wrapper now forces horizontal center alignment so popup opens visually centered in viewport.
+- Build/test commands used for 2026-05-23 promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo centering tune: `__PROMO_CENTER_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

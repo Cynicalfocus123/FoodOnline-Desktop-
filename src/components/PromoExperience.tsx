@@ -84,7 +84,7 @@ export function PromoExperience() {
 
         <div className="absolute inset-0 flex items-end justify-center p-0 md:items-center md:p-6">
           <div
-            className={`w-full transition duration-300 ${
+            className={`flex w-full justify-center transition duration-300 ${
               isModalOpen ? "translate-y-0 opacity-100 md:scale-100" : "translate-y-8 opacity-0 md:scale-95"
             }`}
           >

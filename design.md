@@ -99,6 +99,11 @@
 - Dismiss behavior: only explicit dismiss via `X` permanently hides promo and sticky bar by saving localStorage flag in `src/lib/promoStorage.ts`; normal close actions such as backdrop click or `Later` only close the modal.
 - Build/test commands used for this promo feature: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo UI: `9f786a4`
+- Promo modal centering tune on 2026-05-23 adjusts desktop popup only. Modal is now smaller and better centered in viewport instead of reading oversized and offset left/high.
+- Promo centering files changed for this follow-up: `src/components/PromoExperience.tsx` and `src/components/PromoModalDesktop.tsx`.
+- Desktop promo tuning: reduced modal width, tightened top art block and body spacing, and forced overlay content wrapper to justify modal in exact horizontal center.
+- Build/test commands used for this promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo centering tune: `__PROMO_CENTER_COMMIT_HASH__`
 
 ## Guardrails
 
