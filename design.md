@@ -125,7 +125,7 @@
 - Location tweak files changed for this follow-up: `src/components/Header.tsx`.
 - Header location direction: visible control now presents as simple icon + text instead of stacked `DELIVER TO` pill, matching the cleaner reference while still opening the existing ZIP modal.
 - Build/test commands used for this location tweak: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-24 location tweak: `__LOCATION_TWEAK_COMMIT_HASH__`
+- Git commit hash for 2026-05-24 location tweak: `b7048db`
 
 ## Guardrails
 

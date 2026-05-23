@@ -110,7 +110,7 @@
 - Location tweak files changed for 2026-05-24: `src/components/Header.tsx`.
 - Location tweak details: removed `DELIVER TO` stacked label from visible header control, removed pill shell treatment from visible desktop/mobile trigger, and kept the ZIP change modal behavior intact behind the simpler clickable icon/text row.
 - Build/test commands used for 2026-05-24 location tweak: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-24 location tweak: `__LOCATION_TWEAK_COMMIT_HASH__`
+- Git commit hash for 2026-05-24 location tweak: `b7048db`
 
 ## Backend/Admin Notes
 
