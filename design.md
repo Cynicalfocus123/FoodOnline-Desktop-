@@ -114,6 +114,13 @@
 - Responsive tuning: desktop modal max width reduced, mobile modal changed from larger sheet feel to smaller centered card, overlay centers modal on all breakpoints, and duplicate/secondary CTA buttons were removed.
 - Build/test commands used for this promo resize/CTA fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo resize/CTA fix: `90ad5e4`
+- Header/hero/category cleanup on 2026-05-24 updates only presentation of header controls, hero copy, and category tile density.
+- Files changed for this cleanup: `src/components/Header.tsx`, `src/components/HeroSlider.tsx`, and `src/components/CategoryStrip.tsx`.
+- Header direction: location stays as icon + text pill; `Register / Sign in` now behaves like plain text navigation with icon instead of bordered pill button.
+- Hero direction: removed small top badge and removed public descriptive paragraph so splash area feels cleaner and less text-heavy.
+- Category direction: home `Browse all categories` grid now uses compact 5-column small-screen layout with smaller cards, smaller icon chips, and smaller type to better match dense Yami-style mobile browsing.
+- Build/test commands used for this cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 cleanup: `__HEADER_CATEGORY_COMMIT_HASH__`
 
 ## Guardrails
 

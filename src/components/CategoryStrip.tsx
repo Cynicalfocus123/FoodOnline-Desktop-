@@ -18,28 +18,30 @@ export function CategoryStrip() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mt-8 grid grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
           {categories.map((category) => (
             <a
-              className="group rounded-[26px] border border-neutral-200 bg-white p-4 text-center shadow-[0_10px_30px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
+              className="group rounded-[20px] border border-neutral-200 bg-white p-1.5 text-center shadow-[0_8px_20px_rgba(15,23,42,0.03)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:rounded-[22px] sm:p-2.5 lg:rounded-[26px] lg:p-4"
               href="#best-deals"
               id={category.sectionId}
               key={category.name}
             >
-              <div className="rounded-[24px] bg-[#f7f7f4] p-4">
-                <div className="relative overflow-hidden rounded-[22px] bg-white p-3 shadow-inner shadow-neutral-950/5">
+              <div className="rounded-[18px] bg-[#f7f7f4] p-1.5 sm:rounded-[20px] sm:p-2 lg:rounded-[24px] lg:p-4">
+                <div className="relative overflow-hidden rounded-[16px] bg-white p-1.5 shadow-inner shadow-neutral-950/5 sm:rounded-[18px] sm:p-2 lg:rounded-[22px] lg:p-3">
                   <img
                     alt={category.name}
-                    className="aspect-square w-full rounded-[18px] object-cover"
+                    className="aspect-square w-full rounded-[14px] object-cover sm:rounded-[16px] lg:rounded-[18px]"
                     loading="lazy"
                     src={category.image}
                   />
-                  <span className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/90 text-neutral-700 shadow-sm">
-                    <MockIcon className="h-5 w-5" name={category.icon} />
+                  <span className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-xl bg-white/90 text-neutral-700 shadow-sm sm:left-2 sm:top-2 sm:h-7 sm:w-7 lg:left-4 lg:top-4 lg:h-10 lg:w-10 lg:rounded-2xl">
+                    <MockIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-5 lg:w-5" name={category.icon} />
                   </span>
                 </div>
               </div>
-              <p className="mt-4 text-[13px] font-medium leading-5 text-neutral-900 sm:text-sm">{category.name}</p>
+              <p className="mt-2 text-[10px] font-medium leading-4 text-neutral-900 sm:text-[11px] lg:mt-4 lg:text-sm lg:leading-5">
+                {category.name}
+              </p>
             </a>
           ))}
         </div>

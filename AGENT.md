@@ -99,6 +99,13 @@
 - Promo resize fix details: desktop modal width reduced further, mobile modal converted to smaller centered card, overlay now centers modal on desktop/tablet/mobile, and extra secondary buttons were removed so only one copy CTA remains in each modal.
 - Build/test commands used for 2026-05-23 promo resize/CTA fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo resize/CTA fix: `90ad5e4`
+- Header/hero/category cleanup on 2026-05-24: top header location pill was simplified visually, `Register / Sign in` was reduced to text-style action with icon and no filled button shell, extra hero marketing copy was removed, and home category tiles were resized into a tighter 5-across mobile-first layout inspired by Yami-style compact browsing.
+- Files changed for 2026-05-24 cleanup: `src/components/Header.tsx`, `src/components/HeroSlider.tsx`, and `src/components/CategoryStrip.tsx`.
+- Header cleanup details: kept location control as icon + text pill, removed extra shadow weight, and changed `Register / Sign in` visible header treatment from pill button to plain text-with-icon action.
+- Hero cleanup details: removed `Grocery storefront mockup` label and removed public-facing subtitle `Blinkit-style rows, Yamibuy-inspired shortcuts, and clean desktop-first browsing made ready for API wiring later.` while preserving signed-in state text and CTA buttons.
+- Category grid cleanup details: `Browse all categories` cards now render as compact 5-column layout on small/mobile widths with smaller inner cards, smaller labels, and reduced icon tile sizing so more boxes fit per row like Yami mobile browsing.
+- Build/test commands used for 2026-05-24 cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 cleanup: `__HEADER_CATEGORY_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

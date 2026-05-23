@@ -263,7 +263,7 @@ export function Header() {
             </a>
 
             <button
-              className="hidden shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-left shadow-sm shadow-neutral-950/5 transition hover:border-neutral-300 lg:inline-flex"
+              className="hidden shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-left transition hover:border-neutral-300 lg:inline-flex"
               onClick={openZipPanel}
               type="button"
             >
@@ -295,7 +295,7 @@ export function Header() {
 
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
             <button
-              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              className="inline-flex min-h-12 items-center gap-2 px-1 text-[1rem] font-semibold text-neutral-900 transition hover:text-leaf-600"
               onClick={currentUser ? handleAccountClick : openLogin}
               type="button"
             >
@@ -428,7 +428,7 @@ export function Header() {
 
               <div className="mt-2 grid gap-2 sm:grid-cols-3">
                 <button
-                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                  className="flex min-h-12 items-center justify-center gap-2 px-4 text-sm font-semibold text-neutral-900 transition hover:text-leaf-600"
                   onClick={currentUser ? handleAccountClick : openLogin}
                   type="button"
                 >
