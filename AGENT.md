@@ -106,6 +106,11 @@
 - Category grid cleanup details: `Browse all categories` cards now render as compact 5-column layout on small/mobile widths with smaller inner cards, smaller labels, and reduced icon tile sizing so more boxes fit per row like Yami mobile browsing.
 - Build/test commands used for 2026-05-24 cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 cleanup: `5670d48`
+- Location text-style tweak on 2026-05-24: top header location control was simplified again from stacked pill copy to cleaner icon + single-line ZIP text treatment closer to the latest reference.
+- Location tweak files changed for 2026-05-24: `src/components/Header.tsx`.
+- Location tweak details: removed `DELIVER TO` stacked label from visible header control, removed pill shell treatment from visible desktop/mobile trigger, and kept the ZIP change modal behavior intact behind the simpler clickable icon/text row.
+- Build/test commands used for 2026-05-24 location tweak: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 location tweak: `__LOCATION_TWEAK_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

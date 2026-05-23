@@ -263,17 +263,12 @@ export function Header() {
             </a>
 
             <button
-              className="hidden shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-left transition hover:border-neutral-300 lg:inline-flex"
+              className="hidden shrink-0 items-center gap-2 px-1 text-left text-[1rem] font-semibold text-neutral-900 transition hover:text-leaf-600 lg:inline-flex"
               onClick={openZipPanel}
               type="button"
             >
               <LocationMarker />
-              <span className="min-w-0 leading-none">
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                  Deliver to
-                </span>
-                <span className="mt-1 block text-[15px] font-bold text-neutral-900">{zipCode}</span>
-              </span>
+              <span className="min-w-0">{zipCode}</span>
             </button>
 
             <nav className="hidden min-w-0 items-center gap-7 overflow-x-auto whitespace-nowrap text-[15px] font-semibold text-neutral-800 scrollbar-none lg:flex">
@@ -372,7 +367,7 @@ export function Header() {
 
           <div className="flex items-center gap-2 lg:hidden">
             <button
-              className="inline-flex h-11 min-w-[94px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-900"
+              className="inline-flex h-11 items-center justify-center gap-2 px-1 text-sm font-semibold text-neutral-900"
               onClick={openZipPanel}
               type="button"
             >
