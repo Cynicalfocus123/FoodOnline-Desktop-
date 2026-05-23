@@ -371,7 +371,7 @@ export function Header() {
               </button>
             ) : (
               <a
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-citrus-500 px-4 text-[15px] font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600 [&_svg]:text-white"
+                className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
                 href="#login"
                 onClick={handleLoginClick}
               >
@@ -442,7 +442,7 @@ export function Header() {
 
             {!currentUser ? (
               <a
-                className="hidden h-10 shrink-0 items-center rounded-full bg-citrus-500 px-3 text-xs font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600 min-[560px]:inline-flex"
+                className="hidden h-10 shrink-0 items-center text-xs font-bold text-neutral-900 transition hover:text-leaf-600 min-[560px]:inline-flex"
                 href="#login"
                 onClick={handleLoginClick}
               >
@@ -535,6 +535,24 @@ export function Header() {
                   {item.label}
                 </a>
               ))}
+
+              {!currentUser ? (
+                <a
+                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                  href="#login"
+                  onClick={handleLoginClick}
+                >
+                  Login / Register
+                </a>
+              ) : (
+                <button
+                  className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                  onClick={handleAccountClick}
+                  type="button"
+                >
+                  My Account
+                </button>
+              )}
 
               <div className="mt-2 grid gap-2">
                 <button
