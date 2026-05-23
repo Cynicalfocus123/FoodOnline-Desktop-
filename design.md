@@ -108,7 +108,7 @@
 - Promo bar contrast files changed for this follow-up: `src/components/PromoStickyBar.tsx`.
 - Visual tuning: darker neutral gradient, stronger shadow, slightly stronger border, and brighter secondary text/underline treatment while keeping floating translucent feel.
 - Build/test commands used for this promo bar contrast tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 promo bar contrast tune: `__PROMO_BAR_DARK_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 promo bar contrast tune: `95a8f71`
 
 ## Guardrails
 
