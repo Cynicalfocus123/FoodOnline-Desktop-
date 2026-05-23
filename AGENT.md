@@ -88,7 +88,7 @@
 - Promo centering files changed for 2026-05-23: `src/components/PromoExperience.tsx` and `src/components/PromoModalDesktop.tsx`.
 - Promo centering fix details: desktop modal max width reduced from the first version, desktop hero art and copy spacing tightened, and overlay wrapper now forces horizontal center alignment so popup opens visually centered in viewport.
 - Build/test commands used for 2026-05-23 promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 promo centering tune: `__PROMO_CENTER_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 promo centering tune: `9360f17`
 
 ## Backend/Admin Notes
 

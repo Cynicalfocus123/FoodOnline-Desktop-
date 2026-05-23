@@ -103,7 +103,7 @@
 - Promo centering files changed for this follow-up: `src/components/PromoExperience.tsx` and `src/components/PromoModalDesktop.tsx`.
 - Desktop promo tuning: reduced modal width, tightened top art block and body spacing, and forced overlay content wrapper to justify modal in exact horizontal center.
 - Build/test commands used for this promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 promo centering tune: `__PROMO_CENTER_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 promo centering tune: `9360f17`
 
 ## Guardrails
 
