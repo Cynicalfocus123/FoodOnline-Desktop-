@@ -104,6 +104,11 @@
 - Desktop promo tuning: reduced modal width, tightened top art block and body spacing, and forced overlay content wrapper to justify modal in exact horizontal center.
 - Build/test commands used for this promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo centering tune: `9360f17`
+- Promo bar contrast tune on 2026-05-23 updates sticky promo bar only. Floating bar now uses darker translucent neutral surface so white text remains readable over pale/white content backgrounds.
+- Promo bar contrast files changed for this follow-up: `src/components/PromoStickyBar.tsx`.
+- Visual tuning: darker neutral gradient, stronger shadow, slightly stronger border, and brighter secondary text/underline treatment while keeping floating translucent feel.
+- Build/test commands used for this promo bar contrast tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo bar contrast tune: `__PROMO_BAR_DARK_COMMIT_HASH__`
 
 ## Guardrails
 

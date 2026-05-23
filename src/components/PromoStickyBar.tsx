@@ -21,18 +21,18 @@ export function PromoStickyBar({ onOpen }: PromoStickyBarProps) {
   return (
     <button
       aria-label="Open welcome promotion"
-      className="fixed bottom-4 left-1/2 z-[70] flex w-[calc(100%-24px)] max-w-[640px] -translate-x-1/2 items-center gap-3 rounded-[22px] border border-white/10 bg-neutral-900/88 px-3 py-3 text-left shadow-[0_18px_48px_rgba(15,23,42,0.28)] backdrop-blur-xl transition hover:bg-neutral-900/94 sm:bottom-6 sm:w-[calc(100%-48px)] sm:gap-5 sm:px-5"
+      className="fixed bottom-4 left-1/2 z-[70] flex w-[calc(100%-24px)] max-w-[640px] -translate-x-1/2 items-center gap-3 rounded-[22px] border border-white/15 bg-[linear-gradient(90deg,rgba(10,13,16,0.96),rgba(23,26,31,0.94))] px-3 py-3 text-left shadow-[0_20px_54px_rgba(15,23,42,0.34)] backdrop-blur-2xl transition hover:bg-[linear-gradient(90deg,rgba(10,13,16,0.98),rgba(23,26,31,0.97))] sm:bottom-6 sm:w-[calc(100%-48px)] sm:gap-5 sm:px-5"
       onClick={onOpen}
       type="button"
     >
       <TicketVisual />
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 sm:text-xs">Welcome offer</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/72 sm:text-xs">Welcome offer</p>
         <p className="mt-1 text-sm font-semibold text-white sm:text-[1.15rem]">
           Use code: <span className="font-black">WELCOME</span> for 10% off!
         </p>
       </div>
-      <span className="shrink-0 text-sm font-bold text-white underline underline-offset-4 sm:text-base">Copy Code</span>
+      <span className="shrink-0 text-sm font-bold text-white underline decoration-white/80 underline-offset-4 sm:text-base">Copy Code</span>
     </button>
   );
 }

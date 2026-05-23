@@ -89,6 +89,11 @@
 - Promo centering fix details: desktop modal max width reduced from the first version, desktop hero art and copy spacing tightened, and overlay wrapper now forces horizontal center alignment so popup opens visually centered in viewport.
 - Build/test commands used for 2026-05-23 promo centering tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo centering tune: `9360f17`
+- Promo bar contrast tune on 2026-05-23: sticky bottom promo bar surface was darkened further so text stays readable over white homepage sections during scroll.
+- Promo bar contrast files changed for 2026-05-23: `src/components/PromoStickyBar.tsx`.
+- Promo bar contrast fix details: increased dark background opacity, switched to darker neutral gradient, strengthened shadow/border, and slightly raised supporting label/copy underline contrast.
+- Build/test commands used for 2026-05-23 promo bar contrast tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo bar contrast tune: `__PROMO_BAR_DARK_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 
