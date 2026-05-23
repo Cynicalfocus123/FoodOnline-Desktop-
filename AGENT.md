@@ -126,6 +126,10 @@
 - Login/register CTA update: visible guest auth action now says `Login / Register`, uses the existing `#login` public login view through `openLogin`, and remains styled as the orange CTA on desktop plus wider mobile/tablet when space allows.
 - Build/test commands used for 2026-05-24 header login CTA update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header login CTA update: `cc57408`
+- Splash hero Join Now CTA update on 2026-05-24: replaced the separate hero `Register` and `Login` buttons with one centered orange `Join Now` button anchored in the lower area of the splash hero while staying inside the hero section.
+- Splash hero Join Now files changed: `src/components/HeroSlider.tsx`.
+- Join Now behavior: button uses the existing public login flow through `openLogin`; no new route, backend auth logic, or signup flow changes were added.
+- Build/test commands used for 2026-05-24 splash Join Now update: `cmd /c npx tsc --noEmit` and `cmd /c npx vite build --emptyOutDir false`. Full `cmd /c npm run build` reached Vite but Windows returned `EPERM` while emptying existing `dist/assets`.
 
 ## Backend/Admin Notes
 

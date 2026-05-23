@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { assets, slides } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
-import { usePublicAuthStore } from "../store/publicAuthStore";
 
 function getIsMobileViewport() {
   if (typeof window === "undefined") {
@@ -12,9 +11,7 @@ function getIsMobileViewport() {
 }
 
 export function HeroSlider() {
-  const openSignup = useHomeStore((state) => state.openSignup);
   const openLogin = useHomeStore((state) => state.openLogin);
-  const currentUser = usePublicAuthStore((state) => state.currentUser);
   const slide = slides[0];
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const [hasVideoStarted, setHasVideoStarted] = useState(false);
@@ -78,14 +75,6 @@ export function HeroSlider() {
     };
   }, [activeVideoSource, isMobileViewport]);
 
-  function scrollToDeals() {
-    document.getElementById("categories")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function viewAccount() {
-    document.getElementById("account-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
     <section
       id="home"
@@ -132,36 +121,21 @@ export function HeroSlider() {
       )}
       <div className="pointer-events-none absolute inset-0 z-10 bg-neutral-950/30" />
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(255,173,64,0.2),rgba(10,13,16,0.4)_34%,rgba(10,13,16,0.84)_100%)]" />
-      <div className="relative z-20 mx-auto flex min-h-[620px] max-w-7xl items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-14">
+      <div className="relative z-20 mx-auto flex min-h-[620px] max-w-7xl items-center justify-center px-4 pb-32 pt-10 text-center sm:min-h-[700px] sm:px-6 sm:pb-36 sm:pt-14">
         <div className="mx-auto max-w-4xl">
           <h1 className="mx-auto max-w-4xl text-4xl font-black leading-[1.02] tracking-normal sm:text-6xl lg:text-7xl">
             {slide.title}
           </h1>
-
-          <div className="mx-auto mt-6 max-w-3xl sm:mt-8">
-            {currentUser ? (
-              <p className="mb-6 text-base font-semibold leading-7 text-white/85 sm:text-xl sm:leading-8">
-                Signed in as {currentUser.firstName || currentUser.email}.
-              </p>
-            ) : null}
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <button
-                className="min-h-14 min-w-[220px] rounded-2xl bg-citrus-500 px-8 text-base font-black text-white shadow-lg shadow-orange-500/25 transition hover:bg-citrus-600 sm:min-w-[240px]"
-                onClick={currentUser ? viewAccount : openSignup}
-                type="button"
-              >
-                {currentUser ? "View Account" : "Register"}
-              </button>
-              <button
-                className="min-h-14 min-w-[220px] rounded-2xl border border-white/70 bg-white/10 px-8 text-base font-black text-white backdrop-blur transition hover:bg-white/20 sm:min-w-[220px]"
-                onClick={currentUser ? scrollToDeals : openLogin}
-                type="button"
-              >
-                {currentUser ? "Browse Deals" : "Login"}
-              </button>
-            </div>
-          </div>
         </div>
+      </div>
+      <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center px-4 sm:bottom-10">
+        <button
+          className="min-h-14 w-full max-w-[240px] rounded-2xl bg-citrus-500 px-8 text-base font-black text-white shadow-lg shadow-orange-500/25 transition hover:bg-citrus-600 sm:max-w-[260px]"
+          onClick={openLogin}
+          type="button"
+        >
+          Join Now
+        </button>
       </div>
     </section>
   );
