@@ -78,7 +78,7 @@
 - Right-side desktop control order is now `Register / Sign in`, language button, then cart button. Language keeps globe icon + selected text + chevron; cart uses rounded white pill with basket icon.
 - Category/shortcut row spacing fix: homepage top offset increased in `src/App.tsx`, and `ShortcutRow` now adds extra top/bottom spacing so fixed header, shortcut row, and hero/banner no longer collide on desktop, tablet, or mobile.
 - Build/test commands used for this header fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 header/menu fix: `__HEADER_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
 
 ## Guardrails
 

@@ -63,7 +63,7 @@
 - Cart button added: new rounded white pill cart button with basket icon now sits to the right of language in the desktop header and inside the mobile menu action row.
 - Category row spacing fix: increased homepage top padding and added extra top/bottom spacing around `ShortcutRow` so shortcut/category strip no longer overlaps fixed header and now sits with clearer separation from hero/banner area across desktop, tablet, and mobile.
 - Build/test commands used for 2026-05-23 header/menu fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 header/menu fix: `__HEADER_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
 
 ## Backend/Admin Notes
 
