@@ -130,6 +130,11 @@
 - Splash hero Join Now files changed: `src/components/HeroSlider.tsx`.
 - Join Now behavior: button uses the existing public login flow through `openLogin`; no new route, backend auth logic, or signup flow changes were added.
 - Build/test commands used for 2026-05-24 splash Join Now update: `cmd /c npx tsc --noEmit` and `cmd /c npx vite build --emptyOutDir false`. Full `cmd /c npm run build` reached Vite but Windows returned `EPERM` while emptying existing `dist/assets`.
+- Header auth correction on 2026-05-24: reversed the prior orange CTA header treatment so guest `Login / Register` is plain text in the visible header and also appears as a normal text item inside the mobile hamburger menu.
+- Header auth correction files changed: `src/components/Header.tsx`.
+- Header auth correction behavior: both visible header and hamburger `Login / Register` links use existing `#login` / `openLogin`; no new route or backend auth logic was added. ZIP/location and cart remain outside hamburger.
+- Build/test commands used for 2026-05-24 header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 header auth correction: `092b335`
 
 ## Backend/Admin Notes
 

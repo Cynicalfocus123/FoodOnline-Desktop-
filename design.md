@@ -147,6 +147,12 @@
 - Hero CTA direction: remove separate `Register` and `Login` hero buttons and use one orange `Join Now` button matching the existing register styling. Place it centered near the bottom of the splash hero, inside the hero bounds, with enough bottom/title spacing to avoid overlapping important video or text content on desktop, tablet, and mobile.
 - Join Now behavior: use the existing public login flow via `openLogin`; do not introduce a new login route or backend auth behavior.
 - Build/test commands used for this Join Now update: `cmd /c npx tsc --noEmit` and `cmd /c npx vite build --emptyOutDir false`. Full `cmd /c npm run build` reached Vite but Windows returned `EPERM` while emptying existing `dist/assets`.
+- Header auth correction on 2026-05-24 changes only header login/register placement and styling.
+- Files changed for this header auth correction: `src/components/Header.tsx`.
+- Login/Register direction: visible guest auth control is plain text, not orange pill/button, and it still opens the existing public login flow via `#login` / `openLogin`.
+- Hamburger direction: mobile hamburger menu includes a normal text `Login / Register` item while ZIP/location and cart stay visible outside the hamburger.
+- Build/test commands used for this header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 header auth correction: `092b335`
 
 ## Guardrails
 
