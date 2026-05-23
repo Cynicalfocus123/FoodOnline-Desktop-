@@ -154,6 +154,10 @@
 - Build/test commands used for this header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header auth correction: `092b335`
 - Documentation follow-up on 2026-05-24: no separate `designer.md` file exists in the workspace, so this `design.md` file remains the single design source of truth. The header auth correction is also recorded in `AGENT.md`.
+- Chrome/in-app header scroll fix on 2026-05-24 changes the public header positioning and spacing only. Header is now solid white and sticky instead of translucent fixed/backdrop-blurred, which avoids Chromium and embedded-browser scroll rendering bugs where the header could disappear or let content slide through it.
+- Files changed for this header scroll fix: `src/App.tsx`, `src/components/Header.tsx`, `src/components/LoginFlow.tsx`, `src/components/SignupFlow.tsx`, and `src/styles.css`.
+- Layout direction: because the header now stays in normal page flow, homepage no longer uses hardcoded top padding, signup/login screens use smaller top spacing, and header overlay layers are explicitly above promo/content while the ZIP modal remains above the header. ZIP/location, cart, hamburger, plain-text `Login / Register`, and hamburger `Login / Register` behavior remain unchanged.
+- Build/test commands used for this Chrome/in-app header scroll fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Guardrails
 

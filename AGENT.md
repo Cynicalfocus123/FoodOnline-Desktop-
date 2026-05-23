@@ -136,6 +136,10 @@
 - Build/test commands used for 2026-05-24 header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header auth correction: `092b335`
 - Documentation follow-up on 2026-05-24: confirmed there is no `designer.md` file in this repo; `design.md` remains the active design notes source per repo rules. Header auth correction is documented in both `AGENT.md` and `design.md`.
+- Chrome/in-app header scroll fix on 2026-05-24: changed the public header from translucent fixed/backdrop-blur positioning to solid white sticky positioning so it remains visible while scrolling in Chrome, Telegram/in-app browsers, and other Chromium surfaces.
+- Header scroll fix files changed: `src/App.tsx`, `src/components/Header.tsx`, `src/components/LoginFlow.tsx`, `src/components/SignupFlow.tsx`, and `src/styles.css`.
+- Header scroll fix behavior: removed the manual homepage top spacer because sticky header now participates in layout, reduced signup/login top padding that only existed for the old fixed header, raised header/language/ZIP panel z-index layers, and added horizontal overflow guards on `html` and `body`.
+- Build/test commands used for 2026-05-24 Chrome/in-app header scroll fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

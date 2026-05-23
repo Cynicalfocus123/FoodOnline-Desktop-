@@ -41,7 +41,7 @@ export function LoginFlow() {
   }
 
   return (
-    <section className="bg-neutral-50 px-0 pb-16 pt-32 sm:px-6">
+    <section className="bg-neutral-50 px-0 pb-16 pt-8 sm:px-6 sm:pt-10">
       <div className="mx-auto grid max-w-7xl overflow-hidden border-y border-neutral-100 bg-white shadow-soft sm:rounded-[28px] sm:border lg:grid-cols-[1.02fr_0.98fr]">
         <div className="bg-white sm:hidden">
           <img alt="FoodOnlines shop and order banner" className="block h-auto w-full" src={signupBannerImage} />

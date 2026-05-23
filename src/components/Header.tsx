@@ -285,7 +285,7 @@ export function Header() {
   }
 
   const languageDropdown = isLanguageMenuOpen ? (
-    <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-[240px] rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+    <div className="absolute right-0 top-[calc(100%+10px)] z-[1100] w-[240px] rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
       {languageOptions.map((language) => {
         const isSelected = language.code === selectedLanguageCode;
 
@@ -319,7 +319,7 @@ export function Header() {
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+        className="sticky top-0 z-[1000] isolate border-b border-neutral-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.08)] [transform:translateZ(0)]"
         ref={languageMenuReference}
       >
         <div className="mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:py-3">
@@ -605,7 +605,7 @@ export function Header() {
       </header>
 
       <div
-        className={`fixed inset-0 z-50 transition ${isZipPanelOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[1200] transition ${isZipPanelOpen ? "pointer-events-auto" : "pointer-events-none"}`}
         aria-hidden={!isZipPanelOpen}
       >
         <button
