@@ -53,7 +53,7 @@
 - Reusable components created for 2026-05-23: `ProductCard`, `ProductCarousel`, `ShortcutRow`, and `MockIcon`. Homepage mock data source and placeholder art generation now live in `src/data/home.ts` so backend API data can replace it later.
 - Favicon update: added lightweight temporary `public/favicon.svg` and linked it in both `index.html` and `admin.html`.
 - Build/test commands used for 2026-05-23 redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 homepage redesign: `__UI_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 homepage redesign: `59eae19`
 - Next recommended improvements after 2026-05-23 redesign: wire ZIP and language state into real API/session storage, lazy-fetch carousel data from backend endpoints, replace SVG mock product art with optimized WebP catalog assets, and add keyboard focus trapping inside slide panel for stronger accessibility.
 
 ## Backend/Admin Notes

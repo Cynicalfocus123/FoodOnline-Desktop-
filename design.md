@@ -69,7 +69,7 @@
 - Typography update: product card titles use compact ecommerce weight/line-height with two-line clamp; category and shortcut labels use small centered medium-weight copy; global font fallback stack now prefers `Inter`, `Nunito Sans`, `Poppins`, then system sans.
 - Lightweight asset direction: temporary favicon is `public/favicon.svg`; category/product visuals use generated SVG placeholder art to avoid heavy image payloads while design iteration is in progress.
 - Build/test commands used for this redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 homepage redesign: `__UI_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 homepage redesign: `59eae19`
 - Next recommended improvements: persist ZIP/language preferences, connect carousel/category content to backend catalog API, swap mock art for optimized WebP/SVG content images, and optionally add skeleton loading for API-backed rows.
 
 ## Guardrails
