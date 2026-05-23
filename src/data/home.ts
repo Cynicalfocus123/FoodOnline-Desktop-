@@ -572,7 +572,22 @@ export const assets = {
   favicon: localAsset("favicon.svg"),
 };
 
-export const navItems = ["Home", "Categories", "Best deals", "Company"];
+export type NavItem = {
+  label: string;
+  href: string;
+  accent?: "leaf";
+  hasChevron?: boolean;
+};
+
+export const navItems: NavItem[] = [
+  { label: "Home", href: "#home", accent: "leaf" },
+  { label: "Recipe", href: "#company" },
+  { label: "Coupon", href: "#best-deals" },
+  { label: "Products", href: "#best-deals", hasChevron: true },
+  { label: "Healthy Product", href: "#organic-healthy-living" },
+  { label: "Wholesale Products", href: "#best-deals", accent: "leaf" },
+  { label: "Deal-of-the-week", href: "#best-deals" },
+];
 
 export const zipCodeExample = "91789";
 

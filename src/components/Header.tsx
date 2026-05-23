@@ -25,7 +25,7 @@ function GlobeIcon() {
   return (
     <svg
       aria-hidden="true"
-      className="h-4 w-4 shrink-0 text-neutral-700"
+      className="h-5 w-5 shrink-0 text-neutral-800"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -40,11 +40,65 @@ function GlobeIcon() {
   );
 }
 
+function UserIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5 shrink-0 text-neutral-800"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="12" cy="8" r="3.2" />
+      <path d="M5 19c1.4-3.1 4-4.7 7-4.7s5.6 1.6 7 4.7" />
+    </svg>
+  );
+}
+
+function BasketIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5 shrink-0 text-neutral-800"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M5 10h14l-1.3 8a2 2 0 0 1-2 1.7H8.3a2 2 0 0 1-2-1.7Z" />
+      <path d="M9 10 12 5l3 5" />
+      <path d="M8.5 13.2h7" />
+    </svg>
+  );
+}
+
 function ChevronIcon({ isOpen }: { isOpen: boolean }) {
   return (
     <svg
       aria-hidden="true"
       className={`h-4 w-4 shrink-0 text-neutral-500 transition ${isOpen ? "rotate-180" : ""}`}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function MenuChevron() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0 text-neutral-500"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -185,35 +239,79 @@ export function Header() {
     setIsZipPanelOpen(false);
   }
 
+  function handleNavClick(itemLabel: string, event: MouseEvent<HTMLAnchorElement>) {
+    if (itemLabel === "Home" && siteView !== "home") {
+      event.preventDefault();
+      backToHome();
+    }
+
+    setIsMobileMenuOpen(false);
+  }
+
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-40 border-b border-neutral-200 bg-white/95 shadow-sm shadow-neutral-950/5 backdrop-blur-xl">
-        <div className="border-b border-neutral-100">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:min-h-[94px] lg:gap-5">
+          <div className="flex min-w-0 items-center gap-3 lg:flex-1 lg:gap-5">
+            <a className="flex shrink-0 items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
+              <img
+                alt="FoodOnlines logo"
+                className="block h-12 w-auto max-w-[170px] object-contain sm:h-14 sm:max-w-[210px]"
+                src={assets.logo}
+              />
+            </a>
+
             <button
-              className="inline-flex min-w-0 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-neutral-300 hover:bg-neutral-100"
+              className="hidden shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-left shadow-sm shadow-neutral-950/5 transition hover:border-neutral-300 lg:inline-flex"
               onClick={openZipPanel}
               type="button"
             >
               <LocationMarker />
-              <span className="min-w-0">
-                <span className="block truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
+              <span className="min-w-0 leading-none">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   Deliver to
                 </span>
-                <span className="block truncate text-sm font-semibold text-neutral-900">{zipCode}</span>
+                <span className="mt-1 block text-[15px] font-bold text-neutral-900">{zipCode}</span>
               </span>
+            </button>
+
+            <nav className="hidden min-w-0 items-center gap-7 overflow-x-auto whitespace-nowrap text-[15px] font-semibold text-neutral-800 scrollbar-none lg:flex">
+              {navItems.map((item) => (
+                <a
+                  className={`inline-flex items-center gap-1.5 transition hover:text-leaf-600 ${
+                    item.accent === "leaf" ? "text-leaf-500" : "text-neutral-800"
+                  }`}
+                  href={item.href}
+                  key={item.label}
+                  onClick={(event) => handleNavClick(item.label, event)}
+                >
+                  <span>{item.label}</span>
+                  {item.hasChevron ? <MenuChevron /> : null}
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          <div className="hidden shrink-0 items-center gap-3 lg:flex">
+            <button
+              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              onClick={currentUser ? handleAccountClick : openLogin}
+              type="button"
+            >
+              <UserIcon />
+              <span>{currentUser ? "My Account" : "Register / Sign in"}</span>
             </button>
 
             <div className="relative" ref={languageMenuReference}>
               <button
                 aria-expanded={isLanguageMenuOpen}
                 aria-label="Select language"
-                className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
+                className="inline-flex min-h-12 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
                 onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
                 type="button"
               >
                 <GlobeIcon />
-                <span className="max-w-[72px] truncate sm:max-w-none">{selectedLanguage.shortLabel}</span>
+                <span>{selectedLanguage.shortLabel}</span>
                 <ChevronIcon isOpen={isLanguageMenuOpen} />
               </button>
 
@@ -251,89 +349,41 @@ export function Header() {
                 </div>
               ) : null}
             </div>
-          </div>
-        </div>
 
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:gap-8">
-          <a className="flex items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
-            <img
-              alt="FoodOnlines logo"
-              className="block h-12 w-auto max-w-[180px] object-contain sm:h-14 sm:max-w-[220px]"
-              src={assets.logo}
-            />
-          </a>
+            <button
+              className="inline-flex h-12 w-16 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <BasketIcon />
+            </button>
 
-          <nav className="hidden items-center justify-center gap-8 text-sm font-semibold text-neutral-700 lg:flex">
-            {navItems.map((item) => (
-              <a
-                className="transition hover:text-citrus-500"
-                href={`#${item.toLowerCase().replaceAll(" ", "-")}`}
-                key={item}
-                onClick={(event) => {
-                  if (item === "Home" && siteView !== "home") {
-                    event.preventDefault();
-                    backToHome();
-                  }
-
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3 lg:justify-self-end">
-            {siteView !== "home" ? (
+            {currentUser ? (
               <button
-                className="hidden min-h-11 rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:inline-flex lg:items-center"
-                onClick={backToHome}
+                className="inline-flex min-h-12 items-center rounded-full bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600"
+                onClick={() => void logoutUser()}
                 type="button"
               >
-                Home
+                Logout
               </button>
             ) : null}
-            {currentUser ? (
-              <>
-                <button
-                  className="hidden min-h-11 rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-leaf-500 hover:text-leaf-700 lg:inline-flex lg:items-center"
-                  onClick={handleAccountClick}
-                  type="button"
-                >
-                  My Account
-                </button>
-                <button
-                  className="hidden min-h-11 items-center rounded-full bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600 lg:inline-flex"
-                  onClick={() => void logoutUser()}
-                  type="button"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <a
-                  className="hidden min-h-11 items-center rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-leaf-500 hover:text-leaf-700 lg:flex"
-                  href="#login"
-                  onClick={handleLoginClick}
-                >
-                  Login
-                </a>
-                <a
-                  className="hidden min-h-11 items-center rounded-full bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600 lg:flex"
-                  href="#signup"
-                  onClick={handleSignupClick}
-                >
-                  Register
-                </a>
-              </>
-            )}
+          </div>
+
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              className="inline-flex h-11 min-w-[94px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-900"
+              onClick={openZipPanel}
+              type="button"
+            >
+              <LocationMarker />
+              <span>{zipCode}</span>
+            </button>
 
             <button
               aria-controls="mobile-navigation"
               aria-expanded={isMobileMenuOpen}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-800 transition hover:border-citrus-500 hover:text-citrus-500"
               onClick={handleMenuToggle}
               type="button"
             >
@@ -363,72 +413,99 @@ export function Header() {
             className="border-t border-neutral-100 bg-white px-4 pb-5 pt-3 shadow-lg shadow-neutral-950/5 lg:hidden"
             id="mobile-navigation"
           >
-            <nav className="mx-auto flex max-w-7xl flex-col gap-2">
+            <div className="mx-auto flex max-w-7xl flex-col gap-2">
               {navItems.map((item) => (
                 <a
-                  className="rounded-2xl px-4 py-3 text-sm font-bold text-neutral-700 transition hover:bg-neutral-50 hover:text-citrus-500"
-                  href={`#${item.toLowerCase().replaceAll(" ", "-")}`}
-                  key={item}
-                  onClick={(event) => {
-                    if (item === "Home" && siteView !== "home") {
-                      event.preventDefault();
-                      backToHome();
-                    }
-
-                    setIsMobileMenuOpen(false);
-                  }}
+                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                  href={item.href}
+                  key={item.label}
+                  onClick={(event) => handleNavClick(item.label, event)}
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
 
-              <button
-                className="mt-2 flex min-h-12 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  openZipPanel();
-                }}
-                type="button"
-              >
-                Change ZIP Code
-              </button>
+              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                <button
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                  onClick={currentUser ? handleAccountClick : openLogin}
+                  type="button"
+                >
+                  <UserIcon />
+                  <span>{currentUser ? "My Account" : "Register / Sign in"}</span>
+                </button>
+
+                <button
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                  onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
+                  type="button"
+                >
+                  <GlobeIcon />
+                  <span>{selectedLanguage.shortLabel}</span>
+                  <ChevronIcon isOpen={isLanguageMenuOpen} />
+                </button>
+
+                <button
+                  className="flex min-h-12 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                  onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  type="button"
+                >
+                  <BasketIcon />
+                </button>
+              </div>
 
               {currentUser ? (
-                <>
-                  <button
-                    className="flex min-h-12 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
-                    onClick={handleAccountClick}
-                    type="button"
-                  >
-                    My Account
-                  </button>
-                  <button
-                    className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
-                    onClick={() => void logoutUser()}
-                    type="button"
-                  >
-                    Logout
-                  </button>
-                </>
+                <button
+                  className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
+                  onClick={() => void logoutUser()}
+                  type="button"
+                >
+                  Logout
+                </button>
               ) : (
-                <>
-                  <a
-                    className="flex min-h-12 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-leaf-500 hover:text-leaf-700"
-                    href="#login"
-                    onClick={handleLoginClick}
-                  >
-                    Login
-                  </a>
-                  <a
-                    className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
-                    href="#signup"
-                    onClick={handleSignupClick}
-                  >
-                    Register
-                  </a>
-                </>
+                <a
+                  className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
+                  href="#signup"
+                  onClick={handleSignupClick}
+                >
+                  Register
+                </a>
               )}
-            </nav>
+
+              {isLanguageMenuOpen ? (
+                <div className="mt-2 rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+                  {languageOptions.map((language) => {
+                    const isSelected = language.code === selectedLanguageCode;
+
+                    return (
+                      <button
+                        className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-medium text-neutral-800 transition hover:bg-neutral-50"
+                        dir={language.dir}
+                        key={language.code}
+                        lang={language.lang}
+                        onClick={() => {
+                          setSelectedLanguageCode(language.code);
+                          setIsLanguageMenuOpen(false);
+                        }}
+                        type="button"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                            isSelected ? "border-leaf-500" : "border-neutral-300"
+                          }`}
+                        >
+                          <span
+                            className={`h-2 w-2 rounded-full ${isSelected ? "bg-leaf-500" : "bg-transparent"}`}
+                          />
+                        </span>
+                        <span className="flex-1">{language.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           </div>
         ) : null}
       </header>

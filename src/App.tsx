@@ -32,7 +32,7 @@ export default function App() {
     <main className="min-h-screen bg-white font-sans text-ink">
       <Header />
       {siteView === "home" ? (
-        <div className="pt-[116px] sm:pt-[124px]">
+        <div className="pt-[112px] sm:pt-[120px] lg:pt-[138px]">
           <ShortcutRow />
           <HeroSlider />
           {currentUser ? <AccountSummary /> : null}

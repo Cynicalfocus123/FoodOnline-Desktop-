@@ -55,6 +55,15 @@
 - Build/test commands used for 2026-05-23 redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 homepage redesign: `59eae19`
 - Next recommended improvements after 2026-05-23 redesign: wire ZIP and language state into real API/session storage, lazy-fetch carousel data from backend endpoints, replace SVG mock product art with optimized WebP catalog assets, and add keyboard focus trapping inside slide panel for stronger accessibility.
+- Header/menu spacing fix on 2026-05-23: homepage header layout was tightened to match reference ordering without redesigning product rows or backend flows. Desktop header now places logo first, delivery ZIP pill second, then menu links `Home`, `Recipe`, `Coupon`, `Products`, `Healthy Product`, `Wholesale Products`, and `Deal-of-the-week`; right side now places `Register / Sign in`, language, then cart.
+- Header files changed for 2026-05-23 spacing fix: `src/components/Header.tsx`, `src/data/home.ts`, `src/components/ShortcutRow.tsx`, and `src/App.tsx`.
+- Header menu links updated: removed previous `Categories / Best deals / Company` desktop order and replaced it with `Home / Recipe / Coupon / Products / Healthy Product / Wholesale Products / Deal-of-the-week`, including a small products chevron and green emphasis on `Home` and `Wholesale Products`.
+- Location button placement update: delivery ZIP pill stays inside main header row beside FoodOnlines logo and before `Home`, using compact rounded white pill styling, light gray border, pin icon, `DELIVER TO` label, and ZIP `91789`.
+- Language button placement update: language selector moved into desktop right-side control group after `Register / Sign in` and before cart, preserving existing dropdown selection behavior.
+- Cart button added: new rounded white pill cart button with basket icon now sits to the right of language in the desktop header and inside the mobile menu action row.
+- Category row spacing fix: increased homepage top padding and added extra top/bottom spacing around `ShortcutRow` so shortcut/category strip no longer overlaps fixed header and now sits with clearer separation from hero/banner area across desktop, tablet, and mobile.
+- Build/test commands used for 2026-05-23 header/menu fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 header/menu fix: `__HEADER_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

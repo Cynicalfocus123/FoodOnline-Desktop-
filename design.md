@@ -71,6 +71,14 @@
 - Build/test commands used for this redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 homepage redesign: `59eae19`
 - Next recommended improvements: persist ZIP/language preferences, connect carousel/category content to backend catalog API, swap mock art for optimized WebP/SVG content images, and optionally add skeleton loading for API-backed rows.
+- Header/menu reference alignment fix on 2026-05-23 updates only homepage header/menu structure and spacing, leaving product carousels, product cards, backend, and other homepage sections unchanged.
+- Header files changed for this fix: `src/components/Header.tsx`, `src/data/home.ts`, `src/components/ShortcutRow.tsx`, and `src/App.tsx`.
+- Header menu now reads `Home`, `Recipe`, `Coupon`, `Products`, `Healthy Product`, `Wholesale Products`, and `Deal-of-the-week` in that order on desktop, with `Products` showing a small dropdown chevron and `Home` / `Wholesale Products` using green accent similar to reference.
+- Location button placement now sits directly beside logo and before `Home` inside same header row. Pill style uses white background, light gray border, small location pin icon, optional `DELIVER TO` label, and ZIP `91789`.
+- Right-side desktop control order is now `Register / Sign in`, language button, then cart button. Language keeps globe icon + selected text + chevron; cart uses rounded white pill with basket icon.
+- Category/shortcut row spacing fix: homepage top offset increased in `src/App.tsx`, and `ShortcutRow` now adds extra top/bottom spacing so fixed header, shortcut row, and hero/banner no longer collide on desktop, tablet, or mobile.
+- Build/test commands used for this header fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 header/menu fix: `__HEADER_COMMIT_HASH__`
 
 ## Guardrails
 
