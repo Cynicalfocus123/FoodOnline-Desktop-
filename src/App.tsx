@@ -6,6 +6,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
+import { PromoExperience } from "./components/PromoExperience";
 import { ShortcutRow } from "./components/ShortcutRow";
 import { SignupFlow } from "./components/SignupFlow";
 import { useHomeStore } from "./store/homeStore";
@@ -45,6 +46,7 @@ export default function App() {
       ) : null}
       {siteView === "login" ? <LoginFlow /> : null}
       <Footer />
+      {siteView === "home" ? <PromoExperience /> : null}
     </main>
   );
 }

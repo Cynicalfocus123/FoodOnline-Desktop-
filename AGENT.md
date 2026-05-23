@@ -76,6 +76,14 @@
 - Cart icon change on 2026-05-23: replaced previous basket icon with real shopping cart icon with wheels in desktop cart pill and mobile cart action button.
 - Build/test commands used for 2026-05-23 spacing/cart fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 spacing/cart fix: `c831e6c`
+- Promotional coupon UI added on 2026-05-23: homepage now includes reusable sticky bottom-center promo bar plus responsive promo modal flow modeled after Yamibuy-style coupon UX. Promo stays visible while scrolling until dismissed.
+- Promo files changed for 2026-05-23: `src/App.tsx`, `src/components/PromoExperience.tsx`, `src/components/PromoStickyBar.tsx`, `src/components/PromoModalDesktop.tsx`, `src/components/PromoModalMobile.tsx`, and `src/lib/promoStorage.ts`.
+- Promo bar component added: floating bottom-center sticky promo CTA shows `Use code: WELCOME for 10% off!` with coupon visual block and `Copy Code` prompt. Bar uses semi-transparent dark surface, blur, strong shadow, and fixed z-index above homepage content.
+- Desktop promo modal behavior: clicking sticky promo bar opens centered overlay modal with dimmed backdrop, pink hero art area, `10% Off` focus, `WELCOME` code messaging, benefits list, copy CTA, and close `X`. Backdrop click closes modal only; `X` performs full dismissal.
+- Mobile promo modal behavior: on mobile the same click opens bottom-sheet style promo card with stacked content, dimmed overlay, mobile CTA buttons `Copy Code` and `Later`, plus close `X` for full dismissal.
+- Dismiss/localStorage behavior: closing promo with `X` sets persistent frontend dismissal key in localStorage via `src/lib/promoStorage.ts`, hides sticky bar + modal immediately, and keeps promo hidden after refresh until storage key is cleared manually.
+- Build/test commands used for 2026-05-23 promo UI: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo UI: `__PROMO_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

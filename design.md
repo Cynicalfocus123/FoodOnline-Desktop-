@@ -91,6 +91,14 @@
 - Cart icon direction: desktop and mobile cart controls now use wheeled shopping cart icon instead of basket icon, while keeping same rounded pill button shape.
 - Build/test commands used for this spacing/cart update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 spacing/cart fix: `c831e6c`
+- Promotional coupon UI added on 2026-05-23 as homepage-only floating experience. Feature includes sticky bottom-center promo bar, desktop centered promo modal, and mobile bottom-sheet promo modal.
+- Promo files changed for this feature: `src/App.tsx`, `src/components/PromoExperience.tsx`, `src/components/PromoStickyBar.tsx`, `src/components/PromoModalDesktop.tsx`, `src/components/PromoModalMobile.tsx`, and `src/lib/promoStorage.ts`.
+- Sticky promo bar direction: compact floating pill-like strip centered at viewport bottom with dark translucent background, coupon/ticket visual on left, `Use code: WELCOME for 10% off!` text, and clickable `Copy Code` cue.
+- Desktop promo behavior: clicking sticky bar opens centered modal overlay above homepage with dim backdrop, pink promotional art header, 10% offer card, benefits list, copy CTA, and close `X`.
+- Mobile promo behavior: clicking sticky bar opens mobile-friendly stacked bottom sheet with readable spacing, close `X`, `Copy Code`, and `Later` actions.
+- Dismiss behavior: only explicit dismiss via `X` permanently hides promo and sticky bar by saving localStorage flag in `src/lib/promoStorage.ts`; normal close actions such as backdrop click or `Later` only close the modal.
+- Build/test commands used for this promo feature: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo UI: `__PROMO_COMMIT_HASH__`
 
 ## Guardrails
 
