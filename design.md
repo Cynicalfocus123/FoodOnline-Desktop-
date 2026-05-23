@@ -153,6 +153,7 @@
 - Hamburger direction: mobile hamburger menu includes a normal text `Login / Register` item while ZIP/location and cart stay visible outside the hamburger.
 - Build/test commands used for this header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header auth correction: `092b335`
+- Documentation follow-up on 2026-05-24: no separate `designer.md` file exists in the workspace, so this `design.md` file remains the single design source of truth. The header auth correction is also recorded in `AGENT.md`.
 
 ## Guardrails
 

@@ -135,6 +135,7 @@
 - Header auth correction behavior: both visible header and hamburger `Login / Register` links use existing `#login` / `openLogin`; no new route or backend auth logic was added. ZIP/location and cart remain outside hamburger.
 - Build/test commands used for 2026-05-24 header auth correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header auth correction: `092b335`
+- Documentation follow-up on 2026-05-24: confirmed there is no `designer.md` file in this repo; `design.md` remains the active design notes source per repo rules. Header auth correction is documented in both `AGENT.md` and `design.md`.
 
 ## Backend/Admin Notes
 
