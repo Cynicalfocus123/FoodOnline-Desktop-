@@ -319,7 +319,7 @@ export function Header() {
   return (
     <>
       <header
-        className="sticky top-0 z-[1000] isolate border-b border-neutral-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.08)] [transform:translateZ(0)]"
+        className="fixed left-0 right-0 top-0 z-[1000] isolate border-b border-neutral-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.08)] [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
         ref={languageMenuReference}
       >
         <div className="mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:py-3">

@@ -44,7 +44,7 @@ export function SignupFlow() {
 
   if (signupStep === "complete" && completedSubmission) {
     return (
-      <section className="bg-neutral-50 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+      <section className="bg-neutral-50 px-4 pb-16 pt-[164px] sm:px-6 sm:pt-[178px] lg:pt-[186px]">
         <div className="mx-auto max-w-3xl rounded-[28px] border border-emerald-100 bg-emerald-50/80 p-6 shadow-sm shadow-emerald-950/5 sm:p-8">
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black text-white">
@@ -75,7 +75,7 @@ export function SignupFlow() {
 
   if (signupStep === "form") {
     return (
-      <section className="bg-neutral-50 px-0 pb-16 pt-8 sm:px-6 sm:pt-10">
+      <section className="bg-neutral-50 px-0 pb-16 pt-[164px] sm:px-6 sm:pt-[178px] lg:pt-[186px]">
         <div className="mx-auto grid max-w-7xl overflow-hidden border-y border-neutral-100 bg-white shadow-soft sm:rounded-[28px] sm:border lg:grid-cols-[1.02fr_0.98fr]">
           <div className="bg-white sm:hidden">
             <img
@@ -205,7 +205,7 @@ export function SignupFlow() {
   }
 
   return (
-    <section className="bg-neutral-50 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+    <section className="bg-neutral-50 px-4 pb-16 pt-[164px] sm:px-6 sm:pt-[178px] lg:pt-[186px]">
       <div className="mx-auto max-w-5xl rounded-[28px] border border-neutral-100 bg-white p-6 shadow-soft sm:p-8">
         <h1 className="text-3xl font-black text-ink sm:text-4xl">What&apos;s your role?</h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-neutral-600">

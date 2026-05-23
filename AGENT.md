@@ -140,6 +140,9 @@
 - Header scroll fix files changed: `src/App.tsx`, `src/components/Header.tsx`, `src/components/LoginFlow.tsx`, `src/components/SignupFlow.tsx`, and `src/styles.css`.
 - Header scroll fix behavior: removed the manual homepage top spacer because sticky header now participates in layout, reduced signup/login top padding that only existed for the old fixed header, raised header/language/ZIP panel z-index layers, and added horizontal overflow guards on `html` and `body`.
 - Build/test commands used for 2026-05-24 Chrome/in-app header scroll fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Cross-browser fixed header follow-up on 2026-05-24: final requirement is that Chrome, Safari, iOS, Android, Telegram/in-app browsers, and other browser surfaces show the same always-visible header and search bar while scrolling.
+- Cross-browser header behavior: header/search is solid white fixed positioning again, but without translucent backdrop blur; homepage, login, and signup content now reserve explicit top space, and anchor/scroll targets use `scroll-padding-top` plus `scroll-margin-top` so sections do not clip behind the fixed header/search.
+- Build/test commands used for 2026-05-24 cross-browser fixed header follow-up: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

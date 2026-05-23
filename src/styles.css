@@ -20,6 +20,7 @@
 html {
   min-height: 100%;
   overflow-x: hidden;
+  scroll-padding-top: 148px;
   scroll-behavior: smooth;
 }
 
@@ -67,4 +68,46 @@ video {
 .home-section-auto {
   content-visibility: auto;
   contain-intrinsic-size: 420px;
+}
+
+#home,
+#categories,
+#best-deals,
+#account-summary,
+#company,
+[id^="category-"],
+[id^="products-"] {
+  scroll-margin-top: 148px;
+}
+
+@media (min-width: 640px) {
+  html {
+    scroll-padding-top: 162px;
+  }
+
+  #home,
+  #categories,
+  #best-deals,
+  #account-summary,
+  #company,
+  [id^="category-"],
+  [id^="products-"] {
+    scroll-margin-top: 162px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 170px;
+  }
+
+  #home,
+  #categories,
+  #best-deals,
+  #account-summary,
+  #company,
+  [id^="category-"],
+  [id^="products-"] {
+    scroll-margin-top: 170px;
+  }
 }
