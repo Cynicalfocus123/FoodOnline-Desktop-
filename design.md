@@ -98,7 +98,7 @@
 - Mobile promo behavior: clicking sticky bar opens mobile-friendly stacked bottom sheet with readable spacing, close `X`, `Copy Code`, and `Later` actions.
 - Dismiss behavior: only explicit dismiss via `X` permanently hides promo and sticky bar by saving localStorage flag in `src/lib/promoStorage.ts`; normal close actions such as backdrop click or `Later` only close the modal.
 - Build/test commands used for this promo feature: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 promo UI: `__PROMO_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 promo UI: `9f786a4`
 
 ## Guardrails
 

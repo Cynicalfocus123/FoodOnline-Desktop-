@@ -83,7 +83,7 @@
 - Mobile promo modal behavior: on mobile the same click opens bottom-sheet style promo card with stacked content, dimmed overlay, mobile CTA buttons `Copy Code` and `Later`, plus close `X` for full dismissal.
 - Dismiss/localStorage behavior: closing promo with `X` sets persistent frontend dismissal key in localStorage via `src/lib/promoStorage.ts`, hides sticky bar + modal immediately, and keeps promo hidden after refresh until storage key is cleared manually.
 - Build/test commands used for 2026-05-23 promo UI: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 promo UI: `__PROMO_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 promo UI: `9f786a4`
 
 ## Backend/Admin Notes
 
