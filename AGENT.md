@@ -121,6 +121,11 @@
 - Category row spacing update: main homepage top padding and shortcut row vertical padding were retuned so the category row sits below the new fixed header/search without overlap or excess gap before hero.
 - Build/test commands used for 2026-05-24 header/search layout: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 header/search layout: `54e1d5a`
+- Header hamburger/login update on 2026-05-24: removed `Register / Sign in` and orange register actions from the mobile hamburger menu so the hamburger only contains nav links plus small-screen language controls.
+- Header login CTA files changed for 2026-05-24: `src/components/Header.tsx`.
+- Login/register CTA update: visible guest auth action now says `Login / Register`, uses the existing `#login` public login view through `openLogin`, and remains styled as the orange CTA on desktop plus wider mobile/tablet when space allows.
+- Build/test commands used for 2026-05-24 header login CTA update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 header login CTA update: `cc57408`
 
 ## Backend/Admin Notes
 
