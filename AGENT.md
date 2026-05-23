@@ -94,6 +94,11 @@
 - Promo bar contrast fix details: increased dark background opacity, switched to darker neutral gradient, strengthened shadow/border, and slightly raised supporting label/copy underline contrast.
 - Build/test commands used for 2026-05-23 promo bar contrast tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo bar contrast tune: `95a8f71`
+- Promo modal size/CTA simplification on 2026-05-23: popup was reduced again, centered on all device sizes, and changed to one main `Copy Code` CTA button only.
+- Promo resize files changed for 2026-05-23: `src/components/PromoModalDesktop.tsx`, `src/components/PromoModalMobile.tsx`, and `src/components/PromoExperience.tsx`.
+- Promo resize fix details: desktop modal width reduced further, mobile modal converted to smaller centered card, overlay now centers modal on desktop/tablet/mobile, and extra secondary buttons were removed so only one copy CTA remains in each modal.
+- Build/test commands used for 2026-05-23 promo resize/CTA fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo resize/CTA fix: `__PROMO_RESIZE_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

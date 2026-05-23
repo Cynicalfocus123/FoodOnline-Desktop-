@@ -82,10 +82,10 @@ export function PromoExperience() {
           type="button"
         />
 
-        <div className="absolute inset-0 flex items-end justify-center p-0 md:items-center md:p-6">
+        <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4 md:p-6">
           <div
             className={`flex w-full justify-center transition duration-300 ${
-              isModalOpen ? "translate-y-0 opacity-100 md:scale-100" : "translate-y-8 opacity-0 md:scale-95"
+              isModalOpen ? "translate-y-0 opacity-100 scale-100" : "translate-y-6 opacity-0 scale-95"
             }`}
           >
             <PromoModalDesktop
@@ -96,9 +96,9 @@ export function PromoExperience() {
             />
             <PromoModalMobile
               copyLabel={copyLabel}
+              hasCopied={hasCopied}
               onClose={handleDismiss}
               onCopy={() => void handleCopy()}
-              onLater={handleCloseModalOnly}
             />
           </div>
         </div>

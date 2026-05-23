@@ -109,6 +109,11 @@
 - Visual tuning: darker neutral gradient, stronger shadow, slightly stronger border, and brighter secondary text/underline treatment while keeping floating translucent feel.
 - Build/test commands used for this promo bar contrast tune: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 promo bar contrast tune: `95a8f71`
+- Promo modal size/CTA simplification on 2026-05-23 tunes popup footprint and actions only. Promo now uses one main copy button and smaller centered card sizing across desktop, tablet, and mobile.
+- Promo resize files changed for this follow-up: `src/components/PromoModalDesktop.tsx`, `src/components/PromoModalMobile.tsx`, and `src/components/PromoExperience.tsx`.
+- Responsive tuning: desktop modal max width reduced, mobile modal changed from larger sheet feel to smaller centered card, overlay centers modal on all breakpoints, and duplicate/secondary CTA buttons were removed.
+- Build/test commands used for this promo resize/CTA fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 promo resize/CTA fix: `__PROMO_RESIZE_COMMIT_HASH__`
 
 ## Guardrails
 
