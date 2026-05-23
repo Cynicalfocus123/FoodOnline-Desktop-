@@ -3,7 +3,7 @@ import { MockIcon } from "./MockIcon";
 
 export function ShortcutRow() {
   return (
-    <section className="mt-0 border-b border-neutral-200 bg-white pb-3 pt-2 sm:pb-4 sm:pt-3">
+    <section className="mt-0 border-b border-neutral-200 bg-white pb-2 pt-1 sm:pb-3 sm:pt-2">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex gap-3 overflow-x-auto py-2 scrollbar-none lg:justify-between">
           {shortcutItems.map((item) => (

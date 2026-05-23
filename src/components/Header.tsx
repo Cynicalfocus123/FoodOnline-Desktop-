@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { assets, languageOptions, navItems, zipCodeExample } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
@@ -78,6 +78,42 @@ function CartIcon() {
   );
 }
 
+function SearchIcon({ className = "h-5 w-5 text-neutral-500" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`${className} shrink-0`}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16.5 16.5 4 4" />
+    </svg>
+  );
+}
+
+function CameraIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5 shrink-0 text-neutral-500"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.9"
+      viewBox="0 0 24 24"
+    >
+      <path d="M5 7.5h3l1.3-2h5.4l1.3 2h3a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z" />
+      <circle cx="12" cy="13.2" r="3.4" />
+    </svg>
+  );
+}
+
 function ChevronIcon({ isOpen }: { isOpen: boolean }) {
   return (
     <svg
@@ -143,7 +179,8 @@ export function Header() {
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
   const [zipCode, setZipCode] = useState(zipCodeExample);
   const [draftZipCode, setDraftZipCode] = useState(zipCodeExample);
-  const languageMenuReference = useRef<HTMLDivElement | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const languageMenuReference = useRef<HTMLElement | null>(null);
 
   const selectedLanguage = useMemo(
     () => languageOptions.find((language) => language.code === selectedLanguageCode) ?? languageOptions[0],
@@ -249,29 +286,70 @@ export function Header() {
     setIsMobileMenuOpen(false);
   }
 
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    console.info("FoodOnline mock search", searchTerm.trim());
+  }
+
+  const languageDropdown = isLanguageMenuOpen ? (
+    <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-[240px] rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+      {languageOptions.map((language) => {
+        const isSelected = language.code === selectedLanguageCode;
+
+        return (
+          <button
+            className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-medium text-neutral-800 transition hover:bg-neutral-50"
+            dir={language.dir}
+            key={language.code}
+            lang={language.lang}
+            onClick={() => {
+              setSelectedLanguageCode(language.code);
+              setIsLanguageMenuOpen(false);
+            }}
+            type="button"
+          >
+            <span
+              aria-hidden="true"
+              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                isSelected ? "border-leaf-500" : "border-neutral-300"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${isSelected ? "bg-leaf-500" : "bg-transparent"}`} />
+            </span>
+            <span className="flex-1">{language.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  ) : null;
+
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:min-h-[88px] lg:gap-5">
-          <div className="flex min-w-0 items-center gap-3 lg:flex-1 lg:gap-5">
+      <header
+        className="fixed left-0 right-0 top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+        ref={languageMenuReference}
+      >
+        <div className="mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:py-3">
+          <div className="flex min-h-[56px] items-center justify-between gap-2 lg:min-h-[64px] lg:gap-4">
+            <div className="flex min-w-0 items-center gap-2 lg:flex-1 lg:gap-4">
             <a className="flex shrink-0 items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
               <img
                 alt="FoodOnlines logo"
-                className="block h-12 w-auto max-w-[170px] object-contain sm:h-14 sm:max-w-[210px]"
+                className="block h-10 w-auto max-w-[100px] object-contain min-[390px]:max-w-[128px] sm:h-12 sm:max-w-[180px] lg:max-w-[190px]"
                 src={assets.logo}
               />
             </a>
 
             <button
-              className="hidden shrink-0 items-center gap-2 px-1 text-left text-[1rem] font-semibold text-neutral-900 transition hover:text-leaf-600 lg:inline-flex"
+              className="hidden shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-left text-sm font-bold text-neutral-900 shadow-sm transition hover:border-neutral-300 hover:text-leaf-600 lg:inline-flex"
               onClick={openZipPanel}
               type="button"
             >
               <LocationMarker />
-              <span className="min-w-0">{zipCode}</span>
+              <span>{zipCode}</span>
             </button>
 
-            <nav className="hidden min-w-0 items-center gap-7 overflow-x-auto whitespace-nowrap text-[15px] font-semibold text-neutral-800 scrollbar-none lg:flex">
+            <nav className="hidden min-w-0 items-center gap-4 overflow-x-auto whitespace-nowrap text-[14px] font-semibold text-neutral-800 scrollbar-none lg:flex xl:gap-6 xl:text-[15px]">
               {navItems.map((item) => (
                 <a
                   className={`inline-flex items-center gap-1.5 transition hover:text-leaf-600 ${
@@ -290,7 +368,7 @@ export function Header() {
 
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
             <button
-              className="inline-flex min-h-12 items-center gap-2 px-1 text-[1rem] font-semibold text-neutral-900 transition hover:text-leaf-600"
+              className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
               onClick={currentUser ? handleAccountClick : openLogin}
               type="button"
             >
@@ -298,11 +376,11 @@ export function Header() {
               <span>{currentUser ? "My Account" : "Register / Sign in"}</span>
             </button>
 
-            <div className="relative" ref={languageMenuReference}>
+            <div className="relative">
               <button
                 aria-expanded={isLanguageMenuOpen}
                 aria-label="Select language"
-                className="inline-flex min-h-12 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
                 onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
                 type="button"
               >
@@ -311,43 +389,11 @@ export function Header() {
                 <ChevronIcon isOpen={isLanguageMenuOpen} />
               </button>
 
-              {isLanguageMenuOpen ? (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-[240px] rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
-                  {languageOptions.map((language) => {
-                    const isSelected = language.code === selectedLanguageCode;
-
-                    return (
-                      <button
-                        className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-medium text-neutral-800 transition hover:bg-neutral-50"
-                        dir={language.dir}
-                        key={language.code}
-                        lang={language.lang}
-                        onClick={() => {
-                          setSelectedLanguageCode(language.code);
-                          setIsLanguageMenuOpen(false);
-                        }}
-                        type="button"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                            isSelected ? "border-leaf-500" : "border-neutral-300"
-                          }`}
-                        >
-                          <span
-                            className={`h-2 w-2 rounded-full ${isSelected ? "bg-leaf-500" : "bg-transparent"}`}
-                          />
-                        </span>
-                        <span className="flex-1">{language.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : null}
+              {languageDropdown}
             </div>
 
             <button
-              className="inline-flex h-12 w-16 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              className="inline-flex h-11 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
               onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
               type="button"
             >
@@ -365,14 +411,38 @@ export function Header() {
             ) : null}
           </div>
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-1.5 lg:hidden">
             <button
-              className="inline-flex h-11 items-center justify-center gap-2 px-1 text-sm font-semibold text-neutral-900"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-full border border-neutral-200 bg-white px-2.5 text-sm font-bold text-neutral-900 shadow-sm min-[390px]:gap-1.5"
               onClick={openZipPanel}
               type="button"
             >
               <LocationMarker />
               <span>{zipCode}</span>
+            </button>
+
+            <div className="relative hidden sm:block">
+              <button
+                aria-expanded={isLanguageMenuOpen}
+                aria-label="Select language"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-900"
+                onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
+                type="button"
+              >
+                <GlobeIcon />
+                <span>{selectedLanguage.shortLabel}</span>
+                <ChevronIcon isOpen={isLanguageMenuOpen} />
+              </button>
+              {languageDropdown}
+            </div>
+
+            <button
+              aria-label="View cart"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <CartIcon />
             </button>
 
             <button
@@ -404,6 +474,37 @@ export function Header() {
           </div>
         </div>
 
+          <form
+            className="mx-auto flex min-h-12 w-full max-w-4xl items-center gap-2 rounded-full border-2 border-neutral-900/80 bg-neutral-50 px-4 shadow-[0_8px_22px_rgba(15,23,42,0.06)] transition focus-within:border-leaf-500 focus-within:bg-white focus-within:shadow-[0_12px_34px_rgba(15,23,42,0.1)] sm:min-h-14 sm:px-5 lg:mt-1"
+            onSubmit={handleSearchSubmit}
+            role="search"
+          >
+            <SearchIcon />
+            <input
+              aria-label="Search products"
+              className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-neutral-900 outline-none placeholder:text-neutral-500 sm:text-base"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search groceries, snacks, drinks and more"
+              type="search"
+              value={searchTerm}
+            />
+            <button
+              aria-label="Search by image"
+              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-200 sm:inline-flex"
+              type="button"
+            >
+              <CameraIcon />
+            </button>
+            <button
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white transition hover:bg-neutral-800 sm:h-10 sm:w-auto sm:px-5 sm:text-sm sm:font-black"
+              type="submit"
+            >
+              <SearchIcon className="h-4 w-4 text-white sm:hidden" />
+              <span className="hidden sm:inline">Search</span>
+            </button>
+          </form>
+        </div>
+
         {isMobileMenuOpen ? (
           <div
             className="border-t border-neutral-100 bg-white px-4 pb-5 pt-3 shadow-lg shadow-neutral-950/5 lg:hidden"
@@ -421,7 +522,7 @@ export function Header() {
                 </a>
               ))}
 
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
                 <button
                   className="flex min-h-12 items-center justify-center gap-2 px-4 text-sm font-semibold text-neutral-900 transition hover:text-leaf-600"
                   onClick={currentUser ? handleAccountClick : openLogin}
@@ -432,21 +533,13 @@ export function Header() {
                 </button>
 
                 <button
-                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50 sm:hidden"
                   onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
                   type="button"
                 >
                   <GlobeIcon />
                   <span>{selectedLanguage.shortLabel}</span>
                   <ChevronIcon isOpen={isLanguageMenuOpen} />
-                </button>
-
-                <button
-                  className="flex min-h-12 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
-                  onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                  type="button"
-                >
-                  <CartIcon />
                 </button>
               </div>
 
