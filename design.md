@@ -84,7 +84,7 @@
 - Footer content now mirrors reference with left description `We bring Grocery to your door for less`, Bangkok office address, phone, email, hours, and full text link lists for distributor/account/corporate/popular sections.
 - Footer styling direction: white background, generous column spacing, dark blue-gray headings/body links, larger logo block, green contact icons, and responsive stacked behavior for smaller screens.
 - Build/test commands used for this footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 footer redesign: `__FOOTER_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 footer redesign: `5154615`
 
 ## Guardrails
 
