@@ -56,6 +56,21 @@
 - Signup regression fix made no visual design changes. It restored the previous working signup payload keys, kept the shared desktop/mobile flow, preserved password eye toggles and banner sizing, improved server error display, and generated cPanel ZIP `foodonlines-signup-regression-fix.zip`.
 - Page navigation scroll fix made no visual design changes. It resets scroll to top when switching public SPA pages and generated cPanel ZIP `foodonlines-scroll-top-fix.zip`.
 - White page deployment fix made no UI changes. It keeps the `/app/` cPanel deployment scoped correctly and prevents missing `assets/` files from being rewritten to `index.html`, so asset upload/extraction mistakes show as missing assets instead of blank module-load failures.
+- Homepage/frontpage redesign on 2026-05-23 now follows grocery ecommerce reference closer to Yamibuy/Blinkit while preserving existing route structure, signup/login/account flows, and light production build behavior.
+- Files changed for 2026-05-23 redesign: `src/App.tsx`, `src/components/Header.tsx`, `src/components/HeroSlider.tsx`, `src/components/ShortcutRow.tsx`, `src/components/CategoryStrip.tsx`, `src/components/DealsGrid.tsx`, `src/components/ProductCard.tsx`, `src/components/ProductCarousel.tsx`, `src/components/MockIcon.tsx`, `src/data/home.ts`, `src/styles.css`, `index.html`, `admin.html`, and `public/favicon.svg`.
+- Header design now uses two fixed rows: top utility row with delivery ZIP selector left and language dropdown right, then main row with FoodOnlines logo, public nav, and auth buttons.
+- ZIP panel design: clicking header location chip opens large right-side slide panel with dim backdrop, red save CTA, large X close button, and outside-click close. This is mock frontend only with no backend validation yet.
+- Language dropdown design: globe trigger opens compact white card with radio-style language options; current language text updates in header immediately; Arabic row uses RTL direction for correct visual alignment.
+- New icon shortcut row sits directly below header and above hero. Desktop shows evenly spaced icons with centered 13px to 14px labels; mobile keeps horizontal scroll and thin bottom divider.
+- Browse All Categories section now uses rounded image cards with soft neutral framing and centered labels for 20 categories: Paan Corner, Dairy/Bread/Eggs, Fruits/Vegetables, Cold Drinks/Juices, Snacks/Munchies, Breakfast/Instant Food, Sweet Tooth, Bakery/Biscuits, Tea/Coffee/Milk Drinks, Atta/Rice/Dal, Masala/Oil/More, Sauces/Spreads, Chicken/Meat/Fish, Organic/Healthy Living, Baby Care, Pharma/Wellness, Cleaning Essentials, Home/Office, Personal Care, and Pet Care.
+- Promotional banner added below categories: yellow/orange gradient, stacked mock product art on left, `Memorial Day Sale` headline, large red `UP TO 80% OFF` message, and black `Shop Now` button.
+- Product system now uses reusable `ProductCard` + `ProductCarousel` components. Homepage renders 19 category sections, each with 15 mock products from `src/data/home.ts`, horizontal scroll, desktop arrow controls, delivery badges, compact two-line product titles, muted size text, bold price, and green outlined `ADD` button.
+- Mock homepage data file location is `src/data/home.ts`. It now stores language options, shortcut rows, category definitions, promo banner content, and generated placeholder product/category art so later API integration can swap data without redesigning components.
+- Typography update: product card titles use compact ecommerce weight/line-height with two-line clamp; category and shortcut labels use small centered medium-weight copy; global font fallback stack now prefers `Inter`, `Nunito Sans`, `Poppins`, then system sans.
+- Lightweight asset direction: temporary favicon is `public/favicon.svg`; category/product visuals use generated SVG placeholder art to avoid heavy image payloads while design iteration is in progress.
+- Build/test commands used for this redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 homepage redesign: `__UI_COMMIT_HASH__`
+- Next recommended improvements: persist ZIP/language preferences, connect carousel/category content to backend catalog API, swap mock art for optimized WebP/SVG content images, and optionally add skeleton loading for API-backed rows.
 
 ## Guardrails
 
