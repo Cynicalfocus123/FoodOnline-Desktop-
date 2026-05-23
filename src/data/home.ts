@@ -663,7 +663,91 @@ export const productCarouselSections: ProductCarouselSection[] = categoryConfigs
     })),
   }));
 
-export const footerLinkRows = [
-  ["Privacy", "Terms", "FAQ", "Company News", "Our Mission", "Contact Us"],
-  ["Seller", "Recipe", "Partners"],
+export type FooterContactItem = {
+  label: string;
+  value: string;
+  type: "location" | "phone" | "email" | "hours";
+};
+
+export type FooterLinkColumn = {
+  title: string;
+  links: string[];
+};
+
+export const footerDescription = "We bring Grocery to your door for less";
+
+export const footerContactItems: FooterContactItem[] = [
+  {
+    label: "Bangkok office:",
+    value: "279 Watcharaphon Rd. Tha rang, Bangkhen, Bangkok, Thailand",
+    type: "location",
+  },
+  {
+    label: "Call Us:",
+    value: "(66+) 097-392-4632",
+    type: "phone",
+  },
+  {
+    label: "Email:",
+    value: "sale@foodonlines.com",
+    type: "email",
+  },
+  {
+    label: "Hours:",
+    value: "10:00 - 18:00, Mon - Sat",
+    type: "hours",
+  },
+];
+
+export const footerColumns: FooterLinkColumn[] = [
+  {
+    title: "Company",
+    links: [
+      "Become Our Distributor",
+      "Apply Credit",
+      "Privacy Policy",
+      "Terms & Conditions",
+      "About Us",
+      "Contact Us",
+      "Complaint",
+      "Careers",
+      "Sitmap",
+    ],
+  },
+  {
+    title: "Account",
+    links: [
+      "Sign In",
+      "View Cart",
+      "My Wishlist",
+      "Track My Order",
+      "Help Ticket",
+      "Shipping Details",
+      "Compare products",
+    ],
+  },
+  {
+    title: "Corporate",
+    links: [
+      "Become a Vendor",
+      "Affiliate Program",
+      "Farm Business",
+      "Farm Careers",
+      "Our Suppliers",
+      "Accessibility",
+      "Promotions",
+    ],
+  },
+  {
+    title: "Popular",
+    links: [
+      "Milk & Flavoured Milk",
+      "Butter and Margarine",
+      "Eggs Substitutes",
+      "Marmalades",
+      "Sour Cream and Dips",
+      "Tea & Kombucha",
+      "Cheese",
+    ],
+  },
 ];

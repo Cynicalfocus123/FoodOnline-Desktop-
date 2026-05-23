@@ -64,6 +64,12 @@
 - Category row spacing fix: increased homepage top padding and added extra top/bottom spacing around `ShortcutRow` so shortcut/category strip no longer overlaps fixed header and now sits with clearer separation from hero/banner area across desktop, tablet, and mobile.
 - Build/test commands used for 2026-05-23 header/menu fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
+- Footer redesign on 2026-05-23: homepage footer now matches reference-style five-column layout with larger FoodOnlines logo block on left, delivery tagline, Bangkok office/contact rows, and full text link columns for `Company`, `Account`, `Corporate`, and `Popular`.
+- Footer files changed for 2026-05-23 redesign: `src/components/Footer.tsx` and `src/data/home.ts`.
+- Footer content update: replaced old compact two-row footer links with structured footer data for `Become Our Distributor`, `Apply Credit`, `Privacy Policy`, `Terms & Conditions`, `About Us`, `Contact Us`, `Complaint`, `Careers`, `Sitmap`, `Sign In`, `View Cart`, `My Wishlist`, `Track My Order`, `Help Ticket`, `Shipping Details`, `Compare products`, `Become a Vendor`, `Affiliate Program`, `Farm Business`, `Farm Careers`, `Our Suppliers`, `Accessibility`, `Promotions`, `Milk & Flavoured Milk`, `Butter and Margarine`, `Eggs Substitutes`, `Marmalades`, `Sour Cream and Dips`, `Tea & Kombucha`, and `Cheese`.
+- Footer contact block update: added left-side description `We bring Grocery to your door for less` plus icon rows for Bangkok office, phone, email, and business hours as shown in reference.
+- Build/test commands used for 2026-05-23 footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 footer redesign: `__FOOTER_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

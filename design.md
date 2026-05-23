@@ -79,6 +79,12 @@
 - Category/shortcut row spacing fix: homepage top offset increased in `src/App.tsx`, and `ShortcutRow` now adds extra top/bottom spacing so fixed header, shortcut row, and hero/banner no longer collide on desktop, tablet, or mobile.
 - Build/test commands used for this header fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
+- Footer redesign on 2026-05-23 updates only footer presentation/content. New footer uses five-column desktop layout: large logo/contact block at left and four link columns titled `Company`, `Account`, `Corporate`, and `Popular`.
+- Footer files changed for this redesign: `src/components/Footer.tsx` and `src/data/home.ts`.
+- Footer content now mirrors reference with left description `We bring Grocery to your door for less`, Bangkok office address, phone, email, hours, and full text link lists for distributor/account/corporate/popular sections.
+- Footer styling direction: white background, generous column spacing, dark blue-gray headings/body links, larger logo block, green contact icons, and responsive stacked behavior for smaller screens.
+- Build/test commands used for this footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 footer redesign: `__FOOTER_COMMIT_HASH__`
 
 ## Guardrails
 
