@@ -90,7 +90,7 @@
 - Spacing direction: reduced main top padding under header, reduced shortcut row vertical padding, and reduced hero inner top spacing so header, icon row, and splash video sit closer together but remain separated and readable on desktop, tablet, and mobile.
 - Cart icon direction: desktop and mobile cart controls now use wheeled shopping cart icon instead of basket icon, while keeping same rounded pill button shape.
 - Build/test commands used for this spacing/cart update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 spacing/cart fix: `__SPACING_CART_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 spacing/cart fix: `c831e6c`
 
 ## Guardrails
 

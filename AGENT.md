@@ -75,7 +75,7 @@
 - Header/category spacing fix details: reduced homepage top offset below fixed header, reduced `ShortcutRow` top/bottom padding, trimmed hero top/bottom content padding, and pulled hero copy slightly upward so blank space between header, category icon row, and splash video is smaller while keeping clean separation.
 - Cart icon change on 2026-05-23: replaced previous basket icon with real shopping cart icon with wheels in desktop cart pill and mobile cart action button.
 - Build/test commands used for 2026-05-23 spacing/cart fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-23 spacing/cart fix: `__SPACING_CART_COMMIT_HASH__`
+- Git commit hash for 2026-05-23 spacing/cart fix: `c831e6c`
 
 ## Backend/Admin Notes
 
