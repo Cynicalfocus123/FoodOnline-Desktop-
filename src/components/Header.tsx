@@ -167,7 +167,6 @@ function CloseIcon() {
 }
 
 export function Header() {
-  const openSignup = useHomeStore((state) => state.openSignup);
   const openLogin = useHomeStore((state) => state.openLogin);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
@@ -223,12 +222,6 @@ export function Header() {
       document.body.style.overflow = previousOverflow;
     };
   }, [isZipPanelOpen]);
-
-  function handleSignupClick(event: MouseEvent<HTMLAnchorElement>) {
-    event.preventDefault();
-    setIsMobileMenuOpen(false);
-    openSignup();
-  }
 
   function handleLoginClick(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
@@ -367,14 +360,25 @@ export function Header() {
           </div>
 
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
-            <button
-              className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
-              onClick={currentUser ? handleAccountClick : openLogin}
-              type="button"
-            >
-              <UserIcon />
-              <span>{currentUser ? "My Account" : "Register / Sign in"}</span>
-            </button>
+            {currentUser ? (
+              <button
+                className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
+                onClick={handleAccountClick}
+                type="button"
+              >
+                <UserIcon />
+                <span>My Account</span>
+              </button>
+            ) : (
+              <a
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-citrus-500 px-4 text-[15px] font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600 [&_svg]:text-white"
+                href="#login"
+                onClick={handleLoginClick}
+              >
+                <UserIcon />
+                <span>Login / Register</span>
+              </a>
+            )}
 
             <div className="relative">
               <button
@@ -435,6 +439,16 @@ export function Header() {
               </button>
               {languageDropdown}
             </div>
+
+            {!currentUser ? (
+              <a
+                className="hidden h-10 shrink-0 items-center rounded-full bg-citrus-500 px-3 text-xs font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600 min-[560px]:inline-flex"
+                href="#login"
+                onClick={handleLoginClick}
+              >
+                Login / Register
+              </a>
+            ) : null}
 
             <button
               aria-label="View cart"
@@ -522,16 +536,7 @@ export function Header() {
                 </a>
               ))}
 
-              <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                <button
-                  className="flex min-h-12 items-center justify-center gap-2 px-4 text-sm font-semibold text-neutral-900 transition hover:text-leaf-600"
-                  onClick={currentUser ? handleAccountClick : openLogin}
-                  type="button"
-                >
-                  <UserIcon />
-                  <span>{currentUser ? "My Account" : "Register / Sign in"}</span>
-                </button>
-
+              <div className="mt-2 grid gap-2">
                 <button
                   className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50 sm:hidden"
                   onClick={() => setIsLanguageMenuOpen((currentValue) => !currentValue)}
@@ -542,24 +547,6 @@ export function Header() {
                   <ChevronIcon isOpen={isLanguageMenuOpen} />
                 </button>
               </div>
-
-              {currentUser ? (
-                <button
-                  className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
-                  onClick={() => void logoutUser()}
-                  type="button"
-                >
-                  Logout
-                </button>
-              ) : (
-                <a
-                  className="flex min-h-12 items-center justify-center rounded-2xl bg-citrus-500 px-4 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-citrus-600"
-                  href="#signup"
-                  onClick={handleSignupClick}
-                >
-                  Register
-                </a>
-              )}
 
               {isLanguageMenuOpen ? (
                 <div className="mt-2 rounded-3xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
