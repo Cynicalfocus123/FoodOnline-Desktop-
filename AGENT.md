@@ -111,6 +111,16 @@
 - Location tweak details: removed `DELIVER TO` stacked label from visible header control, removed pill shell treatment from visible desktop/mobile trigger, and kept the ZIP change modal behavior intact behind the simpler clickable icon/text row.
 - Build/test commands used for 2026-05-24 location tweak: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 location tweak: `b7048db`
+- Header/search layout update on 2026-05-24: homepage header now uses a modern two-row ecommerce layout with top logo/location/navigation/account/language/cart controls and a large centered search bar underneath.
+- Header/search files changed for 2026-05-24: `src/components/Header.tsx`, `src/components/ShortcutRow.tsx`, and `src/App.tsx`.
+- Desktop search bar added: row two contains a wide rounded search form with search icon, placeholder `Search groceries, snacks, drinks and more`, optional camera icon, and dark search button. Submit is frontend mock only and does not call backend API.
+- Mobile search bar added: mobile keeps top row controls visible and places the large rounded search form directly below, with icon submit treatment for small widths.
+- Location/logo/menu placement update: logo and ZIP button stay in the top header area, desktop nav remains in the top row with compact spacing, and search owns the second row.
+- Mobile hamburger placement update: mobile top row order is logo, ZIP, optional language on wider mobile/tablet, cart, then hamburger; ZIP and cart stay outside hamburger.
+- Cart icon confirmation: desktop and mobile cart controls keep the wheeled shopping cart icon.
+- Category row spacing update: main homepage top padding and shortcut row vertical padding were retuned so the category row sits below the new fixed header/search without overlap or excess gap before hero.
+- Build/test commands used for 2026-05-24 header/search layout: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 header/search layout: `54e1d5a`
 
 ## Backend/Admin Notes
 

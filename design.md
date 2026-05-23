@@ -126,6 +126,16 @@
 - Header location direction: visible control now presents as simple icon + text instead of stacked `DELIVER TO` pill, matching the cleaner reference while still opening the existing ZIP modal.
 - Build/test commands used for this location tweak: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 location tweak: `b7048db`
+- Header/search layout update on 2026-05-24 changes only homepage header, search, navigation controls, and spacing around the shortcut/category row.
+- Files changed for this header/search update: `src/components/Header.tsx`, `src/components/ShortcutRow.tsx`, and `src/App.tsx`.
+- Header layout direction: desktop header now has two rows. Row one keeps FoodOnlines logo, ZIP/location pill, nav links, `Register / Sign in`, language, and cart aligned high in the header. Row two adds the main centered search experience.
+- Desktop search bar direction: large rounded search form uses strong dark border, soft neutral fill, search icon, placeholder `Search groceries, snacks, drinks and more`, optional camera icon, and dark search button.
+- Mobile search direction: mobile top row keeps logo, ZIP/location, optional language, cart, and hamburger visible, with cart before hamburger and ZIP/cart outside the hamburger. Large rounded search sits below that row.
+- Mobile hamburger direction: hamburger remains only for nav/account extras, while ZIP/location and cart stay available as top-level touch controls.
+- Cart icon direction: cart remains a real wheeled shopping cart icon, not basket/bag/trash.
+- Category spacing direction: homepage top offset and shortcut row padding were adjusted for the taller fixed header/search so shortcut row, search header, and hero stay compact and non-overlapping.
+- Build/test commands used for this header/search update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 header/search update: `54e1d5a`
 
 ## Guardrails
 
