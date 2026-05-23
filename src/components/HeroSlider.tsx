@@ -132,7 +132,7 @@ export function HeroSlider() {
       )}
       <div className="pointer-events-none absolute inset-0 z-10 bg-neutral-950/30" />
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(255,173,64,0.2),rgba(10,13,16,0.4)_34%,rgba(10,13,16,0.84)_100%)]" />
-      <div className="relative z-20 mx-auto flex min-h-[620px] max-w-7xl items-center justify-center px-4 py-16 text-center sm:px-6 sm:py-20">
+      <div className="relative z-20 mx-auto flex min-h-[620px] max-w-7xl items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-14">
         <div className="mx-auto max-w-4xl">
           <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 backdrop-blur">
             Grocery storefront mockup
@@ -141,7 +141,7 @@ export function HeroSlider() {
             {slide.title}
           </h1>
 
-          <div className="mx-auto mt-8 max-w-3xl sm:mt-10">
+          <div className="mx-auto mt-6 max-w-3xl sm:mt-8">
             <p className="mb-6 text-base font-semibold leading-7 text-white/85 sm:text-xl sm:leading-8">
               {currentUser
                 ? `Signed in as ${currentUser.firstName || currentUser.email}.`

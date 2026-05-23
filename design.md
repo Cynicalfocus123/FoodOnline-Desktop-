@@ -85,6 +85,12 @@
 - Footer styling direction: white background, generous column spacing, dark blue-gray headings/body links, larger logo block, green contact icons, and responsive stacked behavior for smaller screens.
 - Build/test commands used for this footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 footer redesign: `5154615`
+- Header/category spacing tune on 2026-05-23 changes only spacing between fixed header, shortcut/category icon row, and hero/splash video. Goal is tighter ecommerce spacing with no overlap.
+- Files changed for this spacing/cart update: `src/App.tsx`, `src/components/Header.tsx`, `src/components/ShortcutRow.tsx`, and `src/components/HeroSlider.tsx`.
+- Spacing direction: reduced main top padding under header, reduced shortcut row vertical padding, and reduced hero inner top spacing so header, icon row, and splash video sit closer together but remain separated and readable on desktop, tablet, and mobile.
+- Cart icon direction: desktop and mobile cart controls now use wheeled shopping cart icon instead of basket icon, while keeping same rounded pill button shape.
+- Build/test commands used for this spacing/cart update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 spacing/cart fix: `__SPACING_CART_COMMIT_HASH__`
 
 ## Guardrails
 

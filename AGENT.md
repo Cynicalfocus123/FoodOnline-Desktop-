@@ -70,6 +70,12 @@
 - Footer contact block update: added left-side description `We bring Grocery to your door for less` plus icon rows for Bangkok office, phone, email, and business hours as shown in reference.
 - Build/test commands used for 2026-05-23 footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 footer redesign: `5154615`
+- Header/category spacing tune on 2026-05-23: tightened vertical spacing only around fixed header, shortcut/category icon row, and splash hero so those three bands sit closer together without overlap on desktop, tablet, or mobile.
+- Files changed for 2026-05-23 spacing/cart fix: `src/App.tsx`, `src/components/Header.tsx`, `src/components/ShortcutRow.tsx`, and `src/components/HeroSlider.tsx`.
+- Header/category spacing fix details: reduced homepage top offset below fixed header, reduced `ShortcutRow` top/bottom padding, trimmed hero top/bottom content padding, and pulled hero copy slightly upward so blank space between header, category icon row, and splash video is smaller while keeping clean separation.
+- Cart icon change on 2026-05-23: replaced previous basket icon with real shopping cart icon with wheels in desktop cart pill and mobile cart action button.
+- Build/test commands used for 2026-05-23 spacing/cart fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-23 spacing/cart fix: `__SPACING_CART_COMMIT_HASH__`
 
 ## Backend/Admin Notes
 

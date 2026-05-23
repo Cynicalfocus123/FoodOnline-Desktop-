@@ -58,7 +58,7 @@ function UserIcon() {
   );
 }
 
-function BasketIcon() {
+function CartIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -70,9 +70,10 @@ function BasketIcon() {
       strokeWidth="1.8"
       viewBox="0 0 24 24"
     >
-      <path d="M5 10h14l-1.3 8a2 2 0 0 1-2 1.7H8.3a2 2 0 0 1-2-1.7Z" />
-      <path d="M9 10 12 5l3 5" />
-      <path d="M8.5 13.2h7" />
+      <circle cx="10" cy="19" r="1.5" />
+      <circle cx="17" cy="19" r="1.5" />
+      <path d="M3.5 4.5h2.2l1.8 8.6a1.5 1.5 0 0 0 1.5 1.2h8.8a1.5 1.5 0 0 0 1.5-1.1l1.2-5.7H7.1" />
+      <path d="M8.8 16.5h10.1" />
     </svg>
   );
 }
@@ -251,7 +252,7 @@ export function Header() {
   return (
     <>
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:min-h-[94px] lg:gap-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:min-h-[88px] lg:gap-5">
           <div className="flex min-w-0 items-center gap-3 lg:flex-1 lg:gap-5">
             <a className="flex shrink-0 items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
               <img
@@ -355,7 +356,7 @@ export function Header() {
               onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
               type="button"
             >
-              <BasketIcon />
+              <CartIcon />
             </button>
 
             {currentUser ? (
@@ -450,7 +451,7 @@ export function Header() {
                   onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   type="button"
                 >
-                  <BasketIcon />
+                  <CartIcon />
                 </button>
               </div>
 
