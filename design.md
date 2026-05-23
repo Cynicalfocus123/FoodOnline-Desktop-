@@ -120,7 +120,7 @@
 - Hero direction: removed small top badge and removed public descriptive paragraph so splash area feels cleaner and less text-heavy.
 - Category direction: home `Browse all categories` grid now uses compact 5-column small-screen layout with smaller cards, smaller icon chips, and smaller type to better match dense Yami-style mobile browsing.
 - Build/test commands used for this cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-24 cleanup: `__HEADER_CATEGORY_COMMIT_HASH__`
+- Git commit hash for 2026-05-24 cleanup: `5670d48`
 
 ## Guardrails
 

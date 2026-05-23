@@ -105,7 +105,7 @@
 - Hero cleanup details: removed `Grocery storefront mockup` label and removed public-facing subtitle `Blinkit-style rows, Yamibuy-inspired shortcuts, and clean desktop-first browsing made ready for API wiring later.` while preserving signed-in state text and CTA buttons.
 - Category grid cleanup details: `Browse all categories` cards now render as compact 5-column layout on small/mobile widths with smaller inner cards, smaller labels, and reduced icon tile sizing so more boxes fit per row like Yami mobile browsing.
 - Build/test commands used for 2026-05-24 cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for 2026-05-24 cleanup: `__HEADER_CATEGORY_COMMIT_HASH__`
+- Git commit hash for 2026-05-24 cleanup: `5670d48`
 
 ## Backend/Admin Notes
 
