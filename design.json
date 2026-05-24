@@ -148,7 +148,7 @@
         "checkout_auth_modal"
       ],
       "service_guarantee": {
-        "payment_logo_style": "visible_compact_logo_tiles",
+        "payment_logo_style": "smaller_visible_compact_logo_tiles",
         "guarantee_items": [
           "Global & Secure Payments",
           "Privacy Protection",
@@ -271,6 +271,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "18477a6"
+    "git_commit_hash": "pending-cart-payment-logo-trim"
   }
 }

@@ -252,6 +252,8 @@
 - Sort direction: category pages now always filter first, then sort the resulting product set for `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low`. Visible price order and best-selling order must change immediately on desktop, desktop-mobile browser widths, tablet, and mobile.
 - Grid update direction: product count and rendered grid both consume the same sorted result list, and the listing grid remounts on category/sort/filter state changes so reordered cards visibly move instead of appearing stuck in prior order.
 - Git commit hash for this category listing sort fix: `18477a6`
+- Cart payment-logo size trim on 2026-05-24 updates only the Service Guarantee payment icon row.
+- Payment-logo direction: payment logo tiles are now smaller and tighter across desktop, desktop-mobile browser widths, tablet, and mobile. Height, minimum width, inner logo scaling, and row gaps are reduced so the icon area uses less space without losing clarity.
 
 ## Guardrails
 
