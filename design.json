@@ -281,6 +281,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "pending-cart-sticky-footer-clipping-fix"
+    "git_commit_hash": "f3d3c78"
   }
 }

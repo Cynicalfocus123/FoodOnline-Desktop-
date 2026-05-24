@@ -266,6 +266,7 @@
 - Git commit hash for this desktop gallery update: `14fe685`
 - Cart sticky-footer clipping fix on 2026-05-24 updates only cart page spacing around the sticky checkout footer.
 - Footer-spacing direction: when the sticky checkout footer is present on mobile, tablet, and desktop-mobile browser widths, the cart page now reserves extra bottom space so summary content and lower sections cannot clip behind the fixed footer in Chrome and similar browsers.
+- Git commit hash for this cart sticky-footer clipping fix: `f3d3c78`
 
 ## Guardrails
 
