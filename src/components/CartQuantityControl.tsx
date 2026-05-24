@@ -2,7 +2,7 @@ import { useHomeStore } from "../store/homeStore";
 
 type CartQuantityControlProps = {
   productId: string;
-  variant?: "compact" | "detail";
+  variant?: "compact" | "detail" | "listing";
 };
 
 function MinusIcon() {
@@ -45,6 +45,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         className={
           variant === "detail"
             ? "inline-flex min-h-14 w-full items-center justify-center rounded-[22px] bg-leaf-600 px-6 text-base font-black text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)] transition hover:bg-leaf-700"
+            : variant === "listing"
+              ? "inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d6def6] bg-white text-leaf-600 shadow-[0_10px_22px_rgba(15,23,42,0.14)] transition hover:border-leaf-500 hover:text-leaf-700"
             : "inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-full border-2 border-leaf-500 px-4 text-[13px] font-black text-leaf-600 transition hover:bg-leaf-500 hover:text-white"
         }
         onClick={(event) => {
@@ -53,7 +55,7 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         }}
         type="button"
       >
-        Add to cart
+        {variant === "listing" ? <PlusIcon /> : "Add to cart"}
       </button>
     );
   }
@@ -63,6 +65,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
       className={
         variant === "detail"
           ? "flex min-h-14 w-full items-center overflow-hidden rounded-[22px] bg-leaf-600 text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)]"
+          : variant === "listing"
+            ? "flex min-h-11 min-w-[120px] items-center overflow-hidden rounded-full border border-[#d6def6] bg-white text-leaf-600 shadow-[0_10px_22px_rgba(15,23,42,0.14)]"
           : "flex min-h-11 w-full items-center overflow-hidden rounded-full bg-leaf-600 text-white shadow-[0_10px_24px_rgba(22,163,74,0.2)]"
       }
     >
@@ -70,6 +74,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         className={
           variant === "detail"
             ? "inline-flex h-14 w-14 shrink-0 items-center justify-center"
+            : variant === "listing"
+              ? "inline-flex h-11 w-10 shrink-0 items-center justify-center"
             : "inline-flex h-11 w-11 shrink-0 items-center justify-center"
         }
         onClick={(event) => {
@@ -84,6 +90,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         className={
           variant === "detail"
             ? "flex-1 text-center text-base font-black tabular-nums"
+            : variant === "listing"
+              ? "min-w-[28px] flex-1 text-center text-sm font-black tabular-nums"
             : "min-w-0 flex-1 text-center text-[15px] font-black tabular-nums"
         }
       >
@@ -93,6 +101,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         className={
           variant === "detail"
             ? "inline-flex h-14 w-14 shrink-0 items-center justify-center"
+            : variant === "listing"
+              ? "inline-flex h-11 w-10 shrink-0 items-center justify-center"
             : "inline-flex h-11 w-11 shrink-0 items-center justify-center"
         }
         onClick={(event) => {

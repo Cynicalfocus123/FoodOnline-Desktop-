@@ -29,6 +29,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
   const isFavorite = favoriteProductIds.includes(product.id);
+  const isGrid = layout === "grid";
 
   function handleOpen() {
     openProduct(product.id);
@@ -47,7 +48,11 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
 
   return (
     <article
-      className={`flex h-full min-h-[356px] cursor-pointer flex-col self-stretch rounded-[24px] border border-neutral-200 bg-white p-3 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:min-h-[366px] lg:min-h-[376px] ${
+      className={`flex h-full cursor-pointer flex-col self-stretch border border-neutral-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] ${
+        isGrid
+          ? "min-h-[292px] rounded-[22px] p-2.5 sm:min-h-[306px] sm:p-3"
+          : "min-h-[356px] rounded-[24px] p-3 sm:min-h-[366px] lg:min-h-[376px]"
+      } ${
         layout === "carousel"
           ? "w-[184px] shrink-0 snap-start sm:w-[194px] lg:w-[204px]"
           : "w-full min-w-0"
@@ -57,10 +62,12 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
       role="button"
       tabIndex={0}
     >
-      <div className="relative rounded-[18px] bg-neutral-50 p-3">
+      <div className={`relative bg-neutral-50 ${isGrid ? "rounded-[18px] p-2" : "rounded-[18px] p-3"}`}>
         <button
           aria-label={isFavorite ? "Remove favorite" : "Save favorite"}
-          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/80 bg-white/95 shadow-sm transition hover:bg-white"
+          className={`absolute inline-flex items-center justify-center rounded-full border border-white/80 bg-white/95 shadow-sm transition hover:bg-white ${
+            isGrid ? "right-2.5 top-2.5 h-7 w-7" : "right-3 top-3 h-8 w-8"
+          }`}
           onClick={(event) => {
             stopCardOpen(event);
             toggleFavorite(product.id);
@@ -71,12 +78,22 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
         </button>
         <img
           alt={product.name}
-          className="aspect-[4/3] w-full rounded-2xl object-contain"
+          className={`w-full object-contain ${isGrid ? "aspect-square rounded-[16px]" : "aspect-[4/3] rounded-2xl"}`}
           loading="lazy"
           src={product.image}
         />
+        {isGrid ? (
+          <div
+            className="absolute bottom-2.5 right-2.5"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+            role="presentation"
+          >
+            <CartQuantityControl productId={product.id} variant="listing" />
+          </div>
+        ) : null}
       </div>
-      <div className="mt-3 flex min-h-[40px] flex-wrap content-start items-start gap-2">
+      <div className={`flex flex-wrap content-start items-start ${isGrid ? "mt-2 min-h-[28px] gap-1.5" : "mt-3 min-h-[40px] gap-2"}`}>
         <span className="inline-flex w-fit rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-emerald-700">
           {product.deliveryTime}
         </span>
@@ -86,32 +103,41 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
           </span>
         ) : null}
       </div>
-      <p className="mt-2 min-h-[14px] text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400 line-clamp-1">
+      <p className={`font-semibold uppercase tracking-[0.18em] text-neutral-400 line-clamp-1 ${isGrid ? "mt-2 min-h-[12px] text-[10px]" : "mt-2 min-h-[14px] text-[11px]"}`}>
         {product.brand}
       </p>
-      <h3 className="mt-1 min-h-[52px] text-[15px] font-semibold leading-5 text-neutral-900 line-clamp-2 sm:min-h-[56px] sm:text-base">
+      <h3 className={`mt-1 font-semibold text-neutral-900 line-clamp-2 ${isGrid ? "min-h-[38px] text-[14px] leading-[1.3] sm:min-h-[42px] sm:text-[15px]" : "min-h-[52px] text-[15px] leading-5 sm:min-h-[56px] sm:text-base"}`}>
         {product.name}
       </h3>
-      <p className="mt-2 min-h-[18px] text-sm font-medium text-neutral-500">{product.size}</p>
-      <p className="mt-1 min-h-[16px] text-xs font-semibold text-neutral-400">{product.unitPrice}</p>
-      <div className="mt-auto grid min-h-[96px] grid-rows-[auto_auto] gap-3 pt-3">
-        <div className="grid min-w-0 gap-1">
-          <span className="text-lg font-bold text-neutral-950">{formatPrice(product.price)}</span>
+      <p className={`font-medium text-neutral-500 ${isGrid ? "mt-1 min-h-[16px] text-[13px]" : "mt-2 min-h-[18px] text-sm"}`}>{product.size}</p>
+      <p className={`font-semibold text-neutral-400 ${isGrid ? "mt-0.5 min-h-[14px] text-[11px]" : "mt-1 min-h-[16px] text-xs"}`}>{product.unitPrice}</p>
+      {isGrid ? (
+        <div className="mt-2 flex flex-wrap items-end gap-x-2 gap-y-1">
+          <span className="text-[1.45rem] font-black leading-none text-neutral-950">{formatPrice(product.price)}</span>
           {product.oldPrice ? (
-            <span className="min-h-[18px] text-xs font-semibold text-neutral-400 line-through">{formatPrice(product.oldPrice)}</span>
-          ) : (
-            <span className="min-h-[18px]" aria-hidden="true" />
-          )}
+            <span className="text-sm font-semibold text-neutral-400 line-through">{formatPrice(product.oldPrice)}</span>
+          ) : null}
         </div>
-        <div
-          className="flex min-h-[44px] w-full items-end"
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-          role="presentation"
-        >
-          <CartQuantityControl productId={product.id} />
+      ) : (
+        <div className="mt-auto grid min-h-[96px] grid-rows-[auto_auto] gap-3 pt-3">
+          <div className="grid min-w-0 gap-1">
+            <span className="text-lg font-bold text-neutral-950">{formatPrice(product.price)}</span>
+            {product.oldPrice ? (
+              <span className="min-h-[18px] text-xs font-semibold text-neutral-400 line-through">{formatPrice(product.oldPrice)}</span>
+            ) : (
+              <span className="min-h-[18px]" aria-hidden="true" />
+            )}
+          </div>
+          <div
+            className="flex min-h-[44px] w-full items-end"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+            role="presentation"
+          >
+            <CartQuantityControl productId={product.id} />
+          </div>
         </div>
-      </div>
+      )}
     </article>
   );
 }

@@ -203,6 +203,8 @@
 - Responsive behavior for category pages: desktop uses `290px` filter sidebar plus 5-column product grid; tablet uses 3-column grid; mobile uses 2-column grid with filter drawer. Product cards reuse homepage design, stay equal height, keep cart controls working, and still route to product detail page.
 - Build/test commands for this category-listing task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this category-listing task: `e81ec93`
+- Category listing card tightening on 2026-05-24: category-page grid cards were shortened and visually tightened after feedback that listing boxes felt too long. This change is grid-only and does not change homepage carousel card height.
+- Compact listing-card behavior: category grid uses shorter card min-height, square image block, tighter brand/title/size spacing, inline price row, and floating listing cart control over the image. Quantity state stays compact in the same overlay footprint to avoid adding extra card height.
 
 ## Backend/Admin Notes
 

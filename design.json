@@ -67,6 +67,12 @@
         "shared_quantity_control",
         "category_grid_reuse"
       ],
+      "category_listing_compact_mode": {
+        "shorter_than_homepage_rail": true,
+        "image_priority": "square",
+        "cart_control_position": "image_overlay_bottom_right",
+        "price_row": "inline_compact"
+      },
       "layout_alignment": {
         "equal_width_per_breakpoint": true,
         "shared_min_height_per_row": true,
@@ -212,6 +218,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "e81ec93"
+    "git_commit_hash": "pending"
   }
 }
