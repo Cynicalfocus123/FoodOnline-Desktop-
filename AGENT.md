@@ -208,6 +208,18 @@
 - Git commit hash for this category-listing card tightening task: `8a9869c`
 - Category listing sort/filter control resize on 2026-05-24: narrow desktop-mobile and mobile category pages no longer use large stacked bordered `Filters` and sort controls. They now use smaller inline text-button controls with icons, closer to Yami-style compact browsing.
 - Git commit hash for this category-listing control resize task: `d9b0d6f`
+- Cart and checkout pages on 2026-05-24: added hash-safe `#cart` and `#checkout` storefront routes, with header cart buttons routing into the cart page instead of scrolling to homepage sections.
+- Cart/checkout files changed for 2026-05-24: `src/App.tsx`, `src/components/AccountSummary.tsx`, `src/components/CartPage.tsx`, `src/components/CheckoutPage.tsx`, `src/components/Header.tsx`, `src/store/homeStore.ts`, `src/store/publicAuthStore.ts`, `AGENT.md`, `design.md`, and `design.json`.
+- Cart state behavior: `useHomeStore` now tracks `savedForLaterIds` and `selectedCartIds` alongside `cartQuantities`. Adding to cart auto-selects active items, remove deletes active quantity and selection, save-for-later moves item out of active cart into saved list, and move-back restores saved items into active cart.
+- Cart page behavior: active cart items render in responsive left-column list with item checkbox, select-all checkbox, product image/name/specification, current price, old price, quantity selector, remove action, save-for-later action, gifting row, and free-shipping progress card. Empty cart shows `Start Shopping`; saved items can still be moved back from the saved section.
+- Free-shipping behavior: frontend threshold is `$49`. Progress bar uses selected cart subtotal only. Before threshold message is `Add $X.XX for FREE Shipping`; at threshold message is `You've got FREE Shipping` and shipping summary becomes `FREE`. `Add More` routes back to homepage browsing.
+- Checkout summary behavior: summary panel uses selected items only for subtotal, item count, shipping, and estimated total. If no items are selected, checkout CTA is disabled and instructs the user to select items first.
+- Payment and guarantee behavior: Service Guarantee area now uses standalone payment provider logos with no bordered tiles and green guarantee list items `Global & Secure Payments`, `Privacy Protection`, `FoodOnlines.com Purchase Protection`, and `Speedy Delivery`. No Yami/Yamibuy wording remains in cart guarantee copy.
+- Checkout auth behavior: green `Proceed to Checkout` button opens centered responsive checkout sign-in modal when user is logged out. Modal collects email or phone first, then password. Email uses existing live login store path; phone number uses safe frontend mock session fallback, then routes user to `#checkout`.
+- Account behavior: when a user is signed in, `AccountSummary` now shows saved-for-later count and sample saved item names so saved items surface under the user account area during the active session.
+- Checkout page placeholder behavior: `#checkout` shows responsive shipping-address placeholder, payment-method placeholder, and selected cart summary. It is frontend-only and safe for later API/payment integration.
+- Responsive behavior for cart task: desktop uses two-column cart + sticky summary, desktop-mobile and tablet collapse summary under items cleanly, mobile keeps vertical items and sticky bottom checkout bar, payment logos wrap cleanly, and modal fits without horizontal overflow.
+- Build/test commands for this cart/checkout task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

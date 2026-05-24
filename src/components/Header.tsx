@@ -168,6 +168,7 @@ function CloseIcon() {
 
 export function Header() {
   const openLogin = useHomeStore((state) => state.openLogin);
+  const openCart = useHomeStore((state) => state.openCart);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
@@ -406,7 +407,7 @@ export function Header() {
 
             <button
               className="relative inline-flex h-11 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
-              onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              onClick={openCart}
               type="button"
             >
               <CartIcon />
@@ -466,7 +467,7 @@ export function Header() {
             <button
               aria-label="View cart"
               className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
-              onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              onClick={openCart}
               type="button"
             >
               <CartIcon />

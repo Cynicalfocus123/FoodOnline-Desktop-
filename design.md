@@ -232,6 +232,18 @@
 - Category listing control resize on 2026-05-24 refines only the mobile and desktop-mobile filter/sort row.
 - Control direction: on narrow breakpoints, `Filter` and `Sort` now render as small inline icon+text controls instead of large full-width bordered buttons. Sort menu remains dropdown-based, but trigger presentation matches the lighter sample style more closely.
 - Git commit hash for this category-listing control resize task: `d9b0d6f`
+- Cart and checkout design on 2026-05-24 adds dedicated storefront cart and checkout placeholder routes while keeping FoodOnlines header/search/home/product/category systems intact.
+- Files changed for this cart/checkout design: `src/App.tsx`, `src/components/AccountSummary.tsx`, `src/components/CartPage.tsx`, `src/components/CheckoutPage.tsx`, `src/components/Header.tsx`, `src/store/homeStore.ts`, `src/store/publicAuthStore.ts`, `AGENT.md`, `design.md`, and `design.json`.
+- Route direction: use hash-safe `#cart` and `#checkout` so GitHub Pages refreshes stay safe. Header cart buttons on desktop and mobile now open `#cart`.
+- Cart state direction: active cart quantity still uses shared `cartQuantities`; cart adds now also preserve selected active items. New shared state handles `selectedCartIds` and `savedForLaterIds`, enabling select-all, per-item selection, remove, save-for-later, and move-back-to-cart flows without separate duplicate cart logic.
+- Desktop cart layout direction: left column shows title, select-all row, free-shipping progress card, seller fulfillment label, item rows, and gifting note. Right column is sticky order summary with coupons, subtotal, shipping/tax/total, standalone payment logos, green service-guarantee list, and green checkout CTA.
+- Mobile cart layout direction: cart rows stack vertically, order summary moves below items, payment logos and guarantee list wrap cleanly, and a sticky bottom green checkout bar keeps selected total visible and tappable without horizontal overflow.
+- Free-shipping direction: threshold is `$49`, progress uses selected subtotal only, and message switches from `Add $X.XX for FREE Shipping` to `You've got FREE Shipping` when threshold is reached. The bar fills fully green at threshold and `Add More` routes back to homepage shopping.
+- Service Guarantee direction: payment provider logos are standalone images with no bordered boxes or rounded tiles. Guarantee list uses green icons and FoodOnlines wording only, including `FoodOnlines.com Purchase Protection`.
+- Checkout auth direction: logged-out checkout attempts open centered responsive modal. Step one collects email or phone number; step two collects password. Email path uses existing live auth store login; phone path uses safe mock session fallback so checkout flow can continue frontend-only when needed.
+- Checkout placeholder direction: `#checkout` shows shipping-address placeholder, payment-method placeholder, and selected order summary. No real payment processing or shipping API was added.
+- Account direction: signed-in account summary now surfaces saved-for-later items from the cart state so saved items appear under the user account during the active session.
+- Build/test commands used for this cart/checkout design: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Guardrails
 

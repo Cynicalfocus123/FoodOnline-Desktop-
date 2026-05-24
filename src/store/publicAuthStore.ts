@@ -39,10 +39,33 @@ type PublicAuthState = {
   isValidatingSession: boolean;
   token: string | null;
   clearAuthError: () => void;
+  checkoutLoginWithIdentifier: (identifier: string, password: string) => Promise<boolean>;
   hydrateSession: () => Promise<void>;
   loginUser: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => Promise<void>;
 };
+
+function isPhoneLikeIdentifier(value: string) {
+  const digitsOnly = value.replace(/\D/g, "");
+  return digitsOnly.length >= 7 && digitsOnly.length <= 15;
+}
+
+function toMockPhoneSession(identifier: string): PublicSessionUser {
+  const digitsOnly = identifier.replace(/\D/g, "");
+
+  return {
+    id: `phone-${digitsOnly}`,
+    accountType: "customer",
+    companyName: "",
+    contactNumber: identifier,
+    email: `${digitsOnly}@foodonlines.local`,
+    firstName: "FoodOnline",
+    lastName: "Shopper",
+    lineId: "",
+    registeredAt: new Date().toISOString(),
+    status: "active",
+  };
+}
 
 function toPublicSessionUser(user: ApiAuthenticatedUser): PublicSessionUser {
   return {
@@ -81,6 +104,22 @@ export const usePublicAuthStore = create<PublicAuthState>()(
       isValidatingSession: false,
       token: null,
       clearAuthError: () => set({ authError: null }),
+      checkoutLoginWithIdentifier: async (identifier, password) => {
+        const trimmedIdentifier = identifier.trim();
+
+        if (isPhoneLikeIdentifier(trimmedIdentifier)) {
+          set({
+            authError: null,
+            currentUser: toMockPhoneSession(trimmedIdentifier),
+            hasHydratedSession: true,
+            isSubmittingLogin: false,
+            token: null,
+          });
+          return true;
+        }
+
+        return get().loginUser(trimmedIdentifier, password);
+      },
       hydrateSession: async () => {
         const token = get().token;
 

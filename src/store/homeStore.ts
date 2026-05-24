@@ -16,7 +16,7 @@ import {
   validateSignupRole,
 } from "../lib/security";
 
-export type SiteView = "home" | "signup" | "login" | "product" | "category";
+export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout";
 export type SignupStep = "role" | "form" | "complete";
 
 function readProductIdFromHash(hash: string) {
@@ -29,6 +29,14 @@ function readCategorySlugFromHash(hash: string) {
   return match?.[1] ?? null;
 }
 
+function isCartHash(hash: string) {
+  return /^#cart(?:[/?#].*)?$/i.test(hash);
+}
+
+function isCheckoutHash(hash: string) {
+  return /^#checkout(?:[/?#].*)?$/i.test(hash);
+}
+
 function writeRouteHash(route: string | null) {
   if (typeof window === "undefined") {
     return;
@@ -39,7 +47,12 @@ function writeRouteHash(route: string | null) {
     return;
   }
 
-  if (window.location.hash.startsWith("#product/") || window.location.hash.startsWith("#category/")) {
+  if (
+    window.location.hash.startsWith("#product/") ||
+    window.location.hash.startsWith("#category/") ||
+    window.location.hash.startsWith("#cart") ||
+    window.location.hash.startsWith("#checkout")
+  ) {
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#home`);
   }
 }
@@ -51,6 +64,8 @@ type HomeState = {
   selectedProductId: string | null;
   selectedCategorySlug: string | null;
   cartQuantities: Record<string, number>;
+  savedForLaterIds: string[];
+  selectedCartIds: string[];
   favoriteProductIds: string[];
   selectedZipCode: string;
   formValues: SignupFormValues;
@@ -62,10 +77,17 @@ type HomeState = {
   openLogin: () => void;
   backToHome: () => void;
   openCategory: (categorySlug: string) => void;
+  openCart: () => void;
+  openCheckout: () => void;
   openProduct: (productId: string) => void;
   syncRouteFromHash: (hash: string) => void;
   setCartQuantity: (productId: string, quantity: number) => void;
   addToCart: (productId: string) => void;
+  removeFromCart: (productId: string) => void;
+  saveForLater: (productId: string) => void;
+  moveSavedToCart: (productId: string) => void;
+  toggleCartSelection: (productId: string) => void;
+  setAllCartSelections: (productIds: string[], isSelected: boolean) => void;
   toggleFavorite: (productId: string) => void;
   setSelectedZipCode: (zipCode: string) => void;
   selectRole: (role: string) => void;
@@ -103,6 +125,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedProductId: null,
   selectedCategorySlug: null,
   cartQuantities: {},
+  savedForLaterIds: [],
+  selectedCartIds: [],
   favoriteProductIds: [],
   selectedZipCode: "91789",
   ...getBlankSignupState(),
@@ -160,6 +184,26 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openCart: () =>
+    set(() => {
+      writeRouteHash("cart");
+      return {
+        siteView: "cart",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        submissionError: null,
+      };
+    }),
+  openCheckout: () =>
+    set(() => {
+      writeRouteHash("checkout");
+      return {
+        siteView: "checkout",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        submissionError: null,
+      };
+    }),
   openProduct: (productId) =>
     set(() => {
       writeRouteHash(`product/${productId}`);
@@ -190,7 +234,28 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
-      if (state.siteView === "product" || state.siteView === "category") {
+      if (isCheckoutHash(hash)) {
+        return {
+          siteView: "checkout",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
+      if (isCartHash(hash)) {
+        return {
+          siteView: "cart",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
+      if (
+        state.siteView === "product" ||
+        state.siteView === "category" ||
+        state.siteView === "cart" ||
+        state.siteView === "checkout"
+      ) {
         return {
           siteView: "home",
           selectedProductId: null,
@@ -204,15 +269,18 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set((state) => {
       const nextQuantity = Math.max(0, quantity);
       const nextCart = { ...state.cartQuantities };
+      const nextSelectedCartIds = state.selectedCartIds.filter((id) => id !== productId);
 
       if (nextQuantity <= 0) {
         delete nextCart[productId];
       } else {
         nextCart[productId] = nextQuantity;
+        nextSelectedCartIds.push(productId);
       }
 
       return {
         cartQuantities: nextCart,
+        selectedCartIds: nextSelectedCartIds,
       };
     }),
   addToCart: (productId) =>
@@ -221,6 +289,52 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ...state.cartQuantities,
         [productId]: (state.cartQuantities[productId] ?? 0) + 1,
       },
+      selectedCartIds: state.selectedCartIds.includes(productId) ? state.selectedCartIds : [...state.selectedCartIds, productId],
+      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== productId),
+    })),
+  removeFromCart: (productId) =>
+    set((state) => {
+      const nextCart = { ...state.cartQuantities };
+      delete nextCart[productId];
+
+      return {
+        cartQuantities: nextCart,
+        selectedCartIds: state.selectedCartIds.filter((id) => id !== productId),
+      };
+    }),
+  saveForLater: (productId) =>
+    set((state) => {
+      const nextCart = { ...state.cartQuantities };
+      delete nextCart[productId];
+
+      return {
+        cartQuantities: nextCart,
+        selectedCartIds: state.selectedCartIds.filter((id) => id !== productId),
+        savedForLaterIds: state.savedForLaterIds.includes(productId)
+          ? state.savedForLaterIds
+          : [...state.savedForLaterIds, productId],
+      };
+    }),
+  moveSavedToCart: (productId) =>
+    set((state) => ({
+      cartQuantities: {
+        ...state.cartQuantities,
+        [productId]: state.cartQuantities[productId] ?? 1,
+      },
+      selectedCartIds: state.selectedCartIds.includes(productId) ? state.selectedCartIds : [...state.selectedCartIds, productId],
+      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== productId),
+    })),
+  toggleCartSelection: (productId) =>
+    set((state) => ({
+      selectedCartIds: state.selectedCartIds.includes(productId)
+        ? state.selectedCartIds.filter((id) => id !== productId)
+        : [...state.selectedCartIds, productId],
+    })),
+  setAllCartSelections: (productIds, isSelected) =>
+    set((state) => ({
+      selectedCartIds: isSelected
+        ? Array.from(new Set([...state.selectedCartIds.filter((id) => !productIds.includes(id)), ...productIds]))
+        : state.selectedCartIds.filter((id) => !productIds.includes(id)),
     })),
   toggleFavorite: (productId) =>
     set((state) => ({

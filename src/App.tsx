@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { AccountSummary } from "./components/AccountSummary";
+import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
 import { CategoryListingPage } from "./components/CategoryListingPage";
+import { CheckoutPage } from "./components/CheckoutPage";
 import { DealsGrid } from "./components/DealsGrid";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -64,6 +66,8 @@ export default function App() {
         <SignupFlow />
       ) : null}
       {siteView === "login" ? <LoginFlow /> : null}
+      {siteView === "cart" ? <CartPage /> : null}
+      {siteView === "checkout" ? <CheckoutPage /> : null}
       {siteView === "category" ? <CategoryListingPage /> : null}
       {siteView === "product" ? <ProductDetailPage /> : null}
       <Footer />

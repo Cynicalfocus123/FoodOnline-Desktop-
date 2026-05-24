@@ -20,6 +20,16 @@
       "path": "#login",
       "view": "login"
     },
+    "cart": {
+      "path": "#cart",
+      "view": "cart",
+      "refresh_safe": true
+    },
+    "checkout": {
+      "path": "#checkout",
+      "view": "checkout",
+      "refresh_safe": true
+    },
     "category_listing": {
       "path": "#category/:categorySlug",
       "view": "category",
@@ -120,13 +130,47 @@
         "Brand"
       ]
     },
+    "cart_page": {
+      "file": "src/components/CartPage.tsx",
+      "desktop_layout": "left_items_right_summary",
+      "mobile_layout": "stacked_items_with_sticky_checkout_bar",
+      "free_shipping_threshold": 49,
+      "behaviors": [
+        "select_all",
+        "item_selection",
+        "remove_item",
+        "save_for_later",
+        "move_saved_to_cart",
+        "free_shipping_progress",
+        "checkout_auth_modal"
+      ],
+      "service_guarantee": {
+        "payment_logo_style": "standalone_logos_no_boxes",
+        "guarantee_items": [
+          "Global & Secure Payments",
+          "Privacy Protection",
+          "FoodOnlines.com Purchase Protection",
+          "Speedy Delivery"
+        ]
+      }
+    },
+    "checkout_page": {
+      "file": "src/components/CheckoutPage.tsx",
+      "type": "responsive_placeholder",
+      "sections": [
+        "shipping_address_placeholder",
+        "payment_method_placeholder",
+        "selected_order_summary"
+      ]
+    },
     "header_cart": {
       "file": "src/components/Header.tsx",
       "badge_behavior": [
         "shared_cart_total",
         "desktop_badge",
         "mobile_badge",
-        "hide_when_zero"
+        "hide_when_zero",
+        "route_to_cart_page"
       ]
     },
     "cart_quantity_control": {
@@ -152,20 +196,23 @@
       "tabs": "horizontal_scroll",
       "reviews_modal": "resize_cleanly",
       "product_cards": "equal_width_and_height_scroll_row",
-      "category_listing": "filter_drawer_no_clipping"
+      "category_listing": "filter_drawer_no_clipping",
+      "cart_page": "summary_stacks_under_items"
     },
     "tablet": {
       "top_layout": "two_column_if_space_else_stack",
       "controls": "touch_friendly",
       "product_cards": "equal_width_and_height_scroll_row",
-      "category_listing": "three_column_grid"
+      "category_listing": "three_column_grid",
+      "cart_page": "two_column_if_room_else_stack"
     },
     "mobile": {
       "top_layout": "stacked",
       "gallery": "top",
       "reviews_view": "bottom_sheet_style",
       "product_cards": "equal_width_and_height_scroll_row",
-      "category_listing": "two_column_grid_with_filter_drawer"
+      "category_listing": "two_column_grid_with_filter_drawer",
+      "cart_page": "vertical_list_sticky_checkout_bar"
     }
   },
   "data_bindings": {
@@ -210,6 +257,8 @@
       "selectedProductId",
       "selectedCategorySlug",
       "cartQuantities",
+      "selectedCartIds",
+      "savedForLaterIds",
       "favoriteProductIds",
       "selectedZipCode"
     ]
@@ -219,6 +268,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "d9b0d6f"
+    "git_commit_hash": "pending"
   }
 }
