@@ -254,6 +254,7 @@
 - Git commit hash for this category listing sort fix: `18477a6`
 - Cart payment-logo size trim on 2026-05-24 updates only the Service Guarantee payment icon row.
 - Payment-logo direction: payment logo tiles are now smaller and tighter across desktop, desktop-mobile browser widths, tablet, and mobile. Height, minimum width, inner logo scaling, and row gaps are reduced so the icon area uses less space without losing clarity.
+- Git commit hash for this cart payment-logo trim: `23699a1`
 
 ## Guardrails
 

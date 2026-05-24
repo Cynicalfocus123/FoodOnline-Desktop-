@@ -232,6 +232,7 @@
 - Cart payment-logo size trim files changed: `src/components/CartPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Cart payment-logo responsive behavior: logos now keep a smaller shared footprint with tight wrapping and no stretched marks across all breakpoints while preserving the current branded icon set.
 - Build/test commands for this cart payment-logo trim: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this cart payment-logo trim: `23699a1`
 
 ## Backend/Admin Notes
 

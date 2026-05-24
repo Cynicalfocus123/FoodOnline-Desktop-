@@ -271,6 +271,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "pending-cart-payment-logo-trim"
+    "git_commit_hash": "23699a1"
   }
 }
