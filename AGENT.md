@@ -241,6 +241,9 @@
 - Product-card badge cleanup follow-up files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this site-wide product-card badge cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this site-wide product-card badge cleanup: `5b6dbbe`
+- Product detail desktop gallery update on 2026-05-24: added desktop-only boxed thumbnail selector under the main product image for all product detail pages. Clicking any thumbnail switches the main product image. Tablet and mobile keep the lighter dot-based gallery flow.
+- Product detail desktop gallery files changed: `src/components/ProductDetailPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this desktop gallery update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

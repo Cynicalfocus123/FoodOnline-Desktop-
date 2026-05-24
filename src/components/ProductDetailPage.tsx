@@ -402,7 +402,7 @@ export function ProductDetailPage() {
             </div>
 
             {product.imageUrls.length > 1 ? (
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-2 lg:hidden">
                 {product.imageUrls.map((_, index) => (
                   <button
                     aria-label={`Show image ${index + 1}`}
@@ -412,6 +412,34 @@ export function ProductDetailPage() {
                     type="button"
                   />
                 ))}
+              </div>
+            ) : null}
+
+            {product.imageUrls.length > 1 ? (
+              <div className="hidden rounded-[26px] border border-neutral-200 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)] lg:block">
+                <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+                  {product.imageUrls.map((image, index) => (
+                    <button
+                      aria-label={`Show desktop image ${index + 1}`}
+                      className={`shrink-0 overflow-hidden rounded-[18px] border-2 bg-neutral-50 transition ${
+                        index === activeImageIndex
+                          ? "border-leaf-500 shadow-[0_10px_22px_rgba(34,197,94,0.16)]"
+                          : "border-transparent hover:border-neutral-300"
+                      }`}
+                      key={`${product.id}-desktop-thumb-${index}`}
+                      onClick={() => scrollGalleryTo(index)}
+                      type="button"
+                    >
+                      <img
+                        alt={`${product.name} thumbnail ${index + 1}`}
+                        className="h-24 w-24 object-cover"
+                        draggable={false}
+                        loading="lazy"
+                        src={image}
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>

@@ -56,8 +56,11 @@
       "gallery_behavior": {
         "boxed_card_removed": true,
         "image_fit": "contain",
-        "navigation": "pagination_dots_only",
-        "drag_scroll_supported": true
+        "navigation": "pagination_dots_mobile_tablet_desktop_thumbnail_box",
+        "drag_scroll_supported": true,
+        "desktop_thumbnail_box": true,
+        "tablet_thumbnail_box": false,
+        "mobile_thumbnail_box": false
       },
       "cart_behavior": {
         "cta_color": "green",
@@ -277,6 +280,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "5b6dbbe"
+    "git_commit_hash": "pending-desktop-product-gallery-update"
   }
 }
