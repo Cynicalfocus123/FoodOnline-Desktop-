@@ -187,7 +187,7 @@
 - Data-binding direction: catalog structure now supports `imageUrls`, `price`, `oldPrice`, `discountPercent`, `unitPrice`, `soldCount`, `categoryId`, `tags`, `badges`, `provider`, `countryOfOrigin`, `brandOrigin`, `netContent`, `ingredients`, `storageInstructions`, `sku`, `recipeSuggestions`, `nutritionFacts`, `returnPolicy`, `reviews`, `reviewTags`, `ratingBreakdown`, and `variants` so backend API swap can happen later without redesign.
 - Desktop design memory: root `design.json` now exists as lightweight desktop structure memory for product-detail route, components, responsive rules, and backend-ready fields. No desktop `designer.md` exists in this repo, so `design.md` remains design source of truth here.
 - Build/test commands used for this product-detail design: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-detail design: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-detail design: `b411971`
 
 ## Guardrails
 

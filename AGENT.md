@@ -165,7 +165,7 @@
 - Responsive behavior: desktop uses wide top grid with sticky right panel, desktop-mobile browser widths collapse without clipping, tablet keeps two columns when room allows and otherwise stacks, and mobile uses touch-sized vertical flow with wrapped text and no horizontal overflow. Product gallery images use `object-contain`; review and price rows wrap instead of truncating.
 - Desktop design memory file: root `design.json` did not exist before this task. It is now used as lightweight desktop UI structure memory for product-detail routes, components, responsive rules, and data bindings.
 - Build/test commands for this product-detail task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-detail task: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-detail task: `b411971`
 
 ## Backend/Admin Notes
 
