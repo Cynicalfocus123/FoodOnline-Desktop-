@@ -322,9 +322,9 @@ export function Header() {
         className="fixed left-0 right-0 top-0 z-[1000] isolate border-b border-neutral-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.08)] [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
         ref={languageMenuReference}
       >
-        <div className="mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:py-3">
-          <div className="flex min-h-[56px] items-center justify-between gap-2 lg:min-h-[64px] lg:gap-4">
-            <div className="flex min-w-0 items-center gap-2 lg:flex-1 lg:gap-4">
+        <div className="mx-auto max-w-[1480px] px-3 py-2 sm:px-6 lg:py-3">
+          <div className="flex min-h-[56px] items-center justify-between gap-2 lg:min-h-[64px] lg:gap-3">
+            <div className="flex min-w-0 items-center gap-2 lg:flex-1 lg:gap-3 xl:gap-4">
             <a className="flex shrink-0 items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
               <img
                 alt="FoodOnlines logo"
@@ -342,10 +342,10 @@ export function Header() {
               <span>{zipCode}</span>
             </button>
 
-            <nav className="hidden min-w-0 items-center gap-4 overflow-x-auto whitespace-nowrap text-[14px] font-semibold text-neutral-800 scrollbar-none lg:flex xl:gap-6 xl:text-[15px]">
+            <nav className="hidden min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap text-[14px] font-semibold text-neutral-800 scrollbar-none lg:flex xl:gap-5 xl:text-[15px]">
               {navItems.map((item) => (
                 <a
-                  className={`inline-flex items-center gap-1.5 transition hover:text-leaf-600 ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 transition hover:text-leaf-600 ${
                     item.accent === "leaf" ? "text-leaf-500" : "text-neutral-800"
                   }`}
                   href={item.href}
@@ -359,7 +359,7 @@ export function Header() {
             </nav>
           </div>
 
-          <div className="hidden shrink-0 items-center gap-3 lg:flex">
+          <div className="hidden shrink-0 items-center gap-2 xl:gap-3 lg:flex">
             {currentUser ? (
               <button
                 className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"

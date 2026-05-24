@@ -171,6 +171,8 @@
 - Git commit hash for this category image code/assets update: `15b5e7b`.
 - Category double-box cleanup on 2026-05-24 removes the nested inner image shells from `Browse all categories`. Each category now renders as one main rounded card containing the optimized image and label, preserving responsive sizing and the original grid.
 - Files changed for this cleanup: `src/components/CategoryStrip.tsx`.
+- Desktop header nav clipping fix on 2026-05-24 preserves the current header/search design while widening the desktop header content area, tightening horizontal gaps, and preventing nav link text from shrinking. Desktop labels, including `Wholesale Products`, should render fully without clipping.
+- Files changed for this header fix: `src/components/Header.tsx`.
 
 ## Guardrails
 

@@ -154,6 +154,8 @@
 - Git commit hash for 2026-05-24 category image code/assets update: `15b5e7b`.
 - Category double-box cleanup on 2026-05-24: removed nested inner image wrappers from homepage category tiles so each category uses one main rounded card with the real optimized image and label only. No header, product carousel, promo, footer, backend, or category names changed.
 - Category double-box cleanup files changed: `src/components/CategoryStrip.tsx`.
+- Desktop header nav clipping fix on 2026-05-24: widened desktop header inner container from `max-w-7xl` to `max-w-[1480px]`, tightened desktop nav/control gaps, and made nav links `shrink-0` so labels such as `Wholesale Products` do not truncate on desktop. Header/search behavior and mobile order remain unchanged.
+- Desktop header nav clipping fix files changed: `src/components/Header.tsx`.
 
 ## Backend/Admin Notes
 
