@@ -169,6 +169,8 @@
 - Image optimization direction: source PNGs were resized into 360x360 optimized JPEG assets at quality 82, centered with contain-style scaling on a soft neutral background. Category cards keep existing rounded ecommerce tile styling, explicit image dimensions, lazy loading, square aspect ratio, and `object-contain` for desktop/tablet/mobile consistency.
 - Build/test commands used for this category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this category image code/assets update: `15b5e7b`.
+- Category double-box cleanup on 2026-05-24 removes the nested inner image shells from `Browse all categories`. Each category now renders as one main rounded card containing the optimized image and label, preserving responsive sizing and the original grid.
+- Files changed for this cleanup: `src/components/CategoryStrip.tsx`.
 
 ## Guardrails
 

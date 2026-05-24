@@ -20,23 +20,19 @@ export function CategoryStrip() {
         <div className="mt-8 grid grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
           {categories.map((category) => (
             <a
-              className="group rounded-[20px] border border-neutral-200 bg-white p-1.5 text-center shadow-[0_8px_20px_rgba(15,23,42,0.03)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:rounded-[22px] sm:p-2.5 lg:rounded-[26px] lg:p-4"
+              className="group rounded-[20px] border border-neutral-200 bg-white p-2 text-center shadow-[0_8px_20px_rgba(15,23,42,0.03)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:rounded-[22px] sm:p-3 lg:rounded-[26px] lg:p-5"
               href="#best-deals"
               id={category.sectionId}
               key={category.name}
             >
-              <div className="rounded-[18px] bg-[#f7f7f4] p-1.5 sm:rounded-[20px] sm:p-2 lg:rounded-[24px] lg:p-4">
-                <div className="relative overflow-hidden rounded-[16px] bg-white p-1.5 shadow-inner shadow-neutral-950/5 sm:rounded-[18px] sm:p-2 lg:rounded-[22px] lg:p-3">
-                  <img
-                    alt={category.name}
-                    className="aspect-square w-full rounded-[14px] object-contain sm:rounded-[16px] lg:rounded-[18px]"
-                    height={360}
-                    loading="lazy"
-                    src={category.image}
-                    width={360}
-                  />
-                </div>
-              </div>
+              <img
+                alt={category.name}
+                className="aspect-square w-full rounded-[16px] object-contain sm:rounded-[18px] lg:rounded-[22px]"
+                height={360}
+                loading="lazy"
+                src={category.image}
+                width={360}
+              />
               <p className="mt-2 text-[10px] font-medium leading-4 text-neutral-900 sm:text-[11px] lg:mt-4 lg:text-sm lg:leading-5">
                 {category.name}
               </p>

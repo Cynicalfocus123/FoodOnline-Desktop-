@@ -152,6 +152,8 @@
 - Category responsive image behavior: category tile images use explicit `width`/`height`, lazy loading, square aspect ratio, and `object-contain` so desktop/tablet/mobile cards keep labels centered and avoid stretched, cropped, or clipped images.
 - Build/test commands used for 2026-05-24 category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-24 category image code/assets update: `15b5e7b`.
+- Category double-box cleanup on 2026-05-24: removed nested inner image wrappers from homepage category tiles so each category uses one main rounded card with the real optimized image and label only. No header, product carousel, promo, footer, backend, or category names changed.
+- Category double-box cleanup files changed: `src/components/CategoryStrip.tsx`.
 
 ## Backend/Admin Notes
 
