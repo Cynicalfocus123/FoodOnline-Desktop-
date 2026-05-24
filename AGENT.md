@@ -151,6 +151,7 @@
 - Category image optimization method: PowerShell/.NET `System.Drawing` resized each source image into 360x360 JPEG at quality 82 with contain-style scaling on a soft `#f7f7f4` background; output files are about 12-19 KB each. Production code references only `assets/categories/*.jpg`, never local `D:\` paths.
 - Category responsive image behavior: category tile images use explicit `width`/`height`, lazy loading, square aspect ratio, and `object-contain` so desktop/tablet/mobile cards keep labels centered and avoid stretched, cropped, or clipped images.
 - Build/test commands used for 2026-05-24 category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for 2026-05-24 category image code/assets update: `15b5e7b`.
 
 ## Backend/Admin Notes
 

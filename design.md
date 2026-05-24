@@ -168,6 +168,7 @@
 - Image matching direction: exact or close filename matches were used for each category. Closest-match fallbacks are `counteres.png` for Paan Corner and `bakery and biscuit.png` for Snacks & Munchies; Bakery & Biscuits also uses `bakery and biscuit.png` because no separate snack image exists.
 - Image optimization direction: source PNGs were resized into 360x360 optimized JPEG assets at quality 82, centered with contain-style scaling on a soft neutral background. Category cards keep existing rounded ecommerce tile styling, explicit image dimensions, lazy loading, square aspect ratio, and `object-contain` for desktop/tablet/mobile consistency.
 - Build/test commands used for this category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this category image code/assets update: `15b5e7b`.
 
 ## Guardrails
 
