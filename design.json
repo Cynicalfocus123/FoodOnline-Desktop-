@@ -72,7 +72,8 @@
           "unit_price_text",
           "price_and_action_footer"
         ],
-        "title_clamp": 3
+        "title_clamp": 2,
+        "trimmed_vertical_spacing": true
       },
       "quantity_css": {
         "stable_pill_width": true,
@@ -171,6 +172,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "acf0fc5"
+    "git_commit_hash": "PENDING_COMMIT_HASH"
   }
 }

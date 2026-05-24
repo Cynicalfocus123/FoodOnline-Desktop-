@@ -182,6 +182,11 @@
 - Responsive behavior for this alignment fix: desktop, desktop-mobile browser width, tablet, and mobile all keep smooth horizontal carousel scroll, even card heights per row, no clipped controls, and no overflow from title or cart controls.
 - Build/test commands for this product-card alignment task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this product-card alignment task: `acf0fc5`
+- Homepage product-card height trim on 2026-05-24: reduced the reserved vertical space inside carousel cards after feedback that the aligned cards became too tall. Kept equal-width/equal-baseline behavior, but tightened badge, brand, title, size, unit-price, and footer row budgets.
+- Product-card height trim files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Product-card height rules update: card minimum heights are now shorter across breakpoints, title block is back to 2-line clamp, and bottom action zone remains aligned without excess empty space.
+- Build/test commands for this product-card height trim task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-card height trim task: `PENDING_COMMIT_HASH`
 
 ## Backend/Admin Notes
 
