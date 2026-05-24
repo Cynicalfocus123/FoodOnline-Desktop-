@@ -396,33 +396,6 @@ function svgDataUri(svg: string) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-function createCategoryImage(label: string, palette: Palette) {
-  const shortLabel = label
-    .split(/[,&]/)
-    .map((word) => word.trim().slice(0, 1))
-    .join("")
-    .slice(0, 3)
-    .toUpperCase();
-
-  return svgDataUri(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" fill="none">
-      <defs>
-        <linearGradient id="g" x1="32" y1="32" x2="288" y2="288" gradientUnits="userSpaceOnUse">
-          <stop stop-color="${palette.from}"/>
-          <stop offset="1" stop-color="${palette.to}"/>
-        </linearGradient>
-      </defs>
-      <rect width="320" height="320" rx="56" fill="#ffffff"/>
-      <rect x="24" y="24" width="272" height="272" rx="44" fill="url(#g)"/>
-      <circle cx="242" cy="88" r="42" fill="rgba(255,255,255,0.26)"/>
-      <circle cx="94" cy="98" r="26" fill="rgba(255,255,255,0.18)"/>
-      <rect x="68" y="184" width="184" height="54" rx="27" fill="rgba(255,255,255,0.2)"/>
-      <text x="160" y="170" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="800" fill="#ffffff">${escapeXml(shortLabel)}</text>
-      <text x="160" y="218" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">${escapeXml(label.slice(0, 22))}</text>
-    </svg>
-  `);
-}
-
 function createProductImage(productName: string, brand: string, palette: Palette) {
   const productLabel = productName.split(" ").slice(0, 2).join(" ");
   const brandLabel = brand.toUpperCase();
@@ -551,6 +524,29 @@ const categoryConfigs: CategoryConfig[] = [
 
 const categoryMap = new Map(categoryConfigs.map((config) => [config.name, config]));
 
+const categoryImageByName: Record<string, string> = {
+  "Paan Corner": "paan-corner.jpg",
+  "Dairy, Bread & Eggs": "dairy-bread-eggs.jpg",
+  "Fruits & Vegetables": "fruits-vegetables.jpg",
+  "Cold Drinks & Juices": "cold-drinks-juices.jpg",
+  "Snacks & Munchies": "snacks-munchies.jpg",
+  "Breakfast & Instant Food": "breakfast-instant-food.jpg",
+  "Sweet Tooth": "sweet-tooth.jpg",
+  "Bakery & Biscuits": "bakery-biscuits.jpg",
+  "Tea, Coffee & Milk Drinks": "tea-coffee-milk-drinks.jpg",
+  "Atta, Rice & Dal": "atta-rice-dal.jpg",
+  "Masala, Oil & More": "masala-oil-more.jpg",
+  "Sauces & Spreads": "sauces-spreads.jpg",
+  "Chicken, Meat & Fish": "chicken-meat-fish.jpg",
+  "Organic & Healthy Living": "organic-healthy-living.jpg",
+  "Baby Care": "baby-care.jpg",
+  "Pharma & Wellness": "pharma-wellness.jpg",
+  "Cleaning Essentials": "cleaning-essentials.jpg",
+  "Home & Office": "home-office.jpg",
+  "Personal Care": "personal-care.jpg",
+  "Pet Care": "pet-care.jpg",
+};
+
 function getCategoryConfig(name: string) {
   const config = categoryMap.get(name);
 
@@ -624,7 +620,7 @@ export const shortcutItems: ShortcutItem[] = [
 export const categories: CategoryTile[] = categoryConfigs.map((category) => ({
   name: category.name,
   icon: category.icon,
-  image: createCategoryImage(category.name, category.palette),
+  image: localAsset(`assets/categories/${categoryImageByName[category.name]}`),
   sectionId: `category-${slugify(category.name)}`,
 }));
 

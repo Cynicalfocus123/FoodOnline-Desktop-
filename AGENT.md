@@ -145,6 +145,12 @@
 - Build/test commands used for 2026-05-24 cross-browser fixed header follow-up: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Footer product row removal on 2026-05-24: removed the `Popular` footer column and its product links (`Milk & Flavoured Milk`, `Butter and Margarine`, `Eggs Substitutes`, `Marmalades`, `Sour Cream and Dips`, `Tea & Kombucha`, `Cheese`) from the public footer.
 - Footer product row removal files changed: `src/data/home.ts` and `src/components/Footer.tsx`; desktop footer grid now uses logo/contact plus `Company`, `Account`, and `Corporate` columns.
+- Homepage category real-image update on 2026-05-24: replaced generated placeholder letter category images with real optimized category assets sourced from `D:\Foodonline desktop version\site video and content\category image`.
+- Category image update files changed: `src/data/home.ts`, `src/components/CategoryStrip.tsx`, and optimized files in `public/assets/categories/*.jpg`.
+- Category image matching decisions: Paan Corner -> `counteres.png` closest available; Dairy/Bread/Eggs -> `bread.png`; Fruits/Vegetables -> `Fruits and vegetable.png`; Cold Drinks/Juices -> `cold drinks and juice.png`; Snacks/Munchies -> `bakery and biscuit.png` closest available fallback; Breakfast/Instant Food -> `breakfast food.png`; Sweet Tooth -> `sweet tooth.png`; Bakery/Biscuits -> `bakery and biscuit.png`; Tea/Coffee/Milk Drinks -> `tea, coffee and milk drinks.png`; Atta/Rice/Dal -> `rice.png`; Masala/Oil/More -> `masala.png`; Sauces/Spreads -> `sauces.png`; Chicken/Meat/Fish -> `chicken meat and fish.png`; Organic/Healthy Living -> `Organic healhty living.png`; Baby Care -> `baby care.png`; Pharma/Wellness -> `pharma.png`; Cleaning Essentials -> `cleaning.png`; Home/Office -> `home and office.png`; Personal Care -> `personal care.png`; Pet Care -> `pet care.png`.
+- Category image optimization method: PowerShell/.NET `System.Drawing` resized each source image into 360x360 JPEG at quality 82 with contain-style scaling on a soft `#f7f7f4` background; output files are about 12-19 KB each. Production code references only `assets/categories/*.jpg`, never local `D:\` paths.
+- Category responsive image behavior: category tile images use explicit `width`/`height`, lazy loading, square aspect ratio, and `object-contain` so desktop/tablet/mobile cards keep labels centered and avoid stretched, cropped, or clipped images.
+- Build/test commands used for 2026-05-24 category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

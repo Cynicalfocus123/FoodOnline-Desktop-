@@ -1,5 +1,4 @@
 import { categories, promoBanner } from "../data/home";
-import { MockIcon } from "./MockIcon";
 
 export function CategoryStrip() {
   return (
@@ -30,13 +29,12 @@ export function CategoryStrip() {
                 <div className="relative overflow-hidden rounded-[16px] bg-white p-1.5 shadow-inner shadow-neutral-950/5 sm:rounded-[18px] sm:p-2 lg:rounded-[22px] lg:p-3">
                   <img
                     alt={category.name}
-                    className="aspect-square w-full rounded-[14px] object-cover sm:rounded-[16px] lg:rounded-[18px]"
+                    className="aspect-square w-full rounded-[14px] object-contain sm:rounded-[16px] lg:rounded-[18px]"
+                    height={360}
                     loading="lazy"
                     src={category.image}
+                    width={360}
                   />
-                  <span className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-xl bg-white/90 text-neutral-700 shadow-sm sm:left-2 sm:top-2 sm:h-7 sm:w-7 lg:left-4 lg:top-4 lg:h-10 lg:w-10 lg:rounded-2xl">
-                    <MockIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-5 lg:w-5" name={category.icon} />
-                  </span>
                 </div>
               </div>
               <p className="mt-2 text-[10px] font-medium leading-4 text-neutral-900 sm:text-[11px] lg:mt-4 lg:text-sm lg:leading-5">

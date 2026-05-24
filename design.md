@@ -163,6 +163,11 @@
 - Build/test commands used for this cross-browser fixed header follow-up: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Footer product row removal on 2026-05-24 removes the `Popular` product-link column from the public footer. Footer now displays the logo/contact block plus `Company`, `Account`, and `Corporate` link columns only.
 - Files changed for this footer update: `src/data/home.ts` and `src/components/Footer.tsx`.
+- Homepage category real-image update on 2026-05-24 replaces category placeholder/letter graphics with optimized real category images from `D:\Foodonline desktop version\site video and content\category image`.
+- Files changed for this category image update: `src/data/home.ts`, `src/components/CategoryStrip.tsx`, and `public/assets/categories/*.jpg`.
+- Image matching direction: exact or close filename matches were used for each category. Closest-match fallbacks are `counteres.png` for Paan Corner and `bakery and biscuit.png` for Snacks & Munchies; Bakery & Biscuits also uses `bakery and biscuit.png` because no separate snack image exists.
+- Image optimization direction: source PNGs were resized into 360x360 optimized JPEG assets at quality 82, centered with contain-style scaling on a soft neutral background. Category cards keep existing rounded ecommerce tile styling, explicit image dimensions, lazy loading, square aspect ratio, and `object-contain` for desktop/tablet/mobile consistency.
+- Build/test commands used for this category image update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Guardrails
 
