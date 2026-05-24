@@ -247,6 +247,7 @@
 - Git commit hash for this cart/checkout design: `cb28715`
 - Cart visual polish on 2026-05-24 refines only the cart page presentation.
 - Visual direction: payment provider area now uses visible compact branded logo tiles, cart row quantity control is a compact green stepper pill instead of native select dropdown, and desktop fulfillment/free-shipping area is reduced into one slimmer row without the extra nested box around the progress bar.
+- Git commit hash for this cart visual polish task: `14620aa`
 
 ## Guardrails
 
