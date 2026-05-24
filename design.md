@@ -231,6 +231,7 @@
 - Git commit hash for this category-listing card tightening task: `8a9869c`
 - Category listing control resize on 2026-05-24 refines only the mobile and desktop-mobile filter/sort row.
 - Control direction: on narrow breakpoints, `Filter` and `Sort` now render as small inline icon+text controls instead of large full-width bordered buttons. Sort menu remains dropdown-based, but trigger presentation matches the lighter sample style more closely.
+- Git commit hash for this category-listing control resize task: `d9b0d6f`
 
 ## Guardrails
 
