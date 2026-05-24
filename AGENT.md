@@ -205,6 +205,7 @@
 - Git commit hash for this category-listing task: `e81ec93`
 - Category listing card tightening on 2026-05-24: category-page grid cards were shortened and visually tightened after feedback that listing boxes felt too long. This change is grid-only and does not change homepage carousel card height.
 - Compact listing-card behavior: category grid uses shorter card min-height, square image block, tighter brand/title/size spacing, inline price row, and floating listing cart control over the image. Quantity state stays compact in the same overlay footprint to avoid adding extra card height.
+- Git commit hash for this category-listing card tightening task: `8a9869c`
 
 ## Backend/Admin Notes
 

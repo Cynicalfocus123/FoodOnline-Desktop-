@@ -228,6 +228,7 @@
 - Git commit hash for this category-listing update: `e81ec93`
 - Category listing card tightening on 2026-05-24 refines only the product-card presentation inside category listing grids.
 - Grid-card direction: listing cards are intentionally shorter than homepage carousel cards, with tighter vertical spacing, square image priority, inline price row, and floating compact cart/quantity control over the image area to match the denser sample style. Homepage rail cards keep their existing layout.
+- Git commit hash for this category-listing card tightening task: `8a9869c`
 
 ## Guardrails
 
