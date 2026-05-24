@@ -79,9 +79,9 @@
 - Category/shortcut row spacing fix: homepage top offset increased in `src/App.tsx`, and `ShortcutRow` now adds extra top/bottom spacing so fixed header, shortcut row, and hero/banner no longer collide on desktop, tablet, or mobile.
 - Build/test commands used for this header fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
-- Footer redesign on 2026-05-23 updates only footer presentation/content. New footer uses five-column desktop layout: large logo/contact block at left and four link columns titled `Company`, `Account`, `Corporate`, and `Popular`.
+- Footer redesign on 2026-05-23 updates only footer presentation/content. Current footer uses a four-column desktop layout: large logo/contact block at left and three link columns titled `Company`, `Account`, and `Corporate`.
 - Footer files changed for this redesign: `src/components/Footer.tsx` and `src/data/home.ts`.
-- Footer content now mirrors reference with left description `We bring Grocery to your door for less`, Bangkok office address, phone, email, hours, and full text link lists for distributor/account/corporate/popular sections.
+- Footer content now mirrors reference with left description `We bring Grocery to your door for less`, Bangkok office address, phone, email, hours, and full text link lists for distributor/account/corporate sections.
 - Footer styling direction: white background, generous column spacing, dark blue-gray headings/body links, larger logo block, green contact icons, and responsive stacked behavior for smaller screens.
 - Build/test commands used for this footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 footer redesign: `5154615`
@@ -161,6 +161,8 @@
 - Cross-browser fixed header follow-up on 2026-05-24 supersedes the sticky header experiment for the final browser/device requirement. Chrome, Safari, iOS, Android, Telegram/in-app browsers, and other browser surfaces should all keep the full header and search bar visible while scrolling.
 - Final layout direction: header/search is solid white fixed positioning with GPU-safe transform hints and no backdrop blur. Homepage, login, and signup screens reserve enough top space for the fixed header, and anchor/section scroll behavior uses `scroll-padding-top` and `scroll-margin-top` so content does not clip underneath the header/search.
 - Build/test commands used for this cross-browser fixed header follow-up: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Footer product row removal on 2026-05-24 removes the `Popular` product-link column from the public footer. Footer now displays the logo/contact block plus `Company`, `Account`, and `Corporate` link columns only.
+- Files changed for this footer update: `src/data/home.ts` and `src/components/Footer.tsx`.
 
 ## Guardrails
 

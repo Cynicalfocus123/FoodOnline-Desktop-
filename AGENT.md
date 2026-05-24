@@ -64,9 +64,9 @@
 - Category row spacing fix: increased homepage top padding and added extra top/bottom spacing around `ShortcutRow` so shortcut/category strip no longer overlaps fixed header and now sits with clearer separation from hero/banner area across desktop, tablet, and mobile.
 - Build/test commands used for 2026-05-23 header/menu fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 header/menu fix: `dfa2322`
-- Footer redesign on 2026-05-23: homepage footer now matches reference-style five-column layout with larger FoodOnlines logo block on left, delivery tagline, Bangkok office/contact rows, and full text link columns for `Company`, `Account`, `Corporate`, and `Popular`.
+- Footer redesign on 2026-05-23: homepage footer now matches reference-style column layout with larger FoodOnlines logo block on left, delivery tagline, Bangkok office/contact rows, and full text link columns.
 - Footer files changed for 2026-05-23 redesign: `src/components/Footer.tsx` and `src/data/home.ts`.
-- Footer content update: replaced old compact two-row footer links with structured footer data for `Become Our Distributor`, `Apply Credit`, `Privacy Policy`, `Terms & Conditions`, `About Us`, `Contact Us`, `Complaint`, `Careers`, `Sitmap`, `Sign In`, `View Cart`, `My Wishlist`, `Track My Order`, `Help Ticket`, `Shipping Details`, `Compare products`, `Become a Vendor`, `Affiliate Program`, `Farm Business`, `Farm Careers`, `Our Suppliers`, `Accessibility`, `Promotions`, `Milk & Flavoured Milk`, `Butter and Margarine`, `Eggs Substitutes`, `Marmalades`, `Sour Cream and Dips`, `Tea & Kombucha`, and `Cheese`.
+- Footer content update: replaced old compact two-row footer links with structured footer data for `Become Our Distributor`, `Apply Credit`, `Privacy Policy`, `Terms & Conditions`, `About Us`, `Contact Us`, `Complaint`, `Careers`, `Sitmap`, `Sign In`, `View Cart`, `My Wishlist`, `Track My Order`, `Help Ticket`, `Shipping Details`, `Compare products`, `Become a Vendor`, `Affiliate Program`, `Farm Business`, `Farm Careers`, `Our Suppliers`, `Accessibility`, and `Promotions`.
 - Footer contact block update: added left-side description `We bring Grocery to your door for less` plus icon rows for Bangkok office, phone, email, and business hours as shown in reference.
 - Build/test commands used for 2026-05-23 footer redesign: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for 2026-05-23 footer redesign: `5154615`
@@ -143,6 +143,8 @@
 - Cross-browser fixed header follow-up on 2026-05-24: final requirement is that Chrome, Safari, iOS, Android, Telegram/in-app browsers, and other browser surfaces show the same always-visible header and search bar while scrolling.
 - Cross-browser header behavior: header/search is solid white fixed positioning again, but without translucent backdrop blur; homepage, login, and signup content now reserve explicit top space, and anchor/scroll targets use `scroll-padding-top` plus `scroll-margin-top` so sections do not clip behind the fixed header/search.
 - Build/test commands used for 2026-05-24 cross-browser fixed header follow-up: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Footer product row removal on 2026-05-24: removed the `Popular` footer column and its product links (`Milk & Flavoured Milk`, `Butter and Margarine`, `Eggs Substitutes`, `Marmalades`, `Sour Cream and Dips`, `Tea & Kombucha`, `Cheese`) from the public footer.
+- Footer product row removal files changed: `src/data/home.ts` and `src/components/Footer.tsx`; desktop footer grid now uses logo/contact plus `Company`, `Account`, and `Corporate` columns.
 
 ## Backend/Admin Notes
 

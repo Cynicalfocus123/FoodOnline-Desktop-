@@ -738,16 +738,4 @@ export const footerColumns: FooterLinkColumn[] = [
       "Promotions",
     ],
   },
-  {
-    title: "Popular",
-    links: [
-      "Milk & Flavoured Milk",
-      "Butter and Margarine",
-      "Eggs Substitutes",
-      "Marmalades",
-      "Sour Cream and Dips",
-      "Tea & Kombucha",
-      "Cheese",
-    ],
-  },
 ];

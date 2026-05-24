@@ -48,7 +48,7 @@ export function Footer() {
   return (
     <footer id="company" className="border-t border-neutral-200 bg-white px-4 py-14 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.9fr_0.9fr_1fr_0.95fr] lg:gap-12">
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.9fr_0.9fr_1fr] lg:gap-12">
           <div className="max-w-[360px]">
             <a aria-label="FoodOnlines home" className="inline-flex items-center" href="#home">
               <img
