@@ -342,7 +342,7 @@ function FilterPanel({
 export function CategoryListingPage() {
   const selectedCategorySlug = useHomeStore((state) => state.selectedCategorySlug);
   const category = getCategoryBySlug(selectedCategorySlug);
-  const products = getCategoryListingProducts(category.categorySlug);
+  const products = useMemo(() => getCategoryListingProducts(category.categorySlug), [category.categorySlug]);
   const [selectedSort, setSelectedSort] = useState<SortOption>("featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -432,7 +432,7 @@ export function CategoryListingPage() {
   }
 
   const filteredProducts = useMemo(() => {
-    const nextProducts = products.filter((product) => {
+    return products.filter((product) => {
       if (selectedDeliveryTypes.length && !selectedDeliveryTypes.includes(product.deliveryType)) {
         return false;
       }
@@ -459,18 +459,47 @@ export function CategoryListingPage() {
 
       return true;
     });
+  }, [maxPrice, minPrice, products, selectedBrands, selectedDeliveryTypes, selectedMadeIn, selectedPriceBand, selectedProductTypes]);
 
+  const sortedProducts = useMemo(() => {
+    const nextProducts = [...filteredProducts];
     switch (selectedSort) {
       case "best-selling":
-        return [...nextProducts].sort((left, right) => right.soldCount - left.soldCount);
+        return nextProducts.sort((left, right) => right.soldCount - left.soldCount || left.name.localeCompare(right.name));
       case "price-low":
-        return [...nextProducts].sort((left, right) => left.price - right.price);
+        return nextProducts.sort((left, right) => left.price - right.price || left.name.localeCompare(right.name));
       case "price-high":
-        return [...nextProducts].sort((left, right) => right.price - left.price);
+        return nextProducts.sort((left, right) => right.price - left.price || left.name.localeCompare(right.name));
       default:
         return nextProducts;
     }
-  }, [maxPrice, minPrice, products, selectedBrands, selectedDeliveryTypes, selectedMadeIn, selectedPriceBand, selectedProductTypes, selectedSort]);
+  }, [filteredProducts, selectedSort]);
+
+  const gridStateKey = useMemo(
+    () =>
+      [
+        category.categorySlug,
+        selectedSort,
+        selectedPriceBand,
+        minPrice,
+        maxPrice,
+        selectedDeliveryTypes.join(","),
+        selectedProductTypes.join(","),
+        selectedMadeIn.join(","),
+        selectedBrands.join(","),
+      ].join("|"),
+    [
+      category.categorySlug,
+      maxPrice,
+      minPrice,
+      selectedBrands,
+      selectedDeliveryTypes,
+      selectedMadeIn,
+      selectedPriceBand,
+      selectedProductTypes,
+      selectedSort,
+    ],
+  );
 
   return (
     <div className="bg-[#fcfcfd] pb-16 pt-[132px] sm:pt-[146px] lg:pt-[154px]">
@@ -504,7 +533,7 @@ export function CategoryListingPage() {
                 <div className="grid gap-2">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-citrus-500">Category Listing</p>
                   <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">{category.name}</h1>
-                  <p className="text-sm font-medium text-neutral-500">{filteredProducts.length} products shown</p>
+                  <p className="text-sm font-medium text-neutral-500">{sortedProducts.length} products shown</p>
                 </div>
 
                 <div className="hidden sm:flex sm:flex-row sm:items-center sm:justify-end sm:gap-3 lg:hidden">
@@ -630,9 +659,9 @@ export function CategoryListingPage() {
               </div>
             </SectionShell>
 
-            {filteredProducts.length ? (
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-                {filteredProducts.map((product) => (
+            {sortedProducts.length ? (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5" key={gridStateKey}>
+                {sortedProducts.map((product) => (
                   <ProductCard key={product.id} layout="grid" product={product} />
                 ))}
               </div>

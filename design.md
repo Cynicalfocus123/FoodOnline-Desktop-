@@ -248,6 +248,9 @@
 - Cart visual polish on 2026-05-24 refines only the cart page presentation.
 - Visual direction: payment provider area now uses visible compact branded logo tiles, cart row quantity control is a compact green stepper pill instead of native select dropdown, and desktop fulfillment/free-shipping area is reduced into one slimmer row without the extra nested box around the progress bar.
 - Git commit hash for this cart visual polish task: `14620aa`
+- Category listing sort fix on 2026-05-24 updates only the listing-page sort behavior.
+- Sort direction: category pages now always filter first, then sort the resulting product set for `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low`. Visible price order and best-selling order must change immediately on desktop, desktop-mobile browser widths, tablet, and mobile.
+- Grid update direction: product count and rendered grid both consume the same sorted result list, and the listing grid remounts on category/sort/filter state changes so reordered cards visibly move instead of appearing stuck in prior order.
 
 ## Guardrails
 

@@ -223,6 +223,10 @@
 - Git commit hash for this cart/checkout task: `cb28715`
 - Cart visual polish on 2026-05-24: replaced missing/weak payment marks with visible branded payment logo tiles, changed cart row quantity selector from native dropdown to compact green plus/minus pill, and compressed the desktop free-shipping strip into a slimmer single-row treatment with no nested progress box.
 - Git commit hash for this cart visual polish task: `14620aa`
+- Category listing sort fix on 2026-05-24: category sort now always applies after filtering and reorders the visible grid correctly for `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low` on desktop, desktop-mobile browser widths, tablet, and mobile.
+- Category listing sort fix files changed: `src/components/CategoryListingPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Category listing sort behavior update: product count and product grid now both read from the same sorted result set, and the grid remount key follows category/sort/filter state so price-order changes are visible immediately across all category pages.
+- Build/test commands for this category listing sort fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

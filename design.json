@@ -109,6 +109,7 @@
       "desktop_layout": "left_filter_sidebar_right_product_grid",
       "mobile_layout": "filter_drawer_plus_responsive_grid",
       "narrow_control_style": "small_inline_filter_sort_triggers",
+      "sorting_behavior": "filter_first_then_sort_same_result_set_with_visible_grid_reorder",
       "grid_columns": {
         "desktop": 5,
         "tablet": 3,
