@@ -186,7 +186,7 @@
 - Product-card height trim files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Product-card height rules update: card minimum heights are now shorter across breakpoints, title block is back to 2-line clamp, and bottom action zone remains aligned without excess empty space.
 - Build/test commands for this product-card height trim task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-card height trim task: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-card height trim task: `4547e8f`
 
 ## Backend/Admin Notes
 

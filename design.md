@@ -209,7 +209,7 @@
 - Files changed for this product-card height trim: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Height direction: reduce shared card min-heights, shrink badge/brand/title/size/unit-price reserved rows, return title clamp to 2 lines, and keep footer price/cart block bottom-aligned in the same action zone.
 - Build/test commands used for this product-card height trim: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-card height trim: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-card height trim: `4547e8f`
 
 ## Guardrails
 
