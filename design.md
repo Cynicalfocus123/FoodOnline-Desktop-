@@ -244,6 +244,7 @@
 - Checkout placeholder direction: `#checkout` shows shipping-address placeholder, payment-method placeholder, and selected order summary. No real payment processing or shipping API was added.
 - Account direction: signed-in account summary now surfaces saved-for-later items from the cart state so saved items appear under the user account during the active session.
 - Build/test commands used for this cart/checkout design: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this cart/checkout design: `cb28715`
 
 ## Guardrails
 

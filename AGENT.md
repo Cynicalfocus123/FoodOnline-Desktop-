@@ -220,6 +220,7 @@
 - Checkout page placeholder behavior: `#checkout` shows responsive shipping-address placeholder, payment-method placeholder, and selected cart summary. It is frontend-only and safe for later API/payment integration.
 - Responsive behavior for cart task: desktop uses two-column cart + sticky summary, desktop-mobile and tablet collapse summary under items cleanly, mobile keeps vertical items and sticky bottom checkout bar, payment logos wrap cleanly, and modal fits without horizontal overflow.
 - Build/test commands for this cart/checkout task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this cart/checkout task: `cb28715`
 
 ## Backend/Admin Notes
 
