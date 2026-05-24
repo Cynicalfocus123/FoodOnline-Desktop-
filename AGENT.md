@@ -181,7 +181,7 @@
 - Add to Cart / quantity alignment behavior: compact green button and active quantity control keep same reserved bottom action zone, so switching cart states does not change card height or push price/button alignment out of line.
 - Responsive behavior for this alignment fix: desktop, desktop-mobile browser width, tablet, and mobile all keep smooth horizontal carousel scroll, even card heights per row, no clipped controls, and no overflow from title or cart controls.
 - Build/test commands for this product-card alignment task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-card alignment task: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-card alignment task: `acf0fc5`
 
 ## Backend/Admin Notes
 

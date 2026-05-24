@@ -204,7 +204,7 @@
 - Add to Cart direction: compact button and active quantity pill stay in same bottom action footprint, so cart-state changes keep width/height stable and preserve bottom alignment across the row.
 - Responsive direction for this alignment fix: desktop, desktop-mobile browser width, tablet, and mobile keep smooth horizontal scroll, even product-card baselines, controlled text clamping, and no card/button overflow.
 - Build/test commands used for this product-card alignment fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-card alignment fix: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-card alignment fix: `acf0fc5`
 
 ## Guardrails
 
