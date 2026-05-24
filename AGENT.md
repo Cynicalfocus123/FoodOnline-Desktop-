@@ -221,6 +221,7 @@
 - Responsive behavior for cart task: desktop uses two-column cart + sticky summary, desktop-mobile and tablet collapse summary under items cleanly, mobile keeps vertical items and sticky bottom checkout bar, payment logos wrap cleanly, and modal fits without horizontal overflow.
 - Build/test commands for this cart/checkout task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this cart/checkout task: `cb28715`
+- Cart visual polish on 2026-05-24: replaced missing/weak payment marks with visible branded payment logo tiles, changed cart row quantity selector from native dropdown to compact green plus/minus pill, and compressed the desktop free-shipping strip into a slimmer single-row treatment with no nested progress box.
 
 ## Backend/Admin Notes
 
