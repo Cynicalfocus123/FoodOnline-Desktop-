@@ -170,14 +170,15 @@ export function Header() {
   const openLogin = useHomeStore((state) => state.openLogin);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
+  const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
+  const setSelectedZipCode = useHomeStore((state) => state.setSelectedZipCode);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const logoutUser = usePublicAuthStore((state) => state.logoutUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isZipPanelOpen, setIsZipPanelOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
-  const [zipCode, setZipCode] = useState(zipCodeExample);
-  const [draftZipCode, setDraftZipCode] = useState(zipCodeExample);
+  const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
   const [searchTerm, setSearchTerm] = useState("");
   const languageMenuReference = useRef<HTMLElement | null>(null);
 
@@ -223,6 +224,10 @@ export function Header() {
     };
   }, [isZipPanelOpen]);
 
+  useEffect(() => {
+    setDraftZipCode(selectedZipCode);
+  }, [selectedZipCode]);
+
   function handleLoginClick(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
     setIsMobileMenuOpen(false);
@@ -257,7 +262,7 @@ export function Header() {
   }
 
   function openZipPanel() {
-    setDraftZipCode(zipCode);
+    setDraftZipCode(selectedZipCode);
     setIsZipPanelOpen(true);
   }
 
@@ -266,7 +271,7 @@ export function Header() {
   }
 
   function saveZipCode() {
-    setZipCode(draftZipCode.trim() || zipCodeExample);
+    setSelectedZipCode(draftZipCode.trim() || zipCodeExample);
     setIsZipPanelOpen(false);
   }
 
@@ -339,7 +344,7 @@ export function Header() {
               type="button"
             >
               <LocationMarker />
-              <span>{zipCode}</span>
+              <span>{selectedZipCode}</span>
             </button>
 
             <nav className="hidden min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap text-[14px] font-semibold text-neutral-800 scrollbar-none lg:flex xl:gap-5 xl:text-[15px]">
@@ -422,7 +427,7 @@ export function Header() {
               type="button"
             >
               <LocationMarker />
-              <span>{zipCode}</span>
+              <span>{selectedZipCode}</span>
             </button>
 
             <div className="relative hidden sm:block">
@@ -653,7 +658,7 @@ export function Header() {
               inputMode="numeric"
               maxLength={10}
               onChange={(event) => setDraftZipCode(event.target.value)}
-              placeholder={zipCodeExample}
+              placeholder={selectedZipCode || zipCodeExample}
               type="text"
               value={draftZipCode}
             />

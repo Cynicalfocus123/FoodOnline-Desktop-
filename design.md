@@ -173,6 +173,21 @@
 - Files changed for this cleanup: `src/components/CategoryStrip.tsx`.
 - Desktop header nav clipping fix on 2026-05-24 preserves the current header/search design while widening the desktop header content area, tightening horizontal gaps, and preventing nav link text from shrinking. Desktop labels, including `Wholesale Products`, should render fully without clipping.
 - Files changed for this header fix: `src/components/Header.tsx`.
+- Desktop product detail design on 2026-05-24 adds a responsive ecommerce detail page to public website while keeping current homepage/header/search system intact.
+- Files changed for this product-detail design: `src/App.tsx`, `src/components/Header.tsx`, `src/components/ProductCard.tsx`, `src/components/ProductDetailPage.tsx`, `src/components/CartQuantityControl.tsx`, `src/data/home.ts`, `src/store/homeStore.ts`, and new root `design.json`.
+- Route direction: use hash-safe desktop route `#product/:productId` instead of history-path routing so GitHub Pages refreshes keep working. Product cards and similar items open same detail surface through shared store state.
+- Top layout direction: desktop uses a clean two-column product area with large gallery left and sticky product info/purchase panel right. Tablet keeps two columns when space allows and otherwise stacks; mobile always stacks image, product info, shipping, tabs, similar items, and reviews vertically.
+- Gallery direction: main product image is large, centered, and `object-contain`; desktop adds left/right arrows and thumbnail strip; mobile adds pagination dots. Images stay inside one clean rounded surface with no stretching or overflow.
+- Price/cart direction: product header shows title, price, old price, discount badge, unit price, sold count, provider, favorite heart, share button, and pack/variant selector. Add to cart uses shared animated quantity control that becomes trash/minus-count-plus after quantity is positive.
+- Shipping card direction: under price/cart, show `Ships to your selected address`, current ZIP/location from shared header state, delivery speed, free shipping threshold, and easy returns notes with small icons.
+- Detail section direction: use horizontal tab buttons for `Product Details`, `Recipe`, `Nutrition Facts`, and `Return Policy`. Product Details shows backend-ready description/meta fields; Recipe uses clean recipe cards; Nutrition Facts uses desktop table plus mobile stacked cards; Return Policy uses short ecommerce-friendly copy cards.
+- Similar Items direction: show horizontal related-products rail under detail sections with desktop arrow controls and mobile/tablet swipe scroll. Related fill uses same-category products first, then fallback catalog products.
+- Reviews direction: product page includes summary card with average rating, stars, review count, rating breakdown, review tags, preview review cards, and `See all reviews`. Full reviews open in centered desktop modal and mobile bottom-sheet style, with All/Purchased/Photos filters, toggleable Most Recent sort, rating dashboard, write-review button shell, and friendly empty states.
+- Responsive optimization direction: buttons stay large enough for click/tap, price rows and review headers wrap instead of clipping, no horizontal overflow is allowed, and narrow desktop-browser widths collapse cleanly without breaking header spacing or product body layout.
+- Data-binding direction: catalog structure now supports `imageUrls`, `price`, `oldPrice`, `discountPercent`, `unitPrice`, `soldCount`, `categoryId`, `tags`, `badges`, `provider`, `countryOfOrigin`, `brandOrigin`, `netContent`, `ingredients`, `storageInstructions`, `sku`, `recipeSuggestions`, `nutritionFacts`, `returnPolicy`, `reviews`, `reviewTags`, `ratingBreakdown`, and `variants` so backend API swap can happen later without redesign.
+- Desktop design memory: root `design.json` now exists as lightweight desktop structure memory for product-detail route, components, responsive rules, and backend-ready fields. No desktop `designer.md` exists in this repo, so `design.md` remains design source of truth here.
+- Build/test commands used for this product-detail design: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-detail design: `PENDING_COMMIT_HASH`
 
 ## Guardrails
 

@@ -6,6 +6,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
+import { ProductDetailPage } from "./components/ProductDetailPage";
 import { PromoExperience } from "./components/PromoExperience";
 import { ShortcutRow } from "./components/ShortcutRow";
 import { SignupFlow } from "./components/SignupFlow";
@@ -14,6 +15,8 @@ import { usePublicAuthStore } from "./store/publicAuthStore";
 
 export default function App() {
   const siteView = useHomeStore((state) => state.siteView);
+  const selectedProductId = useHomeStore((state) => state.selectedProductId);
+  const syncRouteFromHash = useHomeStore((state) => state.syncRouteFromHash);
   const hydrateSession = usePublicAuthStore((state) => state.hydrateSession);
   const hasHydratedSession = usePublicAuthStore((state) => state.hasHydratedSession);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
@@ -26,8 +29,22 @@ export default function App() {
   }, [hasHydratedSession, hydrateSession, token]);
 
   useEffect(() => {
+    syncRouteFromHash(window.location.hash);
+
+    const handleHashChange = () => {
+      syncRouteFromHash(window.location.hash);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [syncRouteFromHash]);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [siteView]);
+  }, [siteView, selectedProductId]);
 
   return (
     <main className="min-h-screen bg-white font-sans text-ink">
@@ -45,6 +62,7 @@ export default function App() {
         <SignupFlow />
       ) : null}
       {siteView === "login" ? <LoginFlow /> : null}
+      {siteView === "product" ? <ProductDetailPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

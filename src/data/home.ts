@@ -487,10 +487,81 @@ export type ProductItem = {
   brand: string;
   name: string;
   size: string;
-  price: string;
+  price: number;
+  oldPrice?: number;
+  discountPercent?: number;
   deliveryTime: string;
   image: string;
+  imageUrls: string[];
+  unitPrice: string;
+  soldCount: number;
+  categoryId: string;
+  categoryName: string;
+  tags: string[];
+  badges: string[];
+  provider: string;
+  country: string;
+  countryOfOrigin: string;
+  brandOrigin: string;
+  netContent: string;
+  quantity: string;
+  description: string;
+  ingredients?: string;
+  storageInstructions?: string;
+  sku: string;
+  recipeSuggestions: RecipeSuggestion[];
+  nutritionFacts: NutritionFacts;
+  returnPolicy: string;
+  reviews: ProductReview[];
+  reviewTags: string[];
+  averageRating: number;
+  ratingBreakdown: RatingBreakdown;
+  reviewCount: number;
+  variants: ProductVariant[];
 };
+
+export type ProductVariant = {
+  id: string;
+  label: string;
+  packSize: string;
+  price: number;
+  unitPrice: string;
+};
+
+export type RecipeSuggestion = {
+  id: string;
+  title: string;
+  description: string;
+  prepTime: string;
+  usage: string;
+  ingredients: string[];
+};
+
+export type NutritionFacts = {
+  servingSize: string;
+  calories: number;
+  totalFat: string;
+  sodium: string;
+  carbohydrates: string;
+  sugar: string;
+  protein: string;
+  ingredientsNote?: string;
+  allergenNote?: string;
+};
+
+export type ProductReview = {
+  id: string;
+  customerName: string;
+  rating: number;
+  text: string;
+  date: string;
+  verifiedPurchase: boolean;
+  isPurchased: boolean;
+  images: string[];
+  tags: string[];
+};
+
+export type RatingBreakdown = Record<1 | 2 | 3 | 4 | 5, number>;
 
 export type ProductCarouselSection = {
   title: string;
@@ -498,6 +569,215 @@ export type ProductCarouselSection = {
   seeAllHref: string;
   items: ProductItem[];
 };
+
+const PRODUCT_COUNTRIES = [
+  "Thailand",
+  "Japan",
+  "South Korea",
+  "Taiwan",
+  "Vietnam",
+  "Singapore",
+  "Malaysia",
+];
+
+const REVIEW_NAMES = ["Mina L.", "Andre T.", "Jade S.", "Mook P.", "Chris A.", "Nina W."];
+
+export function formatPrice(value: number) {
+  return `$${value.toFixed(2)}`;
+}
+
+function createGalleryImage(productName: string, brand: string, palette: Palette, frameIndex: number) {
+  const title = productName.split(" ").slice(0, 2).join(" ");
+  const accent = frameIndex % 2 === 0 ? palette.badge : palette.text;
+  const note = ["Front", "Side", "Pack", "Close-up"][frameIndex] ?? "View";
+
+  return svgDataUri(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="860" height="860" viewBox="0 0 860 860" fill="none">
+      <defs>
+        <linearGradient id="bg" x1="120" y1="84" x2="742" y2="760" gradientUnits="userSpaceOnUse">
+          <stop stop-color="${palette.from}"/>
+          <stop offset="1" stop-color="${palette.to}"/>
+        </linearGradient>
+      </defs>
+      <rect width="860" height="860" rx="90" fill="#f8fafc"/>
+      <rect x="78" y="78" width="704" height="704" rx="86" fill="url(#bg)" fill-opacity="0.12"/>
+      <circle cx="676" cy="214" r="88" fill="${accent}" fill-opacity="0.12"/>
+      <circle cx="244" cy="222" r="58" fill="${accent}" fill-opacity="0.08"/>
+      <rect x="242" y="118" width="376" height="560" rx="84" fill="#ffffff"/>
+      <rect x="282" y="168" width="296" height="78" rx="30" fill="${palette.badge}" fill-opacity="0.16"/>
+      <rect x="316" y="300" width="228" height="220" rx="46" fill="${palette.badge}" fill-opacity="0.9"/>
+      <rect x="274" y="570" width="312" height="46" rx="23" fill="${accent}" fill-opacity="0.14"/>
+      <text x="430" y="217" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="${palette.text}">${escapeXml(brand)}</text>
+      <text x="430" y="600" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="${palette.text}">${escapeXml(note)}</text>
+      <text x="430" y="786" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800" fill="${palette.text}">${escapeXml(title)}</text>
+    </svg>
+  `);
+}
+
+function createRecipeSuggestions(product: {
+  id: string;
+  name: string;
+  quantity: string;
+  categoryName: string;
+}) {
+  return [
+    {
+      id: `${product.id}-recipe-1`,
+      title: `${product.name} quick bowl`,
+      description: `Turn ${product.name.toLowerCase()} into a fast weeknight plate with crisp vegetables and pantry staples.`,
+      prepTime: "12 min",
+      usage: `Use ${product.quantity} with rice, greens, or noodles.`,
+      ingredients: [product.name, "Scallions", "Sesame oil", "Steamed rice"],
+    },
+    {
+      id: `${product.id}-recipe-2`,
+      title: `${product.categoryName} easy meal prep`,
+      description: `Batch a simple prep-friendly recipe that keeps flavor and texture through lunch or dinner.`,
+      prepTime: "18 min",
+      usage: `Use ${product.name.toLowerCase()} as main flavor base.`,
+      ingredients: [product.name, "Garlic", "Soy sauce", "Mixed vegetables"],
+    },
+  ] satisfies RecipeSuggestion[];
+}
+
+function createNutritionFacts(product: { id: string; quantity: string; name: string }) {
+  const seed = product.id.length + product.name.length;
+  return {
+    servingSize: product.quantity,
+    calories: 120 + (seed % 9) * 15,
+    totalFat: `${4 + (seed % 5)} g`,
+    sodium: `${150 + (seed % 6) * 35} mg`,
+    carbohydrates: `${16 + (seed % 4) * 3} g`,
+    sugar: `${5 + (seed % 4)} g`,
+    protein: `${3 + (seed % 5)} g`,
+    ingredientsNote: "Sample nutrition values for demo display. Check actual product packaging for final values.",
+    allergenNote: "Allergen and ingredient details may vary by provider batch.",
+  } satisfies NutritionFacts;
+}
+
+function createReviewDate(offset: number) {
+  const date = new Date(Date.UTC(2026, 4, 24 - offset));
+  return `${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}/${date.getUTCFullYear()}`;
+}
+
+function createReviews(product: { id: string; name: string; imageUrls: string[] }) {
+  return [
+    {
+      id: `${product.id}-review-1`,
+      customerName: REVIEW_NAMES[0],
+      rating: 5,
+      text: `${product.name} arrived in great condition and matched the photos. Would buy again for pantry restock.`,
+      date: createReviewDate(1),
+      verifiedPurchase: true,
+      isPurchased: true,
+      images: [product.imageUrls[0]],
+      tags: ["Fresh", "Well packed"],
+    },
+    {
+      id: `${product.id}-review-2`,
+      customerName: REVIEW_NAMES[1],
+      rating: 4,
+      text: `Flavor and size were good. Shipping was quick and the packaging felt secure.`,
+      date: createReviewDate(5),
+      verifiedPurchase: true,
+      isPurchased: true,
+      images: [],
+      tags: ["Fast delivery"],
+    },
+    {
+      id: `${product.id}-review-3`,
+      customerName: REVIEW_NAMES[2],
+      rating: 5,
+      text: `Nice value for the price. I used it in two recipes already and it worked exactly as expected.`,
+      date: createReviewDate(12),
+      verifiedPurchase: false,
+      isPurchased: false,
+      images: [product.imageUrls[1]],
+      tags: ["Good value", "Recipe friendly"],
+    },
+    {
+      id: `${product.id}-review-4`,
+      customerName: REVIEW_NAMES[3],
+      rating: 3,
+      text: `Good overall, though I wish the pack size was a little larger. Still a solid grocery staple.`,
+      date: createReviewDate(18),
+      verifiedPurchase: true,
+      isPurchased: true,
+      images: [],
+      tags: ["Staple item"],
+    },
+  ] satisfies ProductReview[];
+}
+
+function createRatingBreakdown(reviews: ProductReview[]) {
+  return reviews.reduce<RatingBreakdown>(
+    (accumulator, review) => {
+      const key = Math.max(1, Math.min(5, Math.round(review.rating))) as 1 | 2 | 3 | 4 | 5;
+      accumulator[key] += 1;
+      return accumulator;
+    },
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  );
+}
+
+function createProductRecord(category: CategoryConfig, productName: string, index: number): ProductItem {
+  const categoryId = slugify(category.name);
+  const id = `${categoryId}-${index + 1}`;
+  const price = Number((PRODUCT_PRICES[index] + category.name.length * 0.11).toFixed(2));
+  const oldPrice = Number((price * 1.16).toFixed(2));
+  const discountPercent = Math.round(((oldPrice - price) / oldPrice) * 100);
+  const size = PRODUCT_SIZES[index];
+  const imageUrls = [0, 1, 2, 3].map((frameIndex) => createGalleryImage(productName, category.brand, category.palette, frameIndex));
+  const quantity = size;
+  const reviews = createReviews({ id, name: productName, imageUrls });
+  const ratingBreakdown = createRatingBreakdown(reviews);
+  const reviewCount = reviews.length;
+  const averageRating =
+    reviews.reduce((total, review) => total + review.rating, 0) / Math.max(reviewCount, 1);
+
+  return {
+    id,
+    brand: category.brand,
+    name: productName,
+    size,
+    price,
+    oldPrice,
+    discountPercent,
+    deliveryTime: DELIVERY_BADGES[index % DELIVERY_BADGES.length],
+    image: imageUrls[0],
+    imageUrls,
+    unitPrice: `${formatPrice(Number((price / (index % 3 === 0 ? 0.5 : 1)).toFixed(2)))}/${index % 2 === 0 ? "lb" : "pack"}`,
+    soldCount: 120 + index * 17 + category.name.length,
+    categoryId,
+    categoryName: category.name,
+    tags: ["Best Seller", category.name.split("&")[0].trim(), "Daily grocery"].slice(0, 3),
+    badges: [discountPercent >= 12 ? `${discountPercent}% OFF` : "Fresh Pick", index % 2 === 0 ? "Popular" : "Top Rated"],
+    provider: `${category.brand} Market`,
+    country: PRODUCT_COUNTRIES[index % PRODUCT_COUNTRIES.length],
+    countryOfOrigin: PRODUCT_COUNTRIES[(index + 2) % PRODUCT_COUNTRIES.length],
+    brandOrigin: PRODUCT_COUNTRIES[(index + 1) % PRODUCT_COUNTRIES.length],
+    netContent: size,
+    quantity,
+    description: `${productName} is a demo-ready ${category.name.toLowerCase()} product built for the desktop product page. It keeps backend-ready fields while showing a polished grocery ecommerce layout across desktop, tablet, and mobile.`,
+    ingredients: `Sample ingredients for ${productName.toLowerCase()}: primary product base, seasoning blend, and provider-specific components.`,
+    storageInstructions: index % 2 === 0 ? "Keep refrigerated after opening." : "Store in a cool, dry place away from direct sunlight.",
+    sku: `FO-${categoryId.toUpperCase()}-${String(index + 1).padStart(3, "0")}`,
+    recipeSuggestions: createRecipeSuggestions({ id, name: productName, quantity, categoryName: category.name }),
+    nutritionFacts: createNutritionFacts({ id, quantity, name: productName }),
+    returnPolicy:
+      "Eligible unopened items can be returned within 7 days. Damaged or missing items should be reported with photos through support for a quick resolution.",
+    reviews,
+    reviewTags: ["Fresh", "Good value", "Fast delivery", "Would repurchase"],
+    averageRating: Number(averageRating.toFixed(1)),
+    ratingBreakdown,
+    reviewCount,
+    variants: [
+      { id: `${id}-default`, label: "Default", packSize: size, price, unitPrice: `${formatPrice(price)}/pack` },
+      { id: `${id}-family`, label: "Family Size", packSize: `2 x ${size}`, price: Number((price * 1.88).toFixed(2)), unitPrice: `${formatPrice(Number((price * 0.94).toFixed(2)))}/pack` },
+      { id: `${id}-bundle`, label: "Bundle", packSize: `3 x ${size}`, price: Number((price * 2.7).toFixed(2)), unitPrice: `${formatPrice(Number((price * 0.9).toFixed(2)))}/pack` },
+    ],
+  };
+}
 
 const categoryConfigs: CategoryConfig[] = [
   { name: "Paan Corner", icon: "paan", brand: "Blink Basket", palette: { from: "#22c55e", to: "#86efac", shell: "#eefbf0", badge: "#15803d", text: "#14532d" } },
@@ -624,6 +904,28 @@ export const categories: CategoryTile[] = categoryConfigs.map((category) => ({
   sectionId: `category-${slugify(category.name)}`,
 }));
 
+export const productCatalog: ProductItem[] = categoryConfigs
+  .filter((category) => category.name !== "Paan Corner")
+  .flatMap((category) =>
+    PRODUCT_NAMES_BY_CATEGORY[category.name].map((productName, index) => createProductRecord(category, productName, index)),
+  );
+
+export const productCatalogById = new Map(productCatalog.map((product) => [product.id, product]));
+
+export function getProductById(productId: string | null) {
+  if (!productId) {
+    return productCatalog[0];
+  }
+
+  return productCatalogById.get(productId) ?? productCatalog[0];
+}
+
+export function getRelatedProducts(product: ProductItem, limit = 8) {
+  const sameCategory = productCatalog.filter((item) => item.id !== product.id && item.categoryId === product.categoryId);
+  const fallback = productCatalog.filter((item) => item.id !== product.id && item.categoryId !== product.categoryId);
+  return [...sameCategory, ...fallback].slice(0, limit);
+}
+
 const promoCategoryNames = ["Snacks & Munchies", "Cold Drinks & Juices", "Sweet Tooth"];
 
 export const promoBanner: PromoBannerData = {
@@ -648,15 +950,7 @@ export const productCarouselSections: ProductCarouselSection[] = categoryConfigs
     title: category.name,
     sectionId: slugify(category.name),
     seeAllHref: "#categories",
-    items: PRODUCT_NAMES_BY_CATEGORY[category.name].map((productName, index) => ({
-      id: `${slugify(category.name)}-${index + 1}`,
-      brand: category.brand,
-      name: productName,
-      size: PRODUCT_SIZES[index],
-      price: `$${(PRODUCT_PRICES[index] + category.name.length * 0.11).toFixed(2)}`,
-      deliveryTime: DELIVERY_BADGES[index % DELIVERY_BADGES.length],
-      image: createProductImage(productName, category.brand, category.palette),
-    })),
+    items: productCatalog.filter((product) => product.categoryId === slugify(category.name)),
   }));
 
 export type FooterContactItem = {

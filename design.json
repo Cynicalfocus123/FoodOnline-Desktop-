@@ -1,0 +1,130 @@
+{
+  "project": {
+    "name": "FoodOnlines Desktop Web",
+    "version": "1.0.0",
+    "updated_at": "2026-05-24",
+    "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
+  },
+  "sources": {
+    "desktop_notes": "D:/Foodonline desktop version/design.md",
+    "desktop_agent": "D:/Foodonline desktop version/AGENT.md",
+    "mobile_reference_designer": "D:/Thai app food online/App/designer.md",
+    "mobile_reference_design_json": "D:/Thai app food online/App/design.json"
+  },
+  "routes": {
+    "home": {
+      "path": "#home",
+      "view": "home"
+    },
+    "login": {
+      "path": "#login",
+      "view": "login"
+    },
+    "product_detail": {
+      "path": "#product/:productId",
+      "view": "product",
+      "refresh_safe": true
+    }
+  },
+  "components": {
+    "product_detail_page": {
+      "file": "src/components/ProductDetailPage.tsx",
+      "sections": [
+        "gallery",
+        "price_and_purchase_panel",
+        "shipping_address_card",
+        "details_tabs",
+        "similar_items_rail",
+        "reviews_summary",
+        "reviews_full_modal"
+      ]
+    },
+    "product_card": {
+      "file": "src/components/ProductCard.tsx",
+      "behaviors": [
+        "open_product_detail",
+        "favorite_toggle",
+        "shared_quantity_control"
+      ]
+    },
+    "cart_quantity_control": {
+      "file": "src/components/CartQuantityControl.tsx",
+      "states": [
+        "add_to_cart",
+        "trash_at_quantity_one",
+        "minus_above_one",
+        "plus_increment"
+      ]
+    }
+  },
+  "responsive_rules": {
+    "desktop": {
+      "top_layout": "two_column",
+      "gallery": "left",
+      "purchase_panel": "sticky_right",
+      "similar_items": "horizontal_multi_card"
+    },
+    "desktop_mobile_browser": {
+      "top_layout": "collapse_without_overflow",
+      "tabs": "horizontal_scroll",
+      "reviews_modal": "resize_cleanly"
+    },
+    "tablet": {
+      "top_layout": "two_column_if_space_else_stack",
+      "controls": "touch_friendly"
+    },
+    "mobile": {
+      "top_layout": "stacked",
+      "gallery": "top",
+      "reviews_view": "bottom_sheet_style"
+    }
+  },
+  "data_bindings": {
+    "catalog_file": "src/data/home.ts",
+    "store_file": "src/store/homeStore.ts",
+    "fields": [
+      "id",
+      "name",
+      "imageUrls",
+      "price",
+      "oldPrice",
+      "discountPercent",
+      "unitPrice",
+      "soldCount",
+      "categoryId",
+      "categoryName",
+      "tags",
+      "badges",
+      "provider",
+      "country",
+      "countryOfOrigin",
+      "brandOrigin",
+      "netContent",
+      "quantity",
+      "description",
+      "ingredients",
+      "storageInstructions",
+      "sku",
+      "recipeSuggestions",
+      "nutritionFacts",
+      "returnPolicy",
+      "reviews",
+      "reviewTags",
+      "ratingBreakdown",
+      "variants"
+    ],
+    "shared_state": [
+      "selectedProductId",
+      "cartQuantities",
+      "favoriteProductIds",
+      "selectedZipCode"
+    ]
+  },
+  "tests": {
+    "commands": [
+      "cmd /c npx tsc --noEmit",
+      "cmd /c npm run build"
+    ],
+    "git_commit_hash": "PENDING_COMMIT_HASH"
+  }
+}

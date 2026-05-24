@@ -16,13 +16,37 @@ import {
   validateSignupRole,
 } from "../lib/security";
 
-export type SiteView = "home" | "signup" | "login";
+export type SiteView = "home" | "signup" | "login" | "product";
 export type SignupStep = "role" | "form" | "complete";
+
+function readProductIdFromHash(hash: string) {
+  const match = hash.match(/^#product\/([^/?#]+)/i);
+  return match?.[1] ?? null;
+}
+
+function writeProductHash(productId: string | null) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (productId) {
+    window.location.hash = `product/${productId}`;
+    return;
+  }
+
+  if (window.location.hash.startsWith("#product/")) {
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#home`);
+  }
+}
 
 type HomeState = {
   siteView: SiteView;
   signupStep: SignupStep;
   selectedRole: SignupRoleKey | null;
+  selectedProductId: string | null;
+  cartQuantities: Record<string, number>;
+  favoriteProductIds: string[];
+  selectedZipCode: string;
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
   completedSubmission: ReturnType<typeof createSignupSubmission> | null;
@@ -31,6 +55,12 @@ type HomeState = {
   openSignup: () => void;
   openLogin: () => void;
   backToHome: () => void;
+  openProduct: (productId: string) => void;
+  syncRouteFromHash: (hash: string) => void;
+  setCartQuantity: (productId: string, quantity: number) => void;
+  addToCart: (productId: string) => void;
+  toggleFavorite: (productId: string) => void;
+  setSelectedZipCode: (zipCode: string) => void;
   selectRole: (role: string) => void;
   continueToForm: () => void;
   setFormValue: <K extends keyof SignupFormValues>(field: K, value: SignupFormValues[K]) => void;
@@ -63,35 +93,111 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   siteView: "home",
   signupStep: "role",
   selectedRole: null,
+  selectedProductId: null,
+  cartQuantities: {},
+  favoriteProductIds: [],
+  selectedZipCode: "91789",
   ...getBlankSignupState(),
   completedSubmission: null,
   submissionError: null,
   isSubmittingSignup: false,
   openSignup: () =>
-    set({
-      siteView: "signup",
-      signupStep: "role",
-      selectedRole: null,
-      ...getBlankSignupState(),
-      completedSubmission: null,
-      submissionError: null,
-      isSubmittingSignup: false,
+    set(() => {
+      writeProductHash(null);
+      return {
+        siteView: "signup",
+        signupStep: "role",
+        selectedRole: null,
+        selectedProductId: null,
+        ...getBlankSignupState(),
+        completedSubmission: null,
+        submissionError: null,
+        isSubmittingSignup: false,
+      };
     }),
   openLogin: () =>
-    set({
-      siteView: "login",
-      submissionError: null,
-      completedSubmission: null,
+    set(() => {
+      writeProductHash(null);
+      return {
+        siteView: "login",
+        selectedProductId: null,
+        submissionError: null,
+        completedSubmission: null,
+      };
     }),
   backToHome: () =>
+    set(() => {
+      writeProductHash(null);
+      return {
+        siteView: "home",
+        signupStep: "role",
+        selectedRole: null,
+        selectedProductId: null,
+        ...getBlankSignupState(),
+        completedSubmission: null,
+        submissionError: null,
+        isSubmittingSignup: false,
+      };
+    }),
+  openProduct: (productId) =>
+    set(() => {
+      writeProductHash(productId);
+      return {
+        siteView: "product",
+        selectedProductId: productId,
+        submissionError: null,
+      };
+    }),
+  syncRouteFromHash: (hash) =>
+    set((state) => {
+      const productId = readProductIdFromHash(hash);
+      if (productId) {
+        return {
+          siteView: "product",
+          selectedProductId: productId,
+        };
+      }
+
+      if (state.siteView === "product") {
+        return {
+          siteView: "home",
+          selectedProductId: null,
+        };
+      }
+
+      return state;
+    }),
+  setCartQuantity: (productId, quantity) =>
+    set((state) => {
+      const nextQuantity = Math.max(0, quantity);
+      const nextCart = { ...state.cartQuantities };
+
+      if (nextQuantity <= 0) {
+        delete nextCart[productId];
+      } else {
+        nextCart[productId] = nextQuantity;
+      }
+
+      return {
+        cartQuantities: nextCart,
+      };
+    }),
+  addToCart: (productId) =>
+    set((state) => ({
+      cartQuantities: {
+        ...state.cartQuantities,
+        [productId]: (state.cartQuantities[productId] ?? 0) + 1,
+      },
+    })),
+  toggleFavorite: (productId) =>
+    set((state) => ({
+      favoriteProductIds: state.favoriteProductIds.includes(productId)
+        ? state.favoriteProductIds.filter((id) => id !== productId)
+        : [...state.favoriteProductIds, productId],
+    })),
+  setSelectedZipCode: (zipCode) =>
     set({
-      siteView: "home",
-      signupStep: "role",
-      selectedRole: null,
-      ...getBlankSignupState(),
-      completedSubmission: null,
-      submissionError: null,
-      isSubmittingSignup: false,
+      selectedZipCode: zipCode,
     }),
   selectRole: (role) =>
     set((state) => ({
