@@ -214,7 +214,7 @@
 - Files changed for this desktop-mobile cart-button placement fix: `src/components/ProductCard.tsx`, `src/components/CartQuantityControl.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Placement direction: in narrow desktop-mobile browser widths, compact price stays above and the cart action becomes one full-width bottom row. `Add to cart` and active quantity control share the same footprint, so click state does not jump left/right or overlap price text.
 - Build/test commands used for this desktop-mobile cart-button placement fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this desktop-mobile cart-button placement fix: `PENDING_COMMIT_HASH`
+- Git commit hash for this desktop-mobile cart-button placement fix: `2cccb7d`
 
 ## Guardrails
 

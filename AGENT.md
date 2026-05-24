@@ -191,7 +191,7 @@
 - Desktop-mobile cart-button placement files changed: `src/components/ProductCard.tsx`, `src/components/CartQuantityControl.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Compact cart-action rules update: homepage `Add to cart` and active quantity control now both occupy full card width inside the reserved bottom action row, so clicking cart never changes horizontal placement or causes overlap in desktop-mobile browser widths.
 - Build/test commands for this desktop-mobile cart-button placement task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this desktop-mobile cart-button placement task: `PENDING_COMMIT_HASH`
+- Git commit hash for this desktop-mobile cart-button placement task: `2cccb7d`
 
 ## Backend/Admin Notes
 
