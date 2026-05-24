@@ -240,6 +240,7 @@
 - Product-card badge cleanup follow-up on 2026-05-24: removed the green delivery-time badge from homepage product rails too, so product-card time banners are now gone site-wide while the red discount badge stays in place.
 - Product-card badge cleanup follow-up files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this site-wide product-card badge cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this site-wide product-card badge cleanup: `5b6dbbe`
 
 ## Backend/Admin Notes
 
