@@ -98,6 +98,7 @@
       "file": "src/components/CategoryListingPage.tsx",
       "desktop_layout": "left_filter_sidebar_right_product_grid",
       "mobile_layout": "filter_drawer_plus_responsive_grid",
+      "narrow_control_style": "small_inline_filter_sort_triggers",
       "grid_columns": {
         "desktop": 5,
         "tablet": 3,
@@ -218,6 +219,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "8a9869c"
+    "git_commit_hash": "pending"
   }
 }

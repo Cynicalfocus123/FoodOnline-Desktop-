@@ -206,6 +206,7 @@
 - Category listing card tightening on 2026-05-24: category-page grid cards were shortened and visually tightened after feedback that listing boxes felt too long. This change is grid-only and does not change homepage carousel card height.
 - Compact listing-card behavior: category grid uses shorter card min-height, square image block, tighter brand/title/size spacing, inline price row, and floating listing cart control over the image. Quantity state stays compact in the same overlay footprint to avoid adding extra card height.
 - Git commit hash for this category-listing card tightening task: `8a9869c`
+- Category listing sort/filter control resize on 2026-05-24: narrow desktop-mobile and mobile category pages no longer use large stacked bordered `Filters` and sort controls. They now use smaller inline text-button controls with icons, closer to Yami-style compact browsing.
 
 ## Backend/Admin Notes
 

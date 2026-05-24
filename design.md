@@ -229,6 +229,8 @@
 - Category listing card tightening on 2026-05-24 refines only the product-card presentation inside category listing grids.
 - Grid-card direction: listing cards are intentionally shorter than homepage carousel cards, with tighter vertical spacing, square image priority, inline price row, and floating compact cart/quantity control over the image area to match the denser sample style. Homepage rail cards keep their existing layout.
 - Git commit hash for this category-listing card tightening task: `8a9869c`
+- Category listing control resize on 2026-05-24 refines only the mobile and desktop-mobile filter/sort row.
+- Control direction: on narrow breakpoints, `Filter` and `Sort` now render as small inline icon+text controls instead of large full-width bordered buttons. Sort menu remains dropdown-based, but trigger presentation matches the lighter sample style more closely.
 
 ## Guardrails
 

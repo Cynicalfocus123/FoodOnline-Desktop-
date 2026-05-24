@@ -73,6 +73,17 @@ function FilterIcon() {
   );
 }
 
+function SortIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M8 4v16" />
+      <path d="m5 7 3-3 3 3" />
+      <path d="M16 20V4" />
+      <path d="m13 17 3 3 3-3" />
+    </svg>
+  );
+}
+
 function CheckIcon() {
   return (
     <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
@@ -496,16 +507,49 @@ export function CategoryListingPage() {
                   <p className="text-sm font-medium text-neutral-500">{filteredProducts.length} products shown</p>
                 </div>
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="hidden sm:flex sm:flex-row sm:items-center sm:justify-end sm:gap-3 lg:hidden">
                   <button
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 text-sm font-bold text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50 lg:hidden"
+                    className="inline-flex min-h-10 items-center gap-2 text-base font-medium text-neutral-900 transition hover:text-neutral-700"
                     onClick={() => setIsFilterDrawerOpen(true)}
                     type="button"
                   >
                     <FilterIcon />
-                    <span>Filters</span>
+                    <span>Filter</span>
                   </button>
+                  <div className="relative" ref={sortReference}>
+                    <button
+                      className="inline-flex min-h-10 items-center gap-2 text-base font-medium text-neutral-900 transition hover:text-neutral-700"
+                      onClick={() => setIsSortOpen((current) => !current)}
+                      type="button"
+                    >
+                      <SortIcon />
+                      <span>Sort</span>
+                    </button>
 
+                    {isSortOpen ? (
+                      <div className="absolute left-0 top-[calc(100%+10px)] z-[1200] min-w-[240px] overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)]">
+                        {sortOptions.map((option) => (
+                          <button
+                            className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-base font-semibold text-neutral-900 transition hover:bg-neutral-50"
+                            key={option.value}
+                            onClick={() => {
+                              setSelectedSort(option.value);
+                              setIsSortOpen(false);
+                            }}
+                            type="button"
+                          >
+                            <span>{option.label}</span>
+                            <span className={selectedSort === option.value ? "text-sky-500" : "text-transparent"}>
+                              <CheckIcon />
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-end lg:gap-3">
                   <div className="relative" ref={sortReference}>
                     <button
                       className="inline-flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border-2 border-neutral-900 bg-white px-4 text-sm font-bold text-neutral-900 transition hover:border-neutral-700 sm:min-w-[290px]"
@@ -540,6 +584,48 @@ export function CategoryListingPage() {
                       </div>
                     ) : null}
                   </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-6 border-t border-neutral-200 pt-4 sm:hidden">
+                <button
+                  className="inline-flex min-h-9 items-center gap-2 text-[15px] font-medium text-neutral-900 transition hover:text-neutral-700"
+                  onClick={() => setIsFilterDrawerOpen(true)}
+                  type="button"
+                >
+                  <FilterIcon />
+                  <span>Filter</span>
+                </button>
+                <div className="relative" ref={sortReference}>
+                  <button
+                    className="inline-flex min-h-9 items-center gap-2 text-[15px] font-medium text-neutral-900 transition hover:text-neutral-700"
+                    onClick={() => setIsSortOpen((current) => !current)}
+                    type="button"
+                  >
+                    <SortIcon />
+                    <span>Sort</span>
+                  </button>
+
+                  {isSortOpen ? (
+                    <div className="absolute left-0 top-[calc(100%+10px)] z-[1200] min-w-[220px] overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)]">
+                      {sortOptions.map((option) => (
+                        <button
+                          className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-base font-semibold text-neutral-900 transition hover:bg-neutral-50"
+                          key={option.value}
+                          onClick={() => {
+                            setSelectedSort(option.value);
+                            setIsSortOpen(false);
+                          }}
+                          type="button"
+                        >
+                          <span>{option.label}</span>
+                          <span className={selectedSort === option.value ? "text-sky-500" : "text-transparent"}>
+                            <CheckIcon />
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </SectionShell>
