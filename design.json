@@ -144,6 +144,7 @@
       "file": "src/components/CartPage.tsx",
       "desktop_layout": "left_items_right_summary",
       "mobile_layout": "stacked_items_with_sticky_checkout_bar",
+      "sticky_footer_spacing": "extra_bottom_reserve_when_footer_visible_below_xl",
       "free_shipping_threshold": 49,
       "desktop_shipping_strip": "slim_single_row_no_nested_progress_box",
       "quantity_control_style": "compact_green_stepper_pill",
@@ -280,6 +281,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "14fe685"
+    "git_commit_hash": "pending-cart-sticky-footer-clipping-fix"
   }
 }

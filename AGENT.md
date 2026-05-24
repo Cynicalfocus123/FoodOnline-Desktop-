@@ -245,6 +245,9 @@
 - Product detail desktop gallery files changed: `src/components/ProductDetailPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this desktop gallery update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this desktop gallery update: `14fe685`
+- Cart sticky-footer clipping fix on 2026-05-24: increased bottom page reserve space for the cart route whenever the mobile/desktop-mobile sticky checkout footer is active, preventing Chrome and similar browsers from covering order-summary/footer content.
+- Cart sticky-footer clipping fix files changed: `src/components/CartPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this cart sticky-footer clipping fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

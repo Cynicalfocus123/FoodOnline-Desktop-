@@ -264,6 +264,8 @@
 - Product detail desktop gallery update on 2026-05-24 changes only large-screen product media controls.
 - Gallery direction: desktop product pages now show a boxed thumbnail strip below the main product image so users can switch among multiple product images directly. Tablet and mobile keep the existing open gallery with pagination dots and no desktop thumbnail box.
 - Git commit hash for this desktop gallery update: `14fe685`
+- Cart sticky-footer clipping fix on 2026-05-24 updates only cart page spacing around the sticky checkout footer.
+- Footer-spacing direction: when the sticky checkout footer is present on mobile, tablet, and desktop-mobile browser widths, the cart page now reserves extra bottom space so summary content and lower sections cannot clip behind the fixed footer in Chrome and similar browsers.
 
 ## Guardrails
 

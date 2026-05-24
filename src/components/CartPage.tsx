@@ -592,7 +592,7 @@ export function CartPage() {
 
   return (
     <>
-      <section className="bg-[#fcfcfd] px-4 pb-24 pt-[132px] sm:px-6 sm:pt-[146px] lg:pb-16 lg:pt-[154px]">
+      <section className="bg-[#fcfcfd] px-4 pb-[calc(150px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px] xl:pb-16">
         <div className="mx-auto max-w-[1480px]">
           <div className="mb-6 flex flex-col gap-3">
             <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">Your Cart</h1>
