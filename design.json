@@ -20,6 +20,11 @@
       "path": "#login",
       "view": "login"
     },
+    "category_listing": {
+      "path": "#category/:categorySlug",
+      "view": "category",
+      "refresh_safe": true
+    },
     "product_detail": {
       "path": "#product/:productId",
       "view": "product",
@@ -59,7 +64,8 @@
       "behaviors": [
         "open_product_detail",
         "favorite_toggle",
-        "shared_quantity_control"
+        "shared_quantity_control",
+        "category_grid_reuse"
       ],
       "layout_alignment": {
         "equal_width_per_breakpoint": true,
@@ -81,6 +87,31 @@
         "responsive_card_safe": true,
         "full_width_bottom_row": true
       }
+    },
+    "category_listing_page": {
+      "file": "src/components/CategoryListingPage.tsx",
+      "desktop_layout": "left_filter_sidebar_right_product_grid",
+      "mobile_layout": "filter_drawer_plus_responsive_grid",
+      "grid_columns": {
+        "desktop": 5,
+        "tablet": 3,
+        "mobile": 2
+      },
+      "initial_product_count_per_category": 60,
+      "sorting_options": [
+        "Featured (default)",
+        "Best Selling",
+        "Price: Low to High",
+        "Price: High to Low"
+      ],
+      "filter_sections": [
+        "Delivery type",
+        "Product type",
+        "Made in",
+        "Price",
+        "Price Range",
+        "Brand"
+      ]
     },
     "header_cart": {
       "file": "src/components/Header.tsx",
@@ -113,18 +144,21 @@
       "top_layout": "collapse_without_overflow",
       "tabs": "horizontal_scroll",
       "reviews_modal": "resize_cleanly",
-      "product_cards": "equal_width_and_height_scroll_row"
+      "product_cards": "equal_width_and_height_scroll_row",
+      "category_listing": "filter_drawer_no_clipping"
     },
     "tablet": {
       "top_layout": "two_column_if_space_else_stack",
       "controls": "touch_friendly",
-      "product_cards": "equal_width_and_height_scroll_row"
+      "product_cards": "equal_width_and_height_scroll_row",
+      "category_listing": "three_column_grid"
     },
     "mobile": {
       "top_layout": "stacked",
       "gallery": "top",
       "reviews_view": "bottom_sheet_style",
-      "product_cards": "equal_width_and_height_scroll_row"
+      "product_cards": "equal_width_and_height_scroll_row",
+      "category_listing": "two_column_grid_with_filter_drawer"
     }
   },
   "data_bindings": {
@@ -133,6 +167,7 @@
     "fields": [
       "id",
       "name",
+      "categorySlug",
       "imageUrls",
       "price",
       "oldPrice",
@@ -141,6 +176,9 @@
       "soldCount",
       "categoryId",
       "categoryName",
+      "deliveryType",
+      "productType",
+      "madeIn",
       "tags",
       "badges",
       "provider",
@@ -163,6 +201,7 @@
     ],
     "shared_state": [
       "selectedProductId",
+      "selectedCategorySlug",
       "cartQuantities",
       "favoriteProductIds",
       "selectedZipCode"
@@ -173,6 +212,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "2cccb7d"
+    "git_commit_hash": "pending"
   }
 }

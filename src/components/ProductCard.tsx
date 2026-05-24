@@ -5,6 +5,7 @@ import { CartQuantityControl } from "./CartQuantityControl";
 
 type ProductCardProps = {
   product: ProductItem;
+  layout?: "carousel" | "grid";
 };
 
 function HeartIcon({ filled }: { filled: boolean }) {
@@ -23,7 +24,7 @@ function HeartIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, layout = "carousel" }: ProductCardProps) {
   const openProduct = useHomeStore((state) => state.openProduct);
   const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
@@ -46,7 +47,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <article
-      className="flex h-full min-h-[356px] w-[184px] shrink-0 snap-start cursor-pointer flex-col self-stretch rounded-[24px] border border-neutral-200 bg-white p-3 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:min-h-[366px] sm:w-[194px] lg:min-h-[376px] lg:w-[204px]"
+      className={`flex h-full min-h-[356px] cursor-pointer flex-col self-stretch rounded-[24px] border border-neutral-200 bg-white p-3 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:min-h-[366px] lg:min-h-[376px] ${
+        layout === "carousel"
+          ? "w-[184px] shrink-0 snap-start sm:w-[194px] lg:w-[204px]"
+          : "w-full min-w-0"
+      }`}
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       role="button"

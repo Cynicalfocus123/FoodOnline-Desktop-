@@ -16,7 +16,7 @@ import {
   validateSignupRole,
 } from "../lib/security";
 
-export type SiteView = "home" | "signup" | "login" | "product";
+export type SiteView = "home" | "signup" | "login" | "product" | "category";
 export type SignupStep = "role" | "form" | "complete";
 
 function readProductIdFromHash(hash: string) {
@@ -24,17 +24,22 @@ function readProductIdFromHash(hash: string) {
   return match?.[1] ?? null;
 }
 
-function writeProductHash(productId: string | null) {
+function readCategorySlugFromHash(hash: string) {
+  const match = hash.match(/^#category\/([^/?#]+)/i);
+  return match?.[1] ?? null;
+}
+
+function writeRouteHash(route: string | null) {
   if (typeof window === "undefined") {
     return;
   }
 
-  if (productId) {
-    window.location.hash = `product/${productId}`;
+  if (route) {
+    window.location.hash = route;
     return;
   }
 
-  if (window.location.hash.startsWith("#product/")) {
+  if (window.location.hash.startsWith("#product/") || window.location.hash.startsWith("#category/")) {
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#home`);
   }
 }
@@ -44,6 +49,7 @@ type HomeState = {
   signupStep: SignupStep;
   selectedRole: SignupRoleKey | null;
   selectedProductId: string | null;
+  selectedCategorySlug: string | null;
   cartQuantities: Record<string, number>;
   favoriteProductIds: string[];
   selectedZipCode: string;
@@ -55,6 +61,7 @@ type HomeState = {
   openSignup: () => void;
   openLogin: () => void;
   backToHome: () => void;
+  openCategory: (categorySlug: string) => void;
   openProduct: (productId: string) => void;
   syncRouteFromHash: (hash: string) => void;
   setCartQuantity: (productId: string, quantity: number) => void;
@@ -94,6 +101,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   signupStep: "role",
   selectedRole: null,
   selectedProductId: null,
+  selectedCategorySlug: null,
   cartQuantities: {},
   favoriteProductIds: [],
   selectedZipCode: "91789",
@@ -103,12 +111,13 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   isSubmittingSignup: false,
   openSignup: () =>
     set(() => {
-      writeProductHash(null);
+      writeRouteHash(null);
       return {
         siteView: "signup",
         signupStep: "role",
         selectedRole: null,
         selectedProductId: null,
+        selectedCategorySlug: null,
         ...getBlankSignupState(),
         completedSubmission: null,
         submissionError: null,
@@ -117,31 +126,43 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }),
   openLogin: () =>
     set(() => {
-      writeProductHash(null);
+      writeRouteHash(null);
       return {
         siteView: "login",
         selectedProductId: null,
+        selectedCategorySlug: null,
         submissionError: null,
         completedSubmission: null,
       };
     }),
   backToHome: () =>
     set(() => {
-      writeProductHash(null);
+      writeRouteHash(null);
       return {
         siteView: "home",
         signupStep: "role",
         selectedRole: null,
         selectedProductId: null,
+        selectedCategorySlug: null,
         ...getBlankSignupState(),
         completedSubmission: null,
         submissionError: null,
         isSubmittingSignup: false,
       };
     }),
+  openCategory: (categorySlug) =>
+    set(() => {
+      writeRouteHash(`category/${categorySlug}`);
+      return {
+        siteView: "category",
+        selectedCategorySlug: categorySlug,
+        selectedProductId: null,
+        submissionError: null,
+      };
+    }),
   openProduct: (productId) =>
     set(() => {
-      writeProductHash(productId);
+      writeRouteHash(`product/${productId}`);
       return {
         siteView: "product",
         selectedProductId: productId,
@@ -151,17 +172,29 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   syncRouteFromHash: (hash) =>
     set((state) => {
       const productId = readProductIdFromHash(hash);
+      const categorySlug = readCategorySlugFromHash(hash);
+
       if (productId) {
         return {
           siteView: "product",
           selectedProductId: productId,
+          selectedCategorySlug: state.selectedCategorySlug,
         };
       }
 
-      if (state.siteView === "product") {
+      if (categorySlug) {
+        return {
+          siteView: "category",
+          selectedCategorySlug: categorySlug,
+          selectedProductId: null,
+        };
+      }
+
+      if (state.siteView === "product" || state.siteView === "category") {
         return {
           siteView: "home",
           selectedProductId: null,
+          selectedCategorySlug: null,
         };
       }
 

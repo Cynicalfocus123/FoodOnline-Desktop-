@@ -192,6 +192,16 @@
 - Compact cart-action rules update: homepage `Add to cart` and active quantity control now both occupy full card width inside the reserved bottom action row, so clicking cart never changes horizontal placement or causes overlap in desktop-mobile browser widths.
 - Build/test commands for this desktop-mobile cart-button placement task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this desktop-mobile cart-button placement task: `2cccb7d`
+- Category listing pages on 2026-05-24: added hash-safe category routes for every homepage category using `#category/:categorySlug`, with homepage `see all` links and homepage category tiles routing into dedicated listing pages instead of generic homepage anchors.
+- Category listing files changed for 2026-05-24: `src/App.tsx`, `src/components/CategoryListingPage.tsx`, `src/components/CategoryStrip.tsx`, `src/components/ProductCard.tsx`, `src/components/ProductCarousel.tsx`, `src/data/home.ts`, `src/store/homeStore.ts`, `src/styles.css`, `AGENT.md`, `design.md`, and `design.json`.
+- Category route behavior: `useHomeStore` now tracks `selectedCategorySlug`, syncs `#category/<slug>` on load/hashchange, and keeps GitHub Pages refresh safe through hash routing. Category tiles below splash and carousel `see all` links call shared `openCategory(categorySlug)`.
+- Category grid/list behavior: each category page renders 60 frontend-safe products (12 rows x 5 columns on desktop) by reusing category catalog products first and then cloning backend-ready variants with unique ids and slightly varied price/size/sold-count/filter metadata.
+- Sorting behavior: category listing dropdown options are `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low`. Sorting is frontend-only and updates visible grid immediately.
+- Filter behavior: desktop uses left sidebar; mobile and narrow desktop-mobile browser widths use right-side drawer. Sections are collapsible and ordered as `Delivery type`, `Product type`, `Made in`, `Price`, `Price Range`, `Brand`.
+- Filter values added to product data: `deliveryType`, `productType`, `madeIn`, `brand`, `categorySlug`, and price-compatible listing clones. Brand options are `NestFood`, `Stouffer`, `StarKist`, `Aldi`, `Adidas`, `Costco`, `Harris`, `ISnack`, and `Burbe`.
+- Price filtering behavior: price radio options are `All`, `Under $5`, `$5 - $10`, `$10 - $15`, `$15 - $25`, and `$25+`. Dual-handle price range slider spans `0` to `500`, combines with radio filtering using stricter result, and Reset restores full range.
+- Responsive behavior for category pages: desktop uses `290px` filter sidebar plus 5-column product grid; tablet uses 3-column grid; mobile uses 2-column grid with filter drawer. Product cards reuse homepage design, stay equal height, keep cart controls working, and still route to product detail page.
+- Build/test commands for this category-listing task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

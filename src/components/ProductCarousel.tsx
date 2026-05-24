@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ProductCarouselSection } from "../data/home";
+import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
 
 type ProductCarouselProps = {
@@ -7,6 +8,7 @@ type ProductCarouselProps = {
 };
 
 export function ProductCarousel({ section }: ProductCarouselProps) {
+  const openCategory = useHomeStore((state) => state.openCategory);
   const scrollReference = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -56,7 +58,14 @@ export function ProductCarousel({ section }: ProductCarouselProps) {
           <h2 className="text-[1.65rem] font-bold tracking-[-0.02em] text-neutral-950 sm:text-[1.9rem]">
             {section.title}
           </h2>
-          <a className="text-sm font-semibold text-leaf-600 transition hover:text-leaf-700" href={section.seeAllHref}>
+          <a
+            className="text-sm font-semibold text-leaf-600 transition hover:text-leaf-700"
+            href={section.seeAllHref}
+            onClick={(event) => {
+              event.preventDefault();
+              openCategory(section.sectionId);
+            }}
+          >
             see all
           </a>
         </div>

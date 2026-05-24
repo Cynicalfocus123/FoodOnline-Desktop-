@@ -37,8 +37,30 @@ const PRODUCT_PRICES = [
 ];
 
 const DELIVERY_BADGES = ["12 MINS", "15 MINS", "18 MINS", "20 MINS"];
+const FILTER_BRANDS = ["NestFood", "Stouffer", "StarKist", "Aldi", "Adidas", "Costco", "Harris", "ISnack", "Burbe"] as const;
+const DELIVERY_TYPES = ["Local Delivery", "GLOBAL+"] as const;
+const PRODUCT_TYPES = ["Deals", "New Arrivals", "Recently Restocked", "SNAP"] as const;
+const MADE_IN_OPTIONS = ["USA", "Spain", "Russia", "China", "Korea", "Japan"] as const;
+const LISTING_VARIATION_LABELS = ["", " Family Pack", " Pantry Pick", " Weekly Value"];
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
+  "Paan Corner": [
+    "Royal Paan Masala Mix",
+    "Mouth Freshener Seeds",
+    "Sweet Betel Candy Pack",
+    "Classic Supari Bites",
+    "Mint Paan Drops",
+    "Rose Gulkand Filling",
+    "Meetha Paan Paste",
+    "Silver Fennel Blend",
+    "Cardamom Paan Cubes",
+    "Sada Paan Kit",
+    "Premium Chuna Pack",
+    "Paan Leaf Preserve",
+    "Kulfi Paan Candy",
+    "Tobacco-Free Zarda Mix",
+    "After Meal Paan Treats",
+  ],
   "Dairy, Bread & Eggs": [
     "Farm Fresh Whole Milk",
     "Golden Brown Bread Loaf",
@@ -383,6 +405,14 @@ function slugify(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+export function getCategorySlug(value: string) {
+  return slugify(value);
+}
+
+export function getCategoryHash(slug: string) {
+  return `#category/${slug}`;
+}
+
 function escapeXml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -469,6 +499,8 @@ export type CategoryTile = {
   icon: IconName;
   image: string;
   sectionId: string;
+  categorySlug: string;
+  href: string;
 };
 
 export type PromoBannerData = {
@@ -486,6 +518,7 @@ export type ProductItem = {
   id: string;
   brand: string;
   name: string;
+  categorySlug: string;
   size: string;
   price: number;
   oldPrice?: number;
@@ -497,6 +530,9 @@ export type ProductItem = {
   soldCount: number;
   categoryId: string;
   categoryName: string;
+  deliveryType: (typeof DELIVERY_TYPES)[number];
+  productType: (typeof PRODUCT_TYPES)[number];
+  madeIn: (typeof MADE_IN_OPTIONS)[number];
   tags: string[];
   badges: string[];
   provider: string;
@@ -569,6 +605,11 @@ export type ProductCarouselSection = {
   seeAllHref: string;
   items: ProductItem[];
 };
+
+export type CategoryFilterBrand = (typeof FILTER_BRANDS)[number];
+export type DeliveryTypeOption = (typeof DELIVERY_TYPES)[number];
+export type ProductTypeOption = (typeof PRODUCT_TYPES)[number];
+export type MadeInOption = (typeof MADE_IN_OPTIONS)[number];
 
 const PRODUCT_COUNTRIES = [
   "Thailand",
@@ -737,8 +778,9 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
 
   return {
     id,
-    brand: category.brand,
+    brand: FILTER_BRANDS[(index + category.name.length) % FILTER_BRANDS.length],
     name: productName,
+    categorySlug: categoryId,
     size,
     price,
     oldPrice,
@@ -750,6 +792,9 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     soldCount: 120 + index * 17 + category.name.length,
     categoryId,
     categoryName: category.name,
+    deliveryType: DELIVERY_TYPES[index % DELIVERY_TYPES.length],
+    productType: PRODUCT_TYPES[(index + category.name.length) % PRODUCT_TYPES.length],
+    madeIn: MADE_IN_OPTIONS[(index + category.name.length) % MADE_IN_OPTIONS.length],
     tags: ["Best Seller", category.name.split("&")[0].trim(), "Daily grocery"].slice(0, 3),
     badges: [discountPercent >= 12 ? `${discountPercent}% OFF` : "Fresh Pick", index % 2 === 0 ? "Popular" : "Top Rated"],
     provider: `${category.brand} Market`,
@@ -902,15 +947,54 @@ export const categories: CategoryTile[] = categoryConfigs.map((category) => ({
   icon: category.icon,
   image: localAsset(`assets/categories/${categoryImageByName[category.name]}`),
   sectionId: `category-${slugify(category.name)}`,
+  categorySlug: slugify(category.name),
+  href: getCategoryHash(slugify(category.name)),
 }));
 
 export const productCatalog: ProductItem[] = categoryConfigs
-  .filter((category) => category.name !== "Paan Corner")
   .flatMap((category) =>
     PRODUCT_NAMES_BY_CATEGORY[category.name].map((productName, index) => createProductRecord(category, productName, index)),
   );
 
-export const productCatalogById = new Map(productCatalog.map((product) => [product.id, product]));
+function createListingProductClone(product: ProductItem, cloneIndex: number) {
+  const variationLabel = LISTING_VARIATION_LABELS[cloneIndex % LISTING_VARIATION_LABELS.length];
+  const priceMultiplier = [1, 1.06, 0.94, 1.12][cloneIndex % 4] ?? 1;
+  const price = Number((product.price * priceMultiplier).toFixed(2));
+  const oldPrice = product.oldPrice ? Number((product.oldPrice * priceMultiplier).toFixed(2)) : undefined;
+
+  return {
+    ...product,
+    id: `${product.id}-listing-${cloneIndex + 1}`,
+    name: `${product.name}${variationLabel}`,
+    price,
+    oldPrice,
+    soldCount: product.soldCount + cloneIndex * 9,
+    size: cloneIndex % 2 === 0 ? product.size : `${product.size} pack`,
+    quantity: cloneIndex % 2 === 0 ? product.quantity : `${product.quantity} pack`,
+    unitPrice: `${formatPrice(Number((price / ((cloneIndex % 3) + 1)).toFixed(2)))}/${cloneIndex % 2 === 0 ? "pack" : "lb"}`,
+    deliveryType: DELIVERY_TYPES[cloneIndex % DELIVERY_TYPES.length],
+    productType: PRODUCT_TYPES[(cloneIndex + product.categoryName.length) % PRODUCT_TYPES.length],
+    madeIn: MADE_IN_OPTIONS[(cloneIndex + product.categoryName.length) % MADE_IN_OPTIONS.length],
+    brand: FILTER_BRANDS[(cloneIndex + product.name.length) % FILTER_BRANDS.length],
+  } satisfies ProductItem;
+}
+
+export const categoryListingCatalogBySlug = new Map(
+  categoryConfigs.map((category) => {
+    const slug = slugify(category.name);
+    const baseProducts = productCatalog.filter((product) => product.categorySlug === slug);
+    const listingProducts = Array.from({ length: 60 }, (_, index) => {
+      const baseProduct = baseProducts[index % baseProducts.length];
+      return index < baseProducts.length ? baseProduct : createListingProductClone(baseProduct, index);
+    });
+
+    return [slug, listingProducts] as const;
+  }),
+);
+
+const allListingProducts = Array.from(categoryListingCatalogBySlug.values()).flat();
+export const productCatalogById = new Map(allListingProducts.map((product) => [product.id, product]));
+export const categoryTileBySlug = new Map(categories.map((category) => [category.categorySlug, category]));
 
 export function getProductById(productId: string | null) {
   if (!productId) {
@@ -924,6 +1008,35 @@ export function getRelatedProducts(product: ProductItem, limit = 8) {
   const sameCategory = productCatalog.filter((item) => item.id !== product.id && item.categoryId === product.categoryId);
   const fallback = productCatalog.filter((item) => item.id !== product.id && item.categoryId !== product.categoryId);
   return [...sameCategory, ...fallback].slice(0, limit);
+}
+
+export function getCategoryBySlug(slug: string | null) {
+  if (!slug) {
+    return categories[0];
+  }
+
+  return categoryTileBySlug.get(slug) ?? categories[0];
+}
+
+export function getCategoryListingProducts(categorySlug: string | null) {
+  const fallbackSlug = categories[0]?.categorySlug ?? "paan-corner";
+  return categoryListingCatalogBySlug.get(categorySlug ?? fallbackSlug) ?? categoryListingCatalogBySlug.get(fallbackSlug) ?? [];
+}
+
+export function getAvailableFilterBrands() {
+  return [...FILTER_BRANDS];
+}
+
+export function getAvailableDeliveryTypes() {
+  return [...DELIVERY_TYPES];
+}
+
+export function getAvailableProductTypes() {
+  return [...PRODUCT_TYPES];
+}
+
+export function getAvailableMadeInOptions() {
+  return [...MADE_IN_OPTIONS];
 }
 
 const promoCategoryNames = ["Snacks & Munchies", "Cold Drinks & Juices", "Sweet Tooth"];
@@ -949,7 +1062,7 @@ export const productCarouselSections: ProductCarouselSection[] = categoryConfigs
   .map((category) => ({
     title: category.name,
     sectionId: slugify(category.name),
-    seeAllHref: "#categories",
+    seeAllHref: getCategoryHash(slugify(category.name)),
     items: productCatalog.filter((product) => product.categoryId === slugify(category.name)),
   }));
 

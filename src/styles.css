@@ -65,6 +65,50 @@ video {
   display: none;
 }
 
+.dual-range {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.dual-range::-webkit-slider-runnable-track {
+  height: 0;
+  background: transparent;
+}
+
+.dual-range::-moz-range-track {
+  height: 0;
+  background: transparent;
+}
+
+.dual-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  height: 18px;
+  width: 18px;
+  margin-top: -8px;
+  border-radius: 999px;
+  border: 2px solid #8ed0ff;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(14, 116, 144, 0.16);
+}
+
+.dual-range::-moz-range-thumb {
+  pointer-events: auto;
+  height: 18px;
+  width: 18px;
+  border-radius: 999px;
+  border: 2px solid #8ed0ff;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(14, 116, 144, 0.16);
+}
+
 .home-section-auto {
   content-visibility: auto;
   contain-intrinsic-size: 420px;
