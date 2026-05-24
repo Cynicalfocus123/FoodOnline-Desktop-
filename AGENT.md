@@ -233,6 +233,9 @@
 - Cart payment-logo responsive behavior: logos now keep a smaller shared footprint with tight wrapping and no stretched marks across all breakpoints while preserving the current branded icon set.
 - Build/test commands for this cart payment-logo trim: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this cart payment-logo trim: `23699a1`
+- Category listing badge cleanup on 2026-05-24: removed only the green delivery-time banner from category product-grid cards across all category pages. The red percentage-off badge stays in the same badge row position on desktop, desktop-mobile browser widths, tablet, mobile, iOS, and Chrome.
+- Category listing badge cleanup files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this category listing badge cleanup: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

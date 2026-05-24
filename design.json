@@ -81,7 +81,9 @@
         "shorter_than_homepage_rail": true,
         "image_priority": "square",
         "cart_control_position": "image_overlay_bottom_right",
-        "price_row": "inline_compact"
+        "price_row": "inline_compact",
+        "delivery_time_badge_visible": false,
+        "discount_badge_visible": true
       },
       "layout_alignment": {
         "equal_width_per_breakpoint": true,
@@ -271,6 +273,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "23699a1"
+    "git_commit_hash": "pending-category-badge-cleanup"
   }
 }

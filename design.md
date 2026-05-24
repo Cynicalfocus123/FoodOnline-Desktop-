@@ -255,6 +255,8 @@
 - Cart payment-logo size trim on 2026-05-24 updates only the Service Guarantee payment icon row.
 - Payment-logo direction: payment logo tiles are now smaller and tighter across desktop, desktop-mobile browser widths, tablet, and mobile. Height, minimum width, inner logo scaling, and row gaps are reduced so the icon area uses less space without losing clarity.
 - Git commit hash for this cart payment-logo trim: `23699a1`
+- Category listing badge cleanup on 2026-05-24 updates only category-grid badge rows.
+- Badge direction: category listing product cards no longer show the green delivery-time banner. The discount percentage badge remains in the same badge row and left-side position so category cards stay compact without changing the rest of the product-card layout.
 
 ## Guardrails
 
