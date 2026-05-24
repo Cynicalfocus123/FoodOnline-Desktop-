@@ -196,7 +196,7 @@
 - Homepage product-card cart direction: compact `Add to cart` and active quantity controls use stable pill sizing, centered icons/count, no wrapped button text, and stay inside product-card width across desktop, desktop-mobile, tablet, and mobile.
 - Responsive direction for this polish: product media keeps strong visual priority on mobile/narrow browser widths, pagination dots stay visible below media, green cart controls scale without clipping, and product-card controls do not overlap price or title.
 - Build/test commands used for this product-detail/cart polish: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-detail/cart polish: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-detail/cart polish: `0526f37`
 
 ## Guardrails
 

@@ -173,7 +173,7 @@
 - Cart badge count behavior: header cart icons on desktop and mobile now show live total cart quantity badge from existing `cartQuantities` store state. Badge is red with white text, stays aligned over the cart button, updates on add/remove, and hides when cart is empty.
 - Homepage product card CSS fix: compact card `Add to cart` / quantity controls now use fixed responsive pill sizing, no text wrap, proper icon centering, and stay inside product cards without overlapping image/title/price in desktop, desktop-mobile browser width, tablet, or mobile.
 - Build/test commands for this product-detail/cart polish task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
-- Git commit hash for this product-detail/cart polish task: `PENDING_COMMIT_HASH`
+- Git commit hash for this product-detail/cart polish task: `0526f37`
 
 ## Backend/Admin Notes
 
