@@ -280,6 +280,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "pending-desktop-product-gallery-update"
+    "git_commit_hash": "14fe685"
   }
 }
