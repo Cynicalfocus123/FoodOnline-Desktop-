@@ -258,6 +258,8 @@
 - Category listing badge cleanup on 2026-05-24 updates only category-grid badge rows.
 - Badge direction: category listing product cards no longer show the green delivery-time banner. The discount percentage badge remains in the same badge row and left-side position so category cards stay compact without changing the rest of the product-card layout.
 - Git commit hash for this category listing badge cleanup: `3e286c4`
+- Product-card badge cleanup follow-up on 2026-05-24 broadens the same badge rule to homepage product rails.
+- Badge direction: delivery-time badges are now removed from both category-grid cards and homepage carousel cards. Discount percentage badges stay visible in the same badge row position across the site.
 
 ## Guardrails
 

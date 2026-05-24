@@ -99,6 +99,10 @@
         "title_clamp": 2,
         "trimmed_vertical_spacing": true
       },
+      "badge_visibility": {
+        "delivery_time_badge_visible": false,
+        "discount_badge_visible": true
+      },
       "quantity_css": {
         "stable_pill_width": true,
         "nowrap_text": true,
@@ -273,6 +277,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "3e286c4"
+    "git_commit_hash": "pending-sitewide-product-badge-cleanup"
   }
 }

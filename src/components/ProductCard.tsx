@@ -94,11 +94,6 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
         ) : null}
       </div>
       <div className={`flex flex-wrap content-start items-start ${isGrid ? "mt-2 min-h-[28px] gap-1.5" : "mt-3 min-h-[40px] gap-2"}`}>
-        {!isGrid ? (
-          <span className="inline-flex w-fit rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-emerald-700">
-            {product.deliveryTime}
-          </span>
-        ) : null}
         {product.discountPercent ? (
           <span className="inline-flex w-fit rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-red-600">
             {product.discountPercent}% OFF
