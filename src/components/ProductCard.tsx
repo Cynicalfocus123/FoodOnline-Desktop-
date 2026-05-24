@@ -89,8 +89,8 @@ export function ProductCard({ product }: ProductCardProps) {
       </h3>
       <p className="mt-2 min-h-[18px] text-sm font-medium text-neutral-500">{product.size}</p>
       <p className="mt-1 min-h-[16px] text-xs font-semibold text-neutral-400">{product.unitPrice}</p>
-      <div className="mt-auto grid min-h-[62px] grid-cols-[minmax(0,1fr)_auto] items-end gap-3 pt-3">
-        <div className="grid min-w-0 gap-1 self-end">
+      <div className="mt-auto grid min-h-[96px] grid-rows-[auto_auto] gap-3 pt-3">
+        <div className="grid min-w-0 gap-1">
           <span className="text-lg font-bold text-neutral-950">{formatPrice(product.price)}</span>
           {product.oldPrice ? (
             <span className="min-h-[18px] text-xs font-semibold text-neutral-400 line-through">{formatPrice(product.oldPrice)}</span>
@@ -99,7 +99,7 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
         <div
-          className="flex min-h-[44px] items-end justify-end"
+          className="flex min-h-[44px] w-full items-end"
           onClick={(event) => event.stopPropagation()}
           onKeyDown={(event) => event.stopPropagation()}
           role="presentation"

@@ -78,7 +78,8 @@
       "quantity_css": {
         "stable_pill_width": true,
         "nowrap_text": true,
-        "responsive_card_safe": true
+        "responsive_card_safe": true,
+        "full_width_bottom_row": true
       }
     },
     "header_cart": {
@@ -172,6 +173,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "4547e8f"
+    "git_commit_hash": "PENDING_COMMIT_HASH"
   }
 }

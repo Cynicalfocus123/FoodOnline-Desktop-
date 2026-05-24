@@ -45,7 +45,7 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         className={
           variant === "detail"
             ? "inline-flex min-h-14 w-full items-center justify-center rounded-[22px] bg-leaf-600 px-6 text-base font-black text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)] transition hover:bg-leaf-700"
-            : "inline-flex min-h-11 w-full min-w-[118px] max-w-[132px] items-center justify-center whitespace-nowrap rounded-full border-2 border-leaf-500 px-4 text-[13px] font-black text-leaf-600 transition hover:bg-leaf-500 hover:text-white sm:min-w-[126px] sm:max-w-[138px]"
+            : "inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-full border-2 border-leaf-500 px-4 text-[13px] font-black text-leaf-600 transition hover:bg-leaf-500 hover:text-white"
         }
         onClick={(event) => {
           event.stopPropagation();
@@ -63,7 +63,7 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
       className={
         variant === "detail"
           ? "flex min-h-14 w-full items-center overflow-hidden rounded-[22px] bg-leaf-600 text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)]"
-          : "flex min-h-11 w-full min-w-[118px] max-w-[132px] items-center overflow-hidden rounded-full bg-leaf-600 text-white shadow-[0_10px_24px_rgba(22,163,74,0.2)] sm:min-w-[126px] sm:max-w-[138px]"
+          : "flex min-h-11 w-full items-center overflow-hidden rounded-full bg-leaf-600 text-white shadow-[0_10px_24px_rgba(22,163,74,0.2)]"
       }
     >
       <button
