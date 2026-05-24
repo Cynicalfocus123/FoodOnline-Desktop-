@@ -202,6 +202,7 @@
 - Price filtering behavior: price radio options are `All`, `Under $5`, `$5 - $10`, `$10 - $15`, `$15 - $25`, and `$25+`. Dual-handle price range slider spans `0` to `500`, combines with radio filtering using stricter result, and Reset restores full range.
 - Responsive behavior for category pages: desktop uses `290px` filter sidebar plus 5-column product grid; tablet uses 3-column grid; mobile uses 2-column grid with filter drawer. Product cards reuse homepage design, stay equal height, keep cart controls working, and still route to product detail page.
 - Build/test commands for this category-listing task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this category-listing task: `e81ec93`
 
 ## Backend/Admin Notes
 

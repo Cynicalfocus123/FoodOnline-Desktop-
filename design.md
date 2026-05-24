@@ -225,6 +225,7 @@
 - Filter data direction: category listing data now includes backend-ready `categorySlug`, `deliveryType`, `productType`, `madeIn`, and rotating filterable `brand` values. Price Range uses dual-handle 0-500 slider with live min/max readout and combines with Price radio filter for stricter result. Brand options are `NestFood`, `Stouffer`, `StarKist`, `Aldi`, `Adidas`, `Costco`, `Harris`, `ISnack`, and `Burbe`.
 - Responsive direction for this category-listing update: no history-path routing, no horizontal overflow, filter drawer is touch-friendly, sort trigger stays accessible, and homepage category tiles keep same visual design while gaining clickable hover/focus/tap behavior to their routes.
 - Build/test commands used for this category-listing update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this category-listing update: `e81ec93`
 
 ## Guardrails
 
