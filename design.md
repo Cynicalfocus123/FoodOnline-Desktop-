@@ -257,6 +257,7 @@
 - Git commit hash for this cart payment-logo trim: `23699a1`
 - Category listing badge cleanup on 2026-05-24 updates only category-grid badge rows.
 - Badge direction: category listing product cards no longer show the green delivery-time banner. The discount percentage badge remains in the same badge row and left-side position so category cards stay compact without changing the rest of the product-card layout.
+- Git commit hash for this category listing badge cleanup: `3e286c4`
 
 ## Guardrails
 
