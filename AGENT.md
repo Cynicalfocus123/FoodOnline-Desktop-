@@ -174,6 +174,14 @@
 - Homepage product card CSS fix: compact card `Add to cart` / quantity controls now use fixed responsive pill sizing, no text wrap, proper icon centering, and stay inside product cards without overlapping image/title/price in desktop, desktop-mobile browser width, tablet, or mobile.
 - Build/test commands for this product-detail/cart polish task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this product-detail/cart polish task: `0526f37`
+- Homepage product-card alignment fix on 2026-05-24: normalized carousel card width, minimum height, and internal row heights so cards align evenly across each homepage product rail.
+- Product-card alignment files changed: `src/components/ProductCard.tsx`, `src/components/ProductCarousel.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Product-card width/height rules: homepage cards now use one responsive fixed-width pattern per breakpoint and one shared minimum card height, with `self-stretch` cards inside an `items-stretch` carousel row so all cards in same rail share one baseline.
+- Internal alignment rules: badge row, brand row, title row, size row, unit-price row, old-price slot, and button area now reserve consistent heights. Long names are clamped, image areas stay consistent, and footer price/cart block stays pinned to the bottom.
+- Add to Cart / quantity alignment behavior: compact green button and active quantity control keep same reserved bottom action zone, so switching cart states does not change card height or push price/button alignment out of line.
+- Responsive behavior for this alignment fix: desktop, desktop-mobile browser width, tablet, and mobile all keep smooth horizontal carousel scroll, even card heights per row, no clipped controls, and no overflow from title or cart controls.
+- Build/test commands for this product-card alignment task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-card alignment task: `PENDING_COMMIT_HASH`
 
 ## Backend/Admin Notes
 

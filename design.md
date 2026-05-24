@@ -197,6 +197,14 @@
 - Responsive direction for this polish: product media keeps strong visual priority on mobile/narrow browser widths, pagination dots stay visible below media, green cart controls scale without clipping, and product-card controls do not overlap price or title.
 - Build/test commands used for this product-detail/cart polish: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this product-detail/cart polish: `0526f37`
+- Homepage product-card alignment fix on 2026-05-24 updates carousel-card sizing and row alignment only.
+- Files changed for this product-card alignment fix: `src/components/ProductCard.tsx`, `src/components/ProductCarousel.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Card sizing direction: every homepage product card now follows one fixed responsive width pattern and one shared minimum card height per breakpoint. Cards in carousel rows stretch to same vertical size instead of floating at different heights.
+- Internal row direction: image area, badge band, vendor label, title block, size text, unit-price text, price/old-price slot, and button zone now reserve predictable heights so titles and badges cannot pull bottom controls out of alignment.
+- Add to Cart direction: compact button and active quantity pill stay in same bottom action footprint, so cart-state changes keep width/height stable and preserve bottom alignment across the row.
+- Responsive direction for this alignment fix: desktop, desktop-mobile browser width, tablet, and mobile keep smooth horizontal scroll, even product-card baselines, controlled text clamping, and no card/button overflow.
+- Build/test commands used for this product-card alignment fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-card alignment fix: `PENDING_COMMIT_HASH`
 
 ## Guardrails
 

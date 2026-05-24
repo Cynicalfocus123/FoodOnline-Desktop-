@@ -74,7 +74,7 @@ export function ProductCarousel({ section }: ProductCarouselProps) {
           </button>
 
           <div
-            className="flex gap-3 overflow-x-auto pb-3 pt-1 scrollbar-none snap-x snap-mandatory scroll-smooth scroll-px-4"
+            className="flex items-stretch gap-3 overflow-x-auto pb-4 pt-1 scrollbar-none snap-x snap-mandatory scroll-smooth scroll-px-4"
             ref={scrollReference}
           >
             {section.items.map((product) => (

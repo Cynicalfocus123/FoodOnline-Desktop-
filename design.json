@@ -61,6 +61,19 @@
         "favorite_toggle",
         "shared_quantity_control"
       ],
+      "layout_alignment": {
+        "equal_width_per_breakpoint": true,
+        "shared_min_height_per_row": true,
+        "reserved_internal_rows": [
+          "badge_band",
+          "brand_label",
+          "title_block",
+          "size_text",
+          "unit_price_text",
+          "price_and_action_footer"
+        ],
+        "title_clamp": 3
+      },
       "quantity_css": {
         "stable_pill_width": true,
         "nowrap_text": true,
@@ -97,16 +110,19 @@
     "desktop_mobile_browser": {
       "top_layout": "collapse_without_overflow",
       "tabs": "horizontal_scroll",
-      "reviews_modal": "resize_cleanly"
+      "reviews_modal": "resize_cleanly",
+      "product_cards": "equal_width_and_height_scroll_row"
     },
     "tablet": {
       "top_layout": "two_column_if_space_else_stack",
-      "controls": "touch_friendly"
+      "controls": "touch_friendly",
+      "product_cards": "equal_width_and_height_scroll_row"
     },
     "mobile": {
       "top_layout": "stacked",
       "gallery": "top",
-      "reviews_view": "bottom_sheet_style"
+      "reviews_view": "bottom_sheet_style",
+      "product_cards": "equal_width_and_height_scroll_row"
     }
   },
   "data_bindings": {
@@ -155,6 +171,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "0526f37"
+    "git_commit_hash": "PENDING_COMMIT_HASH"
   }
 }
