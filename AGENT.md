@@ -166,6 +166,14 @@
 - Desktop design memory file: root `design.json` did not exist before this task. It is now used as lightweight desktop UI structure memory for product-detail routes, components, responsive rules, and data bindings.
 - Build/test commands for this product-detail task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this product-detail task: `b411971`
+- Product detail/cart polish on 2026-05-24: updated product media, cart badge, and quantity-control styling to match latest Yamibuy-style references without changing backend, product sections, or routing.
+- Product detail/cart polish files changed: `src/components/ProductDetailPage.tsx`, `src/components/CartQuantityControl.tsx`, `src/components/ProductCard.tsx`, `src/components/Header.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Product detail image layout update: removed boxed gallery-card framing from detail page media column. Product media now uses open full-width scroll-snap image area with large centered `object-contain` product art, no left/right arrows, and pagination dots across desktop, desktop-mobile browser width, tablet, and mobile.
+- Add to Cart and quantity behavior update: product detail `Add to cart` CTA is now green, stays full-width, and switches to green quantity control with left trash at quantity 1, left minus above 1, centered count, and right plus. Compact homepage quantity controls use the same shared store logic and icon order.
+- Cart badge count behavior: header cart icons on desktop and mobile now show live total cart quantity badge from existing `cartQuantities` store state. Badge is red with white text, stays aligned over the cart button, updates on add/remove, and hides when cart is empty.
+- Homepage product card CSS fix: compact card `Add to cart` / quantity controls now use fixed responsive pill sizing, no text wrap, proper icon centering, and stay inside product cards without overlapping image/title/price in desktop, desktop-mobile browser width, tablet, or mobile.
+- Build/test commands for this product-detail/cart polish task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-detail/cart polish task: `PENDING_COMMIT_HASH`
 
 ## Backend/Admin Notes
 

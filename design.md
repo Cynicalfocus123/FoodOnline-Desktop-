@@ -188,6 +188,15 @@
 - Desktop design memory: root `design.json` now exists as lightweight desktop structure memory for product-detail route, components, responsive rules, and backend-ready fields. No desktop `designer.md` exists in this repo, so `design.md` remains design source of truth here.
 - Build/test commands used for this product-detail design: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this product-detail design: `b411971`
+- Product detail/cart polish on 2026-05-24 updates only product detail media treatment, green cart CTA/quantity behavior, header cart badge, and homepage product-card cart control CSS.
+- Files changed for this product-detail/cart polish: `src/components/ProductDetailPage.tsx`, `src/components/CartQuantityControl.tsx`, `src/components/ProductCard.tsx`, `src/components/Header.tsx`, and design memory files `AGENT.md`, `design.md`, `design.json`.
+- Product media direction: remove boxed/bordered gallery-card feel from detail page. Media section should feel open and large like Yamibuy mobile/desktop-mobile, keep centered `object-contain` pack shots, avoid clipping under header, and use drag/scroll-friendly horizontal image track with pagination dots only. No left/right gallery arrows.
+- Product detail cart direction: detail CTA is green, full-width, rounded, and touch-friendly. After add, it becomes green quantity control with trash at quantity 1, minus above 1, centered count, and plus on right.
+- Cart badge direction: desktop and mobile header cart icons show red circular live item-count badge from shared cart store state, positioned over icon without shifting layout. Badge hides when cart total is zero.
+- Homepage product-card cart direction: compact `Add to cart` and active quantity controls use stable pill sizing, centered icons/count, no wrapped button text, and stay inside product-card width across desktop, desktop-mobile, tablet, and mobile.
+- Responsive direction for this polish: product media keeps strong visual priority on mobile/narrow browser widths, pagination dots stay visible below media, green cart controls scale without clipping, and product-card controls do not overlap price or title.
+- Build/test commands used for this product-detail/cart polish: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this product-detail/cart polish: `PENDING_COMMIT_HASH`
 
 ## Guardrails
 

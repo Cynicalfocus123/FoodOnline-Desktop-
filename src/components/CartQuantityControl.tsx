@@ -44,8 +44,8 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
       <button
         className={
           variant === "detail"
-            ? "inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600"
-            : "inline-flex min-h-10 items-center justify-center rounded-xl border border-leaf-500 px-4 text-sm font-bold text-leaf-600 transition hover:bg-leaf-500 hover:text-white"
+            ? "inline-flex min-h-14 w-full items-center justify-center rounded-[22px] bg-leaf-600 px-6 text-base font-black text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)] transition hover:bg-leaf-700"
+            : "inline-flex min-h-11 w-full min-w-[118px] max-w-[132px] items-center justify-center whitespace-nowrap rounded-full border-2 border-leaf-500 px-4 text-[13px] font-black text-leaf-600 transition hover:bg-leaf-500 hover:text-white sm:min-w-[126px] sm:max-w-[138px]"
         }
         onClick={(event) => {
           event.stopPropagation();
@@ -62,12 +62,16 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
     <div
       className={
         variant === "detail"
-          ? "flex min-h-14 w-full items-center rounded-2xl bg-leaf-600 text-white shadow-[0_14px_32px_rgba(34,197,94,0.24)]"
-          : "flex min-h-10 items-center rounded-xl bg-leaf-600 text-white"
+          ? "flex min-h-14 w-full items-center overflow-hidden rounded-[22px] bg-leaf-600 text-white shadow-[0_14px_32px_rgba(22,163,74,0.24)]"
+          : "flex min-h-11 w-full min-w-[118px] max-w-[132px] items-center overflow-hidden rounded-full bg-leaf-600 text-white shadow-[0_10px_24px_rgba(22,163,74,0.2)] sm:min-w-[126px] sm:max-w-[138px]"
       }
     >
       <button
-        className={variant === "detail" ? "inline-flex h-14 w-14 items-center justify-center" : "inline-flex h-10 w-10 items-center justify-center"}
+        className={
+          variant === "detail"
+            ? "inline-flex h-14 w-14 shrink-0 items-center justify-center"
+            : "inline-flex h-11 w-11 shrink-0 items-center justify-center"
+        }
         onClick={(event) => {
           event.stopPropagation();
           setCartQuantity(productId, quantity - 1);
@@ -76,11 +80,21 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
       >
         {quantity === 1 ? <TrashIcon /> : <MinusIcon />}
       </button>
-      <span className={variant === "detail" ? "flex-1 text-center text-base font-black" : "min-w-[58px] text-center text-sm font-black"}>
-        {variant === "detail" ? `${quantity} in Cart` : quantity}
+      <span
+        className={
+          variant === "detail"
+            ? "flex-1 text-center text-base font-black tabular-nums"
+            : "min-w-0 flex-1 text-center text-[15px] font-black tabular-nums"
+        }
+      >
+        {quantity}
       </span>
       <button
-        className={variant === "detail" ? "inline-flex h-14 w-14 items-center justify-center" : "inline-flex h-10 w-10 items-center justify-center"}
+        className={
+          variant === "detail"
+            ? "inline-flex h-14 w-14 shrink-0 items-center justify-center"
+            : "inline-flex h-11 w-11 shrink-0 items-center justify-center"
+        }
         onClick={(event) => {
           event.stopPropagation();
           setCartQuantity(productId, quantity + 1);

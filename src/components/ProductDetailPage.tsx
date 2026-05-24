@@ -252,6 +252,7 @@ export function ProductDetailPage() {
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("all");
   const [isMostRecent, setIsMostRecent] = useState(false);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
+  const galleryScrollRef = useRef<HTMLDivElement | null>(null);
   const relatedScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -276,6 +277,16 @@ export function ProductDetailPage() {
       document.body.style.overflow = previousOverflow;
     };
   }, [isReviewsOpen]);
+
+  useEffect(() => {
+    const galleryElement = galleryScrollRef.current;
+
+    if (!galleryElement) {
+      return;
+    }
+
+    galleryElement.scrollTo({ left: 0, behavior: "auto" });
+  }, [product.id]);
 
   const selectedVariant =
     product.variants.find((variant) => variant.id === selectedVariantId) ?? product.variants[0];
@@ -305,23 +316,36 @@ export function ProductDetailPage() {
     return [...baseReviews].sort((left, right) => reviewDateValue(right.date) - reviewDateValue(left.date));
   }, [isMostRecent, product.reviews, reviewFilter]);
 
-  function moveGallery(direction: "left" | "right") {
-    setActiveImageIndex((current) => {
-      const lastIndex = product.imageUrls.length - 1;
-
-      if (direction === "left") {
-        return current <= 0 ? lastIndex : current - 1;
-      }
-
-      return current >= lastIndex ? 0 : current + 1;
-    });
-  }
-
   function scrollRelated(direction: "left" | "right") {
     relatedScrollRef.current?.scrollBy({
       left: direction === "left" ? -340 : 340,
       behavior: "smooth",
     });
+  }
+
+  function scrollGalleryTo(index: number) {
+    const galleryElement = galleryScrollRef.current;
+
+    if (!galleryElement) {
+      return;
+    }
+
+    galleryElement.scrollTo({
+      left: galleryElement.clientWidth * index,
+      behavior: "smooth",
+    });
+    setActiveImageIndex(index);
+  }
+
+  function handleGalleryScroll() {
+    const galleryElement = galleryScrollRef.current;
+
+    if (!galleryElement) {
+      return;
+    }
+
+    const nextIndex = Math.round(galleryElement.scrollLeft / Math.max(galleryElement.clientWidth, 1));
+    setActiveImageIndex(Math.min(product.imageUrls.length - 1, Math.max(0, nextIndex)));
   }
 
   async function handleShare() {
@@ -355,70 +379,42 @@ export function ProductDetailPage() {
         </button>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] lg:items-start">
-          <SectionShell>
-            <div className="grid gap-4">
-              <div className="relative overflow-hidden rounded-[28px] bg-neutral-50 p-4 sm:p-6">
-                <img
-                  alt={product.name}
-                  className="aspect-square w-full rounded-[24px] object-contain"
-                  src={product.imageUrls[activeImageIndex] ?? product.image}
-                />
-                {product.imageUrls.length > 1 ? (
-                  <>
-                    <button
-                      aria-label="Previous image"
-                      className="absolute left-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/95 text-neutral-800 shadow-lg transition hover:bg-white"
-                      onClick={() => moveGallery("left")}
-                      type="button"
-                    >
-                      <ArrowIcon direction="left" />
-                    </button>
-                    <button
-                      aria-label="Next image"
-                      className="absolute right-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/95 text-neutral-800 shadow-lg transition hover:bg-white"
-                      onClick={() => moveGallery("right")}
-                      type="button"
-                    >
-                      <ArrowIcon direction="right" />
-                    </button>
-                  </>
-                ) : null}
-              </div>
-
-              {product.imageUrls.length > 1 ? (
-                <>
-                  <div className="hidden grid-cols-4 gap-3 sm:grid">
-                    {product.imageUrls.map((image, index) => (
-                      <button
-                        className={`overflow-hidden rounded-2xl border bg-white p-2 transition ${
-                          index === activeImageIndex
-                            ? "border-leaf-500 shadow-[0_8px_20px_rgba(34,197,94,0.18)]"
-                            : "border-neutral-200 hover:border-neutral-300"
-                        }`}
-                        key={`${product.id}-thumb-${index}`}
-                        onClick={() => setActiveImageIndex(index)}
-                        type="button"
-                      >
-                        <img alt={`${product.name} thumbnail ${index + 1}`} className="aspect-square w-full rounded-xl object-contain" src={image} />
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-center gap-2 sm:hidden">
-                    {product.imageUrls.map((_, index) => (
-                      <button
-                        aria-label={`Show image ${index + 1}`}
-                        className={`h-2.5 rounded-full transition ${index === activeImageIndex ? "w-8 bg-leaf-500" : "w-2.5 bg-neutral-300"}`}
-                        key={`${product.id}-dot-${index}`}
-                        onClick={() => setActiveImageIndex(index)}
-                        type="button"
+          <div className="grid gap-4 lg:pr-4">
+            <div
+              className="overflow-x-auto overscroll-x-contain scrollbar-none snap-x snap-mandatory"
+              onScroll={handleGalleryScroll}
+              ref={galleryScrollRef}
+            >
+              <div className="flex">
+                {product.imageUrls.map((image, index) => (
+                  <div className="w-full shrink-0 snap-center" key={`${product.id}-image-${index}`}>
+                    <div className="flex min-h-[360px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_#f9fcf8_0%,_#ffffff_58%,_#ffffff_100%)] sm:min-h-[460px] lg:min-h-[620px]">
+                      <img
+                        alt={`${product.name} image ${index + 1}`}
+                        className="h-full max-h-[620px] w-full object-contain"
+                        draggable={false}
+                        src={image}
                       />
-                    ))}
+                    </div>
                   </div>
-                </>
-              ) : null}
+                ))}
+              </div>
             </div>
-          </SectionShell>
+
+            {product.imageUrls.length > 1 ? (
+              <div className="flex justify-center gap-2">
+                {product.imageUrls.map((_, index) => (
+                  <button
+                    aria-label={`Show image ${index + 1}`}
+                    className={`h-2.5 rounded-full transition ${index === activeImageIndex ? "w-8 bg-neutral-900" : "w-2.5 bg-neutral-300"}`}
+                    key={`${product.id}-dot-${index}`}
+                    onClick={() => scrollGalleryTo(index)}
+                    type="button"
+                  />
+                ))}
+              </div>
+            ) : null}
+          </div>
 
           <div className="grid gap-5 lg:sticky lg:top-[182px]">
             <SectionShell>

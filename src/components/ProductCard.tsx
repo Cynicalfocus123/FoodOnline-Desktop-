@@ -87,12 +87,13 @@ export function ProductCard({ product }: ProductCardProps) {
       </h3>
       <p className="mt-2 text-sm font-medium text-neutral-500">{product.size}</p>
       <p className="mt-1 text-xs font-semibold text-neutral-400">{product.unitPrice}</p>
-      <div className="mt-auto flex items-end justify-between gap-3 pt-4">
-        <div className="grid gap-1">
+      <div className="mt-auto grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 pt-4">
+        <div className="grid min-w-0 gap-1">
           <span className="text-lg font-bold text-neutral-950">{formatPrice(product.price)}</span>
           {product.oldPrice ? <span className="text-xs font-semibold text-neutral-400 line-through">{formatPrice(product.oldPrice)}</span> : null}
         </div>
         <div
+          className="flex justify-end"
           onClick={(event) => event.stopPropagation()}
           onKeyDown={(event) => event.stopPropagation()}
           role="presentation"

@@ -37,7 +37,22 @@
         "similar_items_rail",
         "reviews_summary",
         "reviews_full_modal"
-      ]
+      ],
+      "gallery_behavior": {
+        "boxed_card_removed": true,
+        "image_fit": "contain",
+        "navigation": "pagination_dots_only",
+        "drag_scroll_supported": true
+      },
+      "cart_behavior": {
+        "cta_color": "green",
+        "quantity_control": [
+          "trash_at_1",
+          "minus_above_1",
+          "center_count",
+          "plus_on_right"
+        ]
+      }
     },
     "product_card": {
       "file": "src/components/ProductCard.tsx",
@@ -45,6 +60,20 @@
         "open_product_detail",
         "favorite_toggle",
         "shared_quantity_control"
+      ],
+      "quantity_css": {
+        "stable_pill_width": true,
+        "nowrap_text": true,
+        "responsive_card_safe": true
+      }
+    },
+    "header_cart": {
+      "file": "src/components/Header.tsx",
+      "badge_behavior": [
+        "shared_cart_total",
+        "desktop_badge",
+        "mobile_badge",
+        "hide_when_zero"
       ]
     },
     "cart_quantity_control": {
@@ -54,7 +83,8 @@
         "trash_at_quantity_one",
         "minus_above_one",
         "plus_increment"
-      ]
+      ],
+      "visual_style": "green_pill"
     }
   },
   "responsive_rules": {
@@ -125,6 +155,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "b411971"
+    "git_commit_hash": "PENDING_COMMIT_HASH"
   }
 }

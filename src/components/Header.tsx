@@ -172,6 +172,9 @@ export function Header() {
   const backToHome = useHomeStore((state) => state.backToHome);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const setSelectedZipCode = useHomeStore((state) => state.setSelectedZipCode);
+  const totalCartItems = useHomeStore((state) =>
+    Object.values(state.cartQuantities).reduce((sum, quantity) => sum + quantity, 0),
+  );
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const logoutUser = usePublicAuthStore((state) => state.logoutUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -402,11 +405,16 @@ export function Header() {
             </div>
 
             <button
-              className="inline-flex h-11 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              className="relative inline-flex h-11 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
               onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
               type="button"
             >
               <CartIcon />
+              {totalCartItems > 0 ? (
+                <span className="absolute right-1.5 top-1.5 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#ef4444] px-1 text-[11px] font-black leading-none text-white shadow-[0_6px_14px_rgba(239,68,68,0.32)]">
+                  {totalCartItems}
+                </span>
+              ) : null}
             </button>
 
             {currentUser ? (
@@ -457,11 +465,16 @@ export function Header() {
 
             <button
               aria-label="View cart"
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+              className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
               onClick={() => document.getElementById("best-deals")?.scrollIntoView({ behavior: "smooth", block: "start" })}
               type="button"
             >
               <CartIcon />
+              {totalCartItems > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#ef4444] px-1 text-[11px] font-black leading-none text-white shadow-[0_6px_14px_rgba(239,68,68,0.32)]">
+                  {totalCartItems}
+                </span>
+              ) : null}
             </button>
 
             <button
