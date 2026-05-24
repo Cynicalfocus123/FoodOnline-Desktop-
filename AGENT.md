@@ -227,6 +227,7 @@
 - Category listing sort fix files changed: `src/components/CategoryListingPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Category listing sort behavior update: product count and product grid now both read from the same sorted result set, and the grid remount key follows category/sort/filter state so price-order changes are visible immediately across all category pages.
 - Build/test commands for this category listing sort fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this category listing sort fix: `18477a6`
 
 ## Backend/Admin Notes
 

@@ -251,6 +251,7 @@
 - Category listing sort fix on 2026-05-24 updates only the listing-page sort behavior.
 - Sort direction: category pages now always filter first, then sort the resulting product set for `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low`. Visible price order and best-selling order must change immediately on desktop, desktop-mobile browser widths, tablet, and mobile.
 - Grid update direction: product count and rendered grid both consume the same sorted result list, and the listing grid remounts on category/sort/filter state changes so reordered cards visibly move instead of appearing stuck in prior order.
+- Git commit hash for this category listing sort fix: `18477a6`
 
 ## Guardrails
 
