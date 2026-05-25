@@ -241,7 +241,9 @@
       "homepage_drinks_beverage_first_real_images": 15,
       "category_listing_dairy_uses_remaining_images": true,
       "category_listing_fruits_vegetables_uses_remaining_images": true,
-      "category_listing_drinks_beverage_uses_remaining_images": true
+      "category_listing_drinks_beverage_uses_remaining_images": true,
+      "real_image_overflow_fallback": "generated_unique_mock_art",
+      "exact_duplicate_real_assets_removed": true
     },
     "fields": [
       "id",

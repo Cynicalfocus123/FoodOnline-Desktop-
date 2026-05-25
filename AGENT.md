@@ -295,6 +295,8 @@
 - Cold Drinks & Juices image assignment files changed: `src/data/home.ts`, `src/components/ProductCard.tsx`, `public/assets/drinks-beverage-mockups/*`, `AGENT.md`, `design.md`, and `design.json`.
 - Cold Drinks & Juices image behavior: homepage `Cold Drinks & Juices` rail now uses the first 15 copied real beverage images. The `#category/cold-drinks-juices` listing uses those same images first and then continues through the copied beverage image pool until it runs out; any remaining listing cards keep the current placeholder/mock image behavior.
 - Image-fit behavior update: product cards now also detect `public/assets/drinks-beverage-mockups` images and use the same expanded cover-style media treatment as the dairy/bread and fruits/vegetables real-image categories.
+- Duplicate real-image cleanup on 2026-05-25: removed the exact duplicate `public/assets/fruits-vegetables-mockups/fruits-vegetables-14.avif` and updated real-image category listing overflow so Dairy/Bread/Eggs, Fruits/Vegetables, and Cold Drinks/Juices do not repeat real photos after their copied asset pools run out.
+- Duplicate cleanup behavior: homepage real-image rails use unique real images only, category pages consume each copied real image once, and any extra listing boxes fall back to generated unique mock art instead of recycling dairy, fruit, or beverage images.
 
 ## Backend/Admin Notes
 

@@ -52,8 +52,11 @@ const dairyBreadMockupAssetPaths = [
 ];
 const fruitVegetableMockupAssetPaths = [
   localAsset("assets/fruits-vegetables-mockups/fruits-vegetables-01.jpg"),
-  ...Array.from({ length: 45 }, (_, index) =>
+  ...Array.from({ length: 12 }, (_, index) =>
     localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(index + 2).padStart(2, "0")}.avif`),
+  ),
+  ...Array.from({ length: 32 }, (_, index) =>
+    localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(index + 15).padStart(2, "0")}.avif`),
   ),
 ];
 const drinksBeverageMockupAssetPaths = Array.from({ length: 54 }, (_, index) => {
@@ -1027,7 +1030,14 @@ export const categoryListingCatalogBySlug = new Map(
       ? listingProducts.map((product, index) => {
           const overrideImage = overrideAssetPaths[index];
           if (!overrideImage) {
-            return product;
+            const generatedImageUrls = [0, 1, 2, 3].map((frameIndex) =>
+              createGalleryImage(product.name, product.brand, category.palette, frameIndex),
+            );
+            return {
+              ...product,
+              image: generatedImageUrls[0],
+              imageUrls: generatedImageUrls,
+            };
           }
           return {
             ...product,

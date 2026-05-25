@@ -299,6 +299,8 @@
 - Image direction: homepage `Cold Drinks & Juices` carousel now uses the first 15 copied real drink and beverage product images. The `#category/cold-drinks-juices` listing uses the copied image pool from the start and keeps assigning real images until it runs out, then falls back to existing placeholder imagery for any leftover cards.
 - Source direction: copied 54 assets from `D:\Foodonline desktop version\site video and content\food mockup\drinks and beverage` into `public/assets/drinks-beverage-mockups` with stable numbered names.
 - Image-fit direction: cards that use `drinks-beverage-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
+- Duplicate real-image cleanup on 2026-05-25 keeps Dairy/Bread/Eggs, Fruits/Vegetables, and Cold Drinks/Juices from showing duplicate real photos in homepage rails or category listing overflow.
+- Duplicate cleanup direction: removed the exact duplicate fruits/vegetables asset and changed category overflow cards to generated unique mock art once a real-image pool is exhausted, instead of recycling copied product photos.
 
 ## Guardrails
 
