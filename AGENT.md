@@ -258,6 +258,7 @@
 - Dairy/bread image assignment files changed: `src/data/home.ts`, `public/assets/dairy-bread-mockups/*`, `AGENT.md`, `design.md`, and `design.json`.
 - Dairy/bread image behavior: homepage `Dairy, Bread & Eggs` rail now uses the first 12 sorted bread-folder images for the first 12 product cards only. The dairy category listing page uses the same first 12 images, then continues with the remaining sorted folder images for later listing cards. Once the copied image pool runs out, cards fall back to the current placeholder/mock image behavior.
 - Build/test commands for this dairy/bread image assignment: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this dairy/bread image assignment: `4adfeaa`
 
 ## Backend/Admin Notes
 

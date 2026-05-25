@@ -272,6 +272,7 @@
 - Git commit hash for this payment icon asset swap: `97ad00a`
 - Dairy/bread product image assignment on 2026-05-25 updates only `Dairy, Bread & Eggs` product-card imagery.
 - Image direction: homepage dairy/bread carousel uses the first 12 sorted bread mockup assets as real product images. The dairy/bread category listing page starts with those same 12 images and then continues through the rest of the copied bread-image set. Remaining cards keep the existing placeholder/mock treatment once no more copied images are available.
+- Git commit hash for this dairy/bread image assignment: `4adfeaa`
 
 ## Guardrails
 
