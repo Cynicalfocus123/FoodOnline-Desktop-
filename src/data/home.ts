@@ -65,7 +65,7 @@ const drinksBeverageMockupAssetPaths = Array.from({ length: 60 }, (_, index) => 
   const extension = fileIndex >= 25 && fileIndex <= 56 ? "png" : "avif";
   return localAsset(`assets/drinks-beverage-mockups/drinks-beverage-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
-const snacksMunchiesMockupAssetPaths = Array.from({ length: 26 }, (_, index) =>
+const snacksMunchiesMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/snacks-munchies-mockups/snacks-munchies-${String(index + 1).padStart(2, "0")}.png`),
 );
 const breakfastInstantFoodMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
