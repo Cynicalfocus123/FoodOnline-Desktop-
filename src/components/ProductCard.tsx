@@ -35,12 +35,14 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
       product.categorySlug === "fruits-vegetables" ||
       product.categorySlug === "cold-drinks-juices" ||
       product.categorySlug === "snacks-munchies" ||
-      product.categorySlug === "breakfast-instant-food") &&
+      product.categorySlug === "breakfast-instant-food" ||
+      product.categorySlug === "sweet-tooth") &&
     (product.image.includes("/assets/dairy-bread-mockups/") ||
       product.image.includes("/assets/fruits-vegetables-mockups/") ||
       product.image.includes("/assets/drinks-beverage-mockups/") ||
       product.image.includes("/assets/snacks-munchies-mockups/") ||
-      product.image.includes("/assets/breakfast-instant-food-mockups/"));
+      product.image.includes("/assets/breakfast-instant-food-mockups/") ||
+      product.image.includes("/assets/sweet-tooth-mockups/"));
 
   function handleOpen() {
     openProduct(product.id);
