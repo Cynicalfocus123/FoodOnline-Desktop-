@@ -303,6 +303,9 @@
 - Snacks & Munchies mockup image assignment on 2026-05-25: copied 26 unique snack images from `D:\Foodonline desktop version\site video and content\food mockup\Snack and munchies` into `public/assets/snacks-munchies-mockups` with stable numbered filenames.
 - Snacks & Munchies image behavior: homepage `Snacks & Munchies` rail now uses the first 15 copied real snack images. The `#category/snacks-munchies` listing uses all 26 copied real snack images once, then falls back to generated unique mock art for remaining listing boxes.
 - Image-fit behavior update: product cards now also detect `public/assets/snacks-munchies-mockups` images and use the expanded cover-style media treatment used by other real-image categories.
+- Breakfast & Instant Food mockup image assignment on 2026-05-25: copied 60 unique images from `D:\Foodonline desktop version\site video and content\food mockup\instant food & breakfast` into `public/assets/breakfast-instant-food-mockups` with stable numbered filenames.
+- Breakfast & Instant Food image behavior: homepage `Breakfast & Instant Food` rail now uses the first 15 copied real images. The `#category/breakfast-instant-food` listing uses all 60 copied real images for its 60 boxes with no fallback needed.
+- Image-fit behavior update: product cards now also detect `public/assets/breakfast-instant-food-mockups` images and use the expanded cover-style media treatment used by other real-image categories.
 
 ## Backend/Admin Notes
 

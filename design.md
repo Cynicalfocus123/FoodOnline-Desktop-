@@ -307,6 +307,9 @@
 - Snacks & Munchies mockup image assignment on 2026-05-25 updates only snack imagery in homepage/category product cards.
 - Snacks & Munchies direction: homepage uses the first 15 real snack screenshots from `public/assets/snacks-munchies-mockups`; the category listing consumes all 26 copied real snack images once, then uses generated unique mock art for remaining boxes.
 - Image-fit direction: cards that use `snacks-munchies-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
+- Breakfast & Instant Food mockup image assignment on 2026-05-25 updates only breakfast/instant-food imagery in homepage/category product cards.
+- Breakfast & Instant Food direction: homepage uses the first 15 real images from `public/assets/breakfast-instant-food-mockups`; the category listing consumes all 60 copied real images so every product box on `#category/breakfast-instant-food` has a real image.
+- Image-fit direction: cards that use `breakfast-instant-food-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
 
 ## Guardrails
 
