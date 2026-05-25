@@ -1149,7 +1149,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Track My Order",
       "Help Ticket",
       "Shipping Details",
-      "Compare products",
+      "Recipe",
     ],
   },
   {
