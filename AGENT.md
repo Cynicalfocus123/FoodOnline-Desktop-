@@ -253,6 +253,7 @@
 - Payment icon asset swap files changed: `src/components/CartPage.tsx`, `public/assets/payment-icons/*.png`, `AGENT.md`, `design.md`, and `design.json`.
 - Payment icon behavior: cart Service Guarantee now renders small real logos for Google Pay, PayPal, Visa, Mastercard, Discover, American Express, UnionPay, JCB, Diners Club, Secure Pay, Alipay, and Cash App. Logos are image-based, small, and responsive.
 - Build/test commands for this payment icon asset swap: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this payment icon asset swap: `97ad00a`
 
 ## Backend/Admin Notes
 

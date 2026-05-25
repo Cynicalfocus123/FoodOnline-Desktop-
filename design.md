@@ -269,6 +269,7 @@
 - Git commit hash for this cart sticky-footer clipping fix: `f3d3c78`
 - Payment icon asset swap on 2026-05-25 updates only the cart payment logo presentation.
 - Payment-logo direction: cart payment logos now use real PNG assets copied from the local payment-icon folder, rendered as small responsive images instead of text-drawn mock tiles. Layout stays compact and wraps cleanly on desktop, desktop-mobile browser widths, tablet, mobile, iOS, and Chrome.
+- Git commit hash for this payment icon asset swap: `97ad00a`
 
 ## Guardrails
 

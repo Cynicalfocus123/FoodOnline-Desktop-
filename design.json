@@ -282,6 +282,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "pending-payment-icon-asset-swap"
+    "git_commit_hash": "97ad00a"
   }
 }
