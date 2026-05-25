@@ -11,7 +11,6 @@ import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
 import { ProductDetailPage } from "./components/ProductDetailPage";
 import { PromoExperience } from "./components/PromoExperience";
-import { ShortcutRow } from "./components/ShortcutRow";
 import { SignupFlow } from "./components/SignupFlow";
 import { useHomeStore } from "./store/homeStore";
 import { usePublicAuthStore } from "./store/publicAuthStore";
@@ -54,8 +53,7 @@ export default function App() {
     <main className="min-h-screen bg-white font-sans text-ink">
       <Header />
       {siteView === "home" ? (
-        <div className="pt-[132px] sm:pt-[146px] lg:pt-[154px]">
-          <ShortcutRow />
+        <div className="pt-[116px] sm:pt-[128px] lg:pt-[138px]">
           <HeroSlider />
           {currentUser ? <AccountSummary /> : null}
           <CategoryStrip />

@@ -42,6 +42,10 @@
     }
   },
   "components": {
+    "shortcut_row": {
+      "file": "src/components/ShortcutRow.tsx",
+      "rendered_on_homepage": false
+    },
     "product_detail_page": {
       "file": "src/components/ProductDetailPage.tsx",
       "sections": [

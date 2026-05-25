@@ -308,6 +308,7 @@
 - Snacks & Munchies direction: homepage uses the first 15 real snack screenshots from `public/assets/snacks-munchies-mockups`; the category listing consumes all 26 copied real snack images once, then uses generated unique mock art for remaining boxes.
 - Image-fit direction: cards that use `snacks-munchies-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
 - Snacks & Munchies fill follow-up on 2026-05-25 rebuilds the snack mockup asset pool from the latest 60 unique source images so `#category/snacks-munchies` has a real image in every product box.
+- Homepage shortcut-strip removal on 2026-05-25 removes the icon row above the hero on all devices. The splash hero now begins directly under the fixed header, and the home top spacing is tightened for desktop, desktop-mobile browser widths, tablet, iOS, Chrome, and mobile.
 - Breakfast & Instant Food mockup image assignment on 2026-05-25 updates only breakfast/instant-food imagery in homepage/category product cards.
 - Breakfast & Instant Food direction: homepage uses the first 15 real images from `public/assets/breakfast-instant-food-mockups`; the category listing consumes all 60 copied real images so every product box on `#category/breakfast-instant-food` has a real image.
 - Image-fit direction: cards that use `breakfast-instant-food-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
