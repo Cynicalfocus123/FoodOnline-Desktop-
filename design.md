@@ -302,6 +302,8 @@
 - Duplicate real-image cleanup on 2026-05-25 keeps Dairy/Bread/Eggs, Fruits/Vegetables, and Cold Drinks/Juices from showing duplicate real photos in homepage rails or category listing overflow.
 - Duplicate cleanup direction: removed the exact duplicate fruits/vegetables asset and changed category overflow cards to generated unique mock art once a real-image pool is exhausted, instead of recycling copied product photos.
 - Beverage image fill follow-up on 2026-05-25 rebuilt the beverage mockup asset sequence from the full sorted source folder so the six previously missing PNG screenshots now fill the remaining beverage category boxes. The beverage category image pool now hash-checks with no exact duplicates.
+- Fruits & Vegetables image fill follow-up on 2026-05-25 rebuilt the fruits/vegetables mockup asset sequence from the newest 60 unique source images so the `#category/fruits-vegetables` page has a real image in every product box.
+- Fruits & Vegetables direction: homepage uses the first 15 images from the updated real-image pool, while the category listing consumes all 60 real images before any fallback would be needed.
 
 ## Guardrails
 

@@ -298,6 +298,8 @@
 - Duplicate real-image cleanup on 2026-05-25: removed the exact duplicate `public/assets/fruits-vegetables-mockups/fruits-vegetables-14.avif` and updated real-image category listing overflow so Dairy/Bread/Eggs, Fruits/Vegetables, and Cold Drinks/Juices do not repeat real photos after their copied asset pools run out.
 - Duplicate cleanup behavior: homepage real-image rails use unique real images only, category pages consume each copied real image once, and any extra listing boxes fall back to generated unique mock art instead of recycling dairy, fruit, or beverage images.
 - Beverage image fill follow-up on 2026-05-25: rebuilt `public/assets/drinks-beverage-mockups` from the full sorted source folder after finding six PNG beverage screenshots were not copied in the first pass. The `#category/cold-drinks-juices` listing now has 60 real beverage images for 60 boxes with no exact duplicate hashes.
+- Fruits & Vegetables image fill follow-up on 2026-05-25: rebuilt `public/assets/fruits-vegetables-mockups` from the newest 60 unique images in `D:\Foodonline desktop version\site video and content\food mockup\Fruit and vegetable` so `#category/fruits-vegetables` fills all 60 listing boxes with real images.
+- Fruits & Vegetables follow-up behavior: the fruit/vegetable category page now references 60 deployable images with no exact duplicate hashes; homepage still uses the first 15 real images from the same updated pool.
 
 ## Backend/Admin Notes
 

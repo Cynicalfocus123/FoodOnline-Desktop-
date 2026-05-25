@@ -51,13 +51,11 @@ const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 3 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 47).padStart(2, "0")}.avif`)),
 ];
 const fruitVegetableMockupAssetPaths = [
-  localAsset("assets/fruits-vegetables-mockups/fruits-vegetables-01.jpg"),
-  ...Array.from({ length: 12 }, (_, index) =>
-    localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(index + 2).padStart(2, "0")}.avif`),
-  ),
-  ...Array.from({ length: 32 }, (_, index) =>
-    localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(index + 15).padStart(2, "0")}.avif`),
-  ),
+  ...Array.from({ length: 60 }, (_, index) => {
+    const fileIndex = index + 1;
+    const extension = fileIndex === 53 ? "jpg" : fileIndex === 60 ? "png" : "avif";
+    return localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(fileIndex).padStart(2, "0")}.${extension}`);
+  }),
 ];
 const drinksBeverageMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
