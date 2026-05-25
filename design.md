@@ -292,6 +292,9 @@
 - Image direction: homepage `Fruits & Vegetables` carousel now uses the first 15 copied real fruit/vegetable product images. The `#category/fruits-vegetables` listing uses the same copied image pool from the start and keeps assigning the remaining real images until the pool runs out, then falls back to the existing placeholder imagery for any leftover cards.
 - Source direction: copied 46 non-screenshot assets from `D:\Foodonline desktop version\site video and content\food mockup\Fruit and vegetable` into `public/assets/fruits-vegetables-mockups` with stable numbered names.
 - Git commit hash for this Fruits & Vegetables image assignment: `b3ced52`
+- Dairy and Fruits & Vegetables image fill tuning on 2026-05-25 updates only shared product-card media behavior for those two real-image sections.
+- Image-fit direction: cards that use `dairy-bread-mockups` or `fruits-vegetables-mockups` now switch from the generic contained image treatment to a clipped cover-style presentation with slightly enlarged scale, so real product photos visually fill the square media box better on homepage rails and category grids across desktop, desktop-mobile browser widths, tablet, mobile, Safari, and Chrome.
+- Git commit hash for this image fill tuning: `3dd965b`
 
 ## Guardrails
 

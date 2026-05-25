@@ -286,6 +286,11 @@
 - Fruits & Vegetables image behavior: homepage `Fruits & Vegetables` rail now uses the first 15 copied real images. The fruits category listing page uses those same images first and then continues through the remaining copied image pool until it runs out; any remaining listing cards keep the current placeholder/mock image behavior.
 - Build/test commands for this Fruits & Vegetables image assignment: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this Fruits & Vegetables image assignment: `b3ced52`
+- Dairy and Fruits & Vegetables image fill tuning on 2026-05-25: updated shared product-card media rendering so real dairy/bread and fruits/vegetables mockup assets fill their product boxes much better on homepage rails and category pages.
+- Dairy and Fruits & Vegetables image fill tuning files changed: `src/components/ProductCard.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Image-fit behavior: product cards now detect real assets from `public/assets/dairy-bread-mockups` and `public/assets/fruits-vegetables-mockups` and render them with a larger `object-cover` treatment inside a clipped white media frame. Other categories keep the normal `object-contain` behavior. This change is intended to stay stable across desktop, desktop-mobile browser widths, tablet, Safari, Chrome, and mobile.
+- Build/test commands for this image fill tuning: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this image fill tuning: `3dd965b`
 
 ## Backend/Admin Notes
 
