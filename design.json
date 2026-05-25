@@ -287,6 +287,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "pending-dairy-bread-homepage-image-extension"
+    "git_commit_hash": "e101ab4"
   }
 }

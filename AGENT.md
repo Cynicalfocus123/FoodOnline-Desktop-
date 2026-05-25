@@ -262,6 +262,7 @@
 - Dairy/bread homepage image extension on 2026-05-25: extended homepage `Dairy, Bread & Eggs` rail from 12 unique bread images to 15 unique bread images, using the next 3 unused images from the same copied asset set and avoiding duplicates.
 - Dairy/bread homepage image extension files changed: `src/data/home.ts`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this dairy/bread homepage image extension: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this dairy/bread homepage image extension: `e101ab4`
 
 ## Backend/Admin Notes
 

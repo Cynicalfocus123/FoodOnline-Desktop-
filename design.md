@@ -275,6 +275,7 @@
 - Git commit hash for this dairy/bread image assignment: `4adfeaa`
 - Dairy/bread homepage image extension on 2026-05-25 updates only the homepage dairy/bread rail.
 - Image direction: homepage `Dairy, Bread & Eggs` now uses 15 unique bread mockup images before any placeholder fallback. The extra 3 images come from the next unused files in the copied bread-image set, with no duplicates of the first 12.
+- Git commit hash for this dairy/bread homepage image extension: `e101ab4`
 
 ## Guardrails
 
