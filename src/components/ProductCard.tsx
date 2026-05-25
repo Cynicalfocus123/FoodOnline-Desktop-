@@ -31,8 +31,12 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const isFavorite = favoriteProductIds.includes(product.id);
   const isGrid = layout === "grid";
   const usesExpandedCategoryImage =
-    (product.categorySlug === "dairy-bread-eggs" || product.categorySlug === "fruits-vegetables") &&
-    (product.image.includes("/assets/dairy-bread-mockups/") || product.image.includes("/assets/fruits-vegetables-mockups/"));
+    (product.categorySlug === "dairy-bread-eggs" ||
+      product.categorySlug === "fruits-vegetables" ||
+      product.categorySlug === "cold-drinks-juices") &&
+    (product.image.includes("/assets/dairy-bread-mockups/") ||
+      product.image.includes("/assets/fruits-vegetables-mockups/") ||
+      product.image.includes("/assets/drinks-beverage-mockups/"));
 
   function handleOpen() {
     openProduct(product.id);

@@ -291,6 +291,10 @@
 - Image-fit behavior: product cards now detect real assets from `public/assets/dairy-bread-mockups` and `public/assets/fruits-vegetables-mockups` and render them with a larger `object-cover` treatment inside a clipped white media frame. Other categories keep the normal `object-contain` behavior. This change is intended to stay stable across desktop, desktop-mobile browser widths, tablet, Safari, Chrome, and mobile.
 - Build/test commands for this image fill tuning: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this image fill tuning: `3dd965b`
+- Cold Drinks & Juices mockup image assignment on 2026-05-25: copied 54 drink and beverage images from `D:\Foodonline desktop version\site video and content\food mockup\drinks and beverage` into `public/assets/drinks-beverage-mockups` with stable numbered filenames.
+- Cold Drinks & Juices image assignment files changed: `src/data/home.ts`, `src/components/ProductCard.tsx`, `public/assets/drinks-beverage-mockups/*`, `AGENT.md`, `design.md`, and `design.json`.
+- Cold Drinks & Juices image behavior: homepage `Cold Drinks & Juices` rail now uses the first 15 copied real beverage images. The `#category/cold-drinks-juices` listing uses those same images first and then continues through the copied beverage image pool until it runs out; any remaining listing cards keep the current placeholder/mock image behavior.
+- Image-fit behavior update: product cards now also detect `public/assets/drinks-beverage-mockups` images and use the same expanded cover-style media treatment as the dairy/bread and fruits/vegetables real-image categories.
 
 ## Backend/Admin Notes
 
