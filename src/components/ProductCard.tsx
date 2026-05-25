@@ -30,6 +30,9 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
   const isFavorite = favoriteProductIds.includes(product.id);
   const isGrid = layout === "grid";
+  const usesExpandedCategoryImage =
+    (product.categorySlug === "dairy-bread-eggs" || product.categorySlug === "fruits-vegetables") &&
+    (product.image.includes("/assets/dairy-bread-mockups/") || product.image.includes("/assets/fruits-vegetables-mockups/"));
 
   function handleOpen() {
     openProduct(product.id);
@@ -76,12 +79,18 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
         >
           <HeartIcon filled={isFavorite} />
         </button>
-        <img
-          alt={product.name}
-          className={`w-full object-contain ${isGrid ? "aspect-square rounded-[16px]" : "aspect-[4/3] rounded-2xl"}`}
-          loading="lazy"
-          src={product.image}
-        />
+        <div className={`overflow-hidden bg-white ${isGrid ? "aspect-square rounded-[16px]" : "aspect-[4/3] rounded-2xl"}`}>
+          <img
+            alt={product.name}
+            className={`h-full w-full ${
+              usesExpandedCategoryImage
+                ? "object-cover object-center scale-[1.08] transform-gpu"
+                : "object-contain"
+            }`}
+            loading="lazy"
+            src={product.image}
+          />
+        </div>
         {isGrid ? (
           <div
             className="absolute bottom-2.5 right-2.5"
