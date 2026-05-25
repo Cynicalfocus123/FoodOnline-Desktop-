@@ -42,6 +42,12 @@ const DELIVERY_TYPES = ["Local Delivery", "GLOBAL+"] as const;
 const PRODUCT_TYPES = ["Deals", "New Arrivals", "Recently Restocked", "SNAP"] as const;
 const MADE_IN_OPTIONS = ["USA", "Spain", "Russia", "China", "Korea", "Japan"] as const;
 const LISTING_VARIATION_LABELS = ["", " Family Pack", " Pantry Pick", " Weekly Value"];
+const DAIRY_BREAD_CATEGORY_NAME = "Dairy, Bread & Eggs";
+const dairyBreadMockupAssetPaths = [
+  ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
+  ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
+  ...Array.from({ length: 3 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 47).padStart(2, "0")}.avif`)),
+];
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
   "Paan Corner": [
@@ -768,7 +774,10 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
   const oldPrice = Number((price * 1.16).toFixed(2));
   const discountPercent = Math.round(((oldPrice - price) / oldPrice) * 100);
   const size = PRODUCT_SIZES[index];
-  const imageUrls = [0, 1, 2, 3].map((frameIndex) => createGalleryImage(productName, category.brand, category.palette, frameIndex));
+  const generatedImageUrls = [0, 1, 2, 3].map((frameIndex) => createGalleryImage(productName, category.brand, category.palette, frameIndex));
+  const dairyBreadPrimaryImage =
+    category.name === DAIRY_BREAD_CATEGORY_NAME && index < 12 ? dairyBreadMockupAssetPaths[index] : undefined;
+  const imageUrls = dairyBreadPrimaryImage ? [dairyBreadPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
   const ratingBreakdown = createRatingBreakdown(reviews);
@@ -786,7 +795,7 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     oldPrice,
     discountPercent,
     deliveryTime: DELIVERY_BADGES[index % DELIVERY_BADGES.length],
-    image: imageUrls[0],
+    image: dairyBreadPrimaryImage ?? imageUrls[0],
     imageUrls,
     unitPrice: `${formatPrice(Number((price / (index % 3 === 0 ? 0.5 : 1)).toFixed(2)))}/${index % 2 === 0 ? "lb" : "pack"}`,
     soldCount: 120 + index * 17 + category.name.length,
@@ -987,8 +996,22 @@ export const categoryListingCatalogBySlug = new Map(
       const baseProduct = baseProducts[index % baseProducts.length];
       return index < baseProducts.length ? baseProduct : createListingProductClone(baseProduct, index);
     });
+    const listingProductsWithImages =
+      category.name === DAIRY_BREAD_CATEGORY_NAME
+        ? listingProducts.map((product, index) => {
+            const overrideImage = dairyBreadMockupAssetPaths[index];
+            if (!overrideImage) {
+              return product;
+            }
+            return {
+              ...product,
+              image: overrideImage,
+              imageUrls: [overrideImage, ...product.imageUrls.slice(1)],
+            };
+          })
+        : listingProducts;
 
-    return [slug, listingProducts] as const;
+    return [slug, listingProductsWithImages] as const;
   }),
 );
 

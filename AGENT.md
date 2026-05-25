@@ -254,6 +254,10 @@
 - Payment icon behavior: cart Service Guarantee now renders small real logos for Google Pay, PayPal, Visa, Mastercard, Discover, American Express, UnionPay, JCB, Diners Club, Secure Pay, Alipay, and Cash App. Logos are image-based, small, and responsive.
 - Build/test commands for this payment icon asset swap: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this payment icon asset swap: `97ad00a`
+- Dairy/bread product image assignment on 2026-05-25: copied bread mockup assets from `D:\Foodonline desktop version\site video and content\food mockup\bread` into `public/assets/dairy-bread-mockups` using stable numbered names.
+- Dairy/bread image assignment files changed: `src/data/home.ts`, `public/assets/dairy-bread-mockups/*`, `AGENT.md`, `design.md`, and `design.json`.
+- Dairy/bread image behavior: homepage `Dairy, Bread & Eggs` rail now uses the first 12 sorted bread-folder images for the first 12 product cards only. The dairy category listing page uses the same first 12 images, then continues with the remaining sorted folder images for later listing cards. Once the copied image pool runs out, cards fall back to the current placeholder/mock image behavior.
+- Build/test commands for this dairy/bread image assignment: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

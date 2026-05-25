@@ -232,6 +232,11 @@
   "data_bindings": {
     "catalog_file": "src/data/home.ts",
     "store_file": "src/store/homeStore.ts",
+    "asset_overrides": {
+      "dairy_bread_mockup_folder": "public/assets/dairy-bread-mockups",
+      "homepage_dairy_first_real_images": 12,
+      "category_listing_dairy_uses_remaining_images": true
+    },
     "fields": [
       "id",
       "name",
@@ -282,6 +287,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "97ad00a"
+    "git_commit_hash": "pending-dairy-bread-image-assignment"
   }
 }
