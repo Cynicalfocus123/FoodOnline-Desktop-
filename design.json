@@ -287,6 +287,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "d95c4a6"
+    "git_commit_hash": "97d2a89"
   }
 }

@@ -279,6 +279,9 @@
 - Category listing sort selection fix on 2026-05-25 updates only the category sort dropdown behavior.
 - Sort direction: each responsive sort trigger now owns its own DOM ref, so outside-click close logic no longer hijacks desktop/tablet/mobile option taps. `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low` all route through one shared selection handler and immediately reorder the visible grid.
 - Git commit hash for this category listing sort selection fix: `d95c4a6`
+- Homepage category intro copy removal on 2026-05-25 updates only the top text block of the homepage category section.
+- Copy direction: removed `Grocery-first aisles for every daily cart` and `Rounded category tiles, soft image cards, and clear labels keep desktop browsing quick while mobile stays swipe-friendly.` The section now goes straight from the eyebrow label into the category grid to keep the homepage lighter.
+- Git commit hash for this homepage category intro copy removal: `97d2a89`
 
 ## Guardrails
 

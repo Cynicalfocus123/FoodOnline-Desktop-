@@ -268,6 +268,10 @@
 - Sort behavior: `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low` now use a shared `handleSortSelect` path and correctly update the rendered category grid after option click on every responsive sort control.
 - Build/test commands for this category listing sort selection fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this category listing sort selection fix: `d95c4a6`
+- Homepage category intro copy removal on 2026-05-25: removed the two descriptive helper lines above the homepage category grid, leaving only the `Browse all categories` eyebrow and the existing category tiles/promo layout.
+- Homepage category intro copy removal files changed: `src/components/CategoryStrip.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this homepage category intro copy removal: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this homepage category intro copy removal: `97d2a89`
 
 ## Backend/Admin Notes
 
