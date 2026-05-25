@@ -272,6 +272,10 @@
 - Homepage category intro copy removal files changed: `src/components/CategoryStrip.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this homepage category intro copy removal: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this homepage category intro copy removal: `97d2a89`
+- Footer account-link correction on 2026-05-25: replaced the footer `Compare products` account link text with `Recipe` to match the requested header/footer wording swap.
+- Footer account-link correction files changed: `src/data/home.ts`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this footer account-link correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this footer account-link correction: `96ffc26`
 
 ## Backend/Admin Notes
 

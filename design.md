@@ -282,6 +282,9 @@
 - Homepage category intro copy removal on 2026-05-25 updates only the top text block of the homepage category section.
 - Copy direction: removed `Grocery-first aisles for every daily cart` and `Rounded category tiles, soft image cards, and clear labels keep desktop browsing quick while mobile stays swipe-friendly.` The section now goes straight from the eyebrow label into the category grid to keep the homepage lighter.
 - Git commit hash for this homepage category intro copy removal: `97d2a89`
+- Footer account-link correction on 2026-05-25 updates only the footer account column text.
+- Copy direction: replaced `Compare products` with `Recipe` in the footer account links so footer wording matches the requested navigation terminology.
+- Git commit hash for this footer account-link correction: `96ffc26`
 
 ## Guardrails
 
