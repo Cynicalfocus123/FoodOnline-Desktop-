@@ -33,10 +33,12 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const usesExpandedCategoryImage =
     (product.categorySlug === "dairy-bread-eggs" ||
       product.categorySlug === "fruits-vegetables" ||
-      product.categorySlug === "cold-drinks-juices") &&
+      product.categorySlug === "cold-drinks-juices" ||
+      product.categorySlug === "snacks-munchies") &&
     (product.image.includes("/assets/dairy-bread-mockups/") ||
       product.image.includes("/assets/fruits-vegetables-mockups/") ||
-      product.image.includes("/assets/drinks-beverage-mockups/"));
+      product.image.includes("/assets/drinks-beverage-mockups/") ||
+      product.image.includes("/assets/snacks-munchies-mockups/"));
 
   function handleOpen() {
     openProduct(product.id);

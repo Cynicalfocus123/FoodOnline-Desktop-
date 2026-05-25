@@ -304,6 +304,9 @@
 - Beverage image fill follow-up on 2026-05-25 rebuilt the beverage mockup asset sequence from the full sorted source folder so the six previously missing PNG screenshots now fill the remaining beverage category boxes. The beverage category image pool now hash-checks with no exact duplicates.
 - Fruits & Vegetables image fill follow-up on 2026-05-25 rebuilt the fruits/vegetables mockup asset sequence from the newest 60 unique source images so the `#category/fruits-vegetables` page has a real image in every product box.
 - Fruits & Vegetables direction: homepage uses the first 15 images from the updated real-image pool, while the category listing consumes all 60 real images before any fallback would be needed.
+- Snacks & Munchies mockup image assignment on 2026-05-25 updates only snack imagery in homepage/category product cards.
+- Snacks & Munchies direction: homepage uses the first 15 real snack screenshots from `public/assets/snacks-munchies-mockups`; the category listing consumes all 26 copied real snack images once, then uses generated unique mock art for remaining boxes.
+- Image-fit direction: cards that use `snacks-munchies-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
 
 ## Guardrails
 

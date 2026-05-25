@@ -45,6 +45,7 @@ const LISTING_VARIATION_LABELS = ["", " Family Pack", " Pantry Pick", " Weekly V
 const DAIRY_BREAD_CATEGORY_NAME = "Dairy, Bread & Eggs";
 const FRUITS_VEGETABLES_CATEGORY_NAME = "Fruits & Vegetables";
 const DRINKS_BEVERAGE_CATEGORY_NAME = "Cold Drinks & Juices";
+const SNACKS_MUNCHIES_CATEGORY_NAME = "Snacks & Munchies";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -62,6 +63,9 @@ const drinksBeverageMockupAssetPaths = Array.from({ length: 60 }, (_, index) => 
   const extension = fileIndex >= 25 && fileIndex <= 56 ? "png" : "avif";
   return localAsset(`assets/drinks-beverage-mockups/drinks-beverage-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
+const snacksMunchiesMockupAssetPaths = Array.from({ length: 26 }, (_, index) =>
+  localAsset(`assets/snacks-munchies-mockups/snacks-munchies-${String(index + 1).padStart(2, "0")}.png`),
+);
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
   "Paan Corner": [
@@ -795,7 +799,10 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     category.name === FRUITS_VEGETABLES_CATEGORY_NAME && index < 15 ? fruitVegetableMockupAssetPaths[index] : undefined;
   const drinksBeveragePrimaryImage =
     category.name === DRINKS_BEVERAGE_CATEGORY_NAME && index < 15 ? drinksBeverageMockupAssetPaths[index] : undefined;
-  const realPrimaryImage = dairyBreadPrimaryImage ?? fruitVegetablePrimaryImage ?? drinksBeveragePrimaryImage;
+  const snacksMunchiesPrimaryImage =
+    category.name === SNACKS_MUNCHIES_CATEGORY_NAME && index < 15 ? snacksMunchiesMockupAssetPaths[index] : undefined;
+  const realPrimaryImage =
+    dairyBreadPrimaryImage ?? fruitVegetablePrimaryImage ?? drinksBeveragePrimaryImage ?? snacksMunchiesPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -1023,7 +1030,9 @@ export const categoryListingCatalogBySlug = new Map(
           ? fruitVegetableMockupAssetPaths
           : category.name === DRINKS_BEVERAGE_CATEGORY_NAME
             ? drinksBeverageMockupAssetPaths
-            : null;
+            : category.name === SNACKS_MUNCHIES_CATEGORY_NAME
+              ? snacksMunchiesMockupAssetPaths
+              : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
           const overrideImage = overrideAssetPaths[index];

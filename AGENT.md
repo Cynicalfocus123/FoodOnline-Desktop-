@@ -300,6 +300,9 @@
 - Beverage image fill follow-up on 2026-05-25: rebuilt `public/assets/drinks-beverage-mockups` from the full sorted source folder after finding six PNG beverage screenshots were not copied in the first pass. The `#category/cold-drinks-juices` listing now has 60 real beverage images for 60 boxes with no exact duplicate hashes.
 - Fruits & Vegetables image fill follow-up on 2026-05-25: rebuilt `public/assets/fruits-vegetables-mockups` from the newest 60 unique images in `D:\Foodonline desktop version\site video and content\food mockup\Fruit and vegetable` so `#category/fruits-vegetables` fills all 60 listing boxes with real images.
 - Fruits & Vegetables follow-up behavior: the fruit/vegetable category page now references 60 deployable images with no exact duplicate hashes; homepage still uses the first 15 real images from the same updated pool.
+- Snacks & Munchies mockup image assignment on 2026-05-25: copied 26 unique snack images from `D:\Foodonline desktop version\site video and content\food mockup\Snack and munchies` into `public/assets/snacks-munchies-mockups` with stable numbered filenames.
+- Snacks & Munchies image behavior: homepage `Snacks & Munchies` rail now uses the first 15 copied real snack images. The `#category/snacks-munchies` listing uses all 26 copied real snack images once, then falls back to generated unique mock art for remaining listing boxes.
+- Image-fit behavior update: product cards now also detect `public/assets/snacks-munchies-mockups` images and use the expanded cover-style media treatment used by other real-image categories.
 
 ## Backend/Admin Notes
 
