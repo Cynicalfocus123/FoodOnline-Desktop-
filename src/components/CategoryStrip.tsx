@@ -1,4 +1,4 @@
-import { categories, promoBanner } from "../data/home";
+import { assets, categories, promoBanner } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 
 export function CategoryStrip() {
@@ -38,46 +38,19 @@ export function CategoryStrip() {
           ))}
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-[30px] bg-[linear-gradient(90deg,#ffd65a_0%,#ffb347_52%,#ff9a28_100%)] px-5 py-6 shadow-[0_20px_60px_rgba(245,158,11,0.25)] sm:px-7 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-end gap-3 sm:gap-4">
-              {promoBanner.products.map((product, index) => (
-                <div
-                  className={`overflow-hidden rounded-[22px] bg-white/70 p-2 shadow-lg shadow-orange-950/10 ${
-                    index === 1 ? "mb-4" : ""
-                  }`}
-                  key={product.name}
-                >
-                  <img
-                    alt={product.name}
-                    className="h-24 w-24 rounded-[18px] object-cover sm:h-28 sm:w-28"
-                    loading="lazy"
-                    src={product.image}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="flex-1 text-left lg:px-6">
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-neutral-900/70">{promoBanner.title}</p>
-              <h3 className="mt-2 text-3xl font-black leading-none tracking-[-0.04em] text-[#d62828] sm:text-5xl">
-                {promoBanner.saleText}
-              </h3>
-              <p className="mt-3 max-w-xl text-sm font-medium leading-6 text-neutral-900/70 sm:text-base">
-                Stock up on pantry hits, snack bundles, and quick-delivery favorites with mock launch pricing.
-              </p>
-            </div>
-
-            <div className="lg:self-center">
-              <a
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-neutral-950 px-6 text-sm font-bold text-white transition hover:bg-neutral-800"
-                href={promoBanner.href}
-              >
-                {promoBanner.ctaLabel}
-              </a>
-            </div>
-          </div>
-        </div>
+        <a
+          className="mt-10 block overflow-hidden rounded-[30px] shadow-[0_20px_60px_rgba(245,158,11,0.2)] transition hover:shadow-[0_24px_70px_rgba(245,158,11,0.26)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf-400 focus-visible:ring-offset-2"
+          href={promoBanner.href}
+        >
+          <img
+            alt={`${promoBanner.title} banner`}
+            className="w-full object-cover"
+            height={546}
+            loading="lazy"
+            src={assets.homeCategoryPromoBanner}
+            width={2048}
+          />
+        </a>
       </div>
     </section>
   );

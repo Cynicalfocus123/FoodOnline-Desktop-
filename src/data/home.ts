@@ -899,6 +899,7 @@ export const assets = {
   heroPoster: localAsset("assets/food-hero-poster.svg"),
   splashVideo:
     "https://cdn.dribbble.com/userupload/37155242/file/original-dfa8adc9e11296c13069bce9286cb596.mp4",
+  homeCategoryPromoBanner: localAsset("assets/home-banners/memorial-day-sale-banner.png"),
   favicon: localAsset("favicon.svg"),
 };
 
