@@ -296,11 +296,12 @@
 - Image-fit direction: cards that use `dairy-bread-mockups` or `fruits-vegetables-mockups` now switch from the generic contained image treatment to a clipped cover-style presentation with slightly enlarged scale, so real product photos visually fill the square media box better on homepage rails and category grids across desktop, desktop-mobile browser widths, tablet, mobile, Safari, and Chrome.
 - Git commit hash for this image fill tuning: `3dd965b`
 - Cold Drinks & Juices mockup image assignment on 2026-05-25 updates only beverage imagery in homepage/category product cards.
-- Image direction: homepage `Cold Drinks & Juices` carousel now uses the first 15 copied real drink and beverage product images. The `#category/cold-drinks-juices` listing uses the copied image pool from the start and keeps assigning real images until it runs out, then falls back to existing placeholder imagery for any leftover cards.
-- Source direction: copied 54 assets from `D:\Foodonline desktop version\site video and content\food mockup\drinks and beverage` into `public/assets/drinks-beverage-mockups` with stable numbered names.
+- Image direction: homepage `Cold Drinks & Juices` carousel now uses the first 15 copied real drink and beverage product images. The `#category/cold-drinks-juices` listing now uses 60 copied real beverage images for its 60 product boxes.
+- Source direction: copied 60 assets from `D:\Foodonline desktop version\site video and content\food mockup\drinks and beverage` into `public/assets/drinks-beverage-mockups` with stable numbered names.
 - Image-fit direction: cards that use `drinks-beverage-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
 - Duplicate real-image cleanup on 2026-05-25 keeps Dairy/Bread/Eggs, Fruits/Vegetables, and Cold Drinks/Juices from showing duplicate real photos in homepage rails or category listing overflow.
 - Duplicate cleanup direction: removed the exact duplicate fruits/vegetables asset and changed category overflow cards to generated unique mock art once a real-image pool is exhausted, instead of recycling copied product photos.
+- Beverage image fill follow-up on 2026-05-25 rebuilt the beverage mockup asset sequence from the full sorted source folder so the six previously missing PNG screenshots now fill the remaining beverage category boxes. The beverage category image pool now hash-checks with no exact duplicates.
 
 ## Guardrails
 

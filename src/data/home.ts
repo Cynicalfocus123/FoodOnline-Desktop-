@@ -59,9 +59,9 @@ const fruitVegetableMockupAssetPaths = [
     localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(index + 15).padStart(2, "0")}.avif`),
   ),
 ];
-const drinksBeverageMockupAssetPaths = Array.from({ length: 54 }, (_, index) => {
+const drinksBeverageMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
-  const extension = fileIndex >= 25 && fileIndex <= 50 ? "png" : "avif";
+  const extension = fileIndex >= 25 && fileIndex <= 56 ? "png" : "avif";
   return localAsset(`assets/drinks-beverage-mockups/drinks-beverage-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
 

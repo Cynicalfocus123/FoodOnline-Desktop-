@@ -239,6 +239,7 @@
       "homepage_dairy_first_real_images": 15,
       "homepage_fruits_vegetables_first_real_images": 15,
       "homepage_drinks_beverage_first_real_images": 15,
+      "category_listing_drinks_beverage_real_images": 60,
       "category_listing_dairy_uses_remaining_images": true,
       "category_listing_fruits_vegetables_uses_remaining_images": true,
       "category_listing_drinks_beverage_uses_remaining_images": true,
