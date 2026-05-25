@@ -7,17 +7,8 @@ export function CategoryStrip() {
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16" id="categories">
       <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col gap-3 text-center sm:text-left">
+        <div className="text-center sm:text-left">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-citrus-500">Browse all categories</p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <h2 className="text-3xl font-bold tracking-[-0.03em] text-neutral-950 sm:text-4xl">
-              Grocery-first aisles for every daily cart
-            </h2>
-            <p className="max-w-2xl text-sm leading-6 text-neutral-500 sm:text-right">
-              Rounded category tiles, soft image cards, and clear labels keep desktop browsing quick while mobile stays
-              swipe-friendly.
-            </p>
-          </div>
         </div>
 
         <div className="mt-8 grid grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
