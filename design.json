@@ -158,7 +158,8 @@
         "checkout_auth_modal"
       ],
       "service_guarantee": {
-        "payment_logo_style": "smaller_visible_compact_logo_tiles",
+        "payment_logo_style": "small_real_png_logos",
+        "payment_logo_asset_folder": "public/assets/payment-icons",
         "guarantee_items": [
           "Global & Secure Payments",
           "Privacy Protection",
@@ -281,6 +282,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "f3d3c78"
+    "git_commit_hash": "pending-payment-icon-asset-swap"
   }
 }

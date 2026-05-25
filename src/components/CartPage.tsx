@@ -11,6 +11,21 @@ import { usePublicAuthStore } from "../store/publicAuthStore";
 
 const FREE_SHIPPING_THRESHOLD = 49;
 const ESTIMATED_SHIPPING = 5.99;
+const paymentIconAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+const paymentLogos = [
+  { label: "Google Pay", src: paymentIconAsset("assets/payment-icons/google-pay.png"), widthClass: "w-[52px] sm:w-[58px]" },
+  { label: "PayPal", src: paymentIconAsset("assets/payment-icons/paypal.png"), widthClass: "w-[52px] sm:w-[58px]" },
+  { label: "Visa", src: paymentIconAsset("assets/payment-icons/visa.png"), widthClass: "w-[52px] sm:w-[58px]" },
+  { label: "Mastercard", src: paymentIconAsset("assets/payment-icons/mastercard.png"), widthClass: "w-[30px] sm:w-[34px]" },
+  { label: "Discover", src: paymentIconAsset("assets/payment-icons/discover.png"), widthClass: "w-[52px] sm:w-[58px]" },
+  { label: "American Express", src: paymentIconAsset("assets/payment-icons/american-express.png"), widthClass: "w-[64px] sm:w-[72px]" },
+  { label: "UnionPay", src: paymentIconAsset("assets/payment-icons/unionpay.png"), widthClass: "w-[42px] sm:w-[48px]" },
+  { label: "JCB", src: paymentIconAsset("assets/payment-icons/jcb.png"), widthClass: "w-[30px] sm:w-[34px]" },
+  { label: "Diners Club", src: paymentIconAsset("assets/payment-icons/diners-club.png"), widthClass: "w-[28px] sm:w-[30px]" },
+  { label: "Secure Pay", src: paymentIconAsset("assets/payment-icons/secure-pay.png"), widthClass: "w-[28px] sm:w-[30px]" },
+  { label: "Alipay", src: paymentIconAsset("assets/payment-icons/alipay.png"), widthClass: "w-[28px] sm:w-[30px]" },
+  { label: "Cash App", src: paymentIconAsset("assets/payment-icons/cash-app.png"), widthClass: "w-[28px] sm:w-[30px]" },
+] as const;
 
 type CartLineItem = {
   productId: string;
@@ -154,46 +169,17 @@ function GuaranteeList() {
 }
 
 function PaymentProviderLogos() {
-  const tileClass =
-    "inline-flex h-9 min-w-[50px] items-center justify-center rounded-[8px] border border-neutral-200 bg-white px-2.5 text-xs font-black shadow-[0_2px_6px_rgba(15,23,42,0.04)] sm:h-10 sm:min-w-[56px] sm:px-3";
-
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-2 sm:gap-x-3 sm:gap-y-2.5">
-      <div className={`${tileClass} gap-1 rounded-full px-2.5 sm:px-3`}>
-        <span className="text-base font-black text-[#4285F4] sm:text-lg">G</span>
-        <span className="text-xs font-black text-neutral-800">Pay</span>
-      </div>
-      <div className={`${tileClass} px-3 text-[11px] text-neutral-950 sm:px-3.5 sm:text-xs`}>Apple Pay</div>
-      <div className={`${tileClass} px-3 text-[11px] sm:px-3.5 sm:text-xs`}>
-        <span className="text-[#0070ba]">Pay</span>
-        <span className="text-[#003087]">Pal</span>
-      </div>
-      <div className={`${tileClass} text-[#1a1f71]`}>VISA</div>
-      <div className={`${tileClass} gap-1.5`}>
-        <span className="h-3.5 w-3.5 rounded-full bg-[#eb001b] sm:h-4 sm:w-4" />
-        <span className="-ml-1.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b]/90 sm:-ml-2 sm:h-4 sm:w-4" />
-      </div>
-      <div className={`${tileClass} px-2.5 text-[10px] sm:px-3 sm:text-[11px]`}>
-        <span className="text-neutral-900">DISC</span>
-        <span className="text-[#f97316]">OVER</span>
-      </div>
-      <div className={`${tileClass} px-2 text-[8px] leading-tight text-[#2563eb] sm:text-[9px]`}>
-        <span>AMERICAN</span>
-        <span>EXPRESS</span>
-      </div>
-      <div className={`${tileClass} gap-0.5 px-2`}>
-        <span className="rounded-[4px] bg-[#e11d48] px-1.5 py-[3px] text-[7px] text-white sm:text-[8px]">U</span>
-        <span className="rounded-[4px] bg-[#2563eb] px-1.5 py-[3px] text-[7px] text-white sm:text-[8px]">n</span>
-        <span className="rounded-[4px] bg-[#16a34a] px-1.5 py-[3px] text-[7px] text-white sm:text-[8px]">P</span>
-      </div>
-      <div className={`${tileClass} text-[#2563eb]`}>JCB</div>
-      <div className={`${tileClass}`}>
-        <span className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full border-[2.5px] border-[#2563eb] text-[9px] font-black text-[#2563eb] sm:h-5 sm:w-5 sm:text-[10px]">
-          D
-        </span>
-      </div>
-      <div className={`${tileClass} text-[#0284c7]`}>Alipay</div>
-      <div className={`${tileClass} text-[#22c55e]`}>$</div>
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4 sm:gap-y-2.5">
+      {paymentLogos.map((logo) => (
+        <img
+          alt={logo.label}
+          className={`${logo.widthClass} h-auto object-contain`}
+          key={logo.label}
+          loading="lazy"
+          src={logo.src}
+        />
+      ))}
     </div>
   );
 }

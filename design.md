@@ -267,6 +267,8 @@
 - Cart sticky-footer clipping fix on 2026-05-24 updates only cart page spacing around the sticky checkout footer.
 - Footer-spacing direction: when the sticky checkout footer is present on mobile, tablet, and desktop-mobile browser widths, the cart page now reserves extra bottom space so summary content and lower sections cannot clip behind the fixed footer in Chrome and similar browsers.
 - Git commit hash for this cart sticky-footer clipping fix: `f3d3c78`
+- Payment icon asset swap on 2026-05-25 updates only the cart payment logo presentation.
+- Payment-logo direction: cart payment logos now use real PNG assets copied from the local payment-icon folder, rendered as small responsive images instead of text-drawn mock tiles. Layout stays compact and wraps cleanly on desktop, desktop-mobile browser widths, tablet, mobile, iOS, and Chrome.
 
 ## Guardrails
 

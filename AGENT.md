@@ -249,6 +249,10 @@
 - Cart sticky-footer clipping fix files changed: `src/components/CartPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this cart sticky-footer clipping fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this cart sticky-footer clipping fix: `f3d3c78`
+- Payment icon asset swap on 2026-05-25: replaced hand-built cart payment marks with real PNG payment logos copied from `D:\Foodonline desktop version\site video and content\payment icon` into `public/assets/payment-icons`.
+- Payment icon asset swap files changed: `src/components/CartPage.tsx`, `public/assets/payment-icons/*.png`, `AGENT.md`, `design.md`, and `design.json`.
+- Payment icon behavior: cart Service Guarantee now renders small real logos for Google Pay, PayPal, Visa, Mastercard, Discover, American Express, UnionPay, JCB, Diners Club, Secure Pay, Alipay, and Cash App. Logos are image-based, small, and responsive.
+- Build/test commands for this payment icon asset swap: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 
