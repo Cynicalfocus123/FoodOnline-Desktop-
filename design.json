@@ -234,7 +234,7 @@
     "store_file": "src/store/homeStore.ts",
     "asset_overrides": {
       "dairy_bread_mockup_folder": "public/assets/dairy-bread-mockups",
-      "homepage_dairy_first_real_images": 12,
+      "homepage_dairy_first_real_images": 15,
       "category_listing_dairy_uses_remaining_images": true
     },
     "fields": [
@@ -287,6 +287,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "4adfeaa"
+    "git_commit_hash": "pending-dairy-bread-homepage-image-extension"
   }
 }

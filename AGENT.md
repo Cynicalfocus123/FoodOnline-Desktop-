@@ -259,6 +259,9 @@
 - Dairy/bread image behavior: homepage `Dairy, Bread & Eggs` rail now uses the first 12 sorted bread-folder images for the first 12 product cards only. The dairy category listing page uses the same first 12 images, then continues with the remaining sorted folder images for later listing cards. Once the copied image pool runs out, cards fall back to the current placeholder/mock image behavior.
 - Build/test commands for this dairy/bread image assignment: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this dairy/bread image assignment: `4adfeaa`
+- Dairy/bread homepage image extension on 2026-05-25: extended homepage `Dairy, Bread & Eggs` rail from 12 unique bread images to 15 unique bread images, using the next 3 unused images from the same copied asset set and avoiding duplicates.
+- Dairy/bread homepage image extension files changed: `src/data/home.ts`, `AGENT.md`, `design.md`, and `design.json`.
+- Build/test commands for this dairy/bread homepage image extension: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 
 ## Backend/Admin Notes
 

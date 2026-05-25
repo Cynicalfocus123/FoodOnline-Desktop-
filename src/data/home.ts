@@ -776,7 +776,7 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
   const size = PRODUCT_SIZES[index];
   const generatedImageUrls = [0, 1, 2, 3].map((frameIndex) => createGalleryImage(productName, category.brand, category.palette, frameIndex));
   const dairyBreadPrimaryImage =
-    category.name === DAIRY_BREAD_CATEGORY_NAME && index < 12 ? dairyBreadMockupAssetPaths[index] : undefined;
+    category.name === DAIRY_BREAD_CATEGORY_NAME && index < 15 ? dairyBreadMockupAssetPaths[index] : undefined;
   const imageUrls = dairyBreadPrimaryImage ? [dairyBreadPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
