@@ -281,6 +281,11 @@
 - Banner behavior: the homepage section now renders the provided promo banner image as one clickable rounded banner linked to the existing promo destination, while keeping the category grid and surrounding homepage layout unchanged.
 - Build/test commands for this homepage category promo banner update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this homepage category promo banner update: `1b08eef`
+- Fruits & Vegetables mockup image assignment on 2026-05-25: copied 46 real product images from `D:\Foodonline desktop version\site video and content\food mockup\Fruit and vegetable` into `public/assets/fruits-vegetables-mockups`, skipping the `Screenshot_*` files and renaming the kept assets into stable numbered filenames for frontend use.
+- Fruits & Vegetables image assignment files changed: `src/data/home.ts`, `public/assets/fruits-vegetables-mockups/*`, `AGENT.md`, `design.md`, and `design.json`.
+- Fruits & Vegetables image behavior: homepage `Fruits & Vegetables` rail now uses the first 15 copied real images. The fruits category listing page uses those same images first and then continues through the remaining copied image pool until it runs out; any remaining listing cards keep the current placeholder/mock image behavior.
+- Build/test commands for this Fruits & Vegetables image assignment: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this Fruits & Vegetables image assignment: `b3ced52`
 
 ## Backend/Admin Notes
 

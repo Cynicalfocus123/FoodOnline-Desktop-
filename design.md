@@ -288,6 +288,10 @@
 - Homepage category promo banner update on 2026-05-25 updates only the banner block beneath the homepage category grid.
 - Banner direction: removed the generated orange promo composition and replaced it with the provided local sale banner image, copied into `public/assets/home-banners` and rendered as a full-width clickable rounded image banner. Existing category tiles, section spacing, and promo click target remain intact.
 - Git commit hash for this homepage category promo banner update: `1b08eef`
+- Fruits & Vegetables mockup image assignment on 2026-05-25 updates only fruits imagery in homepage/category product cards.
+- Image direction: homepage `Fruits & Vegetables` carousel now uses the first 15 copied real fruit/vegetable product images. The `#category/fruits-vegetables` listing uses the same copied image pool from the start and keeps assigning the remaining real images until the pool runs out, then falls back to the existing placeholder imagery for any leftover cards.
+- Source direction: copied 46 non-screenshot assets from `D:\Foodonline desktop version\site video and content\food mockup\Fruit and vegetable` into `public/assets/fruits-vegetables-mockups` with stable numbered names.
+- Git commit hash for this Fruits & Vegetables image assignment: `b3ced52`
 
 ## Guardrails
 

@@ -234,8 +234,11 @@
     "store_file": "src/store/homeStore.ts",
     "asset_overrides": {
       "dairy_bread_mockup_folder": "public/assets/dairy-bread-mockups",
+      "fruits_vegetables_mockup_folder": "public/assets/fruits-vegetables-mockups",
       "homepage_dairy_first_real_images": 15,
-      "category_listing_dairy_uses_remaining_images": true
+      "homepage_fruits_vegetables_first_real_images": 15,
+      "category_listing_dairy_uses_remaining_images": true,
+      "category_listing_fruits_vegetables_uses_remaining_images": true
     },
     "fields": [
       "id",
@@ -287,6 +290,6 @@
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "1b08eef"
+    "git_commit_hash": "b3ced52"
   }
 }
