@@ -276,6 +276,9 @@
 - Dairy/bread homepage image extension on 2026-05-25 updates only the homepage dairy/bread rail.
 - Image direction: homepage `Dairy, Bread & Eggs` now uses 15 unique bread mockup images before any placeholder fallback. The extra 3 images come from the next unused files in the copied bread-image set, with no duplicates of the first 12.
 - Git commit hash for this dairy/bread homepage image extension: `e101ab4`
+- Category listing sort selection fix on 2026-05-25 updates only the category sort dropdown behavior.
+- Sort direction: each responsive sort trigger now owns its own DOM ref, so outside-click close logic no longer hijacks desktop/tablet/mobile option taps. `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low` all route through one shared selection handler and immediately reorder the visible grid.
+- Git commit hash for this category listing sort selection fix: `d95c4a6`
 
 ## Guardrails
 

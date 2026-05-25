@@ -263,6 +263,11 @@
 - Dairy/bread homepage image extension files changed: `src/data/home.ts`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this dairy/bread homepage image extension: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this dairy/bread homepage image extension: `e101ab4`
+- Category listing sort selection fix on 2026-05-25: repaired the sort dropdown click path across desktop, desktop-mobile browser view, tablet, iOS, and Chrome by removing the shared sort ref bug that was misrouting option clicks against the wrong hidden wrapper.
+- Category listing sort selection fix files changed: `src/components/CategoryListingPage.tsx`, `AGENT.md`, `design.md`, and `design.json`.
+- Sort behavior: `Featured (default)`, `Best Selling`, `Price: Low to High`, and `Price: High to Low` now use a shared `handleSortSelect` path and correctly update the rendered category grid after option click on every responsive sort control.
+- Build/test commands for this category listing sort selection fix: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this category listing sort selection fix: `d95c4a6`
 
 ## Backend/Admin Notes
 
