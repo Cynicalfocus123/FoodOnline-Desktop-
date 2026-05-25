@@ -313,6 +313,7 @@
 - Sweet Tooth mockup image assignment on 2026-05-25 updates only candy imagery in homepage/category product cards.
 - Sweet Tooth direction: homepage uses the first 15 real candy images from `public/assets/sweet-tooth-mockups`; the category listing consumes all 60 copied real images so every product box on `#category/sweet-tooth` has a real image.
 - Image-fit direction: cards that use `sweet-tooth-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
+- Sweet Tooth ordering fix on 2026-05-25 reorders the candy asset pool so non-screenshot candy packshots come first and screenshot captures come later. This keeps the home rail and the top of the category page from showing repeated-looking screenshot images.
 
 ## Guardrails
 

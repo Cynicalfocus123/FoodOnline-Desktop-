@@ -309,6 +309,7 @@
 - Sweet Tooth mockup image assignment on 2026-05-25: copied 60 unique candy images from `D:\Foodonline desktop version\site video and content\food mockup\candy` into `public/assets/sweet-tooth-mockups` with stable numbered filenames.
 - Sweet Tooth image behavior: homepage `Sweet Tooth` rail now uses the first 15 copied real candy images. The `#category/sweet-tooth` listing uses all 60 copied real images for its 60 boxes with no fallback needed.
 - Image-fit behavior update: product cards now also detect `public/assets/sweet-tooth-mockups` images and use the expanded cover-style media treatment used by other real-image categories.
+- Sweet Tooth ordering fix on 2026-05-25: rebuilt `public/assets/sweet-tooth-mockups` so the 26 non-screenshot candy packshots appear before screenshot captures. This removes the repeated-looking candy screenshots from the homepage rail and the top of the category listing.
 
 ## Backend/Admin Notes
 

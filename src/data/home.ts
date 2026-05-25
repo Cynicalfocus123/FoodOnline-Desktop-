@@ -77,8 +77,7 @@ const breakfastInstantFoodMockupAssetPaths = Array.from({ length: 60 }, (_, inde
 });
 const sweetToothMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
-  const extension =
-    fileIndex <= 12 || (fileIndex >= 25 && fileIndex <= 37) || (fileIndex >= 49 && fileIndex <= 57) ? "png" : "avif";
+  const extension = fileIndex <= 26 ? "avif" : "png";
   return localAsset(`assets/sweet-tooth-mockups/sweet-tooth-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
 
