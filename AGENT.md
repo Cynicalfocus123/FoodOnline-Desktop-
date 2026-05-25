@@ -276,6 +276,11 @@
 - Footer account-link correction files changed: `src/data/home.ts`, `AGENT.md`, `design.md`, and `design.json`.
 - Build/test commands for this footer account-link correction: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
 - Git commit hash for this footer account-link correction: `96ffc26`
+- Homepage category promo banner update on 2026-05-25: replaced the generated orange promo block beneath the homepage category grid with the supplied local banner image from `D:\Foodonline desktop version\site video and content\ChatGPT Image May 25, 2026, 01_41_59 PM.png`, copied into frontend assets for GitHub Pages.
+- Homepage category promo banner update files changed: `src/components/CategoryStrip.tsx`, `src/data/home.ts`, `public/assets/home-banners/memorial-day-sale-banner.png`, `AGENT.md`, `design.md`, and `design.json`.
+- Banner behavior: the homepage section now renders the provided promo banner image as one clickable rounded banner linked to the existing promo destination, while keeping the category grid and surrounding homepage layout unchanged.
+- Build/test commands for this homepage category promo banner update: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
+- Git commit hash for this homepage category promo banner update: `1b08eef`
 
 ## Backend/Admin Notes
 

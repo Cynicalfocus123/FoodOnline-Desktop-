@@ -285,6 +285,9 @@
 - Footer account-link correction on 2026-05-25 updates only the footer account column text.
 - Copy direction: replaced `Compare products` with `Recipe` in the footer account links so footer wording matches the requested navigation terminology.
 - Git commit hash for this footer account-link correction: `96ffc26`
+- Homepage category promo banner update on 2026-05-25 updates only the banner block beneath the homepage category grid.
+- Banner direction: removed the generated orange promo composition and replaced it with the provided local sale banner image, copied into `public/assets/home-banners` and rendered as a full-width clickable rounded image banner. Existing category tiles, section spacing, and promo click target remain intact.
+- Git commit hash for this homepage category promo banner update: `1b08eef`
 
 ## Guardrails
 
