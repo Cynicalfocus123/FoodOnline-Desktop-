@@ -1,14 +1,15 @@
 <IfModule mod_rewrite.c>
-    Options -MultiViews -Indexes
-    RewriteEngine On
-    RewriteBase /app/
+  Options -MultiViews -Indexes
+  RewriteEngine On
 
-    RewriteRule ^admin/?$ admin.html [L]
-    RewriteRule ^assets/ - [L]
+  RewriteCond %{REQUEST_URI} ^/assets/ [NC]
+  RewriteRule ^ - [L]
 
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
 
-    RewriteRule ^.*$ index.html [L]
+  RewriteRule ^admin/?$ admin.html [L]
+
+  RewriteRule . index.html [L]
 </IfModule>

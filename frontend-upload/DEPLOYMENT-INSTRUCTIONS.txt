@@ -1,50 +1,47 @@
-FoodOnlines Frontend Auth Fix Upload
+FoodOnlines TMDHosting cPanel Upload
 ====================================
 
-ZIP name
-- foodonlines-frontend-auth-fix.zip
+1. Login to TMDHosting cPanel.
+2. Open File Manager.
+3. Go to the live domain folder, usually:
+   /home/USERNAME/public_html/
+   or:
+   /home/USERNAME/foodonlines.com/
+4. Upload foodonlines-tmdhosting-cpanel-upload.zip.
+5. Extract the ZIP.
+6. Confirm these files are directly inside the live folder:
+   index.html
+   admin.html
+   favicon.svg
+   .htaccess
+   assets/
+7. Do not leave the files inside a nested frontend-upload folder.
+8. Test the public frontend:
+   https://foodonlines.com/
+9. Test admin:
+   https://foodonlines.com/admin
+   https://foodonlines.com/admin.html
+10. Test public auth:
+   https://foodonlines.com/#login
+   https://foodonlines.com/#signup
+11. Test API:
+   https://www.api.foodonlines.com/api/v1/auth/me
+12. If the site shows a white page, check that assets/ exists beside index.html and that JS/CSS files do not return text/html.
 
-Upload location
-1. Upload foodonlines-frontend-auth-fix.zip into the foodonlines.com domain folder.
-2. Extract and replace only:
-   - index.html
-   - admin.html
-   - assets/
-   - .htaccess
+Manual login/register test
+--------------------------
+- Open public site.
+- Click Login / Register.
+- Test login with a live Laravel account.
+- Test register with a new email.
+- Confirm successful register appears in admin users if backend supports it.
+- Confirm logout works.
+- Confirm refresh restores session through /auth/me.
 
-Do not touch
-- Do not touch backend folder.
-- Do not touch database.
-- Do not change Laravel routes.
-- Do not change admin password.
-
-What this fixes
-- Removes Continue as Guest controls from public auth flow.
-- Keeps Register and Login as main entry flow.
-- Keeps signup POST pointed at Laravel API.
-- Adds password show/hide buttons to login and signup password fields.
-- Makes signup banner match login banner sizing.
-
-Signup API
-- Base URL: https://www.api.foodonlines.com/api/v1
-- Endpoint: POST /auth/register
-- Full URL: https://www.api.foodonlines.com/api/v1/auth/register
-- Headers: Accept: application/json, Content-Type: application/json
-- Payload keys: account_type, email, first_name, last_name, contact_number, line_id, company_name, password, registered_from
-
-URLs to test
-- https://foodonlines.com/
-- https://foodonlines.com/admin
-- https://foodonlines.com/admin.html
-
-Frontend tests
-1. Open https://foodonlines.com/
-2. Confirm homepage loads.
-3. Confirm Continue as Guest button is gone.
-4. Open Register, fill all fields, submit.
-5. Confirm validation errors show beside fields if Laravel rejects input.
-6. Confirm success screen appears after accepted signup.
-7. Confirm Go to Login works.
-8. Confirm password eye toggles work on login, signup password, and signup confirm password.
-9. Confirm signup banner matches login banner sizing.
-10. Confirm https://foodonlines.com/admin still loads.
+Notes
+-----
+- This ZIP contains only the public/admin frontend package for cPanel upload.
+- The shared production API base remains https://www.api.foodonlines.com/api/v1
+- If you deploy inside /public_html/app/ instead of the root domain folder, add:
+  RewriteBase /app/
+  near the top of .htaccess after RewriteEngine On.
