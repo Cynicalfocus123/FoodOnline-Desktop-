@@ -49,6 +49,7 @@ const SNACKS_MUNCHIES_CATEGORY_NAME = "Snacks & Munchies";
 const BREAKFAST_INSTANT_FOOD_CATEGORY_NAME = "Breakfast & Instant Food";
 const SWEET_TOOTH_CATEGORY_NAME = "Sweet Tooth";
 const BAKERY_BISCUITS_CATEGORY_NAME = "Bakery & Biscuits";
+const ATTA_RICE_DAL_CATEGORY_NAME = "Atta, Rice & Dal";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -83,6 +84,9 @@ const sweetToothMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
 });
 const bakeryBiscuitsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/bakery-biscuits-mockups/bakery-biscuits-${String(index + 1).padStart(2, "0")}.avif`),
+);
+const attaRiceDalMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
+  localAsset(`assets/atta-rice-dal-mockups/atta-rice-dal-${String(index + 1).padStart(2, "0")}.avif`),
 );
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
@@ -759,6 +763,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     category.name === SWEET_TOOTH_CATEGORY_NAME && index < 15 ? sweetToothMockupAssetPaths[index] : undefined;
   const bakeryBiscuitsPrimaryImage =
     category.name === BAKERY_BISCUITS_CATEGORY_NAME && index < 15 ? bakeryBiscuitsMockupAssetPaths[index] : undefined;
+  const attaRiceDalPrimaryImage =
+    category.name === ATTA_RICE_DAL_CATEGORY_NAME && index < 15 ? attaRiceDalMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
@@ -766,7 +772,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     snacksMunchiesPrimaryImage ??
     breakfastInstantFoodPrimaryImage ??
     sweetToothPrimaryImage ??
-    bakeryBiscuitsPrimaryImage;
+    bakeryBiscuitsPrimaryImage ??
+    attaRiceDalPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -991,6 +998,8 @@ export const categoryListingCatalogBySlug = new Map(
                   ? sweetToothMockupAssetPaths
                   : category.name === BAKERY_BISCUITS_CATEGORY_NAME
                     ? bakeryBiscuitsMockupAssetPaths
+                    : category.name === ATTA_RICE_DAL_CATEGORY_NAME
+                      ? attaRiceDalMockupAssetPaths
               : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
