@@ -54,6 +54,7 @@ const TEA_COFFEE_MILK_DRINKS_CATEGORY_NAME = "Tea, Coffee & Milk Drinks";
 const MASALA_OIL_MORE_CATEGORY_NAME = "Masala, Oil & More";
 const SAUCES_SPREADS_CATEGORY_NAME = "Sauces & Spreads";
 const VEGAN_FOODS_CATEGORY_NAME = "Vegan Foods";
+const CHICKEN_MEAT_FISH_CATEGORY_NAME = "Chicken, Meat & Fish";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -102,6 +103,9 @@ const masalaOilMoreMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
 });
 const saucesSpreadsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/sauces-spreads-mockups/sauces-spreads-${String(index + 1).padStart(2, "0")}.avif`),
+);
+const chickenMeatFishMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
+  localAsset(`assets/chicken-meat-fish-mockups/chicken-meat-fish-${String(index + 1).padStart(2, "0")}.avif`),
 );
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
@@ -788,6 +792,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     category.name === MASALA_OIL_MORE_CATEGORY_NAME && index < 15 ? masalaOilMoreMockupAssetPaths[index] : undefined;
   const saucesSpreadsPrimaryImage =
     category.name === SAUCES_SPREADS_CATEGORY_NAME && index < 15 ? saucesSpreadsMockupAssetPaths[index] : undefined;
+  const chickenMeatFishPrimaryImage =
+    category.name === CHICKEN_MEAT_FISH_CATEGORY_NAME && index < 15 ? chickenMeatFishMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
@@ -799,7 +805,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     attaRiceDalPrimaryImage ??
     teaCoffeeMilkDrinksPrimaryImage ??
     masalaOilMorePrimaryImage ??
-    saucesSpreadsPrimaryImage;
+    saucesSpreadsPrimaryImage ??
+    chickenMeatFishPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -1032,6 +1039,8 @@ export const categoryListingCatalogBySlug = new Map(
                           ? masalaOilMoreMockupAssetPaths
                           : category.name === SAUCES_SPREADS_CATEGORY_NAME
                             ? saucesSpreadsMockupAssetPaths
+                            : category.name === CHICKEN_MEAT_FISH_CATEGORY_NAME
+                              ? chickenMeatFishMockupAssetPaths
                             : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
