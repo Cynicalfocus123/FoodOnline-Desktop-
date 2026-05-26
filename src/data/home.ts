@@ -51,6 +51,7 @@ const SWEET_TOOTH_CATEGORY_NAME = "Sweet Tooth";
 const BAKERY_BISCUITS_CATEGORY_NAME = "Bakery & Biscuits";
 const ATTA_RICE_DAL_CATEGORY_NAME = "Atta, Rice & Dal";
 const TEA_COFFEE_MILK_DRINKS_CATEGORY_NAME = "Tea, Coffee & Milk Drinks";
+const MASALA_OIL_MORE_CATEGORY_NAME = "Masala, Oil & More";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -92,6 +93,11 @@ const attaRiceDalMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
 const teaCoffeeMilkDrinksMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/tea-coffee-milk-drinks-mockups/tea-coffee-milk-drinks-${String(index + 1).padStart(2, "0")}.avif`),
 );
+const masalaOilMoreMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
+  const fileIndex = index + 1;
+  const extension = fileIndex === 31 ? "webp" : "avif";
+  return localAsset(`assets/masala-oil-more-mockups/masala-oil-more-${String(fileIndex).padStart(2, "0")}.${extension}`);
+});
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
   "Paan Corner": [
@@ -773,6 +779,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     category.name === TEA_COFFEE_MILK_DRINKS_CATEGORY_NAME && index < 15
       ? teaCoffeeMilkDrinksMockupAssetPaths[index]
       : undefined;
+  const masalaOilMorePrimaryImage =
+    category.name === MASALA_OIL_MORE_CATEGORY_NAME && index < 15 ? masalaOilMoreMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
@@ -782,7 +790,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     sweetToothPrimaryImage ??
     bakeryBiscuitsPrimaryImage ??
     attaRiceDalPrimaryImage ??
-    teaCoffeeMilkDrinksPrimaryImage;
+    teaCoffeeMilkDrinksPrimaryImage ??
+    masalaOilMorePrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -1011,6 +1020,8 @@ export const categoryListingCatalogBySlug = new Map(
                       ? attaRiceDalMockupAssetPaths
                       : category.name === TEA_COFFEE_MILK_DRINKS_CATEGORY_NAME
                         ? teaCoffeeMilkDrinksMockupAssetPaths
+                        : category.name === MASALA_OIL_MORE_CATEGORY_NAME
+                          ? masalaOilMoreMockupAssetPaths
               : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
