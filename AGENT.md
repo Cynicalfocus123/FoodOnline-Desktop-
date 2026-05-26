@@ -160,6 +160,8 @@
 - Sauces/Spreads mockup update files changed: `src/data/home.ts`, `design.md`, `design.json`, `AGENT.md`, and `public/assets/sauces-spreads-mockups/*`.
 - Chicken/Meat/Fish real product mockup update on 2026-05-26: `Chicken, Meat & Fish` now uses a dedicated 60-image source set from `public/assets/chicken-meat-fish-mockups`, with the first 15 images used on the homepage rail and all 60 used on the category page without repeats.
 - Chicken/Meat/Fish mockup update files changed: `src/data/home.ts`, `design.md`, `design.json`, `AGENT.md`, and `public/assets/chicken-meat-fish-mockups/*`.
+- Organic/Healthy real product mockup update on 2026-05-26: `Organic & Healthy Living` now uses a dedicated 60-image source set from `public/assets/organic-healthy-living-mockups`, with the first 15 images used on the homepage rail and all 60 used on the category page without repeats.
+- Organic/Healthy mockup update files changed: `src/data/home.ts`, `design.md`, `design.json`, `AGENT.md`, and `public/assets/organic-healthy-living-mockups/*`.
 - Vegan Foods rename on 2026-05-26: replaced `Baby Care` with `Vegan Foods` across homepage/category shared data, swapped the category products to vegan grocery items, reused the organic category tile art, and preserved `#category/baby-care` as a route alias so older public links still open the renamed category page.
 - Vegan Foods rename files changed: `src/data/home.ts`, `design.md`, `design.json`, and `AGENT.md`.
 - Category double-box cleanup on 2026-05-24: removed nested inner image wrappers from homepage category tiles so each category uses one main rounded card with the real optimized image and label only. No header, product carousel, promo, footer, backend, or category names changed.

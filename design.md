@@ -31,6 +31,7 @@
 - `Masala, Oil & More` now uses a dedicated 60-image real product set from `public/assets/masala-oil-more-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - `Sauces & Spreads` now uses a dedicated 60-image real product set from `public/assets/sauces-spreads-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - `Chicken, Meat & Fish` now uses a dedicated 60-image real product set from `public/assets/chicken-meat-fish-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
+- `Organic & Healthy Living` now uses a dedicated 60-image real product set from `public/assets/organic-healthy-living-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - `Vegan Foods` replaces `Baby Care` on the homepage and category listing surfaces, reuses the organic food-forward category art, and keeps `#category/baby-care` as a hash-safe alias so older shared links still open the renamed category page.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
 - Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
