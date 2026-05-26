@@ -111,6 +111,9 @@ const chickenMeatFishMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
 const organicHealthyLivingMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/organic-healthy-living-mockups/organic-healthy-living-${String(index + 1).padStart(2, "0")}.avif`),
 );
+const veganFoodsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
+  localAsset(`assets/vegan-foods-mockups/vegan-foods-${String(index + 1).padStart(2, "0")}.avif`),
+);
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
   "Paan Corner": [
@@ -802,6 +805,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     category.name === ORGANIC_HEALTHY_LIVING_CATEGORY_NAME && index < 15
       ? organicHealthyLivingMockupAssetPaths[index]
       : undefined;
+  const veganFoodsPrimaryImage =
+    category.name === VEGAN_FOODS_CATEGORY_NAME && index < 15 ? veganFoodsMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
@@ -815,7 +820,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     masalaOilMorePrimaryImage ??
     saucesSpreadsPrimaryImage ??
     chickenMeatFishPrimaryImage ??
-    organicHealthyLivingPrimaryImage;
+    organicHealthyLivingPrimaryImage ??
+    veganFoodsPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -1052,6 +1058,8 @@ export const categoryListingCatalogBySlug = new Map(
                               ? chickenMeatFishMockupAssetPaths
                               : category.name === ORGANIC_HEALTHY_LIVING_CATEGORY_NAME
                                 ? organicHealthyLivingMockupAssetPaths
+                                : category.name === VEGAN_FOODS_CATEGORY_NAME
+                                  ? veganFoodsMockupAssetPaths
                             : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
