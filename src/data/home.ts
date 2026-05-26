@@ -53,6 +53,7 @@ const ATTA_RICE_DAL_CATEGORY_NAME = "Atta, Rice & Dal";
 const TEA_COFFEE_MILK_DRINKS_CATEGORY_NAME = "Tea, Coffee & Milk Drinks";
 const MASALA_OIL_MORE_CATEGORY_NAME = "Masala, Oil & More";
 const SAUCES_SPREADS_CATEGORY_NAME = "Sauces & Spreads";
+const VEGAN_FOODS_CATEGORY_NAME = "Vegan Foods";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -342,22 +343,22 @@ const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
     "Organic Coconut Sugar",
     "Roasted Foxnut Makhana",
   ],
-  "Baby Care": [
-    "Gentle Baby Wipes",
-    "Newborn Diaper Pack",
-    "Baby Lotion Soft Touch",
-    "Stage 1 Formula",
-    "Fruit Puree Pouch",
-    "Baby Bath Wash",
-    "Diaper Rash Cream",
-    "Feeding Bottle Set",
-    "Organic Baby Cereal",
-    "Cotton Buds for Baby",
-    "Baby Shampoo Mild",
-    "Teething Snack Sticks",
-    "Toddler Milk Drink",
-    "Travel Changing Mat",
-    "Baby Laundry Liquid",
+  "Vegan Foods": [
+    "Plant Protein Bowl",
+    "Vegan Cheese Slices",
+    "Coconut Yogurt Cup",
+    "Tofu Stir Fry Kit",
+    "Almond Milk Unsweetened",
+    "Jackfruit Taco Filling",
+    "Chickpea Curry Pack",
+    "Vegan Butter Spread",
+    "Cauliflower Nuggets",
+    "Oat Milk Chocolate Drink",
+    "Lentil Pasta Box",
+    "Vegan Mayo Jar",
+    "Mushroom Burger Patties",
+    "Cashew Cream Sauce",
+    "Tempeh Teriyaki Pack",
   ],
   Frozen: [
     "Chicken Parmesan Meal",
@@ -870,7 +871,7 @@ const categoryConfigs: CategoryConfig[] = [
   { name: "Sauces & Spreads", icon: "sauce", brand: "Kitchen Dip", palette: { from: "#f97316", to: "#facc15", shell: "#fff7ec", badge: "#c2410c", text: "#7c2d12" } },
   { name: "Chicken, Meat & Fish", icon: "meat", brand: "Protein Market", palette: { from: "#ef4444", to: "#fca5a5", shell: "#fff1f1", badge: "#991b1b", text: "#7f1d1d" } },
   { name: "Organic & Healthy Living", icon: "organic", brand: "Green Ritual", palette: { from: "#10b981", to: "#6ee7b7", shell: "#effdf7", badge: "#047857", text: "#064e3b" } },
-  { name: "Baby Care", icon: "baby", brand: "Tiny Nest", palette: { from: "#38bdf8", to: "#93c5fd", shell: "#eef7ff", badge: "#2563eb", text: "#1d4ed8" } },
+  { name: "Vegan Foods", icon: "organic", brand: "Plant Pantry", palette: { from: "#34d399", to: "#a7f3d0", shell: "#effcf5", badge: "#059669", text: "#065f46" } },
   { name: "Frozen", icon: "health", brand: "Freezer Picks", palette: { from: "#38bdf8", to: "#bfdbfe", shell: "#eff8ff", badge: "#2563eb", text: "#1e3a8a" } },
 ];
 
@@ -891,7 +892,7 @@ const categoryImageByName: Record<string, string> = {
   "Sauces & Spreads": "sauces-spreads.jpg",
   "Chicken, Meat & Fish": "chicken-meat-fish.jpg",
   "Organic & Healthy Living": "organic-healthy-living.jpg",
-  "Baby Care": "baby-care.jpg",
+  "Vegan Foods": "organic-healthy-living.jpg",
   Frozen: "frozen.jfif",
 };
 
@@ -959,7 +960,7 @@ export const shortcutItems: ShortcutItem[] = [
   { label: "Frozen", icon: "health", href: "#frozen" },
   { label: "Meat & Fish", icon: "meat", href: "#chicken-meat-fish" },
   { label: "Organic", icon: "organic", href: "#organic-healthy-living" },
-  { label: "Baby & Mom", icon: "baby", href: "#baby-care" },
+  { label: "Vegan Foods", icon: "organic", href: "#vegan-foods" },
   { label: "Tea & Coffee", icon: "tea", href: "#tea-coffee-milk-drinks" },
 ];
 
@@ -1060,6 +1061,13 @@ export const categoryListingCatalogBySlug = new Map(
 const allListingProducts = Array.from(categoryListingCatalogBySlug.values()).flat();
 export const productCatalogById = new Map(allListingProducts.map((product) => [product.id, product]));
 export const categoryTileBySlug = new Map(categories.map((category) => [category.categorySlug, category]));
+const CATEGORY_SLUG_ALIASES: Record<string, string> = {
+  "baby-care": slugify(VEGAN_FOODS_CATEGORY_NAME),
+};
+
+function resolveCategorySlug(slug: string) {
+  return CATEGORY_SLUG_ALIASES[slug] ?? slug;
+}
 
 function normalizeSearchText(value: string) {
   return value
@@ -1130,12 +1138,14 @@ export function getCategoryBySlug(slug: string | null) {
     return categories[0];
   }
 
-  return categoryTileBySlug.get(slug) ?? categories[0];
+  const resolvedSlug = resolveCategorySlug(slug);
+  return categoryTileBySlug.get(resolvedSlug) ?? categories[0];
 }
 
 export function getCategoryListingProducts(categorySlug: string | null) {
   const fallbackSlug = categories[0]?.categorySlug ?? "paan-corner";
-  return categoryListingCatalogBySlug.get(categorySlug ?? fallbackSlug) ?? categoryListingCatalogBySlug.get(fallbackSlug) ?? [];
+  const resolvedSlug = resolveCategorySlug(categorySlug ?? fallbackSlug);
+  return categoryListingCatalogBySlug.get(resolvedSlug) ?? categoryListingCatalogBySlug.get(fallbackSlug) ?? [];
 }
 
 export function searchProducts(query: string) {

@@ -262,6 +262,9 @@
   "data_bindings": {
     "catalog_file": "src/data/home.ts",
     "store_file": "src/store/homeStore.ts",
+    "category_slug_aliases": {
+      "baby-care": "vegan-foods"
+    },
     "asset_overrides": {
       "dairy_bread_mockup_folder": "public/assets/dairy-bread-mockups",
       "fruits_vegetables_mockup_folder": "public/assets/fruits-vegetables-mockups",
