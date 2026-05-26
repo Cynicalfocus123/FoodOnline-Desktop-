@@ -29,6 +29,7 @@
 - Public search results use the existing `ProductCard` component in a responsive grid and keep the same open-product, add-to-cart, quantity, and favorite behavior as other public product surfaces.
 - Mobile search input keeps a minimum 16px font size and stable line-height so iOS Safari, Android Chrome, and in-app mobile browsers do not auto-zoom or distort the fixed header when the field is focused.
 - `Masala, Oil & More` now uses a dedicated 60-image real product set from `public/assets/masala-oil-more-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
+- `Sauces & Spreads` now uses a dedicated 60-image real product set from `public/assets/sauces-spreads-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
 - Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
