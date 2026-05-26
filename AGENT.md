@@ -167,6 +167,8 @@
 - Vegan Foods update files changed: `src/data/home.ts`, `design.md`, `design.json`, `AGENT.md`, and `public/assets/vegan-foods-mockups/*`.
 - Frozen real product mockup update on 2026-05-26: `Frozen` now uses a dedicated 60-image source set from `public/assets/frozen-mockups`, with the first 15 images used on the homepage rail and all 60 used on the category page without repeats.
 - Frozen mockup update files changed: `src/data/home.ts`, `design.md`, `design.json`, `AGENT.md`, and `public/assets/frozen-mockups/*`.
+- ProductCard mockup rendering follow-up on 2026-05-26: replaced the old hardcoded expanded-image allowlist with a generic `/assets/*-mockups/` path check so newly added real product categories keep visible packshot sizing on listing grids without extra per-category UI patches.
+- ProductCard mockup rendering follow-up files changed: `src/components/ProductCard.tsx`, `design.md`, and `AGENT.md`.
 - Category double-box cleanup on 2026-05-24: removed nested inner image wrappers from homepage category tiles so each category uses one main rounded card with the real optimized image and label only. No header, product carousel, promo, footer, backend, or category names changed.
 - Category double-box cleanup files changed: `src/components/CategoryStrip.tsx`.
 - Desktop header nav clipping fix on 2026-05-24: widened desktop header inner container from `max-w-7xl` to `max-w-[1480px]`, tightened desktop nav/control gaps, and made nav links `shrink-0` so labels such as `Wholesale Products` do not truncate on desktop. Header/search behavior and mobile order remain unchanged.
