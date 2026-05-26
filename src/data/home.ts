@@ -56,6 +56,7 @@ const SAUCES_SPREADS_CATEGORY_NAME = "Sauces & Spreads";
 const VEGAN_FOODS_CATEGORY_NAME = "Vegan Foods";
 const CHICKEN_MEAT_FISH_CATEGORY_NAME = "Chicken, Meat & Fish";
 const ORGANIC_HEALTHY_LIVING_CATEGORY_NAME = "Organic & Healthy Living";
+const FROZEN_CATEGORY_NAME = "Frozen";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -113,6 +114,9 @@ const organicHealthyLivingMockupAssetPaths = Array.from({ length: 60 }, (_, inde
 );
 const veganFoodsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
   localAsset(`assets/vegan-foods-mockups/vegan-foods-${String(index + 1).padStart(2, "0")}.avif`),
+);
+const frozenMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
+  localAsset(`assets/frozen-mockups/frozen-${String(index + 1).padStart(2, "0")}.avif`),
 );
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
@@ -807,6 +811,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
       : undefined;
   const veganFoodsPrimaryImage =
     category.name === VEGAN_FOODS_CATEGORY_NAME && index < 15 ? veganFoodsMockupAssetPaths[index] : undefined;
+  const frozenPrimaryImage =
+    category.name === FROZEN_CATEGORY_NAME && index < 15 ? frozenMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
@@ -821,7 +827,8 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     saucesSpreadsPrimaryImage ??
     chickenMeatFishPrimaryImage ??
     organicHealthyLivingPrimaryImage ??
-    veganFoodsPrimaryImage;
+    veganFoodsPrimaryImage ??
+    frozenPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -1060,6 +1067,8 @@ export const categoryListingCatalogBySlug = new Map(
                                 ? organicHealthyLivingMockupAssetPaths
                                 : category.name === VEGAN_FOODS_CATEGORY_NAME
                                   ? veganFoodsMockupAssetPaths
+                                  : category.name === FROZEN_CATEGORY_NAME
+                                    ? frozenMockupAssetPaths
                             : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
