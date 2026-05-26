@@ -1041,6 +1041,56 @@ const allListingProducts = Array.from(categoryListingCatalogBySlug.values()).fla
 export const productCatalogById = new Map(allListingProducts.map((product) => [product.id, product]));
 export const categoryTileBySlug = new Map(categories.map((category) => [category.categorySlug, category]));
 
+function normalizeSearchText(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[_/\\-]+/g, " ")
+    .replace(/[^a-z0-9\s]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function compactSearchText(value: string) {
+  return normalizeSearchText(value).replace(/\s+/g, "");
+}
+
+function compactSearchTextWithoutAnd(value: string) {
+  return normalizeSearchText(value).replace(/\band\b/g, " ").replace(/\s+/g, "");
+}
+
+const productSearchIndex = allListingProducts.map((product) => {
+  const searchableFields = [
+    product.name,
+    product.categoryName,
+    product.brand,
+    product.provider,
+    product.tags.join(" "),
+    product.badges.join(" "),
+    product.size,
+    product.unitPrice,
+    product.country,
+    product.countryOfOrigin,
+    product.brandOrigin,
+    product.madeIn,
+    product.netContent,
+    product.quantity,
+  ].join(" ");
+
+  return {
+    product,
+    nameNormalized: normalizeSearchText(product.name),
+    nameCompact: compactSearchText(product.name),
+    nameLooseCompact: compactSearchTextWithoutAnd(product.name),
+    categoryNormalized: normalizeSearchText(product.categoryName),
+    categoryCompact: compactSearchText(product.categoryName),
+    categoryLooseCompact: compactSearchTextWithoutAnd(product.categoryName),
+    searchableNormalized: normalizeSearchText(searchableFields),
+    searchableCompact: compactSearchText(searchableFields),
+    searchableLooseCompact: compactSearchTextWithoutAnd(searchableFields),
+  };
+});
+
 export function getProductById(productId: string | null) {
   if (!productId) {
     return productCatalog[0];
@@ -1066,6 +1116,64 @@ export function getCategoryBySlug(slug: string | null) {
 export function getCategoryListingProducts(categorySlug: string | null) {
   const fallbackSlug = categories[0]?.categorySlug ?? "paan-corner";
   return categoryListingCatalogBySlug.get(categorySlug ?? fallbackSlug) ?? categoryListingCatalogBySlug.get(fallbackSlug) ?? [];
+}
+
+export function searchProducts(query: string) {
+  const normalizedQuery = normalizeSearchText(query);
+
+  if (!normalizedQuery) {
+    return [];
+  }
+
+  const compactQuery = normalizedQuery.replace(/\s+/g, "");
+  const looseCompactQuery = compactSearchTextWithoutAnd(query);
+  const queryTokens = normalizedQuery.split(" ").filter(Boolean);
+
+  return productSearchIndex
+    .map((entry) => {
+      const compactMatch =
+        entry.searchableCompact.includes(compactQuery) ||
+        entry.nameCompact.includes(compactQuery) ||
+        entry.categoryCompact.includes(compactQuery) ||
+        entry.searchableLooseCompact.includes(looseCompactQuery) ||
+        entry.nameLooseCompact.includes(looseCompactQuery) ||
+        entry.categoryLooseCompact.includes(looseCompactQuery);
+      const tokenMatches = queryTokens.filter(
+        (token) => entry.searchableNormalized.includes(token) || entry.searchableCompact.includes(token),
+      );
+
+      if (!compactMatch && tokenMatches.length === 0) {
+        return null;
+      }
+
+      let score = 0;
+
+      if (entry.nameCompact.includes(compactQuery)) {
+        score += 120;
+      }
+
+      if (entry.categoryCompact.includes(compactQuery)) {
+        score += 80;
+      }
+
+      if (entry.searchableCompact.includes(compactQuery)) {
+        score += 60;
+      }
+
+      score += tokenMatches.length * 15;
+
+      if (queryTokens.length > 1 && tokenMatches.length === queryTokens.length) {
+        score += 25;
+      }
+
+      return {
+        product: entry.product,
+        score,
+      };
+    })
+    .filter((entry): entry is { product: ProductItem; score: number } => Boolean(entry))
+    .sort((left, right) => right.score - left.score || right.product.soldCount - left.product.soldCount || left.product.name.localeCompare(right.product.name))
+    .map((entry) => entry.product);
 }
 
 export function getAvailableFilterBrands() {

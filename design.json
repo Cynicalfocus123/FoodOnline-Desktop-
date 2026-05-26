@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-05-25",
+    "updated_at": "2026-05-26",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -38,6 +38,11 @@
     "product_detail": {
       "path": "#product/:productId",
       "view": "product",
+      "refresh_safe": true
+    },
+    "search_results": {
+      "path": "#search/:query",
+      "view": "search",
       "refresh_safe": true
     }
   },
@@ -181,6 +186,27 @@
         "selected_order_summary"
       ]
     },
+    "header_search": {
+      "file": "src/components/Header.tsx",
+      "layout_preserved": true,
+      "behaviors": [
+        "shared_global_search_input",
+        "camera_icon_removed",
+        "submit_routes_to_search_results",
+        "mobile_font_size_16px_minimum",
+        "focus_without_mobile_browser_zoom"
+      ]
+    },
+    "search_results_page": {
+      "file": "src/components/SearchResultsPage.tsx",
+      "card_reuse": "ProductCard",
+      "behaviors": [
+        "shared_cart_and_favorite_state",
+        "open_product_detail_from_results",
+        "responsive_grid_results",
+        "friendly_empty_state"
+      ]
+    },
     "header_cart": {
       "file": "src/components/Header.tsx",
       "badge_behavior": [
@@ -261,6 +287,22 @@
       "real_image_overflow_fallback": "generated_unique_mock_art",
       "exact_duplicate_real_assets_removed": true
     },
+    "search_fields": [
+      "name",
+      "categoryName",
+      "brand",
+      "provider",
+      "tags",
+      "badges",
+      "size",
+      "unitPrice",
+      "country",
+      "countryOfOrigin",
+      "brandOrigin",
+      "madeIn",
+      "netContent",
+      "quantity"
+    ],
     "fields": [
       "id",
       "name",
@@ -303,7 +345,9 @@
       "selectedCartIds",
       "savedForLaterIds",
       "favoriteProductIds",
-      "selectedZipCode"
+      "selectedZipCode",
+      "searchInputValue",
+      "searchQuery"
     ]
   },
   "tests": {

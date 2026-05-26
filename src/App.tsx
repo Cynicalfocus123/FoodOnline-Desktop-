@@ -11,6 +11,7 @@ import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
 import { ProductDetailPage } from "./components/ProductDetailPage";
 import { PromoExperience } from "./components/PromoExperience";
+import { SearchResultsPage } from "./components/SearchResultsPage";
 import { SignupFlow } from "./components/SignupFlow";
 import { useHomeStore } from "./store/homeStore";
 import { usePublicAuthStore } from "./store/publicAuthStore";
@@ -19,6 +20,7 @@ export default function App() {
   const siteView = useHomeStore((state) => state.siteView);
   const selectedProductId = useHomeStore((state) => state.selectedProductId);
   const selectedCategorySlug = useHomeStore((state) => state.selectedCategorySlug);
+  const searchQuery = useHomeStore((state) => state.searchQuery);
   const syncRouteFromHash = useHomeStore((state) => state.syncRouteFromHash);
   const hydrateSession = usePublicAuthStore((state) => state.hydrateSession);
   const hasHydratedSession = usePublicAuthStore((state) => state.hasHydratedSession);
@@ -47,7 +49,7 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [siteView, selectedProductId, selectedCategorySlug]);
+  }, [searchQuery, selectedCategorySlug, selectedProductId, siteView]);
 
   return (
     <main className="min-h-screen bg-white font-sans text-ink">
@@ -68,6 +70,7 @@ export default function App() {
       {siteView === "checkout" ? <CheckoutPage /> : null}
       {siteView === "category" ? <CategoryListingPage /> : null}
       {siteView === "product" ? <ProductDetailPage /> : null}
+      {siteView === "search" ? <SearchResultsPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

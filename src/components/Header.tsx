@@ -96,24 +96,6 @@ function SearchIcon({ className = "h-5 w-5 text-neutral-500" }: { className?: st
   );
 }
 
-function CameraIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-5 w-5 shrink-0 text-neutral-500"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.9"
-      viewBox="0 0 24 24"
-    >
-      <path d="M5 7.5h3l1.3-2h5.4l1.3 2h3a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z" />
-      <circle cx="12" cy="13.2" r="3.4" />
-    </svg>
-  );
-}
-
 function ChevronIcon({ isOpen }: { isOpen: boolean }) {
   return (
     <svg
@@ -169,8 +151,11 @@ function CloseIcon() {
 export function Header() {
   const openLogin = useHomeStore((state) => state.openLogin);
   const openCart = useHomeStore((state) => state.openCart);
+  const openSearchResults = useHomeStore((state) => state.openSearchResults);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
+  const searchInputValue = useHomeStore((state) => state.searchInputValue);
+  const setSearchInputValue = useHomeStore((state) => state.setSearchInputValue);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const setSelectedZipCode = useHomeStore((state) => state.setSelectedZipCode);
   const totalCartItems = useHomeStore((state) =>
@@ -183,7 +168,6 @@ export function Header() {
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
   const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
-  const [searchTerm, setSearchTerm] = useState("");
   const languageMenuReference = useRef<HTMLElement | null>(null);
 
   const selectedLanguage = useMemo(
@@ -290,7 +274,7 @@ export function Header() {
 
   function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.info("FoodOnline mock search", searchTerm.trim());
+    openSearchResults(searchInputValue);
   }
 
   const languageDropdown = isLanguageMenuOpen ? (
@@ -508,26 +492,24 @@ export function Header() {
         </div>
 
           <form
-            className="mx-auto flex min-h-12 w-full max-w-4xl items-center gap-2 rounded-full border-2 border-neutral-900/80 bg-neutral-50 px-4 shadow-[0_8px_22px_rgba(15,23,42,0.06)] transition focus-within:border-leaf-500 focus-within:bg-white focus-within:shadow-[0_12px_34px_rgba(15,23,42,0.1)] sm:min-h-14 sm:px-5 lg:mt-1"
+            className="mx-auto flex min-h-12 w-full max-w-4xl items-center gap-2 overflow-hidden rounded-full border-2 border-neutral-900/80 bg-neutral-50 px-4 shadow-[0_8px_22px_rgba(15,23,42,0.06)] transition focus-within:border-leaf-500 focus-within:bg-white focus-within:shadow-[0_12px_34px_rgba(15,23,42,0.1)] sm:min-h-14 sm:px-5 lg:mt-1"
             onSubmit={handleSearchSubmit}
             role="search"
           >
             <SearchIcon />
             <input
               aria-label="Search products"
-              className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-neutral-900 outline-none placeholder:text-neutral-500 sm:text-base"
-              onChange={(event) => setSearchTerm(event.target.value)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              className="min-w-0 flex-1 bg-transparent text-base font-semibold leading-6 text-neutral-900 outline-none placeholder:text-neutral-500"
+              enterKeyHint="search"
+              inputMode="search"
+              onChange={(event) => setSearchInputValue(event.target.value)}
               placeholder="Search groceries, snacks, drinks and more"
+              spellCheck={false}
               type="search"
-              value={searchTerm}
+              value={searchInputValue}
             />
-            <button
-              aria-label="Search by image"
-              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-200 sm:inline-flex"
-              type="button"
-            >
-              <CameraIcon />
-            </button>
             <button
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white transition hover:bg-neutral-800 sm:h-10 sm:w-auto sm:px-5 sm:text-sm sm:font-black"
               type="submit"

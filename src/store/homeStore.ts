@@ -16,8 +16,16 @@ import {
   validateSignupRole,
 } from "../lib/security";
 
-export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout";
+export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search";
 export type SignupStep = "role" | "form" | "complete";
+
+function safeDecodeRouteSegment(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
 
 function readProductIdFromHash(hash: string) {
   const match = hash.match(/^#product\/([^/?#]+)/i);
@@ -27,6 +35,11 @@ function readProductIdFromHash(hash: string) {
 function readCategorySlugFromHash(hash: string) {
   const match = hash.match(/^#category\/([^/?#]+)/i);
   return match?.[1] ?? null;
+}
+
+function readSearchQueryFromHash(hash: string) {
+  const match = hash.match(/^#search\/([^?#]+)/i);
+  return match?.[1] ? safeDecodeRouteSegment(match[1]) : null;
 }
 
 function isCartHash(hash: string) {
@@ -50,6 +63,7 @@ function writeRouteHash(route: string | null) {
   if (
     window.location.hash.startsWith("#product/") ||
     window.location.hash.startsWith("#category/") ||
+    window.location.hash.startsWith("#search/") ||
     window.location.hash.startsWith("#cart") ||
     window.location.hash.startsWith("#checkout")
   ) {
@@ -68,6 +82,8 @@ type HomeState = {
   selectedCartIds: string[];
   favoriteProductIds: string[];
   selectedZipCode: string;
+  searchInputValue: string;
+  searchQuery: string;
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
   completedSubmission: ReturnType<typeof createSignupSubmission> | null;
@@ -80,7 +96,9 @@ type HomeState = {
   openCart: () => void;
   openCheckout: () => void;
   openProduct: (productId: string) => void;
+  openSearchResults: (query: string) => void;
   syncRouteFromHash: (hash: string) => void;
+  setSearchInputValue: (value: string) => void;
   setCartQuantity: (productId: string, quantity: number) => void;
   addToCart: (productId: string) => void;
   removeFromCart: (productId: string) => void;
@@ -129,6 +147,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedCartIds: [],
   favoriteProductIds: [],
   selectedZipCode: "91789",
+  searchInputValue: "",
+  searchQuery: "",
   ...getBlankSignupState(),
   completedSubmission: null,
   submissionError: null,
@@ -213,10 +233,30 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openSearchResults: (query) =>
+    set((state) => {
+      const trimmedQuery = query.trim();
+
+      if (!trimmedQuery) {
+        return state;
+      }
+
+      writeRouteHash(`search/${encodeURIComponent(trimmedQuery)}`);
+
+      return {
+        siteView: "search",
+        searchInputValue: trimmedQuery,
+        searchQuery: trimmedQuery,
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        submissionError: null,
+      };
+    }),
   syncRouteFromHash: (hash) =>
     set((state) => {
       const productId = readProductIdFromHash(hash);
       const categorySlug = readCategorySlugFromHash(hash);
+      const searchQuery = readSearchQueryFromHash(hash);
 
       if (productId) {
         return {
@@ -230,6 +270,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         return {
           siteView: "category",
           selectedCategorySlug: categorySlug,
+          selectedProductId: null,
+        };
+      }
+
+      if (searchQuery) {
+        return {
+          siteView: "search",
+          searchInputValue: searchQuery,
+          searchQuery,
+          selectedCategorySlug: null,
           selectedProductId: null,
         };
       }
@@ -253,6 +303,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       if (
         state.siteView === "product" ||
         state.siteView === "category" ||
+        state.siteView === "search" ||
         state.siteView === "cart" ||
         state.siteView === "checkout"
       ) {
@@ -264,6 +315,10 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       }
 
       return state;
+    }),
+  setSearchInputValue: (value) =>
+    set({
+      searchInputValue: value,
     }),
   setCartQuantity: (productId, quantity) =>
     set((state) => {

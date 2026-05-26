@@ -10,6 +10,8 @@
 ## Page Structure
 
 - Fixed modern white header with larger long transparent FoodOnlines logo, desktop navigation, and signup shortcut.
+- Shared header search keeps the current two-row layout, rounded border, search icon, and search CTA, but no longer shows the small camera icon.
+- Shared header search now works across all public pages and routes to hash-safe `#search/:query` results without changing the existing product-detail `#product/:productId` route behavior.
 - Full-viewport home hero with background food video, dark overlay, centered offer copy, and one primary Join Us Now CTA.
 - Signup opens into a multi-step app flow: role selection, split brand-and-form layout, then registration complete state.
 - Public auth now stays inside the same visual system: homepage remains the first screen, Register opens the existing split signup layout, and Login uses a matching split layout. Register/Login are the main entry flow.
@@ -21,7 +23,11 @@
 
 - React + TypeScript + Vite.
 - Zustand stores shared signup form state for hero and splash email forms.
+- Zustand now also stores the shared public search input and submitted search query so one header search bar can be reused across home, category, product detail, cart, checkout, login, and signup.
 - Tailwind CSS owns responsive layout, colors, spacing, shadows, and buttons.
+- Search matching is case-insensitive and tolerant of spaces, hyphens, punctuation, and compact combined words. It checks product name, category, brand/provider, tags, badges, size/unit, and origin fields from `src/data/home.ts`.
+- Public search results use the existing `ProductCard` component in a responsive grid and keep the same open-product, add-to-cart, quantity, and favorite behavior as other public product surfaces.
+- Mobile search input keeps a minimum 16px font size and stable line-height so iOS Safari, Android Chrome, and in-app mobile browsers do not auto-zoom or distort the fixed header when the field is focused.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
 - Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
@@ -129,7 +135,7 @@
 - Header/search layout update on 2026-05-24 changes only homepage header, search, navigation controls, and spacing around the shortcut/category row.
 - Files changed for this header/search update: `src/components/Header.tsx`, `src/components/ShortcutRow.tsx`, and `src/App.tsx`.
 - Header layout direction: desktop header now has two rows. Row one keeps FoodOnlines logo, ZIP/location pill, nav links, `Register / Sign in`, language, and cart aligned high in the header. Row two adds the main centered search experience.
-- Desktop search bar direction: large rounded search form uses strong dark border, soft neutral fill, search icon, placeholder `Search groceries, snacks, drinks and more`, optional camera icon, and dark search button.
+- Desktop search bar direction: large rounded search form uses strong dark border, soft neutral fill, search icon, placeholder `Search groceries, snacks, drinks and more`, no camera icon, and dark search button.
 - Mobile search direction: mobile top row keeps logo, ZIP/location, optional language, cart, and hamburger visible, with cart before hamburger and ZIP/cart outside the hamburger. Large rounded search sits below that row.
 - Mobile hamburger direction: hamburger remains only for nav/account extras, while ZIP/location and cart stay available as top-level touch controls.
 - Cart icon direction: cart remains a real wheeled shopping cart icon, not basket/bag/trash.
