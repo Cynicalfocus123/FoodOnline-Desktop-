@@ -48,6 +48,7 @@ const DRINKS_BEVERAGE_CATEGORY_NAME = "Cold Drinks & Juices";
 const SNACKS_MUNCHIES_CATEGORY_NAME = "Snacks & Munchies";
 const BREAKFAST_INSTANT_FOOD_CATEGORY_NAME = "Breakfast & Instant Food";
 const SWEET_TOOTH_CATEGORY_NAME = "Sweet Tooth";
+const BAKERY_BISCUITS_CATEGORY_NAME = "Bakery & Biscuits";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
   ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
@@ -80,6 +81,9 @@ const sweetToothMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const extension = fileIndex <= 26 ? "avif" : "png";
   return localAsset(`assets/sweet-tooth-mockups/sweet-tooth-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
+const bakeryBiscuitsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
+  localAsset(`assets/bakery-biscuits-mockups/bakery-biscuits-${String(index + 1).padStart(2, "0")}.avif`),
+);
 
 const PRODUCT_NAMES_BY_CATEGORY: Record<string, string[]> = {
   "Paan Corner": [
@@ -753,13 +757,16 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
       : undefined;
   const sweetToothPrimaryImage =
     category.name === SWEET_TOOTH_CATEGORY_NAME && index < 15 ? sweetToothMockupAssetPaths[index] : undefined;
+  const bakeryBiscuitsPrimaryImage =
+    category.name === BAKERY_BISCUITS_CATEGORY_NAME && index < 15 ? bakeryBiscuitsMockupAssetPaths[index] : undefined;
   const realPrimaryImage =
     dairyBreadPrimaryImage ??
     fruitVegetablePrimaryImage ??
     drinksBeveragePrimaryImage ??
     snacksMunchiesPrimaryImage ??
     breakfastInstantFoodPrimaryImage ??
-    sweetToothPrimaryImage;
+    sweetToothPrimaryImage ??
+    bakeryBiscuitsPrimaryImage;
   const imageUrls = realPrimaryImage ? [realPrimaryImage, ...generatedImageUrls.slice(1)] : generatedImageUrls;
   const quantity = size;
   const reviews = createReviews({ id, name: productName, imageUrls });
@@ -982,6 +989,8 @@ export const categoryListingCatalogBySlug = new Map(
                 ? breakfastInstantFoodMockupAssetPaths
                 : category.name === SWEET_TOOTH_CATEGORY_NAME
                   ? sweetToothMockupAssetPaths
+                  : category.name === BAKERY_BISCUITS_CATEGORY_NAME
+                    ? bakeryBiscuitsMockupAssetPaths
               : null;
     const listingProductsWithImages = overrideAssetPaths
       ? listingProducts.map((product, index) => {
