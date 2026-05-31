@@ -238,12 +238,15 @@ const paymentMethods: Array<{
   title: string;
   description: string;
   icon: ReactNode;
+  logos?: typeof cardBrandLogos;
+  logoSrc?: string;
 }> = [
   {
     id: "card",
     title: "Credit / Debit Card",
     description: "Visa, Mastercard, American Express, JCB, UnionPay, and Discover.",
     icon: <CardIcon />,
+    logos: cardBrandLogos,
   },
   {
     id: "cod",
@@ -268,24 +271,28 @@ const paymentMethods: Array<{
     title: "PayPal",
     description: "Wallet checkout is ready for provider connection.",
     icon: <WalletIcon />,
+    logoSrc: paymentIconAsset("assets/payment-icons/paypal.png"),
   },
   {
     id: "googlePay",
     title: "Google Pay",
     description: "Existing wallet logo support is ready for provider connection.",
     icon: <WalletIcon />,
+    logoSrc: paymentIconAsset("assets/payment-icons/google-pay.png"),
   },
   {
     id: "alipay",
     title: "Alipay",
     description: "Existing wallet logo support is ready for provider connection.",
     icon: <WalletIcon />,
+    logoSrc: paymentIconAsset("assets/payment-icons/alipay.png"),
   },
   {
     id: "cashApp",
     title: "Cash App",
     description: "Existing wallet logo support is ready for provider connection.",
     icon: <WalletIcon />,
+    logoSrc: paymentIconAsset("assets/payment-icons/cash-app.png"),
   },
 ];
 
@@ -577,43 +584,50 @@ function SectionCard({
   );
 }
 
-function PaymentRadioCard({
+function PaymentRadioRow({
   checked,
   description,
   icon,
+  logoSrc,
+  logos,
   onSelect,
   title,
 }: {
   checked: boolean;
   description: string;
   icon: ReactNode;
+  logoSrc?: string;
+  logos?: typeof cardBrandLogos;
   onSelect: () => void;
   title: string;
 }) {
   return (
     <label
-      className={`flex min-h-[88px] cursor-pointer items-start gap-3 rounded-[22px] border p-4 transition ${
-        checked
-          ? "border-leaf-500 bg-emerald-50 text-neutral-950 shadow-[0_10px_24px_rgba(34,197,94,0.12)]"
-          : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-300 hover:bg-neutral-50"
-      }`}
+      className="grid cursor-pointer grid-cols-[28px_52px_minmax(0,1fr)] items-start gap-3 py-3 text-neutral-900 transition hover:text-leaf-700 sm:grid-cols-[28px_58px_minmax(0,1fr)]"
     >
       <input checked={checked} className="sr-only" name="payment-method" onChange={onSelect} type="radio" />
       <span
-        className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
-          checked ? "border-leaf-600 bg-leaf-600 text-white" : "border-neutral-300 bg-white text-transparent"
+        className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
+          checked ? "border-neutral-950 bg-neutral-950 text-white" : "border-neutral-300 bg-white text-transparent"
         }`}
       >
         <CheckIcon />
       </span>
-      <span className="flex min-w-0 flex-1 gap-3">
-        <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${checked ? "bg-white text-leaf-700" : "bg-neutral-100 text-neutral-700"}`}>
-          {icon}
+      <span className="flex h-10 w-12 items-center justify-center rounded-md border border-neutral-200 bg-white sm:h-11 sm:w-14">
+        {logoSrc ? <img alt="" className="max-h-6 max-w-[42px] object-contain sm:max-w-[46px]" src={logoSrc} /> : <span className="text-neutral-700">{icon}</span>}
+      </span>
+      <span className="min-w-0">
+        <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="text-base font-semibold text-neutral-950">{title}</span>
+          {logos ? (
+            <span className="flex flex-wrap items-center gap-1.5">
+              {logos.map((logo) => (
+                <img alt={logo.label} className={`${logo.widthClass} h-auto object-contain`} key={logo.label} src={logo.src} />
+              ))}
+            </span>
+          ) : null}
         </span>
-        <span className="min-w-0">
-          <span className="block text-sm font-black sm:text-base">{title}</span>
-          <span className="mt-1 block text-sm leading-6 text-neutral-500">{description}</span>
-        </span>
+        <span className="mt-1 block text-sm leading-6 text-neutral-500">{description}</span>
       </span>
     </label>
   );
@@ -1150,14 +1164,16 @@ export function CheckoutPage() {
               </SectionCard>
 
               <SectionCard eyebrow="3. Payment" title="Payment method">
-                <div className="grid gap-4">
-                  <div className="grid gap-3 lg:grid-cols-2">
+                <div className="grid gap-5">
+                  <div className="grid divide-y divide-neutral-200 border-b border-neutral-200">
                     {paymentMethods.map((method) => (
-                      <PaymentRadioCard
+                      <PaymentRadioRow
                         checked={paymentMethod === method.id}
                         description={method.description}
                         icon={method.icon}
                         key={method.id}
+                        logoSrc={method.logoSrc}
+                        logos={method.logos}
                         onSelect={() => setPaymentMethod(method.id)}
                         title={method.title}
                       />
@@ -1165,17 +1181,10 @@ export function CheckoutPage() {
                   </div>
 
                   {paymentMethod === "card" ? (
-                    <div className="grid gap-5 rounded-[24px] border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                          <h3 className="text-lg font-black text-neutral-950">Add a New Card</h3>
-                          <p className="mt-1 text-sm font-medium text-neutral-500">Card details stay in page state only.</p>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          {cardBrandLogos.map((logo) => (
-                            <img alt={logo.label} className={`${logo.widthClass} h-auto object-contain`} key={logo.label} src={logo.src} />
-                          ))}
-                        </div>
+                    <div className="grid gap-5">
+                      <div className="grid gap-1">
+                        <h3 className="text-lg font-semibold text-neutral-950">Add a New Card</h3>
+                        <p className="text-sm font-medium text-neutral-500">Card details stay in page state only.</p>
                       </div>
 
                       <div className="grid gap-4 md:grid-cols-2">
@@ -1241,9 +1250,9 @@ export function CheckoutPage() {
                       </label>
                     </div>
                   ) : (
-                    <div className="rounded-[22px] border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-semibold leading-6 text-neutral-600">
+                    <p className="text-sm font-semibold leading-6 text-neutral-600">
                       Payment instructions will be shown after the order is created.
-                    </div>
+                    </p>
                   )}
                 </div>
               </SectionCard>

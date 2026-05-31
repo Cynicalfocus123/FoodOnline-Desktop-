@@ -214,6 +214,9 @@
         "guest_address_entry_allowed": true
       },
       "payment_behavior": {
+        "method_presentation": "compact_aligned_radio_rows_with_small_icon_or_logo_tiles",
+        "large_payment_method_boxes": false,
+        "card_brand_logos_inline": true,
         "methods": [
           "Credit / Debit Card",
           "Cash on Delivery",
