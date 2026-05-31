@@ -230,7 +230,11 @@
         "card_number_auto_spacing": true,
         "expiry_format": "MM/YY",
         "cvv_masked_numeric": true,
+        "credit_card_form_position": "expanded_directly_under_selected_credit_card_row",
         "billing_same_as_shipping_checkbox": true,
+        "billing_address_hidden_when_same_as_shipping": true,
+        "billing_address_dynamic_country_fields_match_shipping": true,
+        "billing_country_switch_preserves_shared_field_keys": true,
         "raw_card_data_persisted": false,
         "requires_backend_tokenization_before_real_charges": true
       },
@@ -456,7 +460,7 @@
     ]
   },
   "tests": {
-    "latest_change": "email auth production fix",
+    "latest_change": "checkout credit card billing address behavior",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"

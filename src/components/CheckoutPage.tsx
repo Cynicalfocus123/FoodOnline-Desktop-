@@ -433,6 +433,21 @@ function validateAddress(values: AddressValues, config: AddressConfig) {
   }, {});
 }
 
+function preserveAddressValuesForCountry(values: AddressValues, country: CountryKey) {
+  const nextFieldKeys = new Set(addressConfigs[country].fields.map((field) => field.key));
+
+  return Object.entries(values).reduce<AddressValues>((nextValues, [key, value]) => {
+    if (nextFieldKeys.has(key)) {
+      nextValues[key] = value;
+    }
+    return nextValues;
+  }, {});
+}
+
+function getScopedAutocomplete(field: AddressField, scope: "shipping" | "billing") {
+  return field.autoComplete?.replace(/^shipping\b/, scope) ?? field.autoComplete;
+}
+
 function createAddressSummary(country: CountryKey, values: AddressValues) {
   const config = addressConfigs[country];
   const addressParts = config.fields
@@ -714,6 +729,10 @@ export function CheckoutPage() {
   });
   const [cardErrors, setCardErrors] = useState<FieldErrors>({});
   const [cardTouched, setCardTouched] = useState<TouchedFields>({});
+  const [billingCountry, setBillingCountry] = useState<CountryKey>("thailand");
+  const [billingAddressValues, setBillingAddressValues] = useState<AddressValues>({});
+  const [billingAddressErrors, setBillingAddressErrors] = useState<FieldErrors>({});
+  const [billingAddressTouched, setBillingAddressTouched] = useState<TouchedFields>({});
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<CouponState>(null);
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
@@ -734,12 +753,14 @@ export function CheckoutPage() {
   );
 
   const activeAddressConfig = addressConfigs[addressCountry];
+  const activeBillingAddressConfig = addressConfigs[billingCountry];
   const selectedSavedAddress = savedAddresses.find((address) => address.id === selectedAddressId) ?? null;
   const selectedAddress = selectedSavedAddress ?? (checkoutAddress?.id === selectedAddressId ? checkoutAddress : null);
   const addressValidation = validateAddress(addressValues, activeAddressConfig);
   const isAddressReady = selectedAddress ? true : Object.keys(addressValidation).length === 0;
   const cardValidation = validateCardForm(cardValues);
-  const isPaymentReady = paymentMethod !== "card" || Object.keys(cardValidation).length === 0;
+  const billingAddressValidation = cardValues.billingSameAsShipping ? {} : validateAddress(billingAddressValues, activeBillingAddressConfig);
+  const isPaymentReady = paymentMethod !== "card" || (Object.keys(cardValidation).length === 0 && Object.keys(billingAddressValidation).length === 0);
   const itemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   const retailSubtotal = selectedItems.reduce((sum, item) => sum + (item.product.oldPrice ?? item.product.price) * item.quantity, 0);
   const subtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
@@ -790,21 +811,54 @@ export function CheckoutPage() {
   }
 
   function handleCountryChange(nextCountry: CountryKey) {
-    const nextFieldKeys = new Set(addressConfigs[nextCountry].fields.map((field) => field.key));
     setAddressCountry(nextCountry);
-    setAddressValues((current) =>
-      Object.entries(current).reduce<AddressValues>((nextValues, [key, value]) => {
-        if (nextFieldKeys.has(key)) {
-          nextValues[key] = value;
-        }
-        return nextValues;
-      }, {}),
-    );
+    setAddressValues((current) => preserveAddressValuesForCountry(current, nextCountry));
     setAddressErrors({});
     setAddressTouched({});
     setSelectedAddressId(null);
     setCheckoutAddress(null);
     setIsAddressFormOpen(true);
+  }
+
+  function updateBillingAddressValue(field: AddressField, value: string) {
+    setBillingAddressValues((current) => ({
+      ...current,
+      [field.key]: value,
+    }));
+
+    if (billingAddressTouched[field.key] || billingAddressErrors[field.key]) {
+      const nextError = getAddressError(field, value);
+      setBillingAddressErrors((current) => {
+        const nextErrors = { ...current };
+        if (nextError) {
+          nextErrors[field.key] = nextError;
+        } else {
+          delete nextErrors[field.key];
+        }
+        return nextErrors;
+      });
+    }
+  }
+
+  function markBillingAddressTouched(field: AddressField) {
+    const nextError = getAddressError(field, billingAddressValues[field.key] ?? "");
+    setBillingAddressTouched((current) => ({ ...current, [field.key]: true }));
+    setBillingAddressErrors((current) => {
+      const nextErrors = { ...current };
+      if (nextError) {
+        nextErrors[field.key] = nextError;
+      } else {
+        delete nextErrors[field.key];
+      }
+      return nextErrors;
+    });
+  }
+
+  function handleBillingCountryChange(nextCountry: CountryKey) {
+    setBillingCountry(nextCountry);
+    setBillingAddressValues((current) => preserveAddressValuesForCountry(current, nextCountry));
+    setBillingAddressErrors({});
+    setBillingAddressTouched({});
   }
 
   function handleUseCurrentZip() {
@@ -879,6 +933,11 @@ export function CheckoutPage() {
     if (cardTouched[field] || cardErrors[field]) {
       setCardErrors(validateCardForm(nextValues));
     }
+
+    if (field === "billingSameAsShipping" && nextValue === true) {
+      setBillingAddressErrors({});
+      setBillingAddressTouched({});
+    }
   }
 
   function markCardTouched(field: keyof CardFormValues) {
@@ -939,6 +998,21 @@ export function CheckoutPage() {
 
       if (Object.keys(nextCardErrors).length) {
         return;
+      }
+
+      if (!cardValues.billingSameAsShipping) {
+        const nextBillingErrors = validateAddress(billingAddressValues, activeBillingAddressConfig);
+        const nextBillingTouched = activeBillingAddressConfig.fields.reduce<TouchedFields>((fields, field) => {
+          fields[field.key] = true;
+          return fields;
+        }, {});
+
+        setBillingAddressTouched(nextBillingTouched);
+        setBillingAddressErrors(nextBillingErrors);
+
+        if (Object.keys(nextBillingErrors).length) {
+          return;
+        }
       }
     }
 
@@ -1078,7 +1152,7 @@ export function CheckoutPage() {
                           return (
                             <div className={field.fullWidth ? "md:col-span-2" : ""} key={field.key}>
                               <CheckoutInput
-                                autoComplete={field.autoComplete}
+                                autoComplete={getScopedAutocomplete(field, "shipping")}
                                 error={error}
                                 id={`checkout-address-${field.key}`}
                                 inputMode={field.type === "postal" ? "numeric" : field.inputMode}
@@ -1167,93 +1241,147 @@ export function CheckoutPage() {
                 <div className="grid gap-5">
                   <div className="grid divide-y divide-neutral-200 border-b border-neutral-200">
                     {paymentMethods.map((method) => (
-                      <PaymentRadioRow
-                        checked={paymentMethod === method.id}
-                        description={method.description}
-                        icon={method.icon}
-                        key={method.id}
-                        logoSrc={method.logoSrc}
-                        logos={method.logos}
-                        onSelect={() => setPaymentMethod(method.id)}
-                        title={method.title}
-                      />
+                      <div key={method.id}>
+                        <PaymentRadioRow
+                          checked={paymentMethod === method.id}
+                          description={method.description}
+                          icon={method.icon}
+                          logoSrc={method.logoSrc}
+                          logos={method.logos}
+                          onSelect={() => setPaymentMethod(method.id)}
+                          title={method.title}
+                        />
+
+                        {method.id === "card" && paymentMethod === "card" ? (
+                          <div className="grid gap-5 pb-6 sm:ml-[86px]">
+                            <div className="grid gap-1">
+                              <h3 className="text-lg font-semibold text-neutral-950">Add a New Card</h3>
+                              <p className="text-sm font-medium text-neutral-500">Card details stay in page state only.</p>
+                            </div>
+
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <CheckoutInput
+                                autoComplete="cc-name"
+                                error={cardTouched.cardholderName || cardErrors.cardholderName ? cardErrors.cardholderName : ""}
+                                id="checkout-cardholder-name"
+                                label="Cardholder name"
+                                onBlur={() => markCardTouched("cardholderName")}
+                                onChange={(value) => updateCardValue("cardholderName", value)}
+                                required
+                                value={cardValues.cardholderName}
+                              />
+                              <CheckoutInput
+                                autoComplete="cc-number"
+                                error={cardTouched.cardNumber || cardErrors.cardNumber ? cardErrors.cardNumber : ""}
+                                id="checkout-card-number"
+                                inputMode="numeric"
+                                label="Card number"
+                                maxLength={23}
+                                onBlur={() => markCardTouched("cardNumber")}
+                                onChange={(value) => updateCardValue("cardNumber", value)}
+                                placeholder="4242 4242 4242 4242"
+                                required
+                                value={cardValues.cardNumber}
+                              />
+                              <CheckoutInput
+                                autoComplete="cc-exp"
+                                error={cardTouched.expiryDate || cardErrors.expiryDate ? cardErrors.expiryDate : ""}
+                                id="checkout-card-expiry"
+                                inputMode="numeric"
+                                label="Expiry date"
+                                maxLength={5}
+                                onBlur={() => markCardTouched("expiryDate")}
+                                onChange={(value) => updateCardValue("expiryDate", value)}
+                                placeholder="MM/YY"
+                                required
+                                value={cardValues.expiryDate}
+                              />
+                              <CheckoutInput
+                                autoComplete="cc-csc"
+                                error={cardTouched.cvv || cardErrors.cvv ? cardErrors.cvv : ""}
+                                id="checkout-card-cvv"
+                                inputMode="numeric"
+                                label="CVV"
+                                maxLength={4}
+                                onBlur={() => markCardTouched("cvv")}
+                                onChange={(value) => updateCardValue("cvv", value)}
+                                required
+                                type="password"
+                                value={cardValues.cvv}
+                              />
+                            </div>
+
+                            <div className="grid gap-4">
+                              <label className="grid gap-2 text-sm font-semibold text-neutral-700">
+                                <span className="text-base font-semibold text-neutral-950">Billing address</span>
+                                <span className="flex items-center gap-3">
+                                  <input
+                                    checked={cardValues.billingSameAsShipping}
+                                    className="h-5 w-5 rounded border-neutral-300 accent-neutral-950"
+                                    onChange={(event) => updateCardValue("billingSameAsShipping", event.target.checked)}
+                                    type="checkbox"
+                                  />
+                                  <span>Same as shipping address</span>
+                                </span>
+                              </label>
+
+                              {!cardValues.billingSameAsShipping ? (
+                                <div className="grid gap-5 rounded-[22px] border border-neutral-200 bg-neutral-50 p-4">
+                                  <label className="grid gap-2" htmlFor="checkout-billing-country">
+                                    <span className="text-sm font-bold text-neutral-800">
+                                      Country <span className="text-red-500" aria-label="required">*</span>
+                                    </span>
+                                    <select
+                                      autoComplete="billing country-name"
+                                      className="min-h-[52px] rounded-2xl border border-neutral-200 bg-white px-4 text-base font-semibold text-neutral-900 outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
+                                      id="checkout-billing-country"
+                                      onChange={(event) => handleBillingCountryChange(event.target.value as CountryKey)}
+                                      value={billingCountry}
+                                    >
+                                      {countryOrder.map((country) => (
+                                        <option key={country} value={country}>
+                                          {addressConfigs[country].label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </label>
+
+                                  <p className="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold leading-6 text-neutral-600">
+                                    {activeBillingAddressConfig.deliveryHint}
+                                  </p>
+
+                                  <div className="grid gap-4 md:grid-cols-2">
+                                    {activeBillingAddressConfig.fields.map((field) => {
+                                      const error =
+                                        billingAddressTouched[field.key] || billingAddressErrors[field.key] ? billingAddressErrors[field.key] : "";
+                                      return (
+                                        <div className={field.fullWidth ? "md:col-span-2" : ""} key={field.key}>
+                                          <CheckoutInput
+                                            autoComplete={getScopedAutocomplete(field, "billing")}
+                                            error={error}
+                                            id={`checkout-billing-address-${field.key}`}
+                                            inputMode={field.type === "postal" ? "numeric" : field.inputMode}
+                                            label={field.label}
+                                            multiline={field.type === "textarea"}
+                                            onBlur={() => markBillingAddressTouched(field)}
+                                            onChange={(value) => updateBillingAddressValue(field, value)}
+                                            placeholder={field.placeholder}
+                                            required={field.required}
+                                            type={field.type === "tel" ? "tel" : "text"}
+                                            value={billingAddressValues[field.key] ?? ""}
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
                     ))}
                   </div>
-
-                  {paymentMethod === "card" ? (
-                    <div className="grid gap-5">
-                      <div className="grid gap-1">
-                        <h3 className="text-lg font-semibold text-neutral-950">Add a New Card</h3>
-                        <p className="text-sm font-medium text-neutral-500">Card details stay in page state only.</p>
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <CheckoutInput
-                          autoComplete="cc-name"
-                          error={cardTouched.cardholderName || cardErrors.cardholderName ? cardErrors.cardholderName : ""}
-                          id="checkout-cardholder-name"
-                          label="Cardholder name"
-                          onBlur={() => markCardTouched("cardholderName")}
-                          onChange={(value) => updateCardValue("cardholderName", value)}
-                          required
-                          value={cardValues.cardholderName}
-                        />
-                        <CheckoutInput
-                          autoComplete="cc-number"
-                          error={cardTouched.cardNumber || cardErrors.cardNumber ? cardErrors.cardNumber : ""}
-                          id="checkout-card-number"
-                          inputMode="numeric"
-                          label="Card number"
-                          maxLength={23}
-                          onBlur={() => markCardTouched("cardNumber")}
-                          onChange={(value) => updateCardValue("cardNumber", value)}
-                          placeholder="4242 4242 4242 4242"
-                          required
-                          value={cardValues.cardNumber}
-                        />
-                        <CheckoutInput
-                          autoComplete="cc-exp"
-                          error={cardTouched.expiryDate || cardErrors.expiryDate ? cardErrors.expiryDate : ""}
-                          id="checkout-card-expiry"
-                          inputMode="numeric"
-                          label="Expiry date"
-                          maxLength={5}
-                          onBlur={() => markCardTouched("expiryDate")}
-                          onChange={(value) => updateCardValue("expiryDate", value)}
-                          placeholder="MM/YY"
-                          required
-                          value={cardValues.expiryDate}
-                        />
-                        <CheckoutInput
-                          autoComplete="cc-csc"
-                          error={cardTouched.cvv || cardErrors.cvv ? cardErrors.cvv : ""}
-                          id="checkout-card-cvv"
-                          inputMode="numeric"
-                          label="CVV"
-                          maxLength={4}
-                          onBlur={() => markCardTouched("cvv")}
-                          onChange={(value) => updateCardValue("cvv", value)}
-                          required
-                          type="password"
-                          value={cardValues.cvv}
-                        />
-                      </div>
-
-                      <label className="flex items-start gap-3 text-sm font-semibold text-neutral-700">
-                        <input
-                          checked={cardValues.billingSameAsShipping}
-                          className="mt-0.5 h-5 w-5 rounded border-neutral-300 accent-neutral-950"
-                          onChange={(event) => updateCardValue("billingSameAsShipping", event.target.checked)}
-                          type="checkbox"
-                        />
-                        <span>Billing address same as shipping address</span>
-                      </label>
-                    </div>
-                  ) : (
-                    <p className="text-sm font-semibold leading-6 text-neutral-600">
-                      Payment instructions will be shown after the order is created.
-                    </p>
-                  )}
                 </div>
               </SectionCard>
             </div>
