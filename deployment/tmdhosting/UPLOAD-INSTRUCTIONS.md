@@ -67,11 +67,31 @@ php artisan optimize:clear
 - `index.php` points to `/home/CPANEL_USERNAME/foodonlines-backend`.
 - Replace `CPANEL_USERNAME` with your real cPanel username before going live.
 
-## Included registration flow
+## Included public auth flow
 
-- API route: `POST /api/v1/auth/register`
+- API routes:
+  - `POST /api/v1/auth/register`
+  - `POST /api/v1/auth/login`
+  - `GET /api/v1/auth/me`
+  - `POST /api/v1/auth/logout`
 - Registration success email: enabled
 - Template: responsive HTML with FoodOnlines branding
+- Public email registration and login require the `user_api_tokens` table migration.
+- After uploading route/controller changes, always clear and rebuild route/config cache. A live `404` on `/api/v1/auth/login` means the deployed backend code or route cache is stale.
+
+## Auth verification commands
+
+Run after deploy from `/home/CPANEL_USERNAME/foodonlines-backend`:
+
+```bash
+php artisan migrate --force
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan route:list --path=api/v1/auth
+```
+
+Expected route list must include `auth/register`, `auth/login`, `auth/me`, and `auth/logout`.
 
 ## Exclusions
 

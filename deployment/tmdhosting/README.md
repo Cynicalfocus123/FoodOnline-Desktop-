@@ -26,6 +26,7 @@ Current workspace still mixes frontend and backend scaffold. For TMDHosting, dep
 5. Run Laravel setup:
    - `php artisan key:generate`
    - `php artisan migrate --force`
+   - `php artisan optimize:clear`
    - `php artisan config:cache`
    - `php artisan route:cache`
    - `php artisan view:cache`
@@ -34,9 +35,12 @@ Current workspace still mixes frontend and backend scaffold. For TMDHosting, dep
 8. Replace `public_html/.htaccess` with `deployment/tmdhosting/public_html/.htaccess`.
 9. If using cPanel Git deployment, adapt `deployment/tmdhosting/.cpanel.yml.example` into real root `.cpanel.yml`.
 
-## API entry
+## API entries
 
 - `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/auth/me`
+- `POST /api/v1/auth/logout`
 
 ## Example JSON payload
 
@@ -49,6 +53,7 @@ Current workspace still mixes frontend and backend scaffold. For TMDHosting, dep
   "contact_number": "+66 81 555 1234",
   "line_id": "alex.tan",
   "company_name": "FoodOnlines Supply Co",
+  "password": "Strongpass123",
   "registered_from": "website"
 }
 ```
@@ -56,7 +61,8 @@ Current workspace still mixes frontend and backend scaffold. For TMDHosting, dep
 ## Notes
 
 - Registration email uses `FRONTEND_URL` for CTA target.
-- Registration endpoint accepts optional `password`, but current frontend flow does not send one yet.
-- Current frontend store still posts to mock admin state. Later frontend wiring should map camelCase form keys into backend snake_case API keys.
+- Email registration requires `password`, stores a secure hash, creates a `user_api_tokens` bearer token, and returns the same session shape used by email login.
+- Current frontend maps camelCase form keys into backend snake_case API keys and persists returned bearer tokens for refresh-safe email sessions.
+- A live `404` from `/api/v1/auth/login` means the deployed backend code or route cache is stale. Re-upload current backend files, run migrations, and rebuild route/config cache.
 - Email send failure logs warning and does not block registration response.
 - Local preview route stays dev-only: `/dev/preview/emails/registration-success/{role}`.

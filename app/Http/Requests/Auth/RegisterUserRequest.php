@@ -107,10 +107,13 @@ class RegisterUserRequest extends FormRequest
             'role.in' => 'Select Customer, Supplier, or Partner.',
             'company_name.regex' => 'Use letters, numbers, spaces, and basic business punctuation only.',
             'contact_number.regex' => 'Enter a valid contact number with 7 to 15 digits.',
-            'email.email' => 'Enter a valid email address.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email address.',
+            'email.unique' => 'Email already exists.',
             'first_name.regex' => 'Use letters, numbers, spaces, apostrophes, periods, or hyphens only.',
             'last_name.regex' => 'Use letters, numbers, spaces, apostrophes, periods, or hyphens only.',
             'line_id.regex' => 'Use 3 to 40 letters, numbers, dots, underscores, hyphens, or @ only.',
+            'password.required' => 'Password is required.',
             'password.regex' => 'Password must include at least one letter and one number.',
         ];
     }

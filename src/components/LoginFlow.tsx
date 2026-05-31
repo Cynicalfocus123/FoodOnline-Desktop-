@@ -21,13 +21,18 @@ export function LoginFlow() {
     const cleanedEmail = normalizeUserEmail(email);
     const cleanedPassword = sanitizeUserPasswordInput(password, true);
 
+    if (!cleanedEmail) {
+      setFieldError("Email is required.");
+      return;
+    }
+
     if (!validateUserEmail(cleanedEmail)) {
-      setFieldError("Enter a valid email address.");
+      setFieldError("Invalid email address.");
       return;
     }
 
     if (!validateUserLoginPassword(cleanedPassword)) {
-      setFieldError("Enter your password.");
+      setFieldError("Password is required.");
       return;
     }
 

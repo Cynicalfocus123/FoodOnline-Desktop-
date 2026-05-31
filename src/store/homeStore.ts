@@ -15,6 +15,7 @@ import {
   validateSignupField,
   validateSignupRole,
 } from "../lib/security";
+import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 
 export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search";
 export type SignupStep = "role" | "form" | "complete";
@@ -116,8 +117,17 @@ type HomeState = {
 
 export const signupRoleOptions = signupRoles;
 
+type RegisterResponse = {
+  token?: string;
+  user?: ApiAuthenticatedUser;
+  data?: {
+    token?: string;
+    user?: ApiAuthenticatedUser;
+  };
+};
+
 async function submitSignupToBackend(selectedRole: SignupRoleKey, formValues: SignupFormValues) {
-  await apiRequest("/auth/register", {
+  return apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",
     body: toRegisterPayload(selectedRole, formValues),
   });
@@ -478,7 +488,13 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({ isSubmittingSignup: true, submissionError: null });
 
     try {
-      await submitSignupToBackend(selectedRole, cleanedValues);
+      const response = await submitSignupToBackend(selectedRole, cleanedValues);
+      const token = response.token ?? response.data?.token ?? null;
+      const user = response.user ?? response.data?.user;
+
+      if (user && token) {
+        usePublicAuthStore.getState().setAuthenticatedSession(user, token);
+      }
     } catch (error) {
       const backendFieldErrors = error instanceof ApiError ? mapRegisterFieldErrors(error) : {};
       const hasBackendFieldErrors = Object.values(backendFieldErrors).some(Boolean);

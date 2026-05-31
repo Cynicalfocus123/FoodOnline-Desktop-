@@ -29,4 +29,16 @@ class LoginUserRequest extends FormRequest
             'password' => ['required', 'string', 'min:1', 'max:72'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email address.',
+            'password.required' => 'Password is required.',
+        ];
+    }
 }

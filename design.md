@@ -39,6 +39,7 @@
 - `Frozen` now uses a dedicated 60-image real product set from `public/assets/frozen-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - Product cards now treat any real image loaded from a `public/assets/*-mockups/` folder as an expanded category packshot, so newer categories such as `Frozen`, `Vegan Foods`, `Organic & Healthy Living`, and `Chicken, Meat & Fish` render visibly on category grids without needing per-category UI allowlists.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
+- Email auth behavior update on 2026-05-31 keeps the existing login/register layouts, but improves production behavior behind them: email register now receives a real bearer token/user session response, stores that session through the same public auth store as login, and shows clearer required/invalid email/password messages. Phone-based checkout fallback behavior is unchanged.
 - Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.

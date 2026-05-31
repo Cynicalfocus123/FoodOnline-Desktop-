@@ -456,11 +456,11 @@
     ]
   },
   "tests": {
-    "latest_change": "dynamic checkout page",
+    "latest_change": "email auth production fix",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo."
+    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Live API smoke testing showed register reachable, while login/me returned 404 until the deployed Laravel backend routes/cache are refreshed."
   }
 }

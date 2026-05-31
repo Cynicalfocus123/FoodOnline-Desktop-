@@ -4,7 +4,7 @@ import { ApiError, apiRequest } from "../lib/apiClient";
 import { SignupRoleKey } from "../lib/registerSchema";
 import { genericUserAuthError, normalizeUserEmail, sanitizeUserPasswordInput } from "../lib/security";
 
-type ApiAuthenticatedUser = {
+export type ApiAuthenticatedUser = {
   id: number | string;
   account_type?: SignupRoleKey;
   company_name: string | null;
@@ -43,6 +43,7 @@ type PublicAuthState = {
   hydrateSession: () => Promise<void>;
   loginUser: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => Promise<void>;
+  setAuthenticatedSession: (user: ApiAuthenticatedUser, token: string) => void;
 };
 
 function isPhoneLikeIdentifier(value: string) {
@@ -195,6 +196,16 @@ export const usePublicAuthStore = create<PublicAuthState>()(
           isSubmittingLogin: false,
           isValidatingSession: false,
           token: null,
+        });
+      },
+      setAuthenticatedSession: (user, token) => {
+        set({
+          authError: null,
+          currentUser: toPublicSessionUser(user),
+          hasHydratedSession: true,
+          isSubmittingLogin: false,
+          isValidatingSession: false,
+          token,
         });
       },
     }),

@@ -6,15 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Resources\Auth\AuthenticatedUserResource;
 use App\Models\User;
-use App\Models\UserApiToken;
+use App\Services\Auth\UserAuthTokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 class LoginUserController extends Controller
 {
-    public function __invoke(LoginUserRequest $request): JsonResponse
+    public function __invoke(LoginUserRequest $request, UserAuthTokenService $tokenService): JsonResponse
     {
         $validated = $request->validated();
         $accountTypeColumn = Schema::hasColumn('users', 'account_type') ? 'account_type' : 'role';
@@ -30,14 +29,7 @@ class LoginUserController extends Controller
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
-        $plainToken = Str::random(80);
-
-        UserApiToken::query()->create([
-            'user_id' => $user->id,
-            'name' => 'public-frontend',
-            'token_hash' => hash('sha256', $plainToken),
-            'last_used_at' => now(),
-        ]);
+        $plainToken = $tokenService->createToken($user);
 
         return response()->json([
             'message' => 'Login successful.',

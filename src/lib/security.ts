@@ -88,7 +88,19 @@ export function validateSignupField<K extends keyof SignupFormValues>(
   formValues?: SignupFormValues,
 ) {
   if (!value) {
-    return requireValue ? "This field is required." : undefined;
+    if (!requireValue) {
+      return undefined;
+    }
+
+    switch (field) {
+      case "emailAddress":
+        return "Email is required.";
+      case "password":
+      case "confirmPassword":
+        return "Password is required.";
+      default:
+        return "This field is required.";
+    }
   }
 
   if (value.length > signupFieldLimits[field]) {
@@ -97,7 +109,7 @@ export function validateSignupField<K extends keyof SignupFormValues>(
 
   switch (field) {
     case "emailAddress":
-      return emailPattern.test(value) ? undefined : "Enter a valid email address.";
+      return emailPattern.test(value) ? undefined : "Invalid email address.";
     case "firstName":
     case "lastName":
       return personNamePattern.test(value)
