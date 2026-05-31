@@ -28,6 +28,9 @@
 - Search matching is case-insensitive and tolerant of spaces, hyphens, punctuation, and compact combined words. It checks product name, category, brand/provider, tags, badges, size/unit, and origin fields from `src/data/home.ts`.
 - Public search results use the existing `ProductCard` component in a responsive grid and keep the same open-product, add-to-cart, quantity, and favorite behavior as other public product surfaces.
 - Mobile search input keeps a minimum 16px font size and stable line-height so iOS Safari, Android Chrome, and in-app mobile browsers do not auto-zoom or distort the fixed header when the field is focused.
+- Promo overlay now fits inside the viewport on desktop, desktop-mobile browser widths, tablet, iOS, and Chrome. The welcome-offer modal uses max-height guards plus vertical scrolling instead of letting the popup art/body overflow and get visibly cropped on shorter screens.
+- Homepage splash hero uses the supplied YouTube embed `https://www.youtube.com/embed/siItG3lu1To` as a cover-style background iframe with muted autoplay, loop, inline playback, and hidden controls. The hero headline now reads `Global food and groceries delivered fast to your door`.
+- Promo overlay now renders above the fixed header and uses safe-area-aware viewport padding plus scroll containment, preventing the welcome-offer popup from being clipped by the header on desktop, desktop-mobile browser widths, tablet, iOS, Chrome, and short-height screens.
 - `Masala, Oil & More` now uses a dedicated 60-image real product set from `public/assets/masala-oil-more-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - `Sauces & Spreads` now uses a dedicated 60-image real product set from `public/assets/sauces-spreads-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
 - `Chicken, Meat & Fish` now uses a dedicated 60-image real product set from `public/assets/chicken-meat-fish-mockups`, with the first 15 images reserved for the homepage rail and all 60 used across the category grid without repeats.
@@ -330,6 +333,19 @@
 - Sweet Tooth direction: homepage uses the first 15 real candy images from `public/assets/sweet-tooth-mockups`; the category listing consumes all 60 copied real images so every product box on `#category/sweet-tooth` has a real image.
 - Image-fit direction: cards that use `sweet-tooth-mockups` now share the expanded cover-style media treatment used by the other real-image product categories.
 - Sweet Tooth ordering fix on 2026-05-25 reorders the candy asset pool so non-screenshot candy packshots come first and screenshot captures come later. This keeps the home rail and the top of the category page from showing repeated-looking screenshot images.
+
+## Checkout Design Update
+
+- Dynamic checkout page on 2026-05-31 replaces the placeholder `#checkout` view with a full grocery ecommerce checkout while preserving existing public header/search/footer, cart selection, auth session, and hash-safe route behavior.
+- Checkout structure now uses FoodOnlines rounded white card styling with green primary actions, orange section eyebrow labels, neutral borders, and dense grocery-commerce spacing. Desktop uses a main checkout column plus sticky right coupon/pricing summary; tablet and mobile stack cards in reading order.
+- Delivery address section includes `Use ZIP`, `Add new address`, selected-address preview, optional saved-address selection for signed-in sessions, and a dynamic country selector. Supported country forms are Thailand, Japan, Singapore, Taiwan, China, Philippines, Malaysia, Indonesia, and Hong Kong.
+- Dynamic address form behavior: country switching keeps values only when the same field key exists in both countries, clears irrelevant fields and errors, preserves natural spaces while typing, uses `tel`, text, postal-code-friendly input modes, shipping autocomplete tokens, accessible labels, required markers, and friendly field-level errors. Delivery note is always optional.
+- Cart item details section renders selected real cart items from shared cart state with product image, name, size/quantity metadata, quantity, unit price, line total, and sale badge when product discount data exists. Empty checkout keeps a friendly return-to-cart/continue-shopping state.
+- Payment section now uses selectable method cards for Credit / Debit Card, Cash on Delivery, Bank Transfer, PromptPay / Thai QR Payment, PayPal, Google Pay, Alipay, and Cash App. Credit card selection reveals cardholder, auto-spaced card number, `MM/YY` expiry, masked numeric CVV, and billing-same-as-shipping checkbox.
+- Payment safety direction: card data remains transient React component state only, is never persisted, and is not sent anywhere. Real charging must be enabled later through backend order creation plus PCI-compliant payment tokenization.
+- Coupon and pricing summary live together before the final buy action. Coupon UI supports apply/remove/success/error/loading states with a frontend-ready `WELCOME` placeholder, while pricing shows retail items, product discount, subtotal, coupon discount, delivery fee, taxes/VAT fallback, and final total.
+- Mobile checkout reserves bottom safe-area space and shows a sticky order total plus green Place Order button. This keeps the total and CTA visible on iOS Safari, Android Chrome, desktop-mobile browser widths, tablets, and small phones without covering lower content.
+- Production-readiness notes: no new dependencies, no global CSS changes, no backend route changes, no cart/auth rewiring. Backend TODOs remain for real coupon validation, order creation, delivery-rate calculation, saved-address persistence, and payment provider tokenization.
 
 ## Guardrails
 

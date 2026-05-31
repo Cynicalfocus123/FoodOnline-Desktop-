@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-05-26",
+    "updated_at": "2026-05-31",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -179,12 +179,67 @@
     },
     "checkout_page": {
       "file": "src/components/CheckoutPage.tsx",
-      "type": "responsive_placeholder",
+      "type": "production_ready_frontend_checkout",
       "sections": [
-        "shipping_address_placeholder",
-        "payment_method_placeholder",
-        "selected_order_summary"
-      ]
+        "delivery_address",
+        "dynamic_country_address_form",
+        "cart_item_details",
+        "payment_methods",
+        "credit_card_fields",
+        "coupon",
+        "pricing_summary",
+        "mobile_sticky_total",
+        "empty_checkout_state"
+      ],
+      "address_countries": [
+        "Thailand",
+        "Japan",
+        "Singapore",
+        "Taiwan",
+        "China",
+        "Philippines",
+        "Malaysia",
+        "Indonesia",
+        "Hong Kong"
+      ],
+      "address_behavior": {
+        "country_switch_preserves_shared_field_keys": true,
+        "irrelevant_fields_reset_on_country_change": true,
+        "delivery_note_optional": true,
+        "spaces_preserved_while_typing": true,
+        "phone_supports_spaces_and_international_numbers": true,
+        "postal_inputs_use_text_with_numeric_inputmode": true,
+        "field_level_validation": true,
+        "saved_address_ui_for_signed_in_session": true,
+        "guest_address_entry_allowed": true
+      },
+      "payment_behavior": {
+        "methods": [
+          "Credit / Debit Card",
+          "Cash on Delivery",
+          "Bank Transfer",
+          "PromptPay / Thai QR Payment",
+          "PayPal",
+          "Google Pay",
+          "Alipay",
+          "Cash App"
+        ],
+        "card_number_auto_spacing": true,
+        "expiry_format": "MM/YY",
+        "cvv_masked_numeric": true,
+        "billing_same_as_shipping_checkbox": true,
+        "raw_card_data_persisted": false,
+        "requires_backend_tokenization_before_real_charges": true
+      },
+      "pricing_behavior": {
+        "uses_selected_cart_items": true,
+        "shows_retail_subtotal": true,
+        "shows_discount": true,
+        "shows_coupon_discount": true,
+        "shows_delivery_fee": true,
+        "shows_tax_vat_fallback": true,
+        "final_total_visible_before_buy_button": true
+      }
     },
     "header_search": {
       "file": "src/components/Header.tsx",
@@ -205,6 +260,27 @@
         "open_product_detail_from_results",
         "responsive_grid_results",
         "friendly_empty_state"
+      ]
+    },
+    "promo_modal": {
+      "files": [
+        "src/components/PromoExperience.tsx",
+        "src/components/PromoModalDesktop.tsx",
+        "src/components/PromoModalMobile.tsx"
+      ],
+      "behaviors": [
+        "viewport_safe_max_height",
+        "scrollable_overlay_container",
+        "no_cropped_promo_box_on_short_screens"
+      ]
+    },
+    "hero_video": {
+      "file": "src/components/HeroSlider.tsx",
+      "behaviors": [
+        "youtube_background_embed",
+        "muted_autoplay_loop_inline_playback",
+        "cover_style_iframe_sizing",
+        "headline_global_food_and_groceries"
       ]
     },
     "header_cart": {
@@ -233,7 +309,8 @@
       "top_layout": "two_column",
       "gallery": "left",
       "purchase_panel": "sticky_right",
-      "similar_items": "horizontal_multi_card"
+      "similar_items": "horizontal_multi_card",
+      "checkout_page": "main_checkout_column_with_sticky_coupon_pricing_summary"
     },
     "desktop_mobile_browser": {
       "top_layout": "collapse_without_overflow",
@@ -241,14 +318,16 @@
       "reviews_modal": "resize_cleanly",
       "product_cards": "equal_width_and_height_scroll_row",
       "category_listing": "filter_drawer_no_clipping",
-      "cart_page": "summary_stacks_under_items"
+      "cart_page": "summary_stacks_under_items",
+      "checkout_page": "stacked_cards_with_safe_area_sticky_total"
     },
     "tablet": {
       "top_layout": "two_column_if_space_else_stack",
       "controls": "touch_friendly",
       "product_cards": "equal_width_and_height_scroll_row",
       "category_listing": "three_column_grid",
-      "cart_page": "two_column_if_room_else_stack"
+      "cart_page": "two_column_if_room_else_stack",
+      "checkout_page": "stacked_or_two_column_sections_without_horizontal_overflow"
     },
     "mobile": {
       "top_layout": "stacked",
@@ -256,7 +335,8 @@
       "reviews_view": "bottom_sheet_style",
       "product_cards": "equal_width_and_height_scroll_row",
       "category_listing": "two_column_grid_with_filter_drawer",
-      "cart_page": "vertical_list_sticky_checkout_bar"
+      "cart_page": "vertical_list_sticky_checkout_bar",
+      "checkout_page": "single_column_cards_safe_area_sticky_order_total"
     }
   },
   "data_bindings": {
@@ -373,10 +453,11 @@
     ]
   },
   "tests": {
+    "latest_change": "dynamic checkout page",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "git_commit_hash": "3dd965b"
+    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo."
   }
 }
