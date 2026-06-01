@@ -535,3 +535,18 @@
   - `design.json`
 - Removed the signed-in account summary block from the homepage. Logged-in users now remain on the normal storefront homepage, with account identity shown only in the header account control/dropdown.
 - Removed the extra homepage logout button that lived inside the old account summary panel.
+
+## Promo Modal Viewport Centering Fix (2026-06-02)
+
+- Files changed:
+  - `src/components/PromoExperience.tsx`
+  - `src/components/PromoModalDesktop.tsx`
+  - `src/components/PromoModalMobile.tsx`
+  - `src/components/PromoStickyBar.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Welcome promo overlay now uses `z-[1800]` so the fixed header/search cannot cover or crop the modal on desktop, desktop-mobile, iOS Safari, Android Chrome, or tablet.
+- Promo overlay now has its own vertical scroll container with safe-area top/bottom padding and centers the modal inside the available viewport.
+- Desktop and mobile promo cards now use viewport-safe `max-height` plus internal scrolling so the top art, code copy, benefits, and Copy Code button stay reachable on short screens.
+- Sticky promo bar bottom offset now includes `env(safe-area-inset-bottom)` so mobile browser chrome does not cut it off.

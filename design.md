@@ -498,6 +498,13 @@
 - Removed the old signed-in homepage account panel. After login, the home page continues to show hero, categories, and product sections only.
 - User account presence is represented by the existing header account button/dropdown, with no duplicate account card or logout button in the page body.
 
+### Promo Modal Viewport Centering Fix (2026-06-02)
+
+- The welcome promo modal now renders above the fixed header/search layer so the header cannot cut off the coupon art or title.
+- Promo overlay layout uses safe-area-aware vertical padding and an internal scroll container, keeping the card centered when it fits and scrollable when the device/browser height is short.
+- Desktop and mobile promo cards have viewport-safe max heights with internal scrolling so the Copy Code button remains reachable on desktop, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, Chrome desktop, tablet, and narrow responsive views.
+- Sticky promo bar uses safe-area bottom offset to avoid being clipped by phone browser navigation controls.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

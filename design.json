@@ -450,8 +450,12 @@
       "behaviors": [
         "viewport_safe_max_height",
         "scrollable_overlay_container",
-        "no_cropped_promo_box_on_short_screens"
-      ]
+        "no_cropped_promo_box_on_short_screens",
+        "overlay_above_fixed_header",
+        "safe_area_padding",
+        "internal_modal_scroll"
+      ],
+      "z_index": 1800
     },
     "hero_video": {
       "file": "src/components/HeroSlider.tsx",

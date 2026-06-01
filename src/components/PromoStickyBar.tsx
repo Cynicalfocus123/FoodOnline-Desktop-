@@ -21,7 +21,7 @@ export function PromoStickyBar({ onOpen }: PromoStickyBarProps) {
   return (
     <button
       aria-label="Open welcome promotion"
-      className="fixed bottom-4 left-1/2 z-[70] flex w-[calc(100%-24px)] max-w-[640px] -translate-x-1/2 items-center gap-3 rounded-[22px] border border-white/15 bg-[linear-gradient(90deg,rgba(10,13,16,0.96),rgba(23,26,31,0.94))] px-3 py-3 text-left shadow-[0_20px_54px_rgba(15,23,42,0.34)] backdrop-blur-2xl transition hover:bg-[linear-gradient(90deg,rgba(10,13,16,0.98),rgba(23,26,31,0.97))] sm:bottom-6 sm:w-[calc(100%-48px)] sm:gap-5 sm:px-5"
+      className="fixed bottom-[calc(1rem_+_env(safe-area-inset-bottom))] left-1/2 z-[70] flex w-[calc(100%-24px)] max-w-[640px] -translate-x-1/2 items-center gap-3 rounded-[22px] border border-white/15 bg-[linear-gradient(90deg,rgba(10,13,16,0.96),rgba(23,26,31,0.94))] px-3 py-3 text-left shadow-[0_20px_54px_rgba(15,23,42,0.34)] backdrop-blur-2xl transition hover:bg-[linear-gradient(90deg,rgba(10,13,16,0.98),rgba(23,26,31,0.97))] sm:bottom-[calc(1.5rem_+_env(safe-area-inset-bottom))] sm:w-[calc(100%-48px)] sm:gap-5 sm:px-5"
       onClick={onOpen}
       type="button"
     >

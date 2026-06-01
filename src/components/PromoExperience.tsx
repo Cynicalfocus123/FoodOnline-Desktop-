@@ -70,7 +70,7 @@ export function PromoExperience() {
       <PromoStickyBar onOpen={handleOpen} />
 
       <div
-        className={`fixed inset-0 z-[80] transition ${isModalOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[1800] transition ${isModalOpen ? "pointer-events-auto" : "pointer-events-none"}`}
         aria-hidden={!isModalOpen}
       >
         <button
@@ -82,9 +82,9 @@ export function PromoExperience() {
           type="button"
         />
 
-        <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4 md:p-6">
+        <div className="absolute inset-0 overflow-y-auto overscroll-contain px-3 py-[calc(1rem_+_env(safe-area-inset-top))] sm:px-4 md:px-6">
           <div
-            className={`flex w-full justify-center transition duration-300 ${
+            className={`flex min-h-full w-full items-center justify-center transition duration-300 ${
               isModalOpen ? "translate-y-0 opacity-100 scale-100" : "translate-y-6 opacity-0 scale-95"
             }`}
           >

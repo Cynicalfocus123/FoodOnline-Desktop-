@@ -24,7 +24,7 @@ function MobileBenefitIcon({ index }: { index: number }) {
 
 export function PromoModalMobile({ copyLabel, hasCopied, onClose, onCopy }: PromoModalMobileProps) {
   return (
-    <div className="w-full max-w-[400px] overflow-hidden rounded-[24px] bg-white shadow-[0_28px_80px_rgba(15,23,42,0.26)] md:hidden">
+    <div className="max-h-[calc(100dvh_-_32px_-_env(safe-area-inset-top)_-_env(safe-area-inset-bottom))] w-full max-w-[400px] overflow-y-auto rounded-[24px] bg-white shadow-[0_28px_80px_rgba(15,23,42,0.26)] md:hidden">
       <div className="relative overflow-hidden bg-[linear-gradient(180deg,#ffd4ea_0%,#ffe5f3_40%,#fff5fb_100%)] px-4 pb-0 pt-4">
         <button
           aria-label="Dismiss promotion"

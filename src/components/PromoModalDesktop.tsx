@@ -14,7 +14,7 @@ const desktopBenefitItems = [
 
 export function PromoModalDesktop({ copyLabel, hasCopied, onClose, onCopy }: PromoModalDesktopProps) {
   return (
-    <div className="hidden w-full max-w-[460px] overflow-hidden rounded-[22px] bg-white shadow-[0_28px_80px_rgba(15,23,42,0.28)] md:block lg:max-w-[500px]">
+    <div className="hidden max-h-[calc(100dvh_-_32px_-_env(safe-area-inset-top)_-_env(safe-area-inset-bottom))] w-full max-w-[460px] overflow-y-auto rounded-[22px] bg-white shadow-[0_28px_80px_rgba(15,23,42,0.28)] md:block lg:max-w-[500px]">
       <div className="relative overflow-hidden bg-[linear-gradient(180deg,#ffd3ea_0%,#ffe9f5_32%,#fef7fb_100%)] px-6 pb-3 pt-5">
         <button
           aria-label="Dismiss promotion"
