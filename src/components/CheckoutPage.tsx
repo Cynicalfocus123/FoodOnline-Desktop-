@@ -762,7 +762,8 @@ export function CheckoutPage() {
   const activeAddressConfig = addressConfigs[addressCountry];
   const activeBillingAddressConfig = addressConfigs[billingCountry];
   const selectedSavedAddress = savedAddresses.find((address) => address.id === selectedAddressId) ?? null;
-  const selectedAddress = selectedSavedAddress ?? (checkoutAddress?.id === selectedAddressId ? checkoutAddress : null);
+  const selectedAddress = selectedSavedAddress ?? checkoutAddress ?? savedAddresses[0] ?? null;
+  const otherSavedAddresses = savedAddresses.filter((address) => address.id !== selectedAddress?.id);
   const addressValidation = validateAddress(addressValues, activeAddressConfig);
   const isAddressReady = selectedAddress ? true : Object.keys(addressValidation).length === 0;
   const cardValidation = validateCardForm(cardValues);
@@ -1143,11 +1144,11 @@ export function CheckoutPage() {
                     </div>
                   ) : null}
 
-                  {savedAddresses.length ? (
+                  {otherSavedAddresses.length ? (
                     <div className="grid gap-3">
                       <p className="text-sm font-black text-neutral-950">Saved addresses</p>
                       <div className="grid gap-3 md:grid-cols-2">
-                        {savedAddresses.map((address) => {
+                        {otherSavedAddresses.map((address) => {
                           const isSelected = selectedAddressId === address.id;
                           return (
                             <button
