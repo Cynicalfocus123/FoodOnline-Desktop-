@@ -13,8 +13,8 @@ export function LoginFlow() {
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
   const checkoutLoginWithIdentifier = usePublicAuthStore((state) => state.checkoutLoginWithIdentifier);
   const loginUser = usePublicAuthStore((state) => state.loginUser);
-  const backToHome = useHomeStore((state) => state.backToHome);
   const openSignup = useHomeStore((state) => state.openSignup);
+  const returnAfterAuth = useHomeStore((state) => state.returnAfterAuth);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [identifierMode, setIdentifierMode] = useState<LoginIdentifierMode>("email");
@@ -56,7 +56,7 @@ export function LoginFlow() {
         ? await checkoutLoginWithIdentifier(cleanedPhoneNumber, cleanedPassword)
         : await loginUser(cleanedEmail, cleanedPassword);
     if (success) {
-      backToHome();
+      returnAfterAuth();
     }
   }
 

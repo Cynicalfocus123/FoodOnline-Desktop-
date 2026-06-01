@@ -233,6 +233,9 @@
         "Hong Kong"
       ],
       "address_behavior": {
+        "add_new_address_opens_blank_form": true,
+        "add_new_address_clears_selected_saved_address": true,
+        "add_new_address_resets_errors_and_touched_state": true,
         "country_switch_preserves_shared_field_keys": true,
         "irrelevant_fields_reset_on_country_change": true,
         "delivery_note_optional": true,
@@ -240,6 +243,7 @@
         "phone_supports_spaces_and_international_numbers": true,
         "postal_inputs_use_text_with_numeric_inputmode": true,
         "field_level_validation": true,
+        "only_country_specific_mandatory_fields_block_save": true,
         "saved_address_ui_for_signed_in_session": true,
         "guest_address_entry_allowed": true
       },
@@ -286,7 +290,9 @@
         "camera_icon_removed",
         "submit_routes_to_search_results",
         "mobile_font_size_16px_minimum",
-        "focus_without_mobile_browser_zoom"
+        "focus_without_mobile_browser_zoom",
+        "no_multiple_green_nav_items",
+        "only_current_mapped_nav_item_highlighted"
       ]
     },
     "search_results_page": {
@@ -490,11 +496,11 @@
     ]
   },
   "tests": {
-    "latest_change": "phone country-code selector for login and register",
+    "latest_change": "checkout address reset and nav highlight cleanup",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"
     ],
-    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Live API smoke testing showed register reachable, while login/me returned 404 until the deployed Laravel backend routes/cache are refreshed."
+    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Live API smoke testing previously showed email register reachable, while login/me returned 404 until the deployed Laravel backend routes/cache are refreshed. No real phone SMS verification backend was found in this workspace."
   }
 }

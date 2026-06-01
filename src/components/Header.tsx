@@ -174,6 +174,17 @@ export function Header() {
     () => languageOptions.find((language) => language.code === selectedLanguageCode) ?? languageOptions[0],
     [selectedLanguageCode],
   );
+  const activeNavLabel = useMemo(() => {
+    if (siteView === "home") {
+      return "Home";
+    }
+
+    if (siteView === "product" || siteView === "category" || siteView === "search") {
+      return "Products";
+    }
+
+    return null;
+  }, [siteView]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -339,7 +350,7 @@ export function Header() {
               {navItems.map((item) => (
                 <a
                   className={`inline-flex shrink-0 items-center gap-1.5 transition hover:text-leaf-600 ${
-                    item.accent === "leaf" ? "text-leaf-500" : "text-neutral-800"
+                    activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"
                   }`}
                   href={item.href}
                   key={item.label}
@@ -528,7 +539,9 @@ export function Header() {
             <div className="mx-auto flex max-w-7xl flex-col gap-2">
               {navItems.map((item) => (
                 <a
-                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                  className={`rounded-2xl px-4 py-3 text-sm font-semibold transition hover:bg-neutral-50 hover:text-leaf-600 ${
+                    activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"
+                  }`}
                   href={item.href}
                   key={item.label}
                   onClick={(event) => handleNavClick(item.label, event)}

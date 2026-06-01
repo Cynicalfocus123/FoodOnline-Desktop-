@@ -20,6 +20,27 @@ import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search";
 export type SignupStep = "role" | "form" | "complete";
 
+function readAuthReturnRoute(state: Pick<HomeState, "siteView" | "selectedProductId" | "selectedCategorySlug" | "searchQuery" | "authReturnRoute">) {
+  if (state.authReturnRoute) {
+    return state.authReturnRoute;
+  }
+
+  switch (state.siteView) {
+    case "product":
+      return state.selectedProductId ? `product/${state.selectedProductId}` : null;
+    case "category":
+      return state.selectedCategorySlug ? `category/${state.selectedCategorySlug}` : null;
+    case "search":
+      return state.searchQuery ? `search/${encodeURIComponent(state.searchQuery)}` : null;
+    case "cart":
+      return "cart";
+    case "checkout":
+      return "checkout";
+    default:
+      return null;
+  }
+}
+
 function safeDecodeRouteSegment(value: string) {
   try {
     return decodeURIComponent(value);
@@ -85,6 +106,7 @@ type HomeState = {
   selectedZipCode: string;
   searchInputValue: string;
   searchQuery: string;
+  authReturnRoute: string | null;
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
   completedSubmission: ReturnType<typeof createSignupSubmission> | null;
@@ -98,6 +120,7 @@ type HomeState = {
   openCheckout: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
+  returnAfterAuth: () => void;
   syncRouteFromHash: (hash: string) => void;
   setSearchInputValue: (value: string) => void;
   setCartQuantity: (productId: string, quantity: number) => void;
@@ -159,15 +182,17 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedZipCode: "91789",
   searchInputValue: "",
   searchQuery: "",
+  authReturnRoute: null,
   ...getBlankSignupState(),
   completedSubmission: null,
   submissionError: null,
   isSubmittingSignup: false,
   openSignup: () =>
-    set(() => {
+    set((state) => {
       writeRouteHash(null);
       return {
         siteView: "signup",
+        authReturnRoute: readAuthReturnRoute(state),
         signupStep: "role",
         selectedRole: null,
         selectedProductId: null,
@@ -179,10 +204,11 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       };
     }),
   openLogin: () =>
-    set(() => {
+    set((state) => {
       writeRouteHash(null);
       return {
         siteView: "login",
+        authReturnRoute: readAuthReturnRoute(state),
         selectedProductId: null,
         selectedCategorySlug: null,
         submissionError: null,
@@ -262,6 +288,18 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  returnAfterAuth: () => {
+    const authReturnRoute = get().authReturnRoute;
+
+    if (!authReturnRoute) {
+      get().backToHome();
+      return;
+    }
+
+    writeRouteHash(authReturnRoute);
+    get().syncRouteFromHash(`#${authReturnRoute}`);
+    set({ authReturnRoute: null });
+  },
   syncRouteFromHash: (hash) =>
     set((state) => {
       const productId = readProductIdFromHash(hash);
@@ -270,6 +308,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (productId) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "product",
           selectedProductId: productId,
           selectedCategorySlug: state.selectedCategorySlug,
@@ -278,6 +317,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (categorySlug) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "category",
           selectedCategorySlug: categorySlug,
           selectedProductId: null,
@@ -286,6 +326,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (searchQuery) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "search",
           searchInputValue: searchQuery,
           searchQuery,
@@ -296,6 +337,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (isCheckoutHash(hash)) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "checkout",
           selectedProductId: null,
           selectedCategorySlug: null,
@@ -304,6 +346,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (isCartHash(hash)) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "cart",
           selectedProductId: null,
           selectedCategorySlug: null,
@@ -318,6 +361,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "checkout"
       ) {
         return {
+          authReturnRoute: state.authReturnRoute,
           siteView: "home",
           selectedProductId: null,
           selectedCategorySlug: null,
