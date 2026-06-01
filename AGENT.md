@@ -562,3 +562,17 @@
 - Removed `About FoodOnlines` and account `ID` rows from the main My Account page.
 - Removed the hidden `about` account route from the account section type/hash parser so users cannot land on an unused account subpage.
 - Account page row clicks now route through a shared helper that scrolls the account panel into the center of the viewport after section changes, covering Orders, Saved items, Buy again, Coupons, Refer a friend, Settings, Language, and Back navigation on mobile, desktop-mobile, tablet, Safari, Chrome, iOS, and Android.
+
+## Account Logout + Checkout CTA Scroll Fix (2026-06-02)
+
+- Files changed:
+  - `src/components/AccountPage.tsx`
+  - `src/components/CheckoutPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Main My Account `Log out` now signs out and opens the centered login/register flow instead of leaving the user at the bottom of the account page.
+- Checkout address save now restores the delivery-address section into view after `Use this address`, so users remain near the address area they were editing instead of being dropped near the totals.
+- Removed the duplicate static pricing-summary Place Order button. Checkout now keeps a single fixed safe-area-aware bottom order-total/Place Order bar across desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, and narrow responsive views.
+- Checks run: `cmd /c npx tsc --noEmit`, `git diff --check`, and `cmd /c npm run build`.
+- Deployment note: no backend routes, database migrations, auth endpoints, or payment provider code changed in this pass.

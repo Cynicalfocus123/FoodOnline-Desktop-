@@ -159,7 +159,8 @@
         "account_section_navigation_resets_scroll": true,
         "account_section_navigation_centers_panel": true,
         "about_and_account_id_rows_removed": true,
-        "logout_site_pill_removed": true
+        "logout_site_pill_removed": true,
+        "logout_opens_login_register_flow": true
       },
       "settings_sections": [
         "Address book",
@@ -378,7 +379,8 @@
         "field_level_validation": true,
         "only_country_specific_mandatory_fields_block_save": true,
         "saved_address_ui_for_signed_in_session": true,
-        "guest_address_entry_allowed": true
+        "guest_address_entry_allowed": true,
+        "save_address_scrolls_delivery_section_into_view": true
       },
       "payment_behavior": {
         "method_presentation": "compact_aligned_radio_rows_with_small_icon_or_logo_tiles",
@@ -412,7 +414,9 @@
         "shows_coupon_discount": true,
         "shows_delivery_fee": true,
         "shows_tax_vat_fallback": true,
-        "final_total_visible_before_buy_button": true
+        "final_total_visible_before_buy_button": true,
+        "single_fixed_bottom_place_order_bar": true,
+        "static_pricing_summary_cta_removed": true
       }
     },
     "header_search": {

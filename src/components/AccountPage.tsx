@@ -290,6 +290,14 @@ export function AccountPage() {
     window.setTimeout(scrollAccountPanelIntoView, 0);
   }
 
+  async function handleAccountLogout() {
+    await logoutUser();
+    openLogin();
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }, 0);
+  }
+
   if (!currentUser) {
     return (
       <section className="bg-neutral-50 px-4 pb-16 pt-[140px] sm:px-6 sm:pt-[154px] lg:pt-[162px]">
@@ -742,7 +750,7 @@ export function AccountPage() {
 
                 <button
                   className="mx-auto mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-8 text-lg font-semibold text-neutral-950 transition hover:bg-neutral-100"
-                  onClick={() => void logoutUser()}
+                  onClick={() => void handleAccountLogout()}
                   type="button"
                 >
                   Log out

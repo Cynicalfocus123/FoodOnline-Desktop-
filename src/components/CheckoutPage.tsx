@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type InputHTMLAttributes, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { formatPrice, getProductById, type ProductItem } from "../data/home";
 import { apiRequest } from "../lib/apiClient";
 import { useHomeStore } from "../store/homeStore";
@@ -749,6 +749,7 @@ export function CheckoutPage() {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [checkoutNotice, setCheckoutNotice] = useState<string | null>(null);
+  const deliverySectionReference = useRef<HTMLDivElement | null>(null);
 
   const selectedItems = useMemo<CheckoutLineItem[]>(
     () =>
@@ -1003,6 +1004,9 @@ export function CheckoutPage() {
     setSelectedAddressId(nextAddress.id);
     setIsAddressFormOpen(false);
     setAddressFormRestoreAddress(null);
+    window.setTimeout(() => {
+      deliverySectionReference.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 0);
 
     if (currentUser && saveAddressForFuture) {
       setSavedAddresses((current) => [nextAddress, ...current.filter((address) => address.summary !== nextAddress.summary)].slice(0, 4));
@@ -1168,7 +1172,7 @@ export function CheckoutPage() {
 
   return (
     <>
-      <section className="bg-[#fcfcfd] px-4 pb-[calc(190px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px] xl:pb-16">
+      <section className="bg-[#fcfcfd] px-4 pb-[calc(190px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
         <div className="mx-auto max-w-[1480px]">
           <div className="mb-6 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
             <div className="grid gap-2">
@@ -1186,26 +1190,27 @@ export function CheckoutPage() {
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_390px]">
             <div className="grid gap-6">
-              <SectionCard eyebrow="1. Shipping info" title="Delivery address">
-                <div className="grid gap-4">
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <button
-                      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-black text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
-                      onClick={handleUseCurrentZip}
-                      type="button"
-                    >
-                      <LocationIcon />
-                      Use ZIP {selectedZipCode || "91789"}
-                    </button>
-                    <button
-                      className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-5 text-sm font-black text-white transition hover:bg-neutral-800 sm:flex-none"
-                      onClick={openBlankAddressForm}
-                      type="button"
-                    >
-                      <PlusIcon />
-                      Add new address
-                    </button>
-                  </div>
+              <div ref={deliverySectionReference} className="scroll-mt-[150px] lg:scroll-mt-[170px]">
+                <SectionCard eyebrow="1. Shipping info" title="Delivery address">
+                  <div className="grid gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <button
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-black text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
+                        onClick={handleUseCurrentZip}
+                        type="button"
+                      >
+                        <LocationIcon />
+                        Use ZIP {selectedZipCode || "91789"}
+                      </button>
+                      <button
+                        className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-5 text-sm font-black text-white transition hover:bg-neutral-800 sm:flex-none"
+                        onClick={openBlankAddressForm}
+                        type="button"
+                      >
+                        <PlusIcon />
+                        Add new address
+                      </button>
+                    </div>
 
                   {selectedAddress ? (
                     <div className="grid gap-3 rounded-[22px] border border-leaf-200 bg-emerald-50/80 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -1339,7 +1344,8 @@ export function CheckoutPage() {
                     </form>
                   ) : null}
                 </div>
-              </SectionCard>
+                </SectionCard>
+              </div>
 
               <SectionCard eyebrow="2. Order details" title="Cart item details">
                 <div className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white">
@@ -1602,14 +1608,6 @@ export function CheckoutPage() {
                   </div>
                 </div>
 
-                <button
-                  className="mt-5 inline-flex min-h-14 w-full items-center justify-center rounded-[22px] bg-leaf-600 px-6 text-base font-black text-white shadow-[0_14px_34px_rgba(34,197,94,0.22)] transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:shadow-none"
-                  disabled={!canPlaceOrder || isPlacingOrder}
-                  onClick={handlePlaceOrder}
-                  type="button"
-                >
-                  {checkoutButtonLabel}
-                </button>
                 <p className="mt-3 min-h-[22px] text-sm font-semibold leading-6 text-neutral-500">
                   {canPlaceOrder ? "Total is ready at the bottom before checkout." : "Complete delivery address and payment details to place order."}
                 </p>
@@ -1624,7 +1622,7 @@ export function CheckoutPage() {
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-[1100] border-t border-neutral-200 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-12px_36px_rgba(15,23,42,0.12)] backdrop-blur-sm xl:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-[1100] border-t border-neutral-200 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-12px_36px_rgba(15,23,42,0.12)] backdrop-blur-sm">
         <div className="mx-auto flex max-w-[1480px] items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.14em] text-neutral-500">Order total</p>

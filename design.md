@@ -511,6 +511,12 @@
 - Account detail navigation now scrolls the account panel into the center of the viewport after changing sections, so taps on Coupons, Refer a friend, Buy again, Saved items, Orders, Settings, Language, or Back do not leave the user at the page bottom.
 - The hidden `about` account route was removed from the account route model to avoid unused account pages.
 
+### Account Logout + Checkout CTA Scroll Fix (2026-06-02)
+
+- Main My Account logout now routes to the login/register experience after the session is cleared, keeping the user at the top login flow instead of the bottom of the account page.
+- Checkout address save keeps the delivery-address card in view after an address is completed, preserving the user's context on mobile, desktop-mobile, tablet, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.
+- Checkout has one order action surface: the fixed safe-area-aware bottom order-total/Place Order bar. The extra static pricing-summary button was removed so duplicate payment actions do not appear.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
