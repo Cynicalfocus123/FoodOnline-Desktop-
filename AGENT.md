@@ -268,7 +268,7 @@
 - Checkout summary behavior: summary panel uses selected items only for subtotal, item count, shipping, and estimated total. If no items are selected, checkout CTA is disabled and instructs the user to select items first.
 - Payment and guarantee behavior: Service Guarantee area now uses standalone payment provider logos with no bordered tiles and green guarantee list items `Global & Secure Payments`, `Privacy Protection`, `FoodOnlines.com Purchase Protection`, and `Speedy Delivery`. No Yami/Yamibuy wording remains in cart guarantee copy.
 - Checkout auth behavior: green `Proceed to Checkout` button opens centered responsive checkout sign-in modal when user is logged out. Modal collects email or phone first, then password. Email uses existing live login store path; phone number uses safe frontend mock session fallback, then routes user to `#checkout`.
-- Account behavior: when a user is signed in, `AccountSummary` now shows saved-for-later count and sample saved item names so saved items surface under the user account area during the active session.
+- Account behavior update: the earlier homepage `AccountSummary` panel has since been removed; signed-in identity now belongs only in the header account control and the dedicated `#account` page.
 - Checkout page placeholder behavior: `#checkout` shows responsive shipping-address placeholder, payment-method placeholder, and selected cart summary. It is frontend-only and safe for later API/payment integration.
 - Responsive behavior for cart task: desktop uses two-column cart + sticky summary, desktop-mobile and tablet collapse summary under items cleanly, mobile keeps vertical items and sticky bottom checkout bar, payment logos wrap cleanly, and modal fits without horizontal overflow.
 - Build/test commands for this cart/checkout task: `cmd /c npx tsc --noEmit` and `cmd /c npm run build`.
@@ -524,3 +524,14 @@
   - `design.md`
 - Removed the `foodonlines.com` pill under the main account `Log out` action.
 - Account section changes now scroll the account panel back into view so mobile/desktop users do not land at the bottom of the page after opening My Account, Settings, Orders, Saved items, Coupons, Refer, About, or Language.
+
+## Homepage Account Summary Removal (2026-06-02)
+
+- Files changed:
+  - `src/App.tsx`
+  - removed `src/components/AccountSummary.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the signed-in account summary block from the homepage. Logged-in users now remain on the normal storefront homepage, with account identity shown only in the header account control/dropdown.
+- Removed the extra homepage logout button that lived inside the old account summary panel.

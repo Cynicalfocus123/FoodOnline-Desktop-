@@ -116,6 +116,8 @@
     },
     "account_page": {
       "file": "src/components/AccountPage.tsx",
+      "homepage_account_summary_removed": true,
+      "logged_in_identity_only_in_header": true,
       "desktop_behavior": {
         "logged_in_account_dropdown_in_header": true,
         "dropdown_trigger_has_avatar_name_and_rotating_chevron": true,

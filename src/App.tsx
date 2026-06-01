@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { AccountSummary } from "./components/AccountSummary";
 import { AccountPage } from "./components/AccountPage";
 import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
@@ -25,7 +24,6 @@ export default function App() {
   const syncRouteFromHash = useHomeStore((state) => state.syncRouteFromHash);
   const hydrateSession = usePublicAuthStore((state) => state.hydrateSession);
   const hasHydratedSession = usePublicAuthStore((state) => state.hasHydratedSession);
-  const currentUser = usePublicAuthStore((state) => state.currentUser);
   const token = usePublicAuthStore((state) => state.token);
 
   useEffect(() => {
@@ -58,7 +56,6 @@ export default function App() {
       {siteView === "home" ? (
         <div className="pt-[116px] sm:pt-[128px] lg:pt-[138px]">
           <HeroSlider />
-          {currentUser ? <AccountSummary /> : null}
           <CategoryStrip />
           <DealsGrid />
         </div>

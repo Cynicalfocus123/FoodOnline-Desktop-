@@ -48,7 +48,7 @@
 - Login forms keep email and phone as separate modes so the phone dial code selector appears only for number login and never prefixes email values.
 - Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint with the same payload used by the last known working desktop signup.
 - Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
-- Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.
+- Logged-in users stay on the public homepage storefront design and see account identity only in the header account control/dropdown. The homepage must not render a separate signed-in account summary block or extra logout panel.
 - Public page switches reset scroll position to the top for home, signup, and login so navigation never inherits the previous page's scroll depth.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
@@ -492,6 +492,11 @@
 
 - The decorative `foodonlines.com` pill under logout was removed from the main account page.
 - Account section navigation now resets the account panel into view when switching pages, preventing mobile and narrow desktop layouts from staying at the bottom after tapping My Account, Settings, or other account rows.
+
+### Homepage Account Summary Removal (2026-06-02)
+
+- Removed the old signed-in homepage account panel. After login, the home page continues to show hero, categories, and product sections only.
+- User account presence is represented by the existing header account button/dropdown, with no duplicate account card or logout button in the page body.
 
 ## Guardrails
 
