@@ -517,6 +517,11 @@
 - Checkout address save keeps the delivery-address card in view after an address is completed, preserving the user's context on mobile, desktop-mobile, tablet, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.
 - Checkout has one order action surface: the fixed safe-area-aware bottom order-total/Place Order bar. The extra static pricing-summary button was removed so duplicate payment actions do not appear.
 
+### Cart Static Checkout Button Removal (2026-06-02)
+
+- The cart order-summary/service-guarantee card no longer contains a static `Proceed to Checkout` button.
+- Cart checkout action now lives only in the fixed safe-area-aware bottom footer bar while users scroll up and down, keeping one clear checkout entry point on desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

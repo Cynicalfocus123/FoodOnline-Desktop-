@@ -576,3 +576,13 @@
 - Removed the duplicate static pricing-summary Place Order button. Checkout now keeps a single fixed safe-area-aware bottom order-total/Place Order bar across desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, and narrow responsive views.
 - Checks run: `cmd /c npx tsc --noEmit`, `git diff --check`, and `cmd /c npm run build`.
 - Deployment note: no backend routes, database migrations, auth endpoints, or payment provider code changed in this pass.
+
+## Cart Static Checkout Button Removal (2026-06-02)
+
+- Files changed:
+  - `src/components/CartPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the static `Proceed to Checkout` button from the cart order-summary/service-guarantee card.
+- Cart now uses only the fixed bottom footer checkout bar while scrolling, across desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.

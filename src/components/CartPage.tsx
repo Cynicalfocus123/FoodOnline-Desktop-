@@ -467,9 +467,6 @@ function SummaryPanel({
   couponCode,
   onCouponChange,
   onApplyCoupon,
-  checkoutDisabled,
-  checkoutLabel,
-  onCheckout,
 }: {
   itemCount: number;
   subtotal: number;
@@ -478,9 +475,6 @@ function SummaryPanel({
   couponCode: string;
   onCouponChange: (value: string) => void;
   onApplyCoupon: () => void;
-  checkoutDisabled: boolean;
-  checkoutLabel: string;
-  onCheckout: () => void;
 }) {
   return (
     <div className="grid gap-5 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)] sm:p-6 lg:sticky lg:top-[176px]">
@@ -539,14 +533,6 @@ function SummaryPanel({
         <GuaranteeList />
       </div>
 
-      <button
-        className="inline-flex min-h-14 items-center justify-center rounded-[22px] bg-leaf-600 px-6 text-base font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-        disabled={checkoutDisabled}
-        onClick={onCheckout}
-        type="button"
-      >
-        {checkoutLabel}
-      </button>
     </div>
   );
 }
@@ -702,7 +688,7 @@ export function CartPage() {
 
   return (
     <>
-      <section className="bg-[#fcfcfd] px-4 pb-[calc(150px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px] xl:pb-16">
+      <section className="bg-[#fcfcfd] px-4 pb-[calc(150px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
         <div className="mx-auto max-w-[1480px]">
           <div className="mb-6 flex flex-col gap-3">
             <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">Your Cart</h1>
@@ -872,12 +858,9 @@ export function CartPage() {
               </div>
 
               <SummaryPanel
-                checkoutDisabled={!selectedItems.length}
-                checkoutLabel={selectedItems.length ? "Proceed to Checkout" : "Select items to checkout"}
                 couponCode={couponCode}
                 itemCount={selectedItemCount}
                 onApplyCoupon={handleApplyCoupon}
-                onCheckout={openCheckoutFlow}
                 onCouponChange={setCouponCode}
                 shipping={shippingCost}
                 subtotal={selectedSubtotal}
@@ -893,7 +876,7 @@ export function CartPage() {
       </section>
 
       {hasActiveItems ? (
-        <div className="fixed inset-x-0 bottom-0 z-[1100] border-t border-neutral-200 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-12px_36px_rgba(15,23,42,0.12)] backdrop-blur-sm xl:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-[1100] border-t border-neutral-200 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-12px_36px_rgba(15,23,42,0.12)] backdrop-blur-sm">
           <div className="mx-auto flex max-w-[1480px] items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-neutral-500">{selectedItemCount} items selected</p>
