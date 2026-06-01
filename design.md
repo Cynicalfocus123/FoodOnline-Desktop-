@@ -483,6 +483,11 @@
   - each notification toggle is independent, whole-row tappable, blue when on, gray when off, and persists through close/reopen/refresh.
   - live API persistence is preferred; localStorage fallback keeps `foodonlines-notification-preferences-v1` ready for users when the backend preferences endpoint is unavailable.
 
+### Header Account Dropdown Link Update (2026-06-01)
+
+- Logged-in desktop account dropdown now starts with `My Account` before `My orders`.
+- `My Account` routes to the account overview hash `#account`, so the public URL resolves to `https://cynicalfocus123.github.io/FoodOnline-Desktop-/#account`.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

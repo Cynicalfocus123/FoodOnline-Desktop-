@@ -505,3 +505,13 @@
   - Added localStorage fallback key `foodonlines-notification-preferences-v1` so each independent toggle immediately updates, persists after closing/reopening the modal, and survives refresh if the backend endpoint is unavailable.
 - Checks for this pass:
   - `cmd /c npx tsc --noEmit`
+
+## Header Account Dropdown My Account Link (2026-06-01)
+
+- Files changed:
+  - `src/components/Header.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Logged-in desktop account dropdown now shows `My Account` as the first row before `My orders`.
+- Clicking `My Account` opens the account overview route at `#account`, matching `https://cynicalfocus123.github.io/FoodOnline-Desktop-/#account`.

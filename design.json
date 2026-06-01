@@ -122,6 +122,7 @@
         "dropdown_keeps_open_when_pointer_moves_button_to_menu": true,
         "dropdown_closes_on_outside_click_or_escape": true,
         "dropdown_items": [
+          "My Account",
           "My orders",
           "Saved items",
           "Address book",

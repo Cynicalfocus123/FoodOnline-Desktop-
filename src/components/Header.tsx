@@ -374,7 +374,7 @@ export function Header() {
     }
   }
 
-  function handleDesktopAccountItem(section: "orders" | "saved" | "refer" | "coupon" | "settings") {
+  function handleDesktopAccountItem(section: "overview" | "orders" | "saved" | "refer" | "coupon" | "settings") {
     setIsAccountMenuOpen(false);
     openAccount(section);
   }
@@ -524,6 +524,11 @@ export function Header() {
                 </button>
                 {isAccountMenuOpen ? (
                   <div className="absolute right-0 top-full z-[1150] mt-1.5 min-w-[272px] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("overview")} type="button">
+                      <UserIcon />
+                      <span className="flex-1">My Account</span>
+                      <RowChevronIcon />
+                    </button>
                     <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("orders")} type="button">
                       <OrdersIcon />
                       <span className="flex-1">My orders</span>
