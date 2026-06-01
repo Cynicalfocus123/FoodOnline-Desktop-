@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import signupBannerImage from "../../site video and content/shop  and order banner.png";
 import { SignupFormValues, getSignupRoleMeta, signupFieldLimits } from "../lib/registerSchema";
 import { signupRoleOptions, useHomeStore } from "../store/homeStore";
+import { PhoneNumberInput } from "./PhoneNumberInput";
 
 const formFields: Array<{
   field: keyof SignupFormValues;
@@ -103,6 +104,20 @@ export function SignupFlow() {
               {formFields.map(({ field, label, type, optional }) => {
                 const fieldError = fieldErrors[field];
 
+                if (field === "contactNumber") {
+                  return (
+                    <PhoneNumberInput
+                      error={fieldError}
+                      id={field}
+                      key={field}
+                      label={label}
+                      onChange={(value) => setFormValue(field, value)}
+                      required={!optional}
+                      value={formValues[field]}
+                    />
+                  );
+                }
+
                 return (
                   <label className="grid gap-2" htmlFor={field} key={field}>
                     <span className="text-sm font-bold text-neutral-700">{label}</span>
@@ -121,13 +136,11 @@ export function SignupFlow() {
                               ? "given-name"
                               : field === "lastName"
                                 ? "family-name"
-                                : field === "contactNumber"
-                                  ? "tel"
-                                  : field === "password"
+                                : field === "password"
+                                  ? "new-password"
+                                  : field === "confirmPassword"
                                     ? "new-password"
-                                    : field === "confirmPassword"
-                                      ? "new-password"
-                                      : "off"
+                                    : "off"
                         }
                         autoCapitalize={
                           field === "emailAddress" ||
@@ -145,7 +158,7 @@ export function SignupFlow() {
                             ? "off"
                             : undefined
                         }
-                        inputMode={field === "contactNumber" ? "tel" : field === "emailAddress" ? "email" : "text"}
+                        inputMode={field === "emailAddress" ? "email" : "text"}
                         maxLength={signupFieldLimits[field]}
                         onChange={(event) => setFormValue(field, event.target.value)}
                         required={!optional}

@@ -44,6 +44,8 @@
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
 - Signup and login password fields include compact eye toggles, preserving the current form layout.
+- Phone-number entry now uses a compact left-side country-code selector on register contact number, public phone login, and checkout phone login. The selector uses native mobile/desktop dropdown behavior for iOS Safari, Android Chrome, desktop Safari/Chrome, tablet, and narrow desktop-mobile browsers, and includes flags, country names, and dial codes for United States, United Kingdom, Turkey, plus all checkout shipping countries.
+- Login forms keep email and phone as separate modes so the phone dial code selector appears only for number login and never prefixes email values.
 - Signup is one responsive flow for desktop and mobile. The shared registration submit path posts JSON to the live Laravel endpoint with the same payload used by the last known working desktop signup.
 - Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
 - Logged-in users stay on the public homepage design and see a compact account summary block plus Logout state. Visitors see Login/Register entry points.

@@ -8,6 +8,7 @@ import {
 } from "../lib/security";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { PhoneNumberInput } from "./PhoneNumberInput";
 
 const FREE_SHIPPING_THRESHOLD = 49;
 const ESTIMATED_SHIPPING = 5.99;
@@ -32,6 +33,8 @@ type CartLineItem = {
   quantity: number;
   selected: boolean;
 };
+
+type CheckoutIdentifierMode = "email" | "phone";
 
 function Checkbox({
   checked,
@@ -253,11 +256,13 @@ function CheckoutAuthModal({
   isSubmitting,
   error,
   identifier,
+  identifierMode,
   password,
   step,
   isPasswordVisible,
   onClose,
   onIdentifierChange,
+  onIdentifierModeChange,
   onPasswordChange,
   onContinue,
   onBack,
@@ -267,11 +272,13 @@ function CheckoutAuthModal({
   isSubmitting: boolean;
   error: string | null;
   identifier: string;
+  identifierMode: CheckoutIdentifierMode;
   password: string;
   step: "identifier" | "password";
   isPasswordVisible: boolean;
   onClose: () => void;
   onIdentifierChange: (value: string) => void;
+  onIdentifierModeChange: (mode: CheckoutIdentifierMode) => void;
   onPasswordChange: (value: string) => void;
   onContinue: (event: FormEvent<HTMLFormElement>) => void;
   onBack: () => void;
@@ -306,19 +313,47 @@ function CheckoutAuthModal({
 
         <form className="mt-8 grid gap-4" onSubmit={onContinue}>
           {step === "identifier" ? (
-            <label className="grid gap-2" htmlFor="checkout-login-identifier">
-              <span className="text-sm font-bold text-neutral-700">Email or phone number</span>
-              <input
-                autoFocus
-                className="min-h-14 rounded-2xl border border-neutral-300 px-4 text-base font-semibold text-neutral-900 outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/15"
-                id="checkout-login-identifier"
-                inputMode="email"
-                onChange={(event) => onIdentifierChange(event.target.value)}
-                placeholder="name@email.com or 917-555-1234"
-                type="text"
-                value={identifier}
-              />
-            </label>
+            <div className="grid gap-3">
+              <div className="inline-grid grid-cols-2 rounded-2xl bg-neutral-100 p-1 text-sm font-black text-neutral-600">
+                {(["email", "phone"] as const).map((mode) => (
+                  <button
+                    className={`min-h-10 rounded-xl px-4 transition ${
+                      identifierMode === mode ? "bg-white text-neutral-950 shadow-sm" : "hover:text-neutral-950"
+                    }`}
+                    key={mode}
+                    onClick={() => onIdentifierModeChange(mode)}
+                    type="button"
+                  >
+                    {mode === "email" ? "Email" : "Phone"}
+                  </button>
+                ))}
+              </div>
+
+              {identifierMode === "phone" ? (
+                <PhoneNumberInput
+                  error={error ?? undefined}
+                  id="checkout-login-identifier"
+                  label="Phone number"
+                  onChange={onIdentifierChange}
+                  required
+                  value={identifier}
+                />
+              ) : (
+                <label className="grid gap-2" htmlFor="checkout-login-identifier">
+                  <span className="text-sm font-bold text-neutral-700">Email address</span>
+                  <input
+                    autoFocus
+                    className="min-h-14 rounded-2xl border border-neutral-300 px-4 text-base font-semibold text-neutral-900 outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/15"
+                    id="checkout-login-identifier"
+                    inputMode="email"
+                    onChange={(event) => onIdentifierChange(event.target.value)}
+                    placeholder="name@email.com"
+                    type="email"
+                    value={identifier}
+                  />
+                </label>
+              )}
+            </div>
           ) : (
             <>
               <div className="flex items-center justify-between gap-3 rounded-2xl bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
@@ -356,7 +391,9 @@ function CheckoutAuthModal({
             </>
           )}
 
-          {error ? <p className="text-sm font-semibold text-red-600">{error}</p> : null}
+          {error && (step !== "identifier" || identifierMode !== "phone") ? (
+            <p className="text-sm font-semibold text-red-600">{error}</p>
+          ) : null}
 
           <button
             className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-leaf-600 px-6 text-base font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
@@ -483,6 +520,7 @@ export function CartPage() {
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [isCheckoutAuthOpen, setIsCheckoutAuthOpen] = useState(false);
   const [authStep, setAuthStep] = useState<"identifier" | "password">("identifier");
+  const [identifierMode, setIdentifierMode] = useState<CheckoutIdentifierMode>("email");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
@@ -513,6 +551,7 @@ export function CartPage() {
 
   function resetAuthModal() {
     setAuthStep("identifier");
+    setIdentifierMode("email");
     setIdentifier("");
     setPassword("");
     setAuthError(null);
@@ -538,7 +577,11 @@ export function CartPage() {
   }
 
   function isValidIdentifier(value: string) {
-    return validateUserEmail(normalizeUserEmail(value)) || value.replace(/\D/g, "").length >= 7;
+    if (identifierMode === "phone") {
+      return value.replace(/\D/g, "").length >= 7;
+    }
+
+    return validateUserEmail(normalizeUserEmail(value));
   }
 
   async function handleCheckoutAuthSubmit(event: FormEvent<HTMLFormElement>) {
@@ -546,7 +589,7 @@ export function CartPage() {
 
     if (authStep === "identifier") {
       if (!isValidIdentifier(identifier.trim())) {
-        setAuthError("Enter a valid email address or phone number.");
+        setAuthError(identifierMode === "phone" ? "Enter a valid phone number." : "Enter a valid email address.");
         return;
       }
 
@@ -804,12 +847,18 @@ export function CartPage() {
           setIdentifier(value);
           setAuthError(null);
         }}
+        onIdentifierModeChange={(mode) => {
+          setIdentifierMode(mode);
+          setIdentifier("");
+          setAuthError(null);
+        }}
         onPasswordChange={(value) => {
           setPassword(value);
           setAuthError(null);
         }}
         onTogglePassword={() => setIsPasswordVisible((current) => !current)}
         password={password}
+        identifierMode={identifierMode}
         step={authStep}
       />
     </>

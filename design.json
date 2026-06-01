@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-05-31",
+    "updated_at": "2026-06-01",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -50,6 +50,35 @@
     "shortcut_row": {
       "file": "src/components/ShortcutRow.tsx",
       "rendered_on_homepage": false
+    },
+    "phone_number_input": {
+      "file": "src/components/PhoneNumberInput.tsx",
+      "used_by": [
+        "src/components/LoginFlow.tsx",
+        "src/components/SignupFlow.tsx",
+        "src/components/CartPage.tsx"
+      ],
+      "countries": [
+        "United States",
+        "United Kingdom",
+        "Turkey",
+        "Thailand",
+        "Japan",
+        "Singapore",
+        "Taiwan",
+        "China",
+        "Philippines",
+        "Malaysia",
+        "Indonesia",
+        "Hong Kong"
+      ],
+      "behavior": {
+        "left_side_country_code_dropdown": true,
+        "native_select_for_mobile_browser_reliability": true,
+        "options_show_flag_country_name_and_dial_code": true,
+        "email_and_phone_login_modes_separate": true,
+        "stored_phone_value_includes_selected_dial_code": true
+      }
     },
     "product_detail_page": {
       "file": "src/components/ProductDetailPage.tsx",
@@ -460,7 +489,7 @@
     ]
   },
   "tests": {
-    "latest_change": "checkout credit card billing address behavior",
+    "latest_change": "phone country-code selector for login and register",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build"

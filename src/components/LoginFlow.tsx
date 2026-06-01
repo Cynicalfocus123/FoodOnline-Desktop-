@@ -3,15 +3,21 @@ import signupBannerImage from "../../site video and content/shop  and order bann
 import { normalizeUserEmail, sanitizeUserPasswordInput, validateUserEmail, validateUserLoginPassword } from "../lib/security";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { PhoneNumberInput } from "./PhoneNumberInput";
+
+type LoginIdentifierMode = "email" | "phone";
 
 export function LoginFlow() {
   const authError = usePublicAuthStore((state) => state.authError);
   const clearAuthError = usePublicAuthStore((state) => state.clearAuthError);
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
+  const checkoutLoginWithIdentifier = usePublicAuthStore((state) => state.checkoutLoginWithIdentifier);
   const loginUser = usePublicAuthStore((state) => state.loginUser);
   const backToHome = useHomeStore((state) => state.backToHome);
   const openSignup = useHomeStore((state) => state.openSignup);
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [identifierMode, setIdentifierMode] = useState<LoginIdentifierMode>("email");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -19,15 +25,21 @@ export function LoginFlow() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const cleanedEmail = normalizeUserEmail(email);
+    const cleanedPhoneNumber = phoneNumber.trim();
     const cleanedPassword = sanitizeUserPasswordInput(password, true);
 
-    if (!cleanedEmail) {
+    if (identifierMode === "email" && !cleanedEmail) {
       setFieldError("Email is required.");
       return;
     }
 
-    if (!validateUserEmail(cleanedEmail)) {
+    if (identifierMode === "email" && !validateUserEmail(cleanedEmail)) {
       setFieldError("Invalid email address.");
+      return;
+    }
+
+    if (identifierMode === "phone" && cleanedPhoneNumber.replace(/\D/g, "").length < 7) {
+      setFieldError("Enter a valid phone number.");
       return;
     }
 
@@ -39,7 +51,10 @@ export function LoginFlow() {
     setFieldError(null);
     clearAuthError();
 
-    const success = await loginUser(cleanedEmail, cleanedPassword);
+    const success =
+      identifierMode === "phone"
+        ? await checkoutLoginWithIdentifier(cleanedPhoneNumber, cleanedPassword)
+        : await loginUser(cleanedEmail, cleanedPassword);
     if (success) {
       backToHome();
     }
@@ -66,18 +81,48 @@ export function LoginFlow() {
           </p>
 
           <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>
-            <label className="grid gap-2" htmlFor="login-email">
-              <span className="text-sm font-bold text-neutral-700">Email address</span>
-              <input
-                autoComplete="username"
-                className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
-                id="login-email"
-                inputMode="email"
-                onChange={(event) => setEmail(event.target.value)}
-                type="email"
-                value={email}
+            <div className="inline-grid grid-cols-2 rounded-md bg-neutral-100 p-1 text-sm font-black text-neutral-600">
+              {(["email", "phone"] as const).map((mode) => (
+                <button
+                  className={`min-h-10 rounded px-4 transition ${
+                    identifierMode === mode ? "bg-white text-ink shadow-sm" : "hover:text-ink"
+                  }`}
+                  key={mode}
+                  onClick={() => {
+                    setIdentifierMode(mode);
+                    setFieldError(null);
+                    clearAuthError();
+                  }}
+                  type="button"
+                >
+                  {mode === "email" ? "Email" : "Phone"}
+                </button>
+              ))}
+            </div>
+
+            {identifierMode === "phone" ? (
+              <PhoneNumberInput
+                error={fieldError?.toLowerCase().includes("phone") ? fieldError : undefined}
+                id="login-phone"
+                label="Phone number"
+                onChange={setPhoneNumber}
+                required
+                value={phoneNumber}
               />
-            </label>
+            ) : (
+              <label className="grid gap-2" htmlFor="login-email">
+                <span className="text-sm font-bold text-neutral-700">Email address</span>
+                <input
+                  autoComplete="username"
+                  className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                  id="login-email"
+                  inputMode="email"
+                  onChange={(event) => setEmail(event.target.value)}
+                  type="email"
+                  value={email}
+                />
+              </label>
+            )}
 
             <label className="grid gap-2" htmlFor="login-password">
               <span className="text-sm font-bold text-neutral-700">Password</span>
@@ -98,7 +143,9 @@ export function LoginFlow() {
               </div>
             </label>
 
-            {fieldError ? <p className="text-sm font-semibold text-red-600">{fieldError}</p> : null}
+            {fieldError && (identifierMode !== "phone" || !fieldError.toLowerCase().includes("phone")) ? (
+              <p className="text-sm font-semibold text-red-600">{fieldError}</p>
+            ) : null}
             {authError ? <p className="text-sm font-semibold text-red-600">{authError}</p> : null}
 
             <button
