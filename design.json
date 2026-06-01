@@ -44,6 +44,19 @@
       "path": "#search/:query",
       "view": "search",
       "refresh_safe": true
+    },
+    "account": {
+      "path": "#account[/section]",
+      "view": "account",
+      "refresh_safe": true,
+      "sections": [
+        "overview",
+        "orders",
+        "saved",
+        "refer",
+        "coupon",
+        "settings"
+      ]
     }
   },
   "components": {
@@ -97,6 +110,49 @@
         "phone_auth_has_resend_code_action": true,
         "phone_auth_returns_user_to_prior_route_when_available": true,
         "checkout_phone_auth_continues_into_checkout_after_verify": true
+      }
+    },
+    "account_page": {
+      "file": "src/components/AccountPage.tsx",
+      "desktop_behavior": {
+        "logged_in_account_dropdown_in_header": true,
+        "dropdown_items": [
+          "My orders",
+          "Saved items",
+          "Refer a friend",
+          "Coupon",
+          "Settings"
+        ]
+      },
+      "mobile_behavior": {
+        "profile_icon_opens_full_account_page_not_small_dropdown": true,
+        "top_my_orders_row": true,
+        "status_shortcuts": [
+          "Pending",
+          "Unshipped",
+          "Shipped",
+          "To Review",
+          "Returns"
+        ],
+        "account_rows": [
+          "Saved items",
+          "Refer a friend",
+          "Coupon",
+          "Settings"
+        ]
+      },
+      "settings_sections": [
+        "Address book",
+        "Payment methods",
+        "Notifications",
+        "Change password",
+        "Delete account"
+      ],
+      "backend_boundaries": {
+        "notification_preferences_use_live_api": true,
+        "address_book_use_live_api": true,
+        "payment_methods_use_live_api_masked_only": true,
+        "delete_account_requests_use_live_api": true
       }
     },
     "product_detail_page": {
@@ -517,12 +573,12 @@
     ]
   },
   "tests": {
-    "latest_change": "mock phone otp auth flow",
+    "latest_change": "logged-in account dropdown/mobile account page/settings backend flow",
     "commands": [
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build",
       "git diff --check"
     ],
-    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Email auth still targets the live Laravel API. Phone auth is now an intentional temporary mock OTP flow in the frontend until real SMS endpoints are added."
+    "verification_note": "Build and typecheck pass locally with the new account routes, account settings API calls, and admin delete-account request panel. PHP CLI is unavailable on this machine, so Laravel migration/cache commands must run on the live server terminal."
   }
 }

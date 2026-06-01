@@ -1,5 +1,6 @@
-import { useMemo, useState, type InputHTMLAttributes, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { formatPrice, getProductById, type ProductItem } from "../data/home";
+import { apiRequest } from "../lib/apiClient";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 
@@ -715,6 +716,7 @@ export function CheckoutPage() {
   const backToHome = useHomeStore((state) => state.backToHome);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
+  const token = usePublicAuthStore((state) => state.token);
 
   const [addressCountry, setAddressCountry] = useState<CountryKey>("thailand");
   const [addressValues, setAddressValues] = useState<AddressValues>({});
@@ -778,6 +780,56 @@ export function CheckoutPage() {
   const estimatedTotal = Math.max(0, subtotal + shipping + ESTIMATED_TAX - couponDiscount);
   const canPlaceOrder = selectedItems.length > 0 && isAddressReady && isPaymentReady;
   const checkoutButtonLabel = isPlacingOrder ? "Placing order..." : "Place Order";
+
+  useEffect(() => {
+    if (!currentUser || !token) {
+      return;
+    }
+
+    let isMounted = true;
+
+    void apiRequest<{
+      addresses: Array<{
+        id: number;
+        country_key: CountryKey;
+        address_values: AddressValues;
+        summary: string;
+        is_default: boolean;
+      }>;
+    }>("/account/addresses", { token })
+      .then((response) => {
+        if (!isMounted) {
+          return;
+        }
+
+        const mappedAddresses = (response.addresses ?? []).map((item) => ({
+          id: String(item.id),
+          country: item.country_key,
+          values: item.address_values ?? {},
+          summary: item.summary,
+        }));
+        setSavedAddresses(mappedAddresses);
+
+        const defaultAddress = (response.addresses ?? []).find((item) => item.is_default);
+        if (defaultAddress) {
+          setSelectedAddressId(String(defaultAddress.id));
+          setCheckoutAddress({
+            id: String(defaultAddress.id),
+            country: defaultAddress.country_key,
+            values: defaultAddress.address_values ?? {},
+            summary: defaultAddress.summary,
+          });
+          setAddressCountry(defaultAddress.country_key);
+          setAddressValues(defaultAddress.address_values ?? {});
+          setIsAddressFormOpen(false);
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser, token]);
 
   function updateAddressValue(field: AddressField, value: string) {
     setAddressValues((current) => ({
@@ -954,6 +1006,37 @@ export function CheckoutPage() {
 
     if (currentUser && saveAddressForFuture) {
       setSavedAddresses((current) => [nextAddress, ...current.filter((address) => address.summary !== nextAddress.summary)].slice(0, 4));
+
+      if (token) {
+        void apiRequest("/account/addresses", {
+          method: "POST",
+          token,
+          body: {
+            country_key: nextAddress.country,
+            address_values: nextAddress.values,
+            summary: nextAddress.summary,
+            is_default: savedAddresses.length === 0,
+          },
+        }).then(() =>
+          apiRequest<{
+            addresses: Array<{
+              id: number;
+              country_key: CountryKey;
+              address_values: AddressValues;
+              summary: string;
+              is_default: boolean;
+            }>;
+          }>("/account/addresses", { token }).then((response) => {
+            const nextSavedAddresses = (response.addresses ?? []).map((item) => ({
+              id: String(item.id),
+              country: item.country_key,
+              values: item.address_values ?? {},
+              summary: item.summary,
+            }));
+            setSavedAddresses(nextSavedAddresses);
+          }),
+        ).catch(() => undefined);
+      }
     }
 
     return true;

@@ -2,7 +2,7 @@ import { SignupFormValues, SignupRoleKey } from "./registerSchema";
 import { apiBaseUrl } from "./runtimeConfig";
 
 type ApiOptions = {
-  method?: "GET" | "POST" | "PUT";
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   token?: string | null;
   body?: unknown;
 };

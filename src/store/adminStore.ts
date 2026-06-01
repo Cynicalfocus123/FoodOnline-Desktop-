@@ -38,6 +38,32 @@ type DashboardStats = {
   active_users: number;
 };
 
+type ApiDeleteAccountRequest = {
+  id: number;
+  user_id: number;
+  user_name: string | null;
+  user_email: string | null;
+  user_phone: string | null;
+  reason: string;
+  other_reason: string | null;
+  status: "pending" | "reviewed" | "completed" | "cancelled";
+  requested_at: string | null;
+  reviewed_at: string | null;
+};
+
+export type AdminDeleteAccountRequest = {
+  id: number;
+  userId: number;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
+  reason: string;
+  otherReason: string;
+  status: "pending" | "reviewed" | "completed" | "cancelled";
+  requestedAt: string;
+  reviewedAt: string;
+};
+
 type AdminStore = {
   screen: AdminScreen;
   isAuthenticated: boolean;
@@ -54,9 +80,13 @@ type AdminStore = {
   stats: DashboardStats;
   lastLoginAt: string | null;
   isLoadingUsers: boolean;
+  deleteAccountRequests: AdminDeleteAccountRequest[];
+  isLoadingDeleteAccountRequests: boolean;
   fetchCurrentAdmin: () => Promise<boolean>;
   fetchUsers: (role?: SignupRoleKey) => Promise<void>;
   fetchStats: () => Promise<void>;
+  fetchDeleteAccountRequests: () => Promise<void>;
+  updateDeleteAccountRequestStatus: (requestId: number, status: AdminDeleteAccountRequest["status"]) => Promise<void>;
   logoutAdmin: () => Promise<void>;
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
@@ -115,6 +145,21 @@ function cleanError(error: unknown, fallback: string) {
   return fallback;
 }
 
+function toDeleteAccountRequest(item: ApiDeleteAccountRequest): AdminDeleteAccountRequest {
+  return {
+    id: item.id,
+    userId: item.user_id,
+    userName: item.user_name ?? "Unknown",
+    userEmail: item.user_email ?? "Not provided",
+    userPhone: item.user_phone ?? "Not provided",
+    reason: item.reason,
+    otherReason: item.other_reason ?? "",
+    status: item.status,
+    requestedAt: item.requested_at ?? "",
+    reviewedAt: item.reviewed_at ?? "",
+  };
+}
+
 export const useAdminStore = create<AdminStore>()(
   persist(
     (set, get) => ({
@@ -133,6 +178,8 @@ export const useAdminStore = create<AdminStore>()(
       stats: emptyStats,
       lastLoginAt: null,
       isLoadingUsers: false,
+      deleteAccountRequests: [],
+      isLoadingDeleteAccountRequests: false,
       fetchCurrentAdmin: async () => {
         const token = get().token;
 
@@ -194,6 +241,45 @@ export const useAdminStore = create<AdminStore>()(
           set({ stats: emptyStats });
         }
       },
+      fetchDeleteAccountRequests: async () => {
+        const token = get().token;
+
+        if (!token) {
+          return;
+        }
+
+        set({ isLoadingDeleteAccountRequests: true });
+        try {
+          const response = await apiRequest<{ delete_account_requests: ApiDeleteAccountRequest[] }>("/admin/delete-account-requests", {
+            token,
+          });
+          set({
+            deleteAccountRequests: (response.delete_account_requests ?? []).map(toDeleteAccountRequest),
+            isLoadingDeleteAccountRequests: false,
+          });
+        } catch {
+          set({
+            deleteAccountRequests: [],
+            isLoadingDeleteAccountRequests: false,
+          });
+        }
+      },
+      updateDeleteAccountRequestStatus: async (requestId, status) => {
+        const token = get().token;
+
+        if (!token) {
+          return;
+        }
+
+        await apiRequest(`/admin/delete-account-requests/${requestId}`, {
+          method: "PUT",
+          token,
+          body: {
+            status,
+          },
+        }).catch(() => undefined);
+        await get().fetchDeleteAccountRequests();
+      },
       logoutAdmin: async () => {
         const token = get().token;
 
@@ -211,6 +297,7 @@ export const useAdminStore = create<AdminStore>()(
           adminName: "",
           users: [],
           stats: emptyStats,
+          deleteAccountRequests: [],
         });
       },
       setActiveSidebarKey: (key) => set({ activeSidebarKey: key, authError: null, settingsMessage: null }),
@@ -242,6 +329,7 @@ export const useAdminStore = create<AdminStore>()(
           }));
           await get().fetchStats();
           await get().fetchUsers(get().activeUsersTab);
+          await get().fetchDeleteAccountRequests();
           return true;
         } catch (error) {
           set({ authError: cleanError(error, "Unable to sign in.") });
@@ -306,6 +394,8 @@ export const useAdminStore = create<AdminStore>()(
         settingsMessage: null,
         users: [],
         stats: emptyStats,
+        deleteAccountRequests: [],
+        isLoadingDeleteAccountRequests: false,
       }),
     },
   ),

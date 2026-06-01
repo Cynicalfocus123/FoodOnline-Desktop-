@@ -357,6 +357,70 @@
 - Phone signup design keeps the existing registration layout and role step, but swaps email/password fields for a phone-first path when the phone tab is selected. The phone registration form keeps first name, last name, contact number, optional Line ID, and company name, then shows the OTP step before access is granted.
 - Production-readiness notes: no new dependencies, no global CSS changes, no backend route changes, no cart/auth rewiring. Backend TODOs remain for real coupon validation, order creation, delivery-rate calculation, saved-address persistence, and payment provider tokenization.
 
+## Account/Profile + Settings Update (2026-06-01)
+
+- Added full logged-in account route flow:
+  - Desktop logged-in users now get an Account dropdown from header with:
+    - `My orders`
+    - `Saved items`
+    - `Refer a friend`
+    - `Coupon`
+    - `Settings`
+  - Mobile (and mobile-width responsive desktop) account entry now opens the full Account page route (`#account`) instead of a small dropdown.
+- New account route behavior:
+  - Hash-safe sections: `#account`, `#account/orders`, `#account/saved`, `#account/refer`, `#account/coupon`, `#account/settings`.
+  - Overview page follows the requested clean ecommerce row/tap structure with:
+    - top `My orders` row,
+    - status shortcuts row (`Pending`, `Unshipped`, `Shipped`, `To Review`, `Returns`),
+    - account menu rows for required actions.
+- Settings page behavior:
+  - Added settings cards for:
+    - Address book
+    - Payment methods
+    - Notifications
+    - Change password
+    - Delete account
+  - Desktop uses grid cards; mobile stacks in single column.
+- Notifications behavior:
+  - Toggle rows for:
+    - Order updates
+    - Delivery updates
+    - Promotions and coupons
+    - Back-in-stock alerts
+    - Saved item price drops
+    - Email notifications
+    - SMS notifications
+    - Push notifications
+  - Toggles persist via real backend API (`PUT /account/notification-preferences`).
+- Address book behavior:
+  - Addresses load from live account API (`GET /account/addresses`).
+  - Add/edit/delete/default operations are wired to backend.
+  - `Add new address` always opens a blank form, resets touched/error state, and does not copy old values.
+  - Country switch preserves only same-key fields; irrelevant fields reset.
+  - Required/optional rules follow current checkout schema across supported countries.
+- Payment methods behavior:
+  - Methods load from backend (`GET /account/payment-methods`).
+  - Add/remove/default wired to backend.
+  - Card UI includes cardholder, card number auto-spacing, expiry `MM/YY`, CVV, and billing same-as-shipping toggle.
+  - No raw PAN/CVV persistence. Backend stores masked metadata only.
+  - Tokenization is still TODO; UI is production-ready for provider integration.
+- Change password behavior:
+  - `Current password`, `New password`, `Retype new password` with backend verification and secure save (`PUT /account/password`).
+- Delete account behavior:
+  - Scrollable modal body with required reason selection and `Other` textarea requirement.
+  - Submits delete request to backend (`POST /account/delete-request`) and uses pending-review flow.
+- Admin behavior:
+  - Added admin delete-account queue panel with status updates:
+    - `Pending`
+    - `Reviewed`
+    - `Completed`
+    - `Cancelled`
+  - Backed by:
+    - `GET /admin/delete-account-requests`
+    - `PUT /admin/delete-account-requests/{requestId}`
+- Checkout sync:
+  - Logged-in checkout now pulls saved addresses from account API so account and checkout share address data source.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

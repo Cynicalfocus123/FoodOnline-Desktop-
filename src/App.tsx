@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AccountSummary } from "./components/AccountSummary";
+import { AccountPage } from "./components/AccountPage";
 import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
 import { CategoryListingPage } from "./components/CategoryListingPage";
@@ -71,6 +72,7 @@ export default function App() {
       {siteView === "category" ? <CategoryListingPage /> : null}
       {siteView === "product" ? <ProductDetailPage /> : null}
       {siteView === "search" ? <SearchResultsPage /> : null}
+      {siteView === "account" ? <AccountPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

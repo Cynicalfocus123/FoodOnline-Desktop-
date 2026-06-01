@@ -388,3 +388,50 @@
 - TMDHosting upload target for the package is the live domain folder such as `/home/USERNAME/public_html/` or `/home/USERNAME/foodonlines.com/`. If deploying under `/public_html/app/`, add `RewriteBase /app/` in `.htaccess`.
 - Package test URLs: `https://foodonlines.com/`, `https://foodonlines.com/admin`, `https://foodonlines.com/admin.html`, `https://foodonlines.com/#login`, `https://foodonlines.com/#signup`, and `https://www.api.foodonlines.com/api/v1/auth/me`.
 - Packaging warning: the generated ZIP is intentionally kept as a local upload artifact and not pushed into Git history because `foodonlines-tmdhosting-cpanel-upload.zip` is about 216 MB, which exceeds normal GitHub single-file push limits. Keep the ZIP on disk for cPanel upload and use the committed `frontend-upload/` folder plus docs as the reproducible source.
+
+## Account/Settings Build (2026-06-01)
+
+- Implemented logged-in account platform flow with desktop dropdown + mobile full account route behavior.
+- Files changed (frontend):
+  - `src/components/AccountPage.tsx` (new full account/profile page + settings modals)
+  - `src/components/Header.tsx` (desktop logged-in dropdown, mobile account routing)
+  - `src/App.tsx` (new `account` view rendering)
+  - `src/store/homeStore.ts` (hash-safe `#account[/section]` routing and account sections)
+  - `src/components/CheckoutPage.tsx` (logged-in address sync from `/account/addresses`)
+  - `src/store/adminStore.ts`, `src/components/AdminPortal.tsx`, `src/data/admin.ts` (admin delete-account request tab)
+  - `src/lib/apiClient.ts` (`DELETE` method support)
+  - `src/lib/addressSchema.ts` (shared dynamic country address schema + validation helpers)
+- Files changed (backend):
+  - `routes/api.php` (new account + admin deletion routes)
+  - `app/Http/Controllers/Api/Account/AddressBookController.php`
+  - `app/Http/Controllers/Api/Account/NotificationPreferenceController.php`
+  - `app/Http/Controllers/Api/Account/PaymentMethodController.php`
+  - `app/Http/Controllers/Api/Account/PasswordController.php` (new)
+  - `app/Http/Controllers/Api/Account/AccountDeletionRequestController.php` (new)
+  - `app/Http/Controllers/Api/Admin/AdminAccountDeletionRequestsController.php` (new)
+  - `app/Models/User.php` plus new models:
+    - `app/Models/UserAddress.php`
+    - `app/Models/UserNotificationPreference.php`
+    - `app/Models/UserPaymentMethod.php`
+    - `app/Models/UserAccountDeletionRequest.php`
+  - New migrations:
+    - `database/migrations/2026_06_01_010000_create_user_addresses_table.php`
+    - `database/migrations/2026_06_01_010100_create_user_notification_preferences_table.php`
+    - `database/migrations/2026_06_01_010200_create_user_payment_methods_table.php`
+    - `database/migrations/2026_06_01_010300_create_user_account_deletion_requests_table.php`
+- Checkout/address behavior covered in this pass:
+  - Logged-in checkout now pulls saved addresses from `/account/addresses`.
+  - Saved account addresses can be selected in checkout after refresh/load.
+  - New checkout addresses can be persisted to account when `Save this address for future orders` is enabled.
+- Security direction:
+  - Payment-method storage is masked metadata only (`brand`, `last4`, expiry, token reference placeholder), never raw card number/CVV.
+  - Delete account uses request workflow (`pending` statuses) instead of hard deletion.
+- Commands run:
+  - `npm.cmd run build` (success)
+  - `php -v` (failed: PHP CLI not installed on this machine)
+- Deployment notes:
+  - Laravel migrations + cache refresh must run on live server terminal:
+    - `php artisan migrate --force`
+    - `php artisan optimize:clear`
+    - `php artisan config:cache`
+    - `php artisan route:cache`

@@ -134,6 +134,16 @@ function AdminDashboard() {
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
   const logoutAdmin = useAdminStore((state) => state.logoutAdmin);
+  const deleteAccountRequests = useAdminStore((state) => state.deleteAccountRequests);
+  const isLoadingDeleteAccountRequests = useAdminStore((state) => state.isLoadingDeleteAccountRequests);
+  const fetchDeleteAccountRequests = useAdminStore((state) => state.fetchDeleteAccountRequests);
+  const updateDeleteAccountRequestStatus = useAdminStore((state) => state.updateDeleteAccountRequestStatus);
+
+  useEffect(() => {
+    if (activeSidebarKey === "deleteAccount") {
+      void fetchDeleteAccountRequests();
+    }
+  }, [activeSidebarKey, fetchDeleteAccountRequests]);
 
   const filteredUsers = useMemo(
     () => users.filter((user) => user.selectedRole === activeUsersTab),
@@ -214,6 +224,13 @@ function AdminDashboard() {
                 filteredUsers={filteredUsers}
                 isLoadingUsers={isLoadingUsers}
                 onChangeTab={setActiveUsersTab}
+              />
+            ) : null}
+            {activeSidebarKey === "deleteAccount" ? (
+              <DeleteAccountRequestsPanel
+                isLoading={isLoadingDeleteAccountRequests}
+                requests={deleteAccountRequests}
+                updateStatus={updateDeleteAccountRequestStatus}
               />
             ) : null}
             {activeSidebarKey === "settings" ? <AdminSettingsPanel /> : null}
@@ -403,6 +420,78 @@ function AdminUserActionSelect() {
       <option value="move-to-review">Move to Review</option>
       <option value="delete-user">Delete User</option>
     </select>
+  );
+}
+
+function DeleteAccountRequestsPanel({
+  isLoading,
+  requests,
+  updateStatus,
+}: {
+  isLoading: boolean;
+  requests: ReturnType<typeof useAdminStore.getState>["deleteAccountRequests"];
+  updateStatus: (requestId: number, status: "pending" | "reviewed" | "completed" | "cancelled") => Promise<void>;
+}) {
+  return (
+    <section className="rounded-[32px] border border-neutral-200 bg-white p-6 shadow-soft sm:p-8">
+      <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Delete Account</p>
+      <h2 className="mt-3 text-3xl font-black text-ink">Account deletion requests</h2>
+
+      <div className="mt-8 overflow-hidden rounded-[24px] border border-neutral-100">
+        <div className="overflow-x-auto">
+          <table className="min-w-[980px] w-full border-collapse text-left">
+            <thead className="bg-neutral-50">
+              <tr>
+                {["User", "Email", "Phone", "Reason", "Other Reason", "Requested", "Status", "Action"].map((header) => (
+                  <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-neutral-500" key={header}>
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr className="border-t border-neutral-100">
+                  <td className="px-4 py-6 text-sm font-semibold text-neutral-500" colSpan={8}>
+                    Loading delete account requests...
+                  </td>
+                </tr>
+              ) : requests.length === 0 ? (
+                <tr className="border-t border-neutral-100">
+                  <td className="px-4 py-6 text-sm font-semibold text-neutral-500" colSpan={8}>
+                    No delete account requests found.
+                  </td>
+                </tr>
+              ) : (
+                requests.map((item) => (
+                  <tr className="border-t border-neutral-100 align-top" key={item.id}>
+                    <td className="px-4 py-3 text-sm font-semibold text-ink">{item.userName}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.userEmail}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.userPhone}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.reason}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.otherReason || "-"}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.requestedAt ? formatDateTime(item.requestedAt) : "-"}</td>
+                    <td className="px-4 py-3 text-sm text-neutral-700">{item.status}</td>
+                    <td className="px-4 py-3">
+                      <select
+                        className="min-h-10 min-w-[150px] rounded-full border border-neutral-200 bg-white px-3 text-xs font-black text-neutral-700 outline-none transition focus:border-citrus-500"
+                        onChange={(event) => void updateStatus(item.id, event.target.value as "pending" | "reviewed" | "completed" | "cancelled")}
+                        value={item.status}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   );
 }
 

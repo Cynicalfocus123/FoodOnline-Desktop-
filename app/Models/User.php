@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -44,4 +46,36 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * @return HasMany<UserAddress, User>
+     */
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(UserAddress::class);
+    }
+
+    /**
+     * @return HasOne<UserNotificationPreference, User>
+     */
+    public function notificationPreference(): HasOne
+    {
+        return $this->hasOne(UserNotificationPreference::class);
+    }
+
+    /**
+     * @return HasMany<UserPaymentMethod, User>
+     */
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(UserPaymentMethod::class);
+    }
+
+    /**
+     * @return HasMany<UserAccountDeletionRequest, User>
+     */
+    public function accountDeletionRequests(): HasMany
+    {
+        return $this->hasMany(UserAccountDeletionRequest::class);
+    }
 }

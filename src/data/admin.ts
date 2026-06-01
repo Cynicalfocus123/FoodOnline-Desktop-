@@ -16,6 +16,11 @@ export const adminSidebarItems = [
     label: "Admin Settings",
     description: "Rotate admin profile and password",
   },
+  {
+    key: "deleteAccount",
+    label: "Delete Account",
+    description: "Review account deletion requests",
+  },
 ] as const;
 
 export type AdminSidebarKey = (typeof adminSidebarItems)[number]["key"];
@@ -118,6 +123,8 @@ export const laravelMySqlBlueprint = {
     "GET /api/v1/admin/users",
     "PUT /api/v1/admin/settings",
     "GET /api/v1/admin/dashboard-stats",
+    "GET /api/v1/admin/delete-account-requests",
+    "PUT /api/v1/admin/delete-account-requests/{requestId}",
   ],
   middleware: ["admin.token", "throttle admin login", "Laravel validation requests"],
   validation: [

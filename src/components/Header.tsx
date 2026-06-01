@@ -150,6 +150,7 @@ function CloseIcon() {
 
 export function Header() {
   const openLogin = useHomeStore((state) => state.openLogin);
+  const openAccount = useHomeStore((state) => state.openAccount);
   const openCart = useHomeStore((state) => state.openCart);
   const openSearchResults = useHomeStore((state) => state.openSearchResults);
   const siteView = useHomeStore((state) => state.siteView);
@@ -167,8 +168,10 @@ export function Header() {
   const [isZipPanelOpen, setIsZipPanelOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
   const languageMenuReference = useRef<HTMLElement | null>(null);
+  const accountMenuReference = useRef<HTMLDivElement | null>(null);
 
   const selectedLanguage = useMemo(
     () => languageOptions.find((language) => language.code === selectedLanguageCode) ?? languageOptions[0],
@@ -188,6 +191,7 @@ export function Header() {
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsAccountMenuOpen(false);
   }, [siteView]);
 
   useEffect(() => {
@@ -209,6 +213,24 @@ export function Header() {
       document.removeEventListener("mousedown", handlePointerDown);
     };
   }, [isLanguageMenuOpen]);
+
+  useEffect(() => {
+    if (!isAccountMenuOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: globalThis.MouseEvent) => {
+      if (accountMenuReference.current?.contains(event.target as Node)) {
+        return;
+      }
+      setIsAccountMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [isAccountMenuOpen]);
 
   useEffect(() => {
     if (!isZipPanelOpen) {
@@ -242,18 +264,9 @@ export function Header() {
     }
   }
 
-  function handleAccountClick() {
-    setIsMobileMenuOpen(false);
-
-    if (siteView !== "home") {
-      backToHome();
-      window.setTimeout(() => {
-        document.getElementById("account-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 30);
-      return;
-    }
-
-    document.getElementById("account-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function handleDesktopAccountItem(section: "orders" | "saved" | "refer" | "coupon" | "settings") {
+    setIsAccountMenuOpen(false);
+    openAccount(section);
   }
 
   function handleMenuToggle() {
@@ -365,14 +378,41 @@ export function Header() {
 
           <div className="hidden shrink-0 items-center gap-2 xl:gap-3 lg:flex">
             {currentUser ? (
-              <button
-                className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
-                onClick={handleAccountClick}
-                type="button"
+              <div
+                className="relative"
+                onMouseEnter={() => setIsAccountMenuOpen(true)}
+                onMouseLeave={() => setIsAccountMenuOpen(false)}
+                ref={accountMenuReference}
               >
-                <UserIcon />
-                <span>My Account</span>
-              </button>
+                <button
+                  aria-expanded={isAccountMenuOpen}
+                  className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
+                  onClick={() => setIsAccountMenuOpen((currentValue) => !currentValue)}
+                  type="button"
+                >
+                  <UserIcon />
+                  <span>My Account</span>
+                </button>
+                {isAccountMenuOpen ? (
+                  <div className="absolute right-0 top-[calc(100%+10px)] z-[1100] min-w-[220px] rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("orders")} type="button">
+                      My orders
+                    </button>
+                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("saved")} type="button">
+                      Saved items
+                    </button>
+                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("refer")} type="button">
+                      Refer a friend
+                    </button>
+                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("coupon")} type="button">
+                      Coupon
+                    </button>
+                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("settings")} type="button">
+                      Settings
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             ) : (
               <a
                 className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
@@ -561,7 +601,10 @@ export function Header() {
               ) : (
                 <button
                   className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                  onClick={handleAccountClick}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    openAccount("overview");
+                  }}
                   type="button"
                 >
                   My Account

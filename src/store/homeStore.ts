@@ -17,10 +17,13 @@ import {
 } from "../lib/security";
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 
-export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search";
+export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings";
+export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search" | "account";
 export type SignupStep = "role" | "form" | "complete";
 
-function readAuthReturnRoute(state: Pick<HomeState, "siteView" | "selectedProductId" | "selectedCategorySlug" | "searchQuery" | "authReturnRoute">) {
+function readAuthReturnRoute(
+  state: Pick<HomeState, "siteView" | "selectedProductId" | "selectedCategorySlug" | "searchQuery" | "accountSection" | "authReturnRoute">,
+) {
   if (state.authReturnRoute) {
     return state.authReturnRoute;
   }
@@ -36,6 +39,8 @@ function readAuthReturnRoute(state: Pick<HomeState, "siteView" | "selectedProduc
       return "cart";
     case "checkout":
       return "checkout";
+    case "account":
+      return state.accountSection === "overview" ? "account" : `account/${state.accountSection}`;
     default:
       return null;
   }
@@ -72,6 +77,22 @@ function isCheckoutHash(hash: string) {
   return /^#checkout(?:[/?#].*)?$/i.test(hash);
 }
 
+function readAccountSectionFromHash(hash: string): AccountSection | null {
+  const match = hash.match(/^#account(?:\/([^?#/]+))?/i);
+
+  if (!match) {
+    return null;
+  }
+
+  const section = (match[1] ?? "").toLowerCase();
+
+  if (section === "orders" || section === "saved" || section === "refer" || section === "coupon" || section === "settings") {
+    return section;
+  }
+
+  return "overview";
+}
+
 function writeRouteHash(route: string | null) {
   if (typeof window === "undefined") {
     return;
@@ -87,7 +108,8 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#category/") ||
     window.location.hash.startsWith("#search/") ||
     window.location.hash.startsWith("#cart") ||
-    window.location.hash.startsWith("#checkout")
+    window.location.hash.startsWith("#checkout") ||
+    window.location.hash.startsWith("#account")
   ) {
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#home`);
   }
@@ -106,6 +128,7 @@ type HomeState = {
   selectedZipCode: string;
   searchInputValue: string;
   searchQuery: string;
+  accountSection: AccountSection;
   authReturnRoute: string | null;
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
@@ -120,6 +143,7 @@ type HomeState = {
   openCheckout: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
+  openAccount: (section?: AccountSection) => void;
   returnAfterAuth: () => void;
   syncRouteFromHash: (hash: string) => void;
   setSearchInputValue: (value: string) => void;
@@ -182,6 +206,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedZipCode: "91789",
   searchInputValue: "",
   searchQuery: "",
+  accountSection: "overview",
   authReturnRoute: null,
   ...getBlankSignupState(),
   completedSubmission: null,
@@ -197,6 +222,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         selectedRole: null,
         selectedProductId: null,
         selectedCategorySlug: null,
+        accountSection: "overview",
         ...getBlankSignupState(),
         completedSubmission: null,
         submissionError: null,
@@ -211,6 +237,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         authReturnRoute: readAuthReturnRoute(state),
         selectedProductId: null,
         selectedCategorySlug: null,
+        accountSection: "overview",
         submissionError: null,
         completedSubmission: null,
       };
@@ -224,6 +251,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         selectedRole: null,
         selectedProductId: null,
         selectedCategorySlug: null,
+        accountSection: "overview",
         ...getBlankSignupState(),
         completedSubmission: null,
         submissionError: null,
@@ -237,6 +265,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         siteView: "category",
         selectedCategorySlug: categorySlug,
         selectedProductId: null,
+        accountSection: "overview",
         submissionError: null,
       };
     }),
@@ -247,6 +276,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         siteView: "cart",
         selectedProductId: null,
         selectedCategorySlug: null,
+        accountSection: "overview",
         submissionError: null,
       };
     }),
@@ -257,6 +287,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         siteView: "checkout",
         selectedProductId: null,
         selectedCategorySlug: null,
+        accountSection: "overview",
         submissionError: null,
       };
     }),
@@ -266,6 +297,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       return {
         siteView: "product",
         selectedProductId: productId,
+        accountSection: "overview",
         submissionError: null,
       };
     }),
@@ -283,6 +315,19 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         siteView: "search",
         searchInputValue: trimmedQuery,
         searchQuery: trimmedQuery,
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
+  openAccount: (section = "overview") =>
+    set(() => {
+      writeRouteHash(section === "overview" ? "account" : `account/${section}`);
+
+      return {
+        siteView: "account",
+        accountSection: section,
         selectedProductId: null,
         selectedCategorySlug: null,
         submissionError: null,
@@ -305,6 +350,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       const productId = readProductIdFromHash(hash);
       const categorySlug = readCategorySlugFromHash(hash);
       const searchQuery = readSearchQueryFromHash(hash);
+      const accountSection = readAccountSectionFromHash(hash);
 
       if (productId) {
         return {
@@ -353,16 +399,28 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (accountSection) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "account",
+          accountSection,
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (
         state.siteView === "product" ||
         state.siteView === "category" ||
         state.siteView === "search" ||
         state.siteView === "cart" ||
-        state.siteView === "checkout"
+        state.siteView === "checkout" ||
+        state.siteView === "account"
       ) {
         return {
           authReturnRoute: state.authReturnRoute,
           siteView: "home",
+          accountSection: "overview",
           selectedProductId: null,
           selectedCategorySlug: null,
         };
