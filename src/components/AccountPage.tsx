@@ -56,6 +56,7 @@ type DeleteReasonKey =
   | "other";
 
 const LOCAL_ADDRESS_STORAGE_KEY = "foodonlines-account-addresses-v1";
+const LOCAL_NOTIFICATION_STORAGE_KEY = "foodonlines-notification-preferences-v1";
 const deleteReasons: Array<{ key: DeleteReasonKey; label: string }> = [
   { key: "bad_experience", label: "Bad experience with FoodOnlines" },
   { key: "too_expensive", label: "It's too expensive" },
@@ -112,6 +113,32 @@ function writeLocalAddressBook(userKey: string, addresses: AccountAddress[]) {
   }
 }
 
+function readLocalNotificationPreferences(userKey: string): NotificationPreferences | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.localStorage.getItem(LOCAL_NOTIFICATION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Record<string, NotificationPreferences>;
+    return parsed[userKey] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalNotificationPreferences(userKey: string, preferences: NotificationPreferences) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const raw = window.localStorage.getItem(LOCAL_NOTIFICATION_STORAGE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, NotificationPreferences>) : {};
+    parsed[userKey] = preferences;
+    window.localStorage.setItem(LOCAL_NOTIFICATION_STORAGE_KEY, JSON.stringify(parsed));
+  } catch {
+    // Preference persistence should never block the account UI.
+  }
+}
+
 function toErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
     return error.message;
@@ -148,6 +175,8 @@ function routeTitle(section: AccountSection) {
   if (section === "refer") return "Refer a friend";
   if (section === "coupon") return "Coupons";
   if (section === "settings") return "Settings";
+  if (section === "about") return "About FoodOnlines";
+  if (section === "language") return "Language";
   return "My account";
 }
 
@@ -288,9 +317,11 @@ export function AccountPage() {
       const response = await apiRequest<{ preferences: NotificationPreferences }>("/account/notification-preferences", {
         token: nextToken,
       });
-      setPreferences(response.preferences ?? defaultPreferences);
+      const nextPreferences = response.preferences ?? defaultPreferences;
+      setPreferences(nextPreferences);
+      writeLocalNotificationPreferences(userAddressCacheKey, nextPreferences);
     } catch {
-      setPreferences(defaultPreferences);
+      setPreferences(readLocalNotificationPreferences(userAddressCacheKey) ?? defaultPreferences);
     }
   }
 
@@ -529,18 +560,22 @@ export function AccountPage() {
   }
 
   async function updatePreference<K extends keyof NotificationPreferences>(key: K, value: boolean) {
-    if (!token) return;
-
     const next = { ...preferences, [key]: value };
     setPreferences(next);
+    writeLocalNotificationPreferences(userAddressCacheKey, next);
     setNotificationState("saving");
     setNotificationMessage(null);
 
     try {
+      if (!token) throw new Error("no-token");
       await apiRequest("/account/notification-preferences", { method: "PUT", token, body: next });
       setNotificationMessage("Notification preferences saved.");
     } catch (error) {
-      setNotificationMessage(toErrorMessage(error, "Unable to save notification preferences."));
+      setNotificationMessage(
+        error instanceof ApiError
+          ? toErrorMessage(error, "Notification preferences saved locally.")
+          : "Notification preferences saved locally.",
+      );
     } finally {
       setNotificationState("idle");
     }
@@ -616,26 +651,25 @@ export function AccountPage() {
       <section className="bg-neutral-50 px-4 pb-[calc(32px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
         <div className="mx-auto max-w-[1080px]">
           <div className="rounded-[24px] border border-neutral-200 bg-white p-4 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
+            {accountSection !== "overview" ? (
+              <AccountSubpageHeader title={routeTitle(accountSection)} onBack={() => openAccount("overview")} />
+            ) : null}
+
+            {accountSection === "overview" ? (
+              <div className="flex min-w-0 items-center gap-3 rounded-[24px] border border-neutral-200 bg-white p-4 sm:p-5">
                 <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-lg font-black text-neutral-900">
                   {(accountName.charAt(0) || "A").toUpperCase()}
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-lg font-black text-neutral-950">{accountName}</p>
-                  <p className="truncate text-sm text-neutral-500">{currentUser.email}</p>
+                  <p className="truncate text-base text-neutral-500">{currentUser.email || currentUser.contactNumber || "FoodOnlines account"}</p>
                 </div>
               </div>
-              <button
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-slate-100 px-5 text-sm font-black text-neutral-700 transition hover:bg-slate-200"
-                onClick={() => void logoutUser()}
-                type="button"
-              >
-                Sign out
-              </button>
-            </div>
+            ) : null}
 
-            <h1 className="mt-5 text-[2rem] font-black leading-none text-neutral-950">{routeTitle(accountSection)}</h1>
+            {accountSection === "overview" ? (
+              <h1 className="mt-5 text-[2rem] font-black leading-none text-neutral-950">{routeTitle(accountSection)}</h1>
+            ) : null}
 
             {accountSection === "overview" ? (
               <div className="mt-6 grid gap-4">
@@ -651,14 +685,10 @@ export function AccountPage() {
                   <ChevronRight />
                 </button>
 
-                <div className="grid grid-cols-5 gap-2 sm:gap-3">
+                <div className="grid grid-cols-5 gap-1.5 overflow-x-auto pb-1 scrollbar-none sm:gap-4">
                   {statusShortcuts.map((item) => (
                     <button
-                      className={`grid min-h-24 gap-2 rounded-3xl border px-1 py-3 text-center transition ${
-                        statusFilter === item.key
-                          ? "border-leaf-500 bg-emerald-50 text-leaf-700"
-                          : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
-                      }`}
+                      className="flex min-w-0 flex-col items-center gap-2 rounded-2xl px-1 py-2 text-center text-neutral-700 transition hover:bg-neutral-50"
                       key={item.key}
                       onClick={() => {
                         setStatusFilter(item.key);
@@ -666,10 +696,14 @@ export function AccountPage() {
                       }}
                       type="button"
                     >
-                      <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-current/20">
+                      <span
+                        className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border text-neutral-950 sm:h-14 sm:w-14 ${
+                          statusFilter === item.key ? "border-leaf-500 bg-emerald-50" : "border-neutral-200 bg-white"
+                        }`}
+                      >
                         {item.icon}
                       </span>
-                      <span className="text-xs font-black leading-4 sm:text-sm">{item.label}</span>
+                      <span className="text-[11px] font-bold leading-4 text-neutral-500 sm:text-sm">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -680,12 +714,25 @@ export function AccountPage() {
                 </div>
 
                 <div className="grid gap-3">
+                  <MenuRow icon={<InfoRowIcon />} label="About FoodOnlines" onClick={() => openAccount("about")} />
+                  <MenuRow icon={<LanguageRowIcon />} label="Language (English)" onClick={() => openAccount("language")} />
+                  <StaticInfoRow icon={<AccountIdIcon />} label={`ID: ${currentUser.id}`} />
                   <MenuRow icon={<AddressBookIcon />} label="Address book" onClick={() => setIsAddressModalOpen(true)} />
+                  <MenuRow icon={<CardRowIcon />} label="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
                   <MenuRow badge={couponCount > 0 ? String(couponCount) : undefined} icon={<CouponIcon />} label="Coupons" onClick={() => openAccount("coupon")} />
                   <MenuRow icon={<GiftRowIcon />} label="Refer a friend" onClick={() => openAccount("refer")} />
-                  <MenuRow icon={<CardRowIcon />} label="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
                   <MenuRow icon={<SettingsRowIcon />} label="Settings" onClick={() => openAccount("settings")} />
-                  <MenuRow icon={<SignOutRowIcon />} label="Sign out" onClick={() => void logoutUser()} />
+                </div>
+
+                <button
+                  className="mx-auto mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-8 text-lg font-semibold text-neutral-950 transition hover:bg-neutral-100"
+                  onClick={() => void logoutUser()}
+                  type="button"
+                >
+                  Log out
+                </button>
+                <div className="mx-auto rounded-full bg-white px-7 py-3 text-base font-black text-neutral-950 shadow-[0_14px_45px_rgba(15,23,42,0.12)]">
+                  foodonlines.com
                 </div>
               </div>
             ) : null}
@@ -707,6 +754,14 @@ export function AccountPage() {
 
             {accountSection === "coupon" ? (
               <SimplePanel title="Coupons" subtitle="Coupon view is ready for coupon-list endpoint and redemption history." />
+            ) : null}
+
+            {accountSection === "about" ? (
+              <SimplePanel title="About FoodOnlines" subtitle="FoodOnlines delivers grocery, pantry, and fresh food favorites with a mobile-first shopping experience." />
+            ) : null}
+
+            {accountSection === "language" ? (
+              <SimplePanel title="Language" subtitle="Language preferences are ready for the existing localization settings endpoint." />
             ) : null}
 
             {accountSection === "settings" ? (
@@ -776,7 +831,7 @@ export function AccountPage() {
                 Country <span className="text-red-500">*</span>
               </span>
               <select
-                className="min-h-12 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                className="min-h-12 rounded-2xl border border-neutral-200 px-4 text-base font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
                 id="account-address-country"
                 onChange={(event) => handleAddressCountryChange(event.target.value as CountryKey)}
                 value={addressCountry}
@@ -805,7 +860,7 @@ export function AccountPage() {
                     {field.type === "textarea" ? (
                       <textarea
                         autoComplete={field.autoComplete}
-                        className="min-h-[110px] rounded-2xl border border-neutral-200 px-3 py-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        className="min-h-[110px] rounded-2xl border border-neutral-200 px-3 py-3 text-base font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));
                           setAddressErrors((current) => ({ ...current, [field.key]: getAddressError(field, addressValues[field.key] ?? "") }));
@@ -816,7 +871,7 @@ export function AccountPage() {
                     ) : (
                       <input
                         autoComplete={field.autoComplete}
-                        className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
                         inputMode={field.type === "postal" ? "numeric" : field.inputMode}
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));
@@ -852,16 +907,16 @@ export function AccountPage() {
               Set as default address
             </label>
 
-            <div className="flex flex-wrap justify-end gap-2 pt-1">
+            <div className="sticky bottom-0 -mx-4 flex flex-wrap justify-end gap-2 border-t border-neutral-100 bg-white px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:-mx-5 sm:px-5">
               <button
-                className="min-h-11 rounded-full bg-slate-100 px-5 text-sm font-black text-neutral-700 transition hover:bg-slate-200"
+                className="min-h-12 rounded-full bg-slate-100 px-6 text-base font-black text-neutral-700 transition hover:bg-slate-200"
                 onClick={() => setAddressMode("list")}
                 type="button"
               >
                 Cancel
               </button>
               <button
-                className="min-h-11 rounded-full bg-leaf-600 px-6 text-sm font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                className="min-h-12 rounded-full bg-leaf-600 px-7 text-base font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
                 disabled={addressState === "saving"}
                 type="submit"
               >
@@ -926,7 +981,7 @@ export function AccountPage() {
               <label className="grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Cardholder name</span>
                 <input
-                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                   onChange={(event) => setCardholderName(event.target.value)}
                   value={cardholderName}
                 />
@@ -934,7 +989,7 @@ export function AccountPage() {
               <label className="grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Card number</span>
                 <input
-                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                   inputMode="numeric"
                   onChange={(event) => setCardNumber(formatCardNumber(event.target.value))}
                   value={cardNumber}
@@ -944,7 +999,7 @@ export function AccountPage() {
                 <label className="grid gap-1.5">
                   <span className="text-sm font-bold text-neutral-700">Expiration date</span>
                   <input
-                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                     inputMode="numeric"
                     onChange={(event) => setExpiryDate(formatExpiryDate(event.target.value))}
                     placeholder="MM/YY"
@@ -954,7 +1009,7 @@ export function AccountPage() {
                 <label className="grid gap-1.5">
                   <span className="text-sm font-bold text-neutral-700">CVV</span>
                   <input
-                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                     inputMode="numeric"
                     onChange={(event) => setCvv(event.target.value.replace(/\D/g, "").slice(0, 4))}
                     type="password"
@@ -980,7 +1035,7 @@ export function AccountPage() {
                       Country <span className="text-red-500">*</span>
                     </span>
                     <select
-                      className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                      className="min-h-12 rounded-xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                       id="account-billing-country"
                       onChange={(event) => {
                         const nextCountry = event.target.value as CountryKey;
@@ -1007,7 +1062,7 @@ export function AccountPage() {
                         </span>
                         {field.type === "textarea" ? (
                           <textarea
-                            className="min-h-[84px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none focus:border-leaf-500"
+                            className="min-h-[84px] rounded-xl border border-neutral-200 px-3 py-2 text-base font-semibold outline-none focus:border-leaf-500"
                             onChange={(event) =>
                               setBillingValues((current) => ({ ...current, [field.key]: event.target.value }))
                             }
@@ -1015,7 +1070,7 @@ export function AccountPage() {
                           />
                         ) : (
                           <input
-                            className="min-h-10 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                            className="min-h-12 rounded-xl border border-neutral-200 px-3 text-base font-semibold outline-none focus:border-leaf-500"
                             inputMode={field.type === "postal" ? "numeric" : field.inputMode}
                             onChange={(event) =>
                               setBillingValues((current) => ({ ...current, [field.key]: event.target.value }))
@@ -1033,16 +1088,16 @@ export function AccountPage() {
                 </div>
               ) : null}
 
-              <div className="flex flex-wrap justify-end gap-2">
+              <div className="sticky bottom-0 -mx-4 flex flex-wrap justify-end gap-2 border-t border-neutral-100 bg-white px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
                 <button
-                  className="rounded-full bg-slate-100 px-5 py-2 text-sm font-black text-neutral-700"
+                  className="min-h-12 rounded-full bg-slate-100 px-6 py-2 text-base font-black text-neutral-700"
                   onClick={() => setIsAddCardOpen(false)}
                   type="button"
                 >
                   Cancel
                 </button>
                 <button
-                  className="rounded-full bg-leaf-600 px-6 py-2 text-sm font-black text-white disabled:bg-neutral-300"
+                  className="min-h-12 rounded-full bg-leaf-600 px-7 py-2 text-base font-black text-white disabled:bg-neutral-300"
                   disabled={paymentState === "saving"}
                   type="submit"
                 >
@@ -1077,7 +1132,7 @@ export function AccountPage() {
           {passwordError ? <p className="text-sm font-semibold text-red-600">{passwordError}</p> : null}
           {passwordMessage ? <p className="text-sm font-semibold text-leaf-700">{passwordMessage}</p> : null}
           <button
-            className="min-h-12 rounded-full bg-leaf-600 px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:bg-neutral-300"
+            className="min-h-12 rounded-full bg-leaf-600 px-4 text-base font-black text-white disabled:cursor-not-allowed disabled:bg-neutral-300"
             disabled={passwordState === "saving"}
             type="submit"
           >
@@ -1112,7 +1167,7 @@ export function AccountPage() {
               <label className="mt-4 grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Tell us your reason...</span>
                 <textarea
-                  className="min-h-[110px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none focus:border-leaf-500"
+                  className="min-h-[110px] rounded-xl border border-neutral-200 px-3 py-2 text-base font-semibold outline-none focus:border-leaf-500"
                   onChange={(event) => setDeleteOtherReason(event.target.value)}
                   value={deleteOtherReason}
                 />
@@ -1195,6 +1250,34 @@ function MenuRow({
   );
 }
 
+function StaticInfoRow({ icon, label }: { icon: ReactNode; label: string }) {
+  return (
+    <div className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-left">
+      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1 truncate text-base font-semibold text-neutral-900">{label}</span>
+    </div>
+  );
+}
+
+function AccountSubpageHeader({ onBack, title }: { onBack: () => void; title: string }) {
+  return (
+    <div className="sticky top-[132px] z-10 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-neutral-100 bg-white px-4 py-3 sm:-mx-6 sm:px-6 lg:top-[154px]">
+      <button
+        className="inline-flex min-h-11 items-center gap-1 rounded-full px-2 text-base font-semibold text-slate-500 transition hover:bg-neutral-50 hover:text-neutral-950"
+        onClick={onBack}
+        type="button"
+      >
+        <BackArrowIcon />
+        <span>Back</span>
+      </button>
+      <h1 className="min-w-0 truncate text-center text-xl font-black text-neutral-950 sm:text-2xl">{title}</h1>
+      <span aria-hidden="true" className="h-11 w-[72px]" />
+    </div>
+  );
+}
+
 function SettingsCard({
   description,
   icon,
@@ -1234,13 +1317,14 @@ function SimplePanel({ subtitle, title }: { subtitle: string; title: string }) {
 function ToggleRow({ label, onChange, value }: { label: string; onChange: (value: boolean) => void; value: boolean }) {
   return (
     <button
+      aria-label={`${label}: ${value ? "on" : "off"}`}
       aria-checked={value}
-      className="flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 px-4 py-3 text-left transition hover:bg-neutral-50"
+      className="flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 px-4 py-3 text-left transition hover:bg-neutral-50"
       onClick={() => onChange(!value)}
       role="switch"
       type="button"
     >
-      <span className="text-sm font-semibold text-neutral-800">{label}</span>
+      <span className="text-base font-semibold text-neutral-800">{label}</span>
       <span className={`relative h-8 w-14 rounded-full transition ${value ? "bg-sky-300" : "bg-neutral-300"}`}>
         <span
           className={`absolute top-1 h-6 w-6 rounded-full transition ${value ? "left-7 bg-sky-500" : "left-1 bg-white"}`}
@@ -1254,17 +1338,17 @@ function PasswordField({ label, onChange, value }: { label: string; onChange: (v
   const [visible, setVisible] = useState(false);
   return (
     <label className="grid gap-1.5">
-      <span className="text-sm font-bold text-neutral-700">{label}</span>
+      <span className="text-base font-bold text-neutral-700">{label}</span>
       <div className="relative">
         <input
-          className="min-h-12 w-full rounded-2xl border border-neutral-200 px-3 pr-16 text-sm font-semibold outline-none focus:border-leaf-500"
+          className="min-h-12 w-full rounded-2xl border border-neutral-200 px-4 pr-24 text-base font-semibold outline-none focus:border-leaf-500"
           onChange={(event) => onChange(event.target.value)}
           type={visible ? "text" : "password"}
           value={value}
         />
         <button
           aria-label={visible ? `Hide ${label}` : `Show ${label}`}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 text-sm font-bold text-neutral-500"
+          className="absolute right-3 top-1/2 min-h-10 -translate-y-1/2 rounded-md px-2 text-base font-bold text-neutral-500"
           onClick={() => setVisible((current) => !current)}
           type="button"
         >
@@ -1333,7 +1417,7 @@ function ModalShell({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[2200] flex items-end justify-center bg-neutral-950/45 p-0 sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-[2200] flex items-end justify-center bg-neutral-950/45 p-3 sm:items-center sm:p-4">
       <button
         aria-label={`Close ${title}`}
         className="absolute inset-0 cursor-default"
@@ -1342,12 +1426,20 @@ function ModalShell({
       />
       <div
         aria-modal="true"
-        className="relative max-h-[92vh] w-full max-w-3xl overflow-hidden rounded-t-[28px] bg-white shadow-[0_30px_100px_rgba(15,23,42,0.35)] sm:rounded-[28px]"
+        className="relative max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-[0_30px_100px_rgba(15,23,42,0.35)] sm:max-h-[90vh]"
         ref={panelReference}
         role="dialog"
       >
-        <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
-          <h2 className="text-[2rem] font-black leading-none text-neutral-950">{title}</h2>
+        <div className="sticky top-0 z-10 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-neutral-100 bg-white px-4 py-4 sm:px-5">
+          <button
+            className="inline-flex min-h-11 items-center gap-1 rounded-full px-2 text-base font-semibold text-slate-500 transition hover:bg-neutral-50 hover:text-neutral-950"
+            onClick={onClose}
+            type="button"
+          >
+            <BackArrowIcon />
+            <span>Back</span>
+          </button>
+          <h2 className="min-w-0 truncate text-center text-2xl font-black leading-none text-neutral-950 sm:text-[2rem]">{title}</h2>
           <button
             aria-label={`Close ${title}`}
             className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-2xl text-neutral-600 transition hover:bg-neutral-200"
@@ -1355,10 +1447,12 @@ function ModalShell({
             ref={firstFocusableReference}
             type="button"
           >
-            ×
+            X
           </button>
         </div>
-        <div className="max-h-[calc(92vh-84px)] overflow-y-auto px-5 py-4">{children}</div>
+        <div className="max-h-[calc(100dvh-112px)] overflow-y-auto px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:max-h-[calc(90vh-84px)] sm:px-5">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -1368,6 +1462,14 @@ function ChevronRight() {
   return (
     <svg aria-hidden="true" className="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+function BackArrowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="m15 18-6-6 6-6" />
     </svg>
   );
 }
@@ -1493,12 +1595,31 @@ function SettingsRowIcon() {
   );
 }
 
-function SignOutRowIcon() {
+function InfoRowIcon() {
   return (
     <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
-      <path d="M9 4H5v16h4" />
-      <path d="M13 12h8" />
-      <path d="m18 7 5 5-5 5" />
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 10v6" />
+      <path d="M12 7h.01" />
+    </svg>
+  );
+}
+
+function LanguageRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z" />
+    </svg>
+  );
+}
+
+function AccountIdIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="3.2" />
+      <path d="M5 19c1.4-3.1 4-4.7 7-4.7s5.6 1.6 7 4.7" />
     </svg>
   );
 }

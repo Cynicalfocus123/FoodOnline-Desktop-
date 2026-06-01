@@ -55,7 +55,9 @@
         "saved",
         "refer",
         "coupon",
-        "settings"
+        "settings",
+        "about",
+        "language"
       ]
     }
   },
@@ -125,13 +127,14 @@
           "Address book",
           "Refer a friend",
           "Coupons",
-          "Settings",
-          "Sign out"
+          "Settings"
         ]
       },
       "mobile_behavior": {
         "profile_icon_opens_full_account_page_not_small_dropdown": true,
         "top_my_orders_row": true,
+        "subpages_have_back_header": true,
+        "only_main_page_has_bottom_logout": true,
         "status_shortcuts": [
           "Pending",
           "Unshipped",
@@ -140,6 +143,9 @@
           "Returns"
         ],
         "account_rows": [
+          "About FoodOnlines",
+          "Language (English)",
+          "Account ID",
           "Saved items",
           "Buy again",
           "Address book",
@@ -147,7 +153,7 @@
           "Refer a friend",
           "Coupons",
           "Settings",
-          "Sign out"
+          "Log out bottom action"
         ],
         "large_touch_targets_and_white_rounded_cards": true
       },
@@ -164,12 +170,17 @@
         "focus_trap": true,
         "body_scroll_lock_when_open": true,
         "modal_content_scroll_on_small_screens": true,
+        "modal_width_viewport_safe": true,
+        "safe_area_bottom_padding": true,
+        "form_action_rows_sticky_when_long": true,
         "high_z_index_above_sticky_bars": true
       },
       "notification_toggle_behavior": {
         "each_row_toggles_independently": true,
         "whole_row_tap_target_toggles_switch": true,
-        "uses_role_switch_and_aria_checked": true
+        "uses_role_switch_and_aria_checked": true,
+        "local_storage_fallback_key": "foodonlines-notification-preferences-v1",
+        "persists_after_refresh_without_backend": true
       },
       "address_book_fallback": {
         "uses_live_api_first": true,

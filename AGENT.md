@@ -449,14 +449,14 @@
 - Desktop header/account behavior updates:
   - Logged-in account trigger now shows avatar initial + username + rotating chevron.
   - Dropdown now keeps open during button-to-menu mouse movement, supports hover + click open, and closes on outside click or `Escape`.
-  - Dropdown menu now includes `My orders`, `Saved items`, `Address book`, `Refer a friend`, `Coupons`, `Settings`, and `Sign out`, each with aligned left icon and right chevron.
-  - Removed separate desktop logout pill in favor of dropdown `Sign out`.
+  - Dropdown menu now includes `My orders`, `Saved items`, `Address book`, `Refer a friend`, `Coupons`, and `Settings`, each with aligned left icon and right chevron.
+  - Earlier dropdown/mobile duplicate sign-out controls were later removed; current logout lives only at the bottom of the main account page.
 - Mobile account behavior updates:
   - Logged-in mobile header now has a dedicated account icon button that opens full `#account` route (not a tiny dropdown).
-  - Mobile menu also includes `My Account` and `Sign out` entries for consistency.
+  - Mobile menu includes `My Account` only for logged-in users; logout is kept on the main account page.
 - Account page and modal UX updates:
   - Overview now uses larger touch-friendly card rows and status shortcuts with icon circles.
-  - Added `Buy again`, `Address book`, `Payment methods`, and `Sign out` rows in overview flow.
+  - Added `Buy again`, `Address book`, and `Payment methods` rows in overview flow.
   - Modals now use higher z-index layering, overlay click close, `Escape` close, `aria-modal` dialog semantics, focus trapping, and body scroll lock while open.
   - Mobile sticky Cart/Checkout footer is now hidden whenever any account modal is open to avoid overlap.
 - Address book save reliability updates:
@@ -476,3 +476,32 @@
   - Users can toggle each notification section on/off by tapping anywhere on that row, not just the small knob.
   - Existing backend persistence endpoint (`PUT /account/notification-preferences`) remains unchanged.
   - Checks rerun: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`.
+
+## Account Mobile UX + Modal Scrolling Fix (2026-06-01)
+
+- Context7 note for this pass: tool discovery was attempted for Context7, but no Context7 resolve/query MCP tools were exposed in this session; only unrelated multi-agent tools were returned. Continued using the existing React/Tailwind codebase patterns.
+- Files changed:
+  - `src/components/AccountPage.tsx`
+  - `src/components/Header.tsx`
+  - `src/store/homeStore.ts`
+  - `index.html`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Account sign-out placement:
+  - Removed duplicate `Sign out` actions from the header dropdown, mobile hamburger account submenu, and top account profile card.
+  - Main `#account` overview now shows the only account logout action as a centered `Log out` row near the bottom, followed by the `foodonlines.com` pill.
+- Account navigation:
+  - Added Back headers for account subpages and modal-detail flows so users can return to the main account dashboard without title/back overlap.
+  - Added hash-safe account sections for `About FoodOnlines` and `Language`, preserving existing `orders`, `saved`, `refer`, `coupon`, and `settings` sections.
+- Order shortcut UI:
+  - Reworked the account order shortcut row into five compact status controls with equal circular outline icons and labels below: Pending, Unshipped, Shipped, To Review, and Returns.
+- Modal/mobile form fixes:
+  - Address Book, Payment Methods, Notifications, Change Password, and Delete Account modals now use viewport-safe width, `dvh` max-height, internal scrolling, safe-area bottom padding, and sticky form action rows where long forms need reachable Save/Cancel controls.
+  - My Account form inputs, selects, textareas, toggle rows, and primary modal buttons now use 16px-or-larger text sizing to avoid iOS/Android browser input zoom.
+  - `index.html` viewport meta now includes `maximum-scale=1` per the requested mobile zoom behavior.
+- Notifications persistence:
+  - Notification toggles still use the live account preferences API when available.
+  - Added localStorage fallback key `foodonlines-notification-preferences-v1` so each independent toggle immediately updates, persists after closing/reopening the modal, and survives refresh if the backend endpoint is unavailable.
+- Checks for this pass:
+  - `cmd /c npx tsc --noEmit`

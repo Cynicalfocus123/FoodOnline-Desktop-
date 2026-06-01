@@ -204,16 +204,6 @@ function SettingsIcon() {
   );
 }
 
-function LogoutIcon() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
-      <path d="M9 4H5v16h4" />
-      <path d="M13 12h8" />
-      <path d="m18 7 5 5-5 5" />
-    </svg>
-  );
-}
-
 function CloseIcon() {
   return (
     <svg
@@ -247,7 +237,6 @@ export function Header() {
     Object.values(state.cartQuantities).reduce((sum, quantity) => sum + quantity, 0),
   );
   const currentUser = usePublicAuthStore((state) => state.currentUser);
-  const logoutUser = usePublicAuthStore((state) => state.logoutUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isZipPanelOpen, setIsZipPanelOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -565,18 +554,6 @@ export function Header() {
                       <span className="flex-1">Settings</span>
                       <RowChevronIcon />
                     </button>
-                    <div className="my-1 h-px bg-neutral-200" />
-                    <button
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50"
-                      onClick={() => {
-                        setIsAccountMenuOpen(false);
-                        void logoutUser();
-                      }}
-                      type="button"
-                    >
-                      <LogoutIcon />
-                      <span className="flex-1">Sign out</span>
-                    </button>
                   </div>
                 ) : null}
               </div>
@@ -769,28 +746,16 @@ export function Header() {
                   Login / Register
                 </a>
               ) : (
-                <>
-                  <button
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      openAccount("overview");
-                    }}
-                    type="button"
-                  >
-                    My Account
-                  </button>
-                  <button
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      void logoutUser();
-                    }}
-                    type="button"
-                  >
-                    Sign out
-                  </button>
-                </>
+                <button
+                  className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    openAccount("overview");
+                  }}
+                  type="button"
+                >
+                  My Account
+                </button>
               )}
 
               <div className="mt-2 grid gap-2">

@@ -435,7 +435,7 @@
   - Refer a friend
   - Coupons
   - Settings
-  - Sign out
+  - Current logout is intentionally not in the dropdown; it appears only as the centered bottom action on the main account page.
 - Mobile account behavior refinement:
   - logged-in mobile header now exposes a direct account icon button that opens full account page route.
   - account access is full-page/tap-friendly, not a compact hover-style dropdown.
@@ -459,6 +459,29 @@
 - Notifications interaction update:
   - each notification section row is now directly tappable/clickable and toggles independently on/off.
   - switch controls use accessible `role="switch"` + `aria-checked` behavior and large tap target spacing for mobile.
+
+### Account Mobile UX + Modal Scrolling Fix (2026-06-01)
+
+- Main account dashboard direction:
+  - top profile card shows avatar initial, account name, and email/phone only.
+  - no sign-out action appears in the profile card, header account dropdown, mobile hamburger submenu, or account subpages.
+  - one centered `Log out` action appears near the bottom of the main account page, followed by a `foodonlines.com` pill.
+- Account menu direction:
+  - overview rows now include About FoodOnlines, Language (English), Account ID, Address book, Payment methods, Coupons, Refer a friend, and Settings.
+  - detail sections use a sticky Back/header row with left Back control and centered page title.
+- Order shortcut direction:
+  - My orders keeps five shortcuts: Pending, Unshipped, Shipped, To Review, and Returns.
+  - each shortcut uses a compact circular outline icon with the label below, avoiding stretched card-like buttons on mobile.
+- Modal direction:
+  - account modals use a gray overlay, rounded white panel, Back and close controls, viewport-safe width, internal vertical scrolling, and safe-area bottom padding.
+  - Address Book and add-card forms keep Save/Cancel reachable with sticky bottom action rows inside the scrollable modal body.
+  - Change Password inputs reserve right padding for the Show/Hide button so labels and input text do not clip on mobile.
+- Mobile input direction:
+  - account forms use 16px-or-larger input/select/textarea/button text sizing to prevent iOS Safari and Android Chrome field zoom.
+  - public viewport meta includes `maximum-scale=1` for the requested no-zoom account-form behavior.
+- Notifications direction:
+  - each notification toggle is independent, whole-row tappable, blue when on, gray when off, and persists through close/reopen/refresh.
+  - live API persistence is preferred; localStorage fallback keeps `foodonlines-notification-preferences-v1` ready for users when the backend preferences endpoint is unavailable.
 
 ## Guardrails
 
