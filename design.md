@@ -456,6 +456,9 @@
   - fallback path persists addresses to localStorage if account address API is temporarily unavailable, including add/edit/delete/default updates and refresh persistence.
 - Shared address-country coverage update:
   - account address schema now also includes United States and United Kingdom in addition to Thailand, Japan, Singapore, Taiwan, China, Philippines, Malaysia, Indonesia, and Hong Kong.
+- Notifications interaction update:
+  - each notification section row is now directly tappable/clickable and toggles independently on/off.
+  - switch controls use accessible `role="switch"` + `aria-checked` behavior and large tap target spacing for mobile.
 
 ## Guardrails
 

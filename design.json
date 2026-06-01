@@ -166,6 +166,11 @@
         "modal_content_scroll_on_small_screens": true,
         "high_z_index_above_sticky_bars": true
       },
+      "notification_toggle_behavior": {
+        "each_row_toggles_independently": true,
+        "whole_row_tap_target_toggles_switch": true,
+        "uses_role_switch_and_aria_checked": true
+      },
       "address_book_fallback": {
         "uses_live_api_first": true,
         "uses_local_storage_fallback_if_api_unavailable": true,

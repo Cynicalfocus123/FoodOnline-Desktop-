@@ -1233,22 +1233,20 @@ function SimplePanel({ subtitle, title }: { subtitle: string; title: string }) {
 
 function ToggleRow({ label, onChange, value }: { label: string; onChange: (value: boolean) => void; value: boolean }) {
   return (
-    <label className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 px-3 py-3">
+    <button
+      aria-checked={value}
+      className="flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 px-4 py-3 text-left transition hover:bg-neutral-50"
+      onClick={() => onChange(!value)}
+      role="switch"
+      type="button"
+    >
       <span className="text-sm font-semibold text-neutral-800">{label}</span>
-      <button
-        aria-pressed={value}
-        className={`relative h-6 w-11 rounded-full transition ${value ? "bg-sky-300" : "bg-neutral-300"}`}
-        onClick={(event) => {
-          event.preventDefault();
-          onChange(!value);
-        }}
-        type="button"
-      >
+      <span className={`relative h-8 w-14 rounded-full transition ${value ? "bg-sky-300" : "bg-neutral-300"}`}>
         <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full transition ${value ? "left-[22px] bg-sky-500" : "left-0.5 bg-white"}`}
+          className={`absolute top-1 h-6 w-6 rounded-full transition ${value ? "left-7 bg-sky-500" : "left-1 bg-white"}`}
         />
-      </button>
-    </label>
+      </span>
+    </button>
   );
 }
 

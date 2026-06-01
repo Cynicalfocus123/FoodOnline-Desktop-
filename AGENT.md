@@ -470,3 +470,9 @@
 - Checks run:
   - `cmd /c npx tsc --noEmit`
   - `cmd /c npm run build`
+
+- Notifications toggle UX follow-up on 2026-06-01:
+  - Updated `src/components/AccountPage.tsx` notification rows so each entire row is now a tappable `role="switch"` control.
+  - Users can toggle each notification section on/off by tapping anywhere on that row, not just the small knob.
+  - Existing backend persistence endpoint (`PUT /account/notification-preferences`) remains unchanged.
+  - Checks rerun: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`.
