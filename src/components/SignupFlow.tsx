@@ -1,10 +1,11 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import signupBannerImage from "../../site video and content/shop  and order banner.png";
 import { SignupFormValues, getSignupRoleMeta, signupFieldLimits } from "../lib/registerSchema";
 import { signupRoleOptions, useHomeStore } from "../store/homeStore";
+import { PublicSessionUser, usePublicAuthStore } from "../store/publicAuthStore";
 import { PhoneNumberInput } from "./PhoneNumberInput";
 
-const formFields: Array<{
+const emailFormFields: Array<{
   field: keyof SignupFormValues;
   label: string;
   type: string;
@@ -20,11 +21,36 @@ const formFields: Array<{
   { field: "confirmPassword", label: "Confirm password", type: "password" },
 ];
 
+const phoneFormFields: Array<{
+  field: keyof SignupFormValues;
+  label: string;
+  type: string;
+  optional?: boolean;
+}> = [
+  { field: "firstName", label: "First name", type: "text" },
+  { field: "lastName", label: "Last name", type: "text" },
+  { field: "contactNumber", label: "Contact number", type: "tel" },
+  { field: "lineId", label: "Line ID optional", type: "text", optional: true },
+  { field: "companyName", label: "Company name", type: "text" },
+];
+
+type SignupMethod = "email" | "phone";
+type PhoneSignupStep = "form" | "otp";
+type PhoneSignupField = "firstName" | "lastName" | "contactNumber" | "companyName";
+type PhoneSignupFieldErrors = Partial<Record<PhoneSignupField, string>>;
+
 export function SignupFlow() {
   const [visiblePasswords, setVisiblePasswords] = useState({
     password: false,
     confirmPassword: false,
   });
+  const [signupMethod, setSignupMethod] = useState<SignupMethod>("email");
+  const [phoneSignupStep, setPhoneSignupStep] = useState<PhoneSignupStep>("form");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpMessage, setOtpMessage] = useState<string | null>(null);
+  const [phoneFieldErrors, setPhoneFieldErrors] = useState<PhoneSignupFieldErrors>({});
+
   const signupStep = useHomeStore((state) => state.signupStep);
   const selectedRole = useHomeStore((state) => state.selectedRole);
   const formValues = useHomeStore((state) => state.formValues);
@@ -37,10 +63,99 @@ export function SignupFlow() {
   const setFormValue = useHomeStore((state) => state.setFormValue);
   const finishSignup = useHomeStore((state) => state.finishSignup);
   const openLogin = useHomeStore((state) => state.openLogin);
+  const returnAfterAuth = useHomeStore((state) => state.returnAfterAuth);
+  const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
+  const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
+
+  const activeFormFields = useMemo(
+    () => (signupMethod === "email" ? emailFormFields : phoneFormFields),
+    [signupMethod],
+  );
+
+  function resetPhoneOtpState() {
+    setPhoneSignupStep("form");
+    setOtpCode("");
+    setOtpError(null);
+    setOtpMessage(null);
+  }
+
+  function setValueAndClearPhoneError<K extends keyof SignupFormValues>(field: K, value: SignupFormValues[K]) {
+    setFormValue(field, value);
+
+    if (field in phoneFieldErrors || otpError) {
+      setPhoneFieldErrors((currentValue) => ({
+        ...currentValue,
+        [field]: undefined,
+      }));
+      setOtpError(null);
+    }
+  }
+
+  function validatePhoneSignupForm() {
+    const nextErrors: PhoneSignupFieldErrors = {};
+
+    if (!formValues.firstName.trim()) {
+      nextErrors.firstName = "First name is required.";
+    }
+
+    if (!formValues.lastName.trim()) {
+      nextErrors.lastName = "Last name is required.";
+    }
+
+    if (!formValues.contactNumber.trim()) {
+      nextErrors.contactNumber = "Phone number is required.";
+    } else if (formValues.contactNumber.replace(/\D/g, "").length < 7) {
+      nextErrors.contactNumber = "Enter a valid phone number.";
+    }
+
+    if (!formValues.companyName.trim()) {
+      nextErrors.companyName = "Company name is required.";
+    }
+
+    setPhoneFieldErrors(nextErrors);
+    return Object.values(nextErrors).some(Boolean) ? null : formValues.contactNumber.trim();
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    await finishSignup();
+
+    if (signupMethod === "email") {
+      await finishSignup();
+      return;
+    }
+
+    if (phoneSignupStep === "form") {
+      const cleanedPhoneNumber = validatePhoneSignupForm();
+      if (!cleanedPhoneNumber) {
+        return;
+      }
+
+      setOtpCode("");
+      setOtpError(null);
+      setOtpMessage("Enter the code sent to your phone.");
+      setPhoneSignupStep("otp");
+      return;
+    }
+
+    if (!otpCode.trim()) {
+      setOtpError("Code is required.");
+      return;
+    }
+
+    setOtpError(null);
+    const success = await completeMockPhoneOtpLogin(formValues.contactNumber.trim(), {
+      accountType: selectedRole ?? "customer",
+      companyName: formValues.companyName.trim(),
+      firstName: formValues.firstName.trim() || "FoodOnline",
+      lastName: formValues.lastName.trim() || "Shopper",
+      lineId: formValues.lineId.trim(),
+    } satisfies Partial<
+      Pick<PublicSessionUser, "accountType" | "companyName" | "firstName" | "lastName" | "lineId">
+    >);
+
+    if (success) {
+      returnAfterAuth();
+    }
   }
 
   if (signupStep === "complete" && completedSubmission) {
@@ -101,8 +216,30 @@ export function SignupFlow() {
             </p>
 
             <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>
-              {formFields.map(({ field, label, type, optional }) => {
-                const fieldError = fieldErrors[field];
+              <div className="inline-grid grid-cols-2 rounded-md bg-neutral-100 p-1 text-sm font-black text-neutral-600">
+                {(["email", "phone"] as const).map((mode) => (
+                  <button
+                    className={`min-h-10 rounded px-4 transition ${
+                      signupMethod === mode ? "bg-white text-ink shadow-sm" : "hover:text-ink"
+                    }`}
+                    key={mode}
+                    onClick={() => {
+                      setSignupMethod(mode);
+                      setPhoneFieldErrors({});
+                      resetPhoneOtpState();
+                    }}
+                    type="button"
+                  >
+                    {mode === "email" ? "Email" : "Phone"}
+                  </button>
+                ))}
+              </div>
+
+              {activeFormFields.map(({ field, label, type, optional }) => {
+                const fieldError =
+                  signupMethod === "phone"
+                    ? phoneFieldErrors[field as PhoneSignupField] ?? fieldErrors[field]
+                    : fieldErrors[field];
 
                 if (field === "contactNumber") {
                   return (
@@ -111,7 +248,7 @@ export function SignupFlow() {
                       id={field}
                       key={field}
                       label={label}
-                      onChange={(value) => setFormValue(field, value)}
+                      onChange={(value) => setValueAndClearPhoneError(field, value)}
                       required={!optional}
                       value={formValues[field]}
                     />
@@ -125,10 +262,14 @@ export function SignupFlow() {
                       <input
                         aria-describedby={fieldError ? `${field}-error` : undefined}
                         aria-invalid={fieldError ? "true" : "false"}
-                        className={`min-h-14 w-full rounded-md border px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20 ${
-                          type === "password" ? "pr-14" : ""
-                        } ${fieldError ? "border-red-400 bg-red-50/40" : "border-neutral-200"}`}
-                        id={field}
+                        autoCapitalize={
+                          field === "emailAddress" ||
+                          field === "lineId" ||
+                          field === "password" ||
+                          field === "confirmPassword"
+                            ? "none"
+                            : undefined
+                        }
                         autoComplete={
                           field === "emailAddress"
                             ? "email"
@@ -142,14 +283,6 @@ export function SignupFlow() {
                                     ? "new-password"
                                     : "off"
                         }
-                        autoCapitalize={
-                          field === "emailAddress" ||
-                          field === "lineId" ||
-                          field === "password" ||
-                          field === "confirmPassword"
-                            ? "none"
-                            : undefined
-                        }
                         autoCorrect={
                           field === "emailAddress" ||
                           field === "lineId" ||
@@ -158,9 +291,13 @@ export function SignupFlow() {
                             ? "off"
                             : undefined
                         }
+                        className={`min-h-14 w-full rounded-md border px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20 ${
+                          type === "password" ? "pr-14" : ""
+                        } ${fieldError ? "border-red-400 bg-red-50/40" : "border-neutral-200"}`}
+                        id={field}
                         inputMode={field === "emailAddress" ? "email" : "text"}
                         maxLength={signupFieldLimits[field]}
-                        onChange={(event) => setFormValue(field, event.target.value)}
+                        onChange={(event) => setValueAndClearPhoneError(field, event.target.value)}
                         required={!optional}
                         type={
                           field === "password" || field === "confirmPassword"
@@ -192,14 +329,75 @@ export function SignupFlow() {
                   </label>
                 );
               })}
+
+              {signupMethod === "phone" && phoneSignupStep === "otp" ? (
+                <div className="grid gap-3 rounded-[22px] border border-neutral-200 bg-neutral-50 px-4 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-neutral-800">Enter the code sent to your phone</p>
+                      <p className="mt-1 text-sm text-neutral-500">{formValues.contactNumber}</p>
+                    </div>
+                    <button
+                      className="text-sm font-bold text-neutral-700 underline underline-offset-4"
+                      onClick={resetPhoneOtpState}
+                      type="button"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                  <label className="grid gap-2" htmlFor="signup-otp">
+                    <span className="text-sm font-bold text-neutral-700">SMS code</span>
+                    <input
+                      autoComplete="one-time-code"
+                      className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                      id="signup-otp"
+                      inputMode="numeric"
+                      onChange={(event) => {
+                        setOtpCode(event.target.value);
+                        setOtpError(null);
+                      }}
+                      placeholder="Enter any code"
+                      type="text"
+                      value={otpCode}
+                    />
+                  </label>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <button
+                      className="text-sm font-bold text-neutral-700 underline underline-offset-4"
+                      onClick={() => {
+                        setOtpMessage("Code sent again.");
+                        setOtpError(null);
+                      }}
+                      type="button"
+                    >
+                      Resend code
+                    </button>
+                    {otpMessage ? <p className="text-sm font-medium text-neutral-500">{otpMessage}</p> : null}
+                  </div>
+                </div>
+              ) : null}
+
               <button
                 className="mt-2 min-h-14 rounded-md bg-citrus-500 px-6 text-base font-black text-white transition hover:bg-citrus-600"
-                disabled={isSubmittingSignup}
+                disabled={signupMethod === "phone" ? isSubmittingLogin : isSubmittingSignup}
                 type="submit"
               >
-                {isSubmittingSignup ? "Submitting..." : "Create Account"}
+                {signupMethod === "phone"
+                  ? phoneSignupStep === "form"
+                    ? "Continue"
+                    : isSubmittingLogin
+                      ? "Verifying..."
+                      : "Verify Code"
+                  : isSubmittingSignup
+                    ? "Submitting..."
+                    : "Create Account"}
               </button>
-              {submissionError ? <p className="text-sm font-semibold text-red-600">{submissionError}</p> : null}
+              {signupMethod === "email" && submissionError ? (
+                <p className="text-sm font-semibold text-red-600">{submissionError}</p>
+              ) : null}
+              {signupMethod === "phone" && otpError ? (
+                <p className="text-sm font-semibold text-red-600">{otpError}</p>
+              ) : null}
             </form>
 
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">

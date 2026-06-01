@@ -6,27 +6,50 @@ import { usePublicAuthStore } from "../store/publicAuthStore";
 import { PhoneNumberInput } from "./PhoneNumberInput";
 
 type LoginIdentifierMode = "email" | "phone";
+type LoginStep = "identifier" | "otp";
 
 export function LoginFlow() {
   const authError = usePublicAuthStore((state) => state.authError);
   const clearAuthError = usePublicAuthStore((state) => state.clearAuthError);
+  const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
-  const checkoutLoginWithIdentifier = usePublicAuthStore((state) => state.checkoutLoginWithIdentifier);
   const loginUser = usePublicAuthStore((state) => state.loginUser);
   const openSignup = useHomeStore((state) => state.openSignup);
   const returnAfterAuth = useHomeStore((state) => state.returnAfterAuth);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [identifierMode, setIdentifierMode] = useState<LoginIdentifierMode>("email");
+  const [loginStep, setLoginStep] = useState<LoginStep>("identifier");
+  const [otpCode, setOtpCode] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
+  const [otpMessage, setOtpMessage] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     const cleanedEmail = normalizeUserEmail(email);
     const cleanedPhoneNumber = phoneNumber.trim();
     const cleanedPassword = sanitizeUserPasswordInput(password, true);
+    const cleanedOtpCode = otpCode.trim();
+
+    if (identifierMode === "phone" && loginStep === "otp") {
+      if (!cleanedOtpCode) {
+        setFieldError("Code is required.");
+        return;
+      }
+
+      setFieldError(null);
+      clearAuthError();
+
+      const success = await completeMockPhoneOtpLogin(cleanedPhoneNumber);
+      if (success) {
+        returnAfterAuth();
+      }
+
+      return;
+    }
 
     if (identifierMode === "email" && !cleanedEmail) {
       setFieldError("Email is required.");
@@ -43,6 +66,15 @@ export function LoginFlow() {
       return;
     }
 
+    if (identifierMode === "phone") {
+      setFieldError(null);
+      clearAuthError();
+      setOtpCode("");
+      setOtpMessage("Enter the code sent to your phone.");
+      setLoginStep("otp");
+      return;
+    }
+
     if (!validateUserLoginPassword(cleanedPassword)) {
       setFieldError("Password is required.");
       return;
@@ -51,10 +83,7 @@ export function LoginFlow() {
     setFieldError(null);
     clearAuthError();
 
-    const success =
-      identifierMode === "phone"
-        ? await checkoutLoginWithIdentifier(cleanedPhoneNumber, cleanedPassword)
-        : await loginUser(cleanedEmail, cleanedPassword);
+    const success = await loginUser(cleanedEmail, cleanedPassword);
     if (success) {
       returnAfterAuth();
     }
@@ -90,6 +119,10 @@ export function LoginFlow() {
                   key={mode}
                   onClick={() => {
                     setIdentifierMode(mode);
+                    setLoginStep("identifier");
+                    setOtpCode("");
+                    setOtpMessage(null);
+                    setPassword("");
                     setFieldError(null);
                     clearAuthError();
                   }}
@@ -124,24 +157,75 @@ export function LoginFlow() {
               </label>
             )}
 
-            <label className="grid gap-2" htmlFor="login-password">
-              <span className="text-sm font-bold text-neutral-700">Password</span>
-              <div className="relative">
-                <input
-                  autoComplete="current-password"
-                  className="min-h-14 w-full rounded-md border border-neutral-200 px-4 pr-14 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
-                  id="login-password"
-                  onChange={(event) => setPassword(event.target.value)}
-                  type={isPasswordVisible ? "text" : "password"}
-                  value={password}
-                />
-                <PasswordEyeButton
-                  isVisible={isPasswordVisible}
-                  label={isPasswordVisible ? "Hide password" : "Show password"}
-                  onClick={() => setIsPasswordVisible((currentValue) => !currentValue)}
-                />
+            {identifierMode === "email" ? (
+              <label className="grid gap-2" htmlFor="login-password">
+                <span className="text-sm font-bold text-neutral-700">Password</span>
+                <div className="relative">
+                  <input
+                    autoComplete="current-password"
+                    className="min-h-14 w-full rounded-md border border-neutral-200 px-4 pr-14 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                    id="login-password"
+                    onChange={(event) => setPassword(event.target.value)}
+                    type={isPasswordVisible ? "text" : "password"}
+                    value={password}
+                  />
+                  <PasswordEyeButton
+                    isVisible={isPasswordVisible}
+                    label={isPasswordVisible ? "Hide password" : "Show password"}
+                    onClick={() => setIsPasswordVisible((currentValue) => !currentValue)}
+                  />
+                </div>
+              </label>
+            ) : null}
+
+            {identifierMode === "phone" && loginStep === "otp" ? (
+              <div className="grid gap-3 rounded-[22px] border border-neutral-200 bg-neutral-50 px-4 py-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-neutral-800">Enter the code sent to your phone</p>
+                    <p className="mt-1 text-sm text-neutral-500">{phoneNumber}</p>
+                  </div>
+                  <button
+                    className="text-sm font-bold text-neutral-700 underline underline-offset-4"
+                    onClick={() => {
+                      setLoginStep("identifier");
+                      setOtpCode("");
+                      setOtpMessage(null);
+                      setFieldError(null);
+                    }}
+                    type="button"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <label className="grid gap-2" htmlFor="login-otp">
+                  <span className="text-sm font-bold text-neutral-700">SMS code</span>
+                  <input
+                    autoComplete="one-time-code"
+                    className="min-h-14 rounded-md border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/20"
+                    id="login-otp"
+                    inputMode="numeric"
+                    onChange={(event) => setOtpCode(event.target.value)}
+                    placeholder="Enter any code"
+                    type="text"
+                    value={otpCode}
+                  />
+                </label>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    className="text-sm font-bold text-neutral-700 underline underline-offset-4"
+                    onClick={() => {
+                      setOtpMessage("Code sent again.");
+                      setFieldError(null);
+                    }}
+                    type="button"
+                  >
+                    Resend code
+                  </button>
+                  {otpMessage ? <p className="text-sm font-medium text-neutral-500">{otpMessage}</p> : null}
+                </div>
               </div>
-            </label>
+            ) : null}
 
             {fieldError && (identifierMode !== "phone" || !fieldError.toLowerCase().includes("phone")) ? (
               <p className="text-sm font-semibold text-red-600">{fieldError}</p>
@@ -153,7 +237,15 @@ export function LoginFlow() {
               disabled={isSubmittingLogin}
               type="submit"
             >
-              {isSubmittingLogin ? "Signing In..." : "Login"}
+              {identifierMode === "phone"
+                ? loginStep === "identifier"
+                  ? "Continue"
+                  : isSubmittingLogin
+                    ? "Verifying..."
+                    : "Verify Code"
+                : isSubmittingLogin
+                  ? "Signing In..."
+                  : "Login"}
             </button>
           </form>
 

@@ -81,6 +81,24 @@
         "stored_phone_value_includes_selected_dial_code": true
       }
     },
+    "public_auth": {
+      "files": [
+        "src/components/LoginFlow.tsx",
+        "src/components/SignupFlow.tsx",
+        "src/components/CartPage.tsx",
+        "src/store/publicAuthStore.ts"
+      ],
+      "behavior": {
+        "email_login_register_uses_live_api": true,
+        "phone_login_no_password_field": true,
+        "phone_register_no_password_field": true,
+        "phone_auth_uses_mock_otp_step": true,
+        "phone_auth_code_accepts_any_non_empty_value_temporarily": true,
+        "phone_auth_has_resend_code_action": true,
+        "phone_auth_returns_user_to_prior_route_when_available": true,
+        "checkout_phone_auth_continues_into_checkout_after_verify": true
+      }
+    },
     "product_detail_page": {
       "file": "src/components/ProductDetailPage.tsx",
       "sections": [
@@ -496,11 +514,12 @@
     ]
   },
   "tests": {
-    "latest_change": "checkout address reset and nav highlight cleanup",
+    "latest_change": "mock phone otp auth flow",
     "commands": [
       "cmd /c npx tsc --noEmit",
-      "cmd /c npm run build"
+      "cmd /c npm run build",
+      "git diff --check"
     ],
-    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Live API smoke testing previously showed email register reachable, while login/me returned 404 until the deployed Laravel backend routes/cache are refreshed. No real phone SMS verification backend was found in this workspace."
+    "verification_note": "Browser preview was not used because AGENT.md forbids localhost/browser preview checks in this repo. Email auth still targets the live Laravel API. Phone auth is now an intentional temporary mock OTP flow in the frontend until real SMS endpoints are added."
   }
 }

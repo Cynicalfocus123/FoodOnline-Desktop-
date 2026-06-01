@@ -40,6 +40,10 @@ type PublicAuthState = {
   token: string | null;
   clearAuthError: () => void;
   checkoutLoginWithIdentifier: (identifier: string, password: string) => Promise<boolean>;
+  completeMockPhoneOtpLogin: (
+    identifier: string,
+    profile?: Partial<Pick<PublicSessionUser, "accountType" | "companyName" | "firstName" | "lastName" | "lineId">>,
+  ) => Promise<boolean>;
   hydrateSession: () => Promise<void>;
   loginUser: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => Promise<void>;
@@ -51,18 +55,21 @@ function isPhoneLikeIdentifier(value: string) {
   return digitsOnly.length >= 7 && digitsOnly.length <= 15;
 }
 
-function toMockPhoneSession(identifier: string): PublicSessionUser {
+function toMockPhoneSession(
+  identifier: string,
+  profile?: Partial<Pick<PublicSessionUser, "accountType" | "companyName" | "firstName" | "lastName" | "lineId">>,
+): PublicSessionUser {
   const digitsOnly = identifier.replace(/\D/g, "");
 
   return {
     id: `phone-${digitsOnly}`,
-    accountType: "customer",
-    companyName: "",
+    accountType: profile?.accountType ?? "customer",
+    companyName: profile?.companyName ?? "",
     contactNumber: identifier,
     email: `${digitsOnly}@foodonlines.local`,
-    firstName: "FoodOnline",
-    lastName: "Shopper",
-    lineId: "",
+    firstName: profile?.firstName ?? "FoodOnline",
+    lastName: profile?.lastName ?? "Shopper",
+    lineId: profile?.lineId ?? "",
     registeredAt: new Date().toISOString(),
     status: "active",
   };
@@ -109,17 +116,32 @@ export const usePublicAuthStore = create<PublicAuthState>()(
         const trimmedIdentifier = identifier.trim();
 
         if (isPhoneLikeIdentifier(trimmedIdentifier)) {
-          set({
-            authError: null,
-            currentUser: toMockPhoneSession(trimmedIdentifier),
-            hasHydratedSession: true,
-            isSubmittingLogin: false,
-            token: null,
-          });
-          return true;
+          return get().completeMockPhoneOtpLogin(trimmedIdentifier);
         }
 
         return get().loginUser(trimmedIdentifier, password);
+      },
+      completeMockPhoneOtpLogin: async (identifier, profile) => {
+        const trimmedIdentifier = identifier.trim();
+
+        if (!isPhoneLikeIdentifier(trimmedIdentifier)) {
+          set({
+            authError: "Enter a valid phone number.",
+            isSubmittingLogin: false,
+          });
+          return false;
+        }
+
+        set({ authError: null, isSubmittingLogin: true });
+
+        set({
+          authError: null,
+          currentUser: toMockPhoneSession(trimmedIdentifier, profile),
+          hasHydratedSession: true,
+          isSubmittingLogin: false,
+          token: null,
+        });
+        return true;
       },
       hydrateSession: async () => {
         const token = get().token;

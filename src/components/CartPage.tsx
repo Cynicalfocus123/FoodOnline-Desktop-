@@ -35,6 +35,7 @@ type CartLineItem = {
 };
 
 type CheckoutIdentifierMode = "email" | "phone";
+type CheckoutAuthStep = "identifier" | "password" | "otp";
 
 function Checkbox({
   checked,
@@ -257,12 +258,16 @@ function CheckoutAuthModal({
   error,
   identifier,
   identifierMode,
+  otpCode,
+  otpMessage,
   password,
   step,
   isPasswordVisible,
   onClose,
   onIdentifierChange,
   onIdentifierModeChange,
+  onOtpChange,
+  onResendCode,
   onPasswordChange,
   onContinue,
   onBack,
@@ -273,12 +278,16 @@ function CheckoutAuthModal({
   error: string | null;
   identifier: string;
   identifierMode: CheckoutIdentifierMode;
+  otpCode: string;
+  otpMessage: string | null;
   password: string;
-  step: "identifier" | "password";
+  step: CheckoutAuthStep;
   isPasswordVisible: boolean;
   onClose: () => void;
   onIdentifierChange: (value: string) => void;
   onIdentifierModeChange: (mode: CheckoutIdentifierMode) => void;
+  onOtpChange: (value: string) => void;
+  onResendCode: () => void;
   onPasswordChange: (value: string) => void;
   onContinue: (event: FormEvent<HTMLFormElement>) => void;
   onBack: () => void;
@@ -307,7 +316,9 @@ function CheckoutAuthModal({
           <p className="mt-3 text-sm leading-7 text-neutral-600 sm:text-base">
             {step === "identifier"
               ? "Enter your email or phone number to sign in or create an account."
-              : "Enter your password to continue to checkout."}
+              : identifierMode === "phone"
+                ? "Enter the code sent to your phone to continue to checkout."
+                : "Enter your password to continue to checkout."}
           </p>
         </div>
 
@@ -354,7 +365,7 @@ function CheckoutAuthModal({
                 </label>
               )}
             </div>
-          ) : (
+          ) : step === "password" ? (
             <>
               <div className="flex items-center justify-between gap-3 rounded-2xl bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
                 <div>
@@ -389,18 +400,58 @@ function CheckoutAuthModal({
                 </div>
               </label>
             </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-3 rounded-2xl bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-neutral-500">Phone number</p>
+                  <p className="mt-1 font-semibold text-neutral-900">{identifier}</p>
+                </div>
+                <button className="text-sm font-bold text-neutral-700 underline underline-offset-4" onClick={onBack} type="button">
+                  Edit
+                </button>
+              </div>
+
+              <label className="grid gap-2" htmlFor="checkout-login-otp">
+                <span className="text-sm font-bold text-neutral-700">SMS code</span>
+                <input
+                  autoComplete="one-time-code"
+                  autoFocus
+                  className="min-h-14 w-full rounded-2xl border border-neutral-300 px-4 text-base font-semibold text-neutral-900 outline-none ring-2 ring-transparent transition placeholder:text-neutral-400 focus:border-leaf-500 focus:ring-leaf-500/15"
+                  id="checkout-login-otp"
+                  inputMode="numeric"
+                  onChange={(event) => onOtpChange(event.target.value)}
+                  placeholder="Enter any code"
+                  type="text"
+                  value={otpCode}
+                />
+              </label>
+
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <button className="text-sm font-bold text-neutral-700 underline underline-offset-4" onClick={onResendCode} type="button">
+                  Resend code
+                </button>
+                {otpMessage ? <p className="text-sm font-medium text-neutral-500">{otpMessage}</p> : null}
+              </div>
+            </>
           )}
 
-          {error && (step !== "identifier" || identifierMode !== "phone") ? (
-            <p className="text-sm font-semibold text-red-600">{error}</p>
-          ) : null}
+          {error ? <p className="text-sm font-semibold text-red-600">{error}</p> : null}
 
           <button
             className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-leaf-600 px-6 text-base font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
             disabled={isSubmitting}
             type="submit"
           >
-            {step === "identifier" ? "Continue" : isSubmitting ? "Signing In..." : "Continue to Checkout"}
+            {step === "identifier"
+              ? "Continue"
+              : step === "otp"
+                ? isSubmitting
+                  ? "Verifying..."
+                  : "Verify Code"
+                : isSubmitting
+                  ? "Signing In..."
+                  : "Continue to Checkout"}
           </button>
         </form>
       </div>
@@ -513,15 +564,18 @@ export function CartPage() {
   const toggleCartSelection = useHomeStore((state) => state.toggleCartSelection);
   const setAllCartSelections = useHomeStore((state) => state.setAllCartSelections);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
+  const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
   const checkoutLoginWithIdentifier = usePublicAuthStore((state) => state.checkoutLoginWithIdentifier);
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
 
   const [couponCode, setCouponCode] = useState("");
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [isCheckoutAuthOpen, setIsCheckoutAuthOpen] = useState(false);
-  const [authStep, setAuthStep] = useState<"identifier" | "password">("identifier");
+  const [authStep, setAuthStep] = useState<CheckoutAuthStep>("identifier");
   const [identifierMode, setIdentifierMode] = useState<CheckoutIdentifierMode>("email");
   const [identifier, setIdentifier] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpMessage, setOtpMessage] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -553,6 +607,8 @@ export function CartPage() {
     setAuthStep("identifier");
     setIdentifierMode("email");
     setIdentifier("");
+    setOtpCode("");
+    setOtpMessage(null);
     setPassword("");
     setAuthError(null);
     setIsPasswordVisible(false);
@@ -594,7 +650,32 @@ export function CartPage() {
       }
 
       setAuthError(null);
+      if (identifierMode === "phone") {
+        setOtpCode("");
+        setOtpMessage("Enter the code sent to your phone.");
+        setAuthStep("otp");
+        return;
+      }
+
       setAuthStep("password");
+      return;
+    }
+
+    if (authStep === "otp") {
+      if (!otpCode.trim()) {
+        setAuthError("Code is required.");
+        return;
+      }
+
+      setAuthError(null);
+      const success = await completeMockPhoneOtpLogin(identifier.trim());
+      if (success) {
+        closeCheckoutModal();
+        openCheckout();
+        return;
+      }
+
+      setAuthError("Invalid verification code.");
       return;
     }
 
@@ -836,8 +917,12 @@ export function CartPage() {
         isOpen={isCheckoutAuthOpen}
         isPasswordVisible={isPasswordVisible}
         isSubmitting={isSubmittingLogin}
+        otpCode={otpCode}
+        otpMessage={otpMessage}
         onBack={() => {
           setAuthStep("identifier");
+          setOtpCode("");
+          setOtpMessage(null);
           setPassword("");
           setAuthError(null);
         }}
@@ -850,6 +935,17 @@ export function CartPage() {
         onIdentifierModeChange={(mode) => {
           setIdentifierMode(mode);
           setIdentifier("");
+          setOtpCode("");
+          setOtpMessage(null);
+          setPassword("");
+          setAuthError(null);
+        }}
+        onOtpChange={(value) => {
+          setOtpCode(value);
+          setAuthError(null);
+        }}
+        onResendCode={() => {
+          setOtpMessage("Code sent again.");
           setAuthError(null);
         }}
         onPasswordChange={(value) => {
