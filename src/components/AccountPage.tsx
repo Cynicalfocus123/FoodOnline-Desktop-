@@ -255,6 +255,7 @@ export function AccountPage() {
   }, [currentUser]);
   const hasAnyModalOpen =
     isAddressModalOpen || isPaymentModalOpen || isNotificationsOpen || isPasswordOpen || isDeleteOpen;
+  const accountPanelReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!currentUser || !token) return;
@@ -271,6 +272,15 @@ export function AccountPage() {
       document.body.style.overflow = previousOverflow;
     };
   }, [hasAnyModalOpen]);
+
+  useEffect(() => {
+    const panel = accountPanelReference.current;
+    if (!panel) return;
+
+    window.requestAnimationFrame(() => {
+      panel.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+  }, [accountSection]);
 
   if (!currentUser) {
     return (
@@ -649,7 +659,7 @@ export function AccountPage() {
   return (
     <>
       <section className="bg-neutral-50 px-4 pb-[calc(32px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
-        <div className="mx-auto max-w-[1080px]">
+        <div className="mx-auto max-w-[1080px]" ref={accountPanelReference}>
           <div className="rounded-[24px] border border-neutral-200 bg-white p-4 sm:p-6">
             {accountSection !== "overview" ? (
               <AccountSubpageHeader title={routeTitle(accountSection)} onBack={() => openAccount("overview")} />
@@ -731,9 +741,6 @@ export function AccountPage() {
                 >
                   Log out
                 </button>
-                <div className="mx-auto rounded-full bg-white px-7 py-3 text-base font-black text-neutral-950 shadow-[0_14px_45px_rgba(15,23,42,0.12)]">
-                  foodonlines.com
-                </div>
               </div>
             ) : null}
 

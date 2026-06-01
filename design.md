@@ -465,7 +465,7 @@
 - Main account dashboard direction:
   - top profile card shows avatar initial, account name, and email/phone only.
   - no sign-out action appears in the profile card, header account dropdown, mobile hamburger submenu, or account subpages.
-  - one centered `Log out` action appears near the bottom of the main account page, followed by a `foodonlines.com` pill.
+  - one centered `Log out` action appears near the bottom of the main account page.
 - Account menu direction:
   - overview rows now include About FoodOnlines, Language (English), Account ID, Address book, Payment methods, Coupons, Refer a friend, and Settings.
   - detail sections use a sticky Back/header row with left Back control and centered page title.
@@ -487,6 +487,11 @@
 
 - Logged-in desktop account dropdown now starts with `My Account` before `My orders`.
 - `My Account` routes to the account overview hash `#account`, so the public URL resolves to `https://cynicalfocus123.github.io/FoodOnline-Desktop-/#account`.
+
+### Account Scroll Position Fix (2026-06-02)
+
+- The decorative `foodonlines.com` pill under logout was removed from the main account page.
+- Account section navigation now resets the account panel into view when switching pages, preventing mobile and narrow desktop layouts from staying at the bottom after tapping My Account, Settings, or other account rows.
 
 ## Guardrails
 

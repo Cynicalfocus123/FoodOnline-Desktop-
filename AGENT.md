@@ -490,7 +490,7 @@
   - `design.json`
 - Account sign-out placement:
   - Removed duplicate `Sign out` actions from the header dropdown, mobile hamburger account submenu, and top account profile card.
-  - Main `#account` overview now shows the only account logout action as a centered `Log out` row near the bottom, followed by the `foodonlines.com` pill.
+  - Main `#account` overview now shows the only account logout action as a centered `Log out` row near the bottom.
 - Account navigation:
   - Added Back headers for account subpages and modal-detail flows so users can return to the main account dashboard without title/back overlap.
   - Added hash-safe account sections for `About FoodOnlines` and `Language`, preserving existing `orders`, `saved`, `refer`, `coupon`, and `settings` sections.
@@ -515,3 +515,12 @@
   - `design.json`
 - Logged-in desktop account dropdown now shows `My Account` as the first row before `My orders`.
 - Clicking `My Account` opens the account overview route at `#account`, matching `https://cynicalfocus123.github.io/FoodOnline-Desktop-/#account`.
+
+## Account Scroll Position Fix (2026-06-02)
+
+- Files changed:
+  - `src/components/AccountPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Removed the `foodonlines.com` pill under the main account `Log out` action.
+- Account section changes now scroll the account panel back into view so mobile/desktop users do not land at the bottom of the page after opening My Account, Settings, Orders, Saved items, Coupons, Refer, About, or Language.

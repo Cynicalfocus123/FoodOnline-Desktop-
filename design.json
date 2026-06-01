@@ -156,7 +156,9 @@
           "Settings",
           "Log out bottom action"
         ],
-        "large_touch_targets_and_white_rounded_cards": true
+        "large_touch_targets_and_white_rounded_cards": true,
+        "account_section_navigation_resets_scroll": true,
+        "logout_site_pill_removed": true
       },
       "settings_sections": [
         "Address book",
