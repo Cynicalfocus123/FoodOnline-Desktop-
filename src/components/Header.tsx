@@ -130,6 +130,90 @@ function MenuChevron() {
   );
 }
 
+function RowChevronIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0 text-neutral-400"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+function OrdersIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M7 4h10l1 15H6L7 4Z" />
+      <path d="M9 8h6" />
+      <path d="M9 12h6" />
+    </svg>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M12 20s-6.7-4.5-8.5-7.7A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 8.5 6.3C18.7 15.5 12 20 12 20Z" />
+    </svg>
+  );
+}
+
+function AddressIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
+      <circle cx="12" cy="10" r="2.2" />
+    </svg>
+  );
+}
+
+function GiftIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M4 8h16v12H4z" />
+      <path d="M2 8h20v4H2z" />
+      <path d="M12 8v12" />
+      <path d="M9.2 8c-1.5 0-2.7-1.2-2.7-2.7S7.7 2.6 9.2 2.6c1.4 0 2.6 1 2.8 2.4M14.8 8c1.5 0 2.7-1.2 2.7-2.7s-1.2-2.7-2.7-2.7c-1.4 0-2.6 1-2.8 2.4" />
+    </svg>
+  );
+}
+
+function TicketIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M21 12a2.8 2.8 0 0 1-2.8 2.8H5.8V9.2h12.4A2.8 2.8 0 0 1 21 12Z" />
+      <path d="M3 9.2h2.8V14.8H3a2.8 2.8 0 0 0 0-5.6Z" />
+      <path d="M12 9.2v5.6" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="m19.4 15-1.3.8.2 1.6-1.6 1.1-1.2-1-1.5.6-.4 1.5h-2l-.4-1.5-1.5-.6-1.2 1-1.6-1.1.2-1.6-1.3-.8.6-1.5-.6-1.5 1.3-.8-.2-1.6 1.6-1.1 1.2 1 1.5-.6.4-1.5h2l.4 1.5 1.5.6 1.2-1 1.6 1.1-.2 1.6 1.3.8-.6 1.5.6 1.5Z" />
+    </svg>
+  );
+}
+
+function LogoutIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M9 4H5v16h4" />
+      <path d="M13 12h8" />
+      <path d="m18 7 5 5-5 5" />
+    </svg>
+  );
+}
+
 function CloseIcon() {
   return (
     <svg
@@ -172,6 +256,7 @@ export function Header() {
   const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
   const languageMenuReference = useRef<HTMLElement | null>(null);
   const accountMenuReference = useRef<HTMLDivElement | null>(null);
+  const accountCloseTimeoutReference = useRef<number | null>(null);
 
   const selectedLanguage = useMemo(
     () => languageOptions.find((language) => language.code === selectedLanguageCode) ?? languageOptions[0],
@@ -188,6 +273,26 @@ export function Header() {
 
     return null;
   }, [siteView]);
+  const accountDisplayName = useMemo(() => {
+    if (!currentUser) {
+      return "My Account";
+    }
+
+    const fullName = `${currentUser.firstName} ${currentUser.lastName}`.trim();
+    if (fullName) {
+      return fullName;
+    }
+
+    if (currentUser.email) {
+      return currentUser.email.split("@")[0];
+    }
+
+    return "My Account";
+  }, [currentUser]);
+  const accountInitial = useMemo(() => {
+    const firstChar = accountDisplayName.trim().charAt(0);
+    return firstChar ? firstChar.toUpperCase() : "A";
+  }, [accountDisplayName]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -227,10 +332,26 @@ export function Header() {
     };
 
     document.addEventListener("mousedown", handlePointerDown);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isAccountMenuOpen]);
+
+  useEffect(
+    () => () => {
+      if (accountCloseTimeoutReference.current) {
+        window.clearTimeout(accountCloseTimeoutReference.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!isZipPanelOpen) {
@@ -267,6 +388,24 @@ export function Header() {
   function handleDesktopAccountItem(section: "orders" | "saved" | "refer" | "coupon" | "settings") {
     setIsAccountMenuOpen(false);
     openAccount(section);
+  }
+
+  function openAccountMenu() {
+    if (accountCloseTimeoutReference.current) {
+      window.clearTimeout(accountCloseTimeoutReference.current);
+      accountCloseTimeoutReference.current = null;
+    }
+    setIsAccountMenuOpen(true);
+  }
+
+  function closeAccountMenuWithDelay() {
+    if (accountCloseTimeoutReference.current) {
+      window.clearTimeout(accountCloseTimeoutReference.current);
+    }
+    accountCloseTimeoutReference.current = window.setTimeout(() => {
+      setIsAccountMenuOpen(false);
+      accountCloseTimeoutReference.current = null;
+    }, 80);
   }
 
   function handleMenuToggle() {
@@ -380,35 +519,63 @@ export function Header() {
             {currentUser ? (
               <div
                 className="relative"
-                onMouseEnter={() => setIsAccountMenuOpen(true)}
-                onMouseLeave={() => setIsAccountMenuOpen(false)}
+                onMouseEnter={openAccountMenu}
+                onMouseLeave={closeAccountMenuWithDelay}
                 ref={accountMenuReference}
               >
                 <button
                   aria-expanded={isAccountMenuOpen}
-                  className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1.5 text-[15px] font-semibold text-neutral-900 transition hover:border-neutral-300 hover:text-leaf-600"
                   onClick={() => setIsAccountMenuOpen((currentValue) => !currentValue)}
                   type="button"
                 >
-                  <UserIcon />
-                  <span>My Account</span>
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-xs font-black text-neutral-800">{accountInitial}</span>
+                  <span className="max-w-[132px] truncate">{accountDisplayName}</span>
+                  <ChevronIcon isOpen={isAccountMenuOpen} />
                 </button>
                 {isAccountMenuOpen ? (
-                  <div className="absolute right-0 top-[calc(100%+10px)] z-[1100] min-w-[220px] rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
-                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("orders")} type="button">
-                      My orders
+                  <div className="absolute right-0 top-full z-[1150] mt-1.5 min-w-[272px] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("orders")} type="button">
+                      <OrdersIcon />
+                      <span className="flex-1">My orders</span>
+                      <RowChevronIcon />
                     </button>
-                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("saved")} type="button">
-                      Saved items
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("saved")} type="button">
+                      <HeartIcon />
+                      <span className="flex-1">Saved items</span>
+                      <RowChevronIcon />
                     </button>
-                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("refer")} type="button">
-                      Refer a friend
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("settings")} type="button">
+                      <AddressIcon />
+                      <span className="flex-1">Address book</span>
+                      <RowChevronIcon />
                     </button>
-                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("coupon")} type="button">
-                      Coupon
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("refer")} type="button">
+                      <GiftIcon />
+                      <span className="flex-1">Refer a friend</span>
+                      <RowChevronIcon />
                     </button>
-                    <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("settings")} type="button">
-                      Settings
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("coupon")} type="button">
+                      <TicketIcon />
+                      <span className="flex-1">Coupons</span>
+                      <RowChevronIcon />
+                    </button>
+                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("settings")} type="button">
+                      <SettingsIcon />
+                      <span className="flex-1">Settings</span>
+                      <RowChevronIcon />
+                    </button>
+                    <div className="my-1 h-px bg-neutral-200" />
+                    <button
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50"
+                      onClick={() => {
+                        setIsAccountMenuOpen(false);
+                        void logoutUser();
+                      }}
+                      type="button"
+                    >
+                      <LogoutIcon />
+                      <span className="flex-1">Sign out</span>
                     </button>
                   </div>
                 ) : null}
@@ -453,15 +620,6 @@ export function Header() {
               ) : null}
             </button>
 
-            {currentUser ? (
-              <button
-                className="inline-flex min-h-12 items-center rounded-full bg-citrus-500 px-4 text-sm font-black text-white transition hover:bg-citrus-600"
-                onClick={() => void logoutUser()}
-                type="button"
-              >
-                Logout
-              </button>
-            ) : null}
           </div>
 
           <div className="flex items-center gap-1.5 lg:hidden">
@@ -497,7 +655,19 @@ export function Header() {
               >
                 Login / Register
               </a>
-            ) : null}
+            ) : (
+              <button
+                aria-label="Open account"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openAccount("overview");
+                }}
+                type="button"
+              >
+                <UserIcon />
+              </button>
+            )}
 
             <button
               aria-label="View cart"
@@ -599,16 +769,28 @@ export function Header() {
                   Login / Register
                 </a>
               ) : (
-                <button
-                  className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    openAccount("overview");
-                  }}
-                  type="button"
-                >
-                  My Account
-                </button>
+                <>
+                  <button
+                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openAccount("overview");
+                    }}
+                    type="button"
+                  >
+                    My Account
+                  </button>
+                  <button
+                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      void logoutUser();
+                    }}
+                    type="button"
+                  >
+                    Sign out
+                  </button>
+                </>
               )}
 
               <div className="mt-2 grid gap-2">

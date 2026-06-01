@@ -435,3 +435,38 @@
     - `php artisan optimize:clear`
     - `php artisan config:cache`
     - `php artisan route:cache`
+
+## Account Menu + Address Book UX Follow-up (2026-06-01)
+
+- Context7 note for this pass: attempted to discover Context7 tools first, but this session only exposed `multi_agent_v1` tools. Continued with local codebase implementation.
+- Files changed:
+  - `src/components/Header.tsx`
+  - `src/components/AccountPage.tsx`
+  - `src/lib/addressSchema.ts`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Desktop header/account behavior updates:
+  - Logged-in account trigger now shows avatar initial + username + rotating chevron.
+  - Dropdown now keeps open during button-to-menu mouse movement, supports hover + click open, and closes on outside click or `Escape`.
+  - Dropdown menu now includes `My orders`, `Saved items`, `Address book`, `Refer a friend`, `Coupons`, `Settings`, and `Sign out`, each with aligned left icon and right chevron.
+  - Removed separate desktop logout pill in favor of dropdown `Sign out`.
+- Mobile account behavior updates:
+  - Logged-in mobile header now has a dedicated account icon button that opens full `#account` route (not a tiny dropdown).
+  - Mobile menu also includes `My Account` and `Sign out` entries for consistency.
+- Account page and modal UX updates:
+  - Overview now uses larger touch-friendly card rows and status shortcuts with icon circles.
+  - Added `Buy again`, `Address book`, `Payment methods`, and `Sign out` rows in overview flow.
+  - Modals now use higher z-index layering, overlay click close, `Escape` close, `aria-modal` dialog semantics, focus trapping, and body scroll lock while open.
+  - Mobile sticky Cart/Checkout footer is now hidden whenever any account modal is open to avoid overlap.
+- Address book save reliability updates:
+  - Address CRUD still uses live account API when available.
+  - Added localStorage fallback (`foodonlines-account-addresses-v1`) for add/edit/delete/default so address data persists after refresh even if account address API is temporarily unavailable.
+  - `Add new address` remains blank-form only and keeps dynamic country field rendering/validation behavior.
+- Address schema updates:
+  - Added `United States` and `United Kingdom` to shared `addressSchema` country list for account/address-book forms.
+- Dirty/untracked cleanup:
+  - Removed stray untracked image files from `site video and content` to keep working tree and package weight clean.
+- Checks run:
+  - `cmd /c npx tsc --noEmit`
+  - `cmd /c npm run build`

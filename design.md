@@ -421,6 +421,42 @@
 - Checkout sync:
   - Logged-in checkout now pulls saved addresses from account API so account and checkout share address data source.
 
+### Account UI/UX Follow-up (2026-06-01)
+
+- Desktop My Account trigger now matches requested interaction style:
+  - avatar initial + username text + small chevron indicator.
+  - chevron rotates when dropdown opens/closes.
+  - dropdown remains open while moving pointer from trigger into menu.
+  - closes on outside click, outside hover leave, or `Escape`.
+- Desktop account dropdown item list now includes:
+  - My orders
+  - Saved items
+  - Address book
+  - Refer a friend
+  - Coupons
+  - Settings
+  - Sign out
+- Mobile account behavior refinement:
+  - logged-in mobile header now exposes a direct account icon button that opens full account page route.
+  - account access is full-page/tap-friendly, not a compact hover-style dropdown.
+- Account page touch UX refinement:
+  - overview rows now use larger white rounded cards, clearer typography hierarchy, icon+label row alignment, and large tap targets.
+  - order status shortcuts now use icon circles with equal-height buttons and no text clipping.
+- Modal behavior refinement for Address Book, Payment Methods, Notifications, Change Password, and Delete Account:
+  - higher overlay z-index so modals always sit above sticky elements.
+  - gray overlay + rounded white panel style.
+  - outside click and `Escape` close behavior.
+  - focus trap and keyboard-tab cycling within modal.
+  - page background scroll lock while modal is open.
+  - modal content remains scrollable for long content on small screens.
+- Mobile overlap fix:
+  - account-page sticky cart/checkout footer hides while any account modal is open to prevent overlap.
+- Address book save resilience:
+  - primary path uses live account API.
+  - fallback path persists addresses to localStorage if account address API is temporarily unavailable, including add/edit/delete/default updates and refresh persistence.
+- Shared address-country coverage update:
+  - account address schema now also includes United States and United Kingdom in addition to Thailand, Japan, Singapore, Taiwan, China, Philippines, Malaysia, Indonesia, and Hong Kong.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

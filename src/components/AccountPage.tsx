@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
   AddressField,
   AddressValues,
@@ -46,23 +46,32 @@ type NotificationPreferences = {
 };
 
 type SaveState = "idle" | "saving";
+type DeleteReasonKey =
+  | "bad_experience"
+  | "too_expensive"
+  | "notifications"
+  | "no_longer_need_account"
+  | "no_longer_support_company"
+  | "prefer_not_to_say"
+  | "other";
 
-const deleteReasons = [
+const LOCAL_ADDRESS_STORAGE_KEY = "foodonlines-account-addresses-v1";
+const deleteReasons: Array<{ key: DeleteReasonKey; label: string }> = [
   { key: "bad_experience", label: "Bad experience with FoodOnlines" },
-  { key: "too_expensive", label: "It’s too expensive" },
+  { key: "too_expensive", label: "It's too expensive" },
   { key: "notifications", label: "Notifications" },
   { key: "no_longer_need_account", label: "No longer need account" },
   { key: "no_longer_support_company", label: "No longer support company" },
   { key: "prefer_not_to_say", label: "Prefer not to say" },
   { key: "other", label: "Other" },
-] as const;
+];
 
 const statusShortcuts = [
-  { key: "pending", label: "Pending" },
-  { key: "unshipped", label: "Unshipped" },
-  { key: "shipped", label: "Shipped" },
-  { key: "toReview", label: "To Review" },
-  { key: "returns", label: "Returns" },
+  { key: "pending", label: "Pending", icon: <ClockIcon /> },
+  { key: "unshipped", label: "Unshipped", icon: <BoxIcon /> },
+  { key: "shipped", label: "Shipped", icon: <TruckIcon /> },
+  { key: "toReview", label: "To Review", icon: <ChatIcon /> },
+  { key: "returns", label: "Returns", icon: <ReturnIcon /> },
 ] as const;
 
 const defaultPreferences: NotificationPreferences = {
@@ -76,6 +85,33 @@ const defaultPreferences: NotificationPreferences = {
   push_notifications: true,
 };
 
+function readLocalAddressBook(userKey: string): AccountAddress[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(LOCAL_ADDRESS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as Record<string, AccountAddress[]>;
+    const values = parsed[userKey];
+    return Array.isArray(values) ? values : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalAddressBook(userKey: string, addresses: AccountAddress[]) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const raw = window.localStorage.getItem(LOCAL_ADDRESS_STORAGE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, AccountAddress[]>) : {};
+    parsed[userKey] = addresses;
+    window.localStorage.setItem(LOCAL_ADDRESS_STORAGE_KEY, JSON.stringify(parsed));
+  } catch {
+    // Local storage failures should not break account actions.
+  }
+}
+
 function toErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
     return error.message;
@@ -85,18 +121,10 @@ function toErrorMessage(error: unknown, fallback: string) {
 
 function detectBrand(cardNumber: string) {
   const digits = cardNumber.replace(/\D/g, "");
-  if (/^4/.test(digits)) {
-    return "Visa";
-  }
-  if (/^(5[1-5]|2[2-7])/.test(digits)) {
-    return "Mastercard";
-  }
-  if (/^3[47]/.test(digits)) {
-    return "American Express";
-  }
-  if (/^6(?:011|5)/.test(digits)) {
-    return "Discover";
-  }
+  if (/^4/.test(digits)) return "Visa";
+  if (/^(5[1-5]|2[2-7])/.test(digits)) return "Mastercard";
+  if (/^3[47]/.test(digits)) return "American Express";
+  if (/^6(?:011|5)/.test(digits)) return "Discover";
   return "Card";
 }
 
@@ -110,9 +138,7 @@ function formatCardNumber(value: string) {
 
 function formatExpiryDate(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 4);
-  if (digits.length <= 2) {
-    return digits;
-  }
+  if (digits.length <= 2) return digits;
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
 }
 
@@ -120,7 +146,7 @@ function routeTitle(section: AccountSection) {
   if (section === "orders") return "My orders";
   if (section === "saved") return "Saved items";
   if (section === "refer") return "Refer a friend";
-  if (section === "coupon") return "Coupon";
+  if (section === "coupon") return "Coupons";
   if (section === "settings") return "Settings";
   return "My account";
 }
@@ -130,12 +156,12 @@ export function AccountPage() {
   const openAccount = useHomeStore((state) => state.openAccount);
   const openCheckout = useHomeStore((state) => state.openCheckout);
   const openCart = useHomeStore((state) => state.openCart);
+  const openLogin = useHomeStore((state) => state.openLogin);
+  const backToHome = useHomeStore((state) => state.backToHome);
+
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const token = usePublicAuthStore((state) => state.token);
-  const openLogin = useHomeStore((state) => state.openLogin);
-
   const logoutUser = usePublicAuthStore((state) => state.logoutUser);
-  const backToHome = useHomeStore((state) => state.backToHome);
 
   const [statusFilter, setStatusFilter] = useState<(typeof statusShortcuts)[number]["key"]>("pending");
   const [couponCount] = useState(1);
@@ -181,7 +207,7 @@ export function AccountPage() {
   const [passwordState, setPasswordState] = useState<SaveState>("idle");
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [deleteReason, setDeleteReason] = useState<string>("");
+  const [deleteReason, setDeleteReason] = useState<DeleteReasonKey | "">("");
   const [deleteOtherReason, setDeleteOtherReason] = useState("");
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
@@ -189,16 +215,33 @@ export function AccountPage() {
 
   const activeAddressConfig = useMemo(() => addressConfigs[addressCountry], [addressCountry]);
   const activeBillingConfig = useMemo(() => addressConfigs[billingCountry], [billingCountry]);
+  const accountName = useMemo(() => {
+    if (!currentUser) return "";
+    const fullName = `${currentUser.firstName} ${currentUser.lastName}`.trim();
+    return fullName || currentUser.email;
+  }, [currentUser]);
+  const userAddressCacheKey = useMemo(() => {
+    if (!currentUser) return "anonymous";
+    return String(currentUser.id);
+  }, [currentUser]);
+  const hasAnyModalOpen =
+    isAddressModalOpen || isPaymentModalOpen || isNotificationsOpen || isPasswordOpen || isDeleteOpen;
 
   useEffect(() => {
-    if (!currentUser || !token) {
-      return;
-    }
-
+    if (!currentUser || !token) return;
     void loadAddresses(token);
     void loadPaymentMethods(token);
     void loadPreferences(token);
   }, [currentUser, token]);
+
+  useEffect(() => {
+    if (!hasAnyModalOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [hasAnyModalOpen]);
 
   if (!currentUser) {
     return (
@@ -207,7 +250,7 @@ export function AccountPage() {
           <h1 className="text-3xl font-black text-neutral-950">Account</h1>
           <p className="mt-3 text-sm leading-7 text-neutral-600">Please sign in to view your account details.</p>
           <button
-            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-2xl bg-leaf-600 px-6 text-sm font-black text-white transition hover:bg-leaf-700"
+            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-leaf-600 px-6 text-sm font-black text-white transition hover:bg-leaf-700"
             onClick={openLogin}
             type="button"
           >
@@ -221,15 +264,19 @@ export function AccountPage() {
   async function loadAddresses(nextToken: string) {
     try {
       const response = await apiRequest<{ addresses: AccountAddress[] }>("/account/addresses", { token: nextToken });
-      setAddresses(response.addresses ?? []);
+      const next = response.addresses ?? [];
+      setAddresses(next);
+      writeLocalAddressBook(userAddressCacheKey, next);
     } catch {
-      setAddresses([]);
+      setAddresses(readLocalAddressBook(userAddressCacheKey));
     }
   }
 
   async function loadPaymentMethods(nextToken: string) {
     try {
-      const response = await apiRequest<{ payment_methods: PaymentMethod[] }>("/account/payment-methods", { token: nextToken });
+      const response = await apiRequest<{ payment_methods: PaymentMethod[] }>("/account/payment-methods", {
+        token: nextToken,
+      });
       setPaymentMethods(response.payment_methods ?? []);
     } catch {
       setPaymentMethods([]);
@@ -278,10 +325,7 @@ export function AccountPage() {
   }
 
   function handleAddressValueChange(field: AddressField, value: string) {
-    setAddressValues((current) => ({
-      ...current,
-      [field.key]: value,
-    }));
+    setAddressValues((current) => ({ ...current, [field.key]: value }));
 
     if (addressTouched[field.key] || addressErrors[field.key]) {
       const error = getAddressError(field, value);
@@ -305,70 +349,106 @@ export function AccountPage() {
     return Object.keys(nextErrors).length === 0;
   }
 
+  function withLocalDefaultState(nextAddresses: AccountAddress[]) {
+    if (!nextAddresses.some((address) => address.is_default) && nextAddresses.length > 0) {
+      const [first, ...rest] = nextAddresses;
+      return [{ ...first, is_default: true }, ...rest];
+    }
+    return nextAddresses;
+  }
+
+  function updateLocalAddresses(nextAddresses: AccountAddress[]) {
+    const normalized = withLocalDefaultState(nextAddresses);
+    setAddresses(normalized);
+    writeLocalAddressBook(userAddressCacheKey, normalized);
+  }
+
   async function saveAddress(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!token || !validateAddressForm()) {
-      return;
-    }
+    if (!validateAddressForm()) return;
+
+    const payload = {
+      country_key: addressCountry,
+      address_values: addressValues,
+      summary: createAddressSummary(addressCountry, addressValues),
+      is_default: addressSaveAsDefault,
+    };
 
     setAddressState("saving");
     setAddressMessage(null);
 
     try {
-      const payload = {
-        country_key: addressCountry,
-        address_values: addressValues,
-        summary: createAddressSummary(addressCountry, addressValues),
-        is_default: addressSaveAsDefault,
-      };
-
-      if (editingAddressId) {
-        await apiRequest(`/account/addresses/${editingAddressId}`, {
-          method: "PUT",
-          token,
-          body: payload,
-        });
-      } else if (saveAddressForFuture) {
-        await apiRequest("/account/addresses", {
-          method: "POST",
-          token,
-          body: payload,
-        });
+      if (token) {
+        if (editingAddressId) {
+          await apiRequest(`/account/addresses/${editingAddressId}`, { method: "PUT", token, body: payload });
+        } else {
+          await apiRequest("/account/addresses", { method: "POST", token, body: payload });
+        }
+        await loadAddresses(token);
+      } else {
+        throw new Error("no-token");
       }
 
-      await loadAddresses(token);
       setAddressMode("list");
       setAddressMessage("Address saved.");
-    } catch (error) {
-      setAddressMessage(toErrorMessage(error, "Unable to save address."));
+    } catch {
+      const base = addresses.length ? [...addresses] : [...readLocalAddressBook(userAddressCacheKey)];
+      if (editingAddressId) {
+        const next = base.map((address) =>
+          address.id === editingAddressId
+            ? { ...address, country_key: addressCountry, address_values: { ...addressValues }, summary: payload.summary, is_default: addressSaveAsDefault }
+            : addressSaveAsDefault
+              ? { ...address, is_default: false }
+              : address,
+        );
+        updateLocalAddresses(next);
+      } else {
+        const localId = Date.now();
+        const nextAddress: AccountAddress = {
+          id: localId,
+          country_key: addressCountry,
+          address_values: { ...addressValues },
+          summary: payload.summary,
+          is_default: addressSaveAsDefault || base.length === 0,
+        };
+        const next = [nextAddress, ...base.map((address) => (nextAddress.is_default ? { ...address, is_default: false } : address))];
+        updateLocalAddresses(next);
+      }
+
+      setAddressMode("list");
+      setAddressMessage(saveAddressForFuture ? "Address saved locally." : "Address used locally and can be saved later.");
     } finally {
       setAddressState("idle");
     }
   }
 
   async function removeAddress(addressId: number) {
-    if (!token) return;
+    if (!token) {
+      updateLocalAddresses(addresses.filter((address) => address.id !== addressId));
+      return;
+    }
+
     try {
-      await apiRequest(`/account/addresses/${addressId}`, {
-        method: "DELETE",
-        token,
-      });
+      await apiRequest(`/account/addresses/${addressId}`, { method: "DELETE", token });
       await loadAddresses(token);
     } catch {
-      setAddressMessage("Unable to remove address.");
+      updateLocalAddresses(addresses.filter((address) => address.id !== addressId));
+      setAddressMessage("Address removed locally.");
     }
   }
 
   async function makeDefaultAddress(addressId: number) {
-    if (!token) return;
+    if (!token) {
+      updateLocalAddresses(addresses.map((address) => ({ ...address, is_default: address.id === addressId })));
+      return;
+    }
+
     try {
-      await apiRequest(`/account/addresses/${addressId}/default`, {
-        method: "PUT",
-        token,
-      });
+      await apiRequest(`/account/addresses/${addressId}/default`, { method: "PUT", token });
       await loadAddresses(token);
     } catch {
-      setAddressMessage("Unable to set default address.");
+      updateLocalAddresses(addresses.map((address) => ({ ...address, is_default: address.id === addressId })));
+      setAddressMessage("Default address updated locally.");
     }
   }
 
@@ -382,10 +462,7 @@ export function AccountPage() {
     if (cardDigits.length < 12 || cardDigits.length > 19) errors.cardNumber = "Enter a valid card number.";
     if (expiryDigits.length !== 4 || month < 1 || month > 12) errors.expiryDate = "Enter a valid expiry date.";
     if (!/^\d{3,4}$/.test(cvv)) errors.cvv = "Enter a valid CVV.";
-
-    if (!billingSameAsShipping) {
-      Object.assign(errors, validateAddress(billingValues, activeBillingConfig));
-    }
+    if (!billingSameAsShipping) Object.assign(errors, validateAddress(billingValues, activeBillingConfig));
 
     setBillingErrors(errors);
     return Object.keys(errors).length === 0;
@@ -393,18 +470,13 @@ export function AccountPage() {
 
   async function saveCard(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!token || !validateCardForm()) {
-      return;
-    }
+    if (!token || !validateCardForm()) return;
 
     setPaymentState("saving");
     setPaymentMessage(null);
-
     try {
       const digits = cardNumber.replace(/\D/g, "");
       const expiryDigits = expiryDate.replace(/\D/g, "");
-      const month = Number(expiryDigits.slice(0, 2));
-      const year = Number(`20${expiryDigits.slice(2, 4)}`);
 
       await apiRequest("/account/payment-methods", {
         method: "POST",
@@ -413,9 +485,9 @@ export function AccountPage() {
           provider: null,
           brand: detectBrand(cardNumber),
           last4: digits.slice(-4),
-          expiry_month: month,
-          expiry_year: year,
-          token_reference: null, // TODO: replace with real provider token when tokenization flow is connected.
+          expiry_month: Number(expiryDigits.slice(0, 2)),
+          expiry_year: Number(`20${expiryDigits.slice(2, 4)}`),
+          token_reference: null, // TODO: swap to real provider token.
           is_default: paymentMethods.length === 0,
         },
       });
@@ -439,10 +511,7 @@ export function AccountPage() {
   async function removePaymentMethod(methodId: number) {
     if (!token) return;
     try {
-      await apiRequest(`/account/payment-methods/${methodId}`, {
-        method: "DELETE",
-        token,
-      });
+      await apiRequest(`/account/payment-methods/${methodId}`, { method: "DELETE", token });
       await loadPaymentMethods(token);
     } catch {
       setPaymentMessage("Unable to remove payment method.");
@@ -452,10 +521,7 @@ export function AccountPage() {
   async function setDefaultPaymentMethod(methodId: number) {
     if (!token) return;
     try {
-      await apiRequest(`/account/payment-methods/${methodId}/default`, {
-        method: "PUT",
-        token,
-      });
+      await apiRequest(`/account/payment-methods/${methodId}/default`, { method: "PUT", token });
       await loadPaymentMethods(token);
     } catch {
       setPaymentMessage("Unable to set default payment method.");
@@ -463,24 +529,15 @@ export function AccountPage() {
   }
 
   async function updatePreference<K extends keyof NotificationPreferences>(key: K, value: boolean) {
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
-    const next = {
-      ...preferences,
-      [key]: value,
-    };
+    const next = { ...preferences, [key]: value };
     setPreferences(next);
     setNotificationState("saving");
     setNotificationMessage(null);
 
     try {
-      await apiRequest("/account/notification-preferences", {
-        method: "PUT",
-        token,
-        body: next,
-      });
+      await apiRequest("/account/notification-preferences", { method: "PUT", token, body: next });
       setNotificationMessage("Notification preferences saved.");
     } catch (error) {
       setNotificationMessage(toErrorMessage(error, "Unable to save notification preferences."));
@@ -495,11 +552,10 @@ export function AccountPage() {
 
     setPasswordError(null);
     setPasswordMessage(null);
-
     if (!currentPassword.trim()) return setPasswordError("Current password is required.");
     if (!newPassword.trim()) return setPasswordError("New password is required.");
     if (!confirmPassword.trim()) return setPasswordError("Retype new password is required.");
-    if (newPassword !== confirmPassword) return setPasswordError("New passwords do not match.");
+    if (newPassword !== confirmPassword) return setPasswordError("New password and retype password must match.");
 
     setPasswordState("saving");
     try {
@@ -525,7 +581,6 @@ export function AccountPage() {
 
   async function submitDeleteRequest() {
     if (!token) return;
-
     setDeleteError(null);
     setDeleteMessage(null);
 
@@ -544,12 +599,9 @@ export function AccountPage() {
       const response = await apiRequest<{ message: string }>("/account/delete-request", {
         method: "POST",
         token,
-        body: {
-          reason: deleteReason,
-          other_reason: deleteReason === "other" ? deleteOtherReason.trim() : null,
-        },
+        body: { reason: deleteReason, other_reason: deleteReason === "other" ? deleteOtherReason.trim() : null },
       });
-      setDeleteMessage(response.message);
+      setDeleteMessage(response.message || "Your account deletion request has been submitted.");
       await logoutUser();
       backToHome();
     } catch (error) {
@@ -562,38 +614,50 @@ export function AccountPage() {
   return (
     <>
       <section className="bg-neutral-50 px-4 pb-[calc(32px+env(safe-area-inset-bottom))] pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
-        <div className="mx-auto max-w-[1280px]">
-          <div className="rounded-[20px] border border-neutral-200 bg-white p-4 sm:p-6">
+        <div className="mx-auto max-w-[1080px]">
+          <div className="rounded-[24px] border border-neutral-200 bg-white p-4 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-neutral-500">Hello</p>
-                <h1 className="text-3xl font-black text-neutral-950">{routeTitle(accountSection)}</h1>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-lg font-black text-neutral-900">
+                  {(accountName.charAt(0) || "A").toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-lg font-black text-neutral-950">{accountName}</p>
+                  <p className="truncate text-sm text-neutral-500">{currentUser.email}</p>
+                </div>
               </div>
               <button
-                className="inline-flex min-h-11 items-center rounded-xl border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-neutral-300"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-slate-100 px-5 text-sm font-black text-neutral-700 transition hover:bg-slate-200"
                 onClick={() => void logoutUser()}
                 type="button"
               >
-                Logout
+                Sign out
               </button>
             </div>
+
+            <h1 className="mt-5 text-[2rem] font-black leading-none text-neutral-950">{routeTitle(accountSection)}</h1>
 
             {accountSection === "overview" ? (
               <div className="mt-6 grid gap-4">
                 <button
-                  className="flex w-full items-center justify-between rounded-2xl border border-neutral-200 px-4 py-4 text-left transition hover:bg-neutral-50"
+                  className="flex w-full items-center justify-between rounded-3xl border border-neutral-200 bg-white px-5 py-5 text-left transition hover:bg-neutral-50"
                   onClick={() => openAccount("orders")}
                   type="button"
                 >
-                  <span className="text-lg font-black text-neutral-950">My orders</span>
-                  <span className="text-xl text-neutral-400">›</span>
+                  <span className="flex items-center gap-3 text-xl font-black text-neutral-950">
+                    <OrdersRowIcon />
+                    My orders
+                  </span>
+                  <ChevronRight />
                 </button>
 
                 <div className="grid grid-cols-5 gap-2 sm:gap-3">
                   {statusShortcuts.map((item) => (
                     <button
-                      className={`rounded-2xl border px-2 py-3 text-center text-xs font-bold transition sm:text-sm ${
-                        statusFilter === item.key ? "border-leaf-500 bg-emerald-50 text-leaf-700" : "border-neutral-200 text-neutral-700 hover:bg-neutral-50"
+                      className={`grid min-h-24 gap-2 rounded-3xl border px-1 py-3 text-center transition ${
+                        statusFilter === item.key
+                          ? "border-leaf-500 bg-emerald-50 text-leaf-700"
+                          : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
                       }`}
                       key={item.key}
                       onClick={() => {
@@ -602,25 +666,35 @@ export function AccountPage() {
                       }}
                       type="button"
                     >
-                      {item.label}
+                      <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-current/20">
+                        {item.icon}
+                      </span>
+                      <span className="text-xs font-black leading-4 sm:text-sm">{item.label}</span>
                     </button>
                   ))}
                 </div>
 
-                <MenuRow label="Saved items" onClick={() => openAccount("saved")} />
-                <MenuRow label="Refer a friend" onClick={() => openAccount("refer")} />
-                <MenuRow badge={couponCount > 0 ? String(couponCount) : undefined} label="Coupon" onClick={() => openAccount("coupon")} />
-                <MenuRow label="Settings" onClick={() => openAccount("settings")} />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <MenuRow icon={<SavedIcon />} label="Saved items" onClick={() => openAccount("saved")} />
+                  <MenuRow icon={<BuyAgainIcon />} label="Buy again" onClick={() => openAccount("orders")} />
+                </div>
+
+                <div className="grid gap-3">
+                  <MenuRow icon={<AddressBookIcon />} label="Address book" onClick={() => setIsAddressModalOpen(true)} />
+                  <MenuRow badge={couponCount > 0 ? String(couponCount) : undefined} icon={<CouponIcon />} label="Coupons" onClick={() => openAccount("coupon")} />
+                  <MenuRow icon={<GiftRowIcon />} label="Refer a friend" onClick={() => openAccount("refer")} />
+                  <MenuRow icon={<CardRowIcon />} label="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
+                  <MenuRow icon={<SettingsRowIcon />} label="Settings" onClick={() => openAccount("settings")} />
+                  <MenuRow icon={<SignOutRowIcon />} label="Sign out" onClick={() => void logoutUser()} />
+                </div>
               </div>
             ) : null}
 
             {accountSection === "orders" ? (
-              <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-                <p className="text-sm font-black text-neutral-900">Order status: {statusShortcuts.find((item) => item.key === statusFilter)?.label ?? "Pending"}</p>
-                <p className="mt-2 text-sm leading-6 text-neutral-600">
-                  Order filters are ready. Orders route can connect to live order history endpoint when available.
-                </p>
-              </div>
+              <SimplePanel
+                title="My orders"
+                subtitle={`Order status shortcut selected: ${statusShortcuts.find((item) => item.key === statusFilter)?.label ?? "Pending"}.`}
+              />
             ) : null}
 
             {accountSection === "saved" ? (
@@ -632,16 +706,16 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "coupon" ? (
-              <SimplePanel title="Coupon" subtitle="Coupon view is ready for coupon-list endpoint and redemption history." />
+              <SimplePanel title="Coupons" subtitle="Coupon view is ready for coupon-list endpoint and redemption history." />
             ) : null}
 
             {accountSection === "settings" ? (
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <SettingsCard description="Manage your saved shipping addresses and defaults." title="Address book" onClick={() => setIsAddressModalOpen(true)} />
-                <SettingsCard description="Manage saved cards and default payment method." title="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
-                <SettingsCard description="Choose email, SMS, push, and order update preferences." title="Notifications" onClick={() => setIsNotificationsOpen(true)} />
-                <SettingsCard description="Update your account password securely." title="Change password" onClick={() => setIsPasswordOpen(true)} />
-                <SettingsCard description="Submit an account deletion request with a reason." title="Delete account" onClick={() => setIsDeleteOpen(true)} />
+                <SettingsCard description="Manage your saved shipping addresses and defaults." icon={<AddressBookIcon />} title="Address book" onClick={() => setIsAddressModalOpen(true)} />
+                <SettingsCard description="Manage saved cards and default payment method." icon={<CardRowIcon />} title="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
+                <SettingsCard description="Choose email, SMS, push, and order update preferences." icon={<BellIcon />} title="Notifications" onClick={() => setIsNotificationsOpen(true)} />
+                <SettingsCard description="Update your account password securely." icon={<LockIcon />} title="Change password" onClick={() => setIsPasswordOpen(true)} />
+                <SettingsCard description="Submit an account deletion request with a reason." icon={<DeleteIcon />} title="Delete account" onClick={() => setIsDeleteOpen(true)} />
               </div>
             ) : null}
           </div>
@@ -654,23 +728,31 @@ export function AccountPage() {
             {addresses.length ? (
               <div className="grid gap-3">
                 {addresses.map((address) => (
-                  <div className="rounded-2xl border border-neutral-200 p-4" key={address.id}>
-                    <p className="text-sm font-black text-neutral-950">{address.address_values.fullName || "Saved address"}</p>
-                    <p className="mt-1 text-sm text-neutral-600">{address.summary}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <button className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-bold" onClick={() => openEditAddressForm(address)} type="button">
+                  <div className="rounded-2xl border border-neutral-200 bg-white p-4" key={address.id}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-base font-black text-neutral-950">{address.address_values.fullName || "Saved address"}</p>
+                        <p className="mt-1 text-sm text-neutral-600">{address.summary}</p>
+                        {address.address_values.phoneNumber ? (
+                          <p className="mt-1 text-sm text-neutral-500">{address.address_values.phoneNumber}</p>
+                        ) : null}
+                      </div>
+                      {address.is_default ? (
+                        <span className="shrink-0 rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-leaf-700">Default</span>
+                      ) : null}
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button className="rounded-full border border-neutral-200 px-3 py-2 text-xs font-black text-neutral-700" onClick={() => openEditAddressForm(address)} type="button">
                         Edit
                       </button>
-                      <button className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-bold" onClick={() => void removeAddress(address.id)} type="button">
+                      <button className="rounded-full border border-neutral-200 px-3 py-2 text-xs font-black text-neutral-700" onClick={() => void removeAddress(address.id)} type="button">
                         Delete
                       </button>
                       {!address.is_default ? (
-                        <button className="rounded-xl border border-leaf-500 px-3 py-2 text-xs font-bold text-leaf-700" onClick={() => void makeDefaultAddress(address.id)} type="button">
+                        <button className="rounded-full border border-leaf-500 px-3 py-2 text-xs font-black text-leaf-700" onClick={() => void makeDefaultAddress(address.id)} type="button">
                           Set default
                         </button>
-                      ) : (
-                        <span className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-leaf-700">Default</span>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 ))}
@@ -679,16 +761,23 @@ export function AccountPage() {
               <p className="text-sm text-neutral-600">No saved addresses yet.</p>
             )}
             {addressMessage ? <p className="text-sm font-semibold text-neutral-700">{addressMessage}</p> : null}
-            <button className="inline-flex min-h-11 items-center justify-center rounded-xl border border-leaf-500 px-4 text-sm font-black text-leaf-700" onClick={openAddAddressForm} type="button">
+            <button
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-leaf-500 px-5 text-sm font-black text-leaf-700"
+              onClick={openAddAddressForm}
+              type="button"
+            >
               Add new address
             </button>
           </div>
         ) : (
           <form className="grid gap-4" onSubmit={saveAddress}>
-            <label className="grid gap-1.5">
-              <span className="text-sm font-bold text-neutral-700">Country</span>
+            <label className="grid gap-1.5" htmlFor="account-address-country">
+              <span className="text-sm font-bold text-neutral-700">
+                Country <span className="text-red-500">*</span>
+              </span>
               <select
-                className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                className="min-h-12 rounded-2xl border border-neutral-200 px-4 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                id="account-address-country"
                 onChange={(event) => handleAddressCountryChange(event.target.value as CountryKey)}
                 value={addressCountry}
               >
@@ -699,6 +788,10 @@ export function AccountPage() {
                 ))}
               </select>
             </label>
+
+            <p className="rounded-2xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-sm font-semibold text-neutral-700">
+              {activeAddressConfig.deliveryHint}
+            </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
               {activeAddressConfig.fields.map((field) => {
@@ -711,7 +804,8 @@ export function AccountPage() {
                     </span>
                     {field.type === "textarea" ? (
                       <textarea
-                        className="min-h-[92px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        autoComplete={field.autoComplete}
+                        className="min-h-[110px] rounded-2xl border border-neutral-200 px-3 py-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));
                           setAddressErrors((current) => ({ ...current, [field.key]: getAddressError(field, addressValues[field.key] ?? "") }));
@@ -721,7 +815,8 @@ export function AccountPage() {
                       />
                     ) : (
                       <input
-                        className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        autoComplete={field.autoComplete}
+                        className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
                         inputMode={field.type === "postal" ? "numeric" : field.inputMode}
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));
@@ -739,19 +834,37 @@ export function AccountPage() {
             </div>
 
             <label className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
-              <input checked={saveAddressForFuture} className="h-4 w-4 accent-leaf-600" onChange={(event) => setSaveAddressForFuture(event.target.checked)} type="checkbox" />
+              <input
+                checked={saveAddressForFuture}
+                className="h-4 w-4 accent-leaf-600"
+                onChange={(event) => setSaveAddressForFuture(event.target.checked)}
+                type="checkbox"
+              />
               Save this address for future orders
             </label>
             <label className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
-              <input checked={addressSaveAsDefault} className="h-4 w-4 accent-leaf-600" onChange={(event) => setAddressSaveAsDefault(event.target.checked)} type="checkbox" />
+              <input
+                checked={addressSaveAsDefault}
+                className="h-4 w-4 accent-leaf-600"
+                onChange={(event) => setAddressSaveAsDefault(event.target.checked)}
+                type="checkbox"
+              />
               Set as default address
             </label>
 
-            <div className="flex flex-wrap justify-end gap-2">
-              <button className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-neutral-700" onClick={() => setAddressMode("list")} type="button">
+            <div className="flex flex-wrap justify-end gap-2 pt-1">
+              <button
+                className="min-h-11 rounded-full bg-slate-100 px-5 text-sm font-black text-neutral-700 transition hover:bg-slate-200"
+                onClick={() => setAddressMode("list")}
+                type="button"
+              >
                 Cancel
               </button>
-              <button className="rounded-xl bg-leaf-600 px-4 py-2 text-sm font-black text-white disabled:bg-neutral-300" disabled={addressState === "saving"} type="submit">
+              <button
+                className="min-h-11 rounded-full bg-leaf-600 px-6 text-sm font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                disabled={addressState === "saving"}
+                type="submit"
+              >
                 {addressState === "saving" ? "Saving..." : "Save"}
               </button>
             </div>
@@ -773,13 +886,21 @@ export function AccountPage() {
                   </p>
                   <div className="mt-3 flex gap-2">
                     {!method.is_default ? (
-                      <button className="rounded-xl border border-leaf-500 px-3 py-2 text-xs font-bold text-leaf-700" onClick={() => void setDefaultPaymentMethod(method.id)} type="button">
+                      <button
+                        className="rounded-full border border-leaf-500 px-3 py-2 text-xs font-black text-leaf-700"
+                        onClick={() => void setDefaultPaymentMethod(method.id)}
+                        type="button"
+                      >
                         Set default
                       </button>
                     ) : (
-                      <span className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-leaf-700">Default</span>
+                      <span className="rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-leaf-700">Default</span>
                     )}
-                    <button className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-bold" onClick={() => void removePaymentMethod(method.id)} type="button">
+                    <button
+                      className="rounded-full border border-neutral-200 px-3 py-2 text-xs font-black text-neutral-700"
+                      onClick={() => void removePaymentMethod(method.id)}
+                      type="button"
+                    >
                       Remove
                     </button>
                   </div>
@@ -793,41 +914,74 @@ export function AccountPage() {
           {paymentMessage ? <p className="text-sm font-semibold text-neutral-700">{paymentMessage}</p> : null}
 
           {!isAddCardOpen ? (
-            <button className="inline-flex min-h-11 items-center justify-center rounded-xl border border-leaf-500 px-4 text-sm font-black text-leaf-700" onClick={() => setIsAddCardOpen(true)} type="button">
+            <button
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-leaf-500 px-5 text-sm font-black text-leaf-700"
+              onClick={() => setIsAddCardOpen(true)}
+              type="button"
+            >
               Add new card
             </button>
           ) : (
             <form className="grid gap-3 rounded-2xl border border-neutral-200 p-4" onSubmit={saveCard}>
               <label className="grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Cardholder name</span>
-                <input className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500" onChange={(event) => setCardholderName(event.target.value)} value={cardholderName} />
+                <input
+                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                  onChange={(event) => setCardholderName(event.target.value)}
+                  value={cardholderName}
+                />
               </label>
               <label className="grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Card number</span>
-                <input className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500" inputMode="numeric" onChange={(event) => setCardNumber(formatCardNumber(event.target.value))} value={cardNumber} />
+                <input
+                  className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                  inputMode="numeric"
+                  onChange={(event) => setCardNumber(formatCardNumber(event.target.value))}
+                  value={cardNumber}
+                />
               </label>
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="grid gap-1.5">
                   <span className="text-sm font-bold text-neutral-700">Expiration date</span>
-                  <input className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500" inputMode="numeric" onChange={(event) => setExpiryDate(formatExpiryDate(event.target.value))} placeholder="MM/YY" value={expiryDate} />
+                  <input
+                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                    inputMode="numeric"
+                    onChange={(event) => setExpiryDate(formatExpiryDate(event.target.value))}
+                    placeholder="MM/YY"
+                    value={expiryDate}
+                  />
                 </label>
                 <label className="grid gap-1.5">
                   <span className="text-sm font-bold text-neutral-700">CVV</span>
-                  <input className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500" inputMode="numeric" onChange={(event) => setCvv(event.target.value.replace(/\D/g, "").slice(0, 4))} type="password" value={cvv} />
+                  <input
+                    className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                    inputMode="numeric"
+                    onChange={(event) => setCvv(event.target.value.replace(/\D/g, "").slice(0, 4))}
+                    type="password"
+                    value={cvv}
+                  />
                 </label>
               </div>
 
               <label className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
-                <input checked={billingSameAsShipping} className="h-4 w-4 accent-leaf-600" onChange={(event) => setBillingSameAsShipping(event.target.checked)} type="checkbox" />
+                <input
+                  checked={billingSameAsShipping}
+                  className="h-4 w-4 accent-leaf-600"
+                  onChange={(event) => setBillingSameAsShipping(event.target.checked)}
+                  type="checkbox"
+                />
                 Billing address same as shipping address
               </label>
 
               {!billingSameAsShipping ? (
-                <div className="grid gap-3 rounded-xl border border-neutral-200 p-3">
-                  <label className="grid gap-1.5">
-                    <span className="text-sm font-bold text-neutral-700">Country</span>
+                <div className="grid gap-3 rounded-2xl border border-neutral-200 p-3">
+                  <label className="grid gap-1.5" htmlFor="account-billing-country">
+                    <span className="text-sm font-bold text-neutral-700">
+                      Country <span className="text-red-500">*</span>
+                    </span>
                     <select
                       className="min-h-11 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                      id="account-billing-country"
                       onChange={(event) => {
                         const nextCountry = event.target.value as CountryKey;
                         setBillingCountry(nextCountry);
@@ -851,19 +1005,28 @@ export function AccountPage() {
                           {field.label}
                           {field.required ? <span className="text-red-500"> *</span> : null}
                         </span>
-                        <input
-                          className="min-h-10 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
-                          inputMode={field.type === "postal" ? "numeric" : field.inputMode}
-                          onChange={(event) =>
-                            setBillingValues((current) => ({
-                              ...current,
-                              [field.key]: event.target.value,
-                            }))
-                          }
-                          type={field.type === "tel" ? "tel" : "text"}
-                          value={billingValues[field.key] ?? ""}
-                        />
-                        {billingErrors[field.key] ? <span className="text-xs font-semibold text-red-600">{billingErrors[field.key]}</span> : null}
+                        {field.type === "textarea" ? (
+                          <textarea
+                            className="min-h-[84px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none focus:border-leaf-500"
+                            onChange={(event) =>
+                              setBillingValues((current) => ({ ...current, [field.key]: event.target.value }))
+                            }
+                            value={billingValues[field.key] ?? ""}
+                          />
+                        ) : (
+                          <input
+                            className="min-h-10 rounded-xl border border-neutral-200 px-3 text-sm font-semibold outline-none focus:border-leaf-500"
+                            inputMode={field.type === "postal" ? "numeric" : field.inputMode}
+                            onChange={(event) =>
+                              setBillingValues((current) => ({ ...current, [field.key]: event.target.value }))
+                            }
+                            type={field.type === "tel" ? "tel" : "text"}
+                            value={billingValues[field.key] ?? ""}
+                          />
+                        )}
+                        {billingErrors[field.key] ? (
+                          <span className="text-xs font-semibold text-red-600">{billingErrors[field.key]}</span>
+                        ) : null}
                       </label>
                     ))}
                   </div>
@@ -871,10 +1034,18 @@ export function AccountPage() {
               ) : null}
 
               <div className="flex flex-wrap justify-end gap-2">
-                <button className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-neutral-700" onClick={() => setIsAddCardOpen(false)} type="button">
+                <button
+                  className="rounded-full bg-slate-100 px-5 py-2 text-sm font-black text-neutral-700"
+                  onClick={() => setIsAddCardOpen(false)}
+                  type="button"
+                >
                   Cancel
                 </button>
-                <button className="rounded-xl bg-leaf-600 px-4 py-2 text-sm font-black text-white disabled:bg-neutral-300" disabled={paymentState === "saving"} type="submit">
+                <button
+                  className="rounded-full bg-leaf-600 px-6 py-2 text-sm font-black text-white disabled:bg-neutral-300"
+                  disabled={paymentState === "saving"}
+                  type="submit"
+                >
                   {paymentState === "saving" ? "Saving..." : "Save"}
                 </button>
               </div>
@@ -905,24 +1076,34 @@ export function AccountPage() {
           <PasswordField label="Retype new password" onChange={setConfirmPassword} value={confirmPassword} />
           {passwordError ? <p className="text-sm font-semibold text-red-600">{passwordError}</p> : null}
           {passwordMessage ? <p className="text-sm font-semibold text-leaf-700">{passwordMessage}</p> : null}
-          <button className="min-h-11 rounded-xl bg-leaf-600 px-4 text-sm font-black text-white disabled:bg-neutral-300" disabled={passwordState === "saving"} type="submit">
+          <button
+            className="min-h-12 rounded-full bg-leaf-600 px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:bg-neutral-300"
+            disabled={passwordState === "saving"}
+            type="submit"
+          >
             {passwordState === "saving" ? "Saving..." : "Save"}
           </button>
         </form>
       </ModalShell>
 
       <ModalShell isOpen={isDeleteOpen} title="Request to delete Your account?" onClose={() => setIsDeleteOpen(false)}>
-        <div className="grid max-h-[70vh] grid-rows-[minmax(0,1fr)_auto] overflow-hidden">
+        <div className="grid max-h-[70vh] grid-rows-[minmax(0,1fr)_auto] gap-4 overflow-hidden">
           <div className="overflow-y-auto pr-1">
             <p className="text-sm leading-6 text-neutral-700">
-              You&apos;ll permanently delete your account and will no longer be able to login.
-              Once your request is processed, your personal data will be deleted in accordance with applicable law.
+              You'll permanently delete your account and will no longer be able to login. Once your request is processed,
+              your personal data will be deleted in accordance with applicable law.
             </p>
             <p className="mt-5 text-sm font-black text-neutral-900">Why are you deleting your account? (*Required)</p>
             <div className="mt-3 grid gap-2">
               {deleteReasons.map((reason) => (
                 <label className="flex items-start gap-2 text-sm font-semibold text-neutral-700" key={reason.key}>
-                  <input checked={deleteReason === reason.key} className="mt-0.5 h-4 w-4 accent-leaf-600" name="delete-reason" onChange={() => setDeleteReason(reason.key)} type="radio" />
+                  <input
+                    checked={deleteReason === reason.key}
+                    className="mt-0.5 h-4 w-4 accent-leaf-600"
+                    name="delete-reason"
+                    onChange={() => setDeleteReason(reason.key)}
+                    type="radio"
+                  />
                   <span>{reason.label}</span>
                 </label>
               ))}
@@ -930,60 +1111,118 @@ export function AccountPage() {
             {deleteReason === "other" ? (
               <label className="mt-4 grid gap-1.5">
                 <span className="text-sm font-bold text-neutral-700">Tell us your reason...</span>
-                <textarea className="min-h-[110px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none focus:border-leaf-500" onChange={(event) => setDeleteOtherReason(event.target.value)} value={deleteOtherReason} />
+                <textarea
+                  className="min-h-[110px] rounded-xl border border-neutral-200 px-3 py-2 text-sm font-semibold outline-none focus:border-leaf-500"
+                  onChange={(event) => setDeleteOtherReason(event.target.value)}
+                  value={deleteOtherReason}
+                />
               </label>
             ) : null}
             {deleteError ? <p className="mt-3 text-sm font-semibold text-red-600">{deleteError}</p> : null}
             {deleteMessage ? <p className="mt-3 text-sm font-semibold text-leaf-700">{deleteMessage}</p> : null}
           </div>
-          <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-neutral-100 pt-3">
-            <button className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-neutral-700" onClick={() => setIsDeleteOpen(false)} type="button">
+          <div className="flex flex-wrap justify-end gap-2 border-t border-neutral-100 pt-3">
+            <button
+              className="rounded-full bg-slate-100 px-5 py-2 text-sm font-black text-neutral-700"
+              onClick={() => setIsDeleteOpen(false)}
+              type="button"
+            >
               Cancel
             </button>
-            <button className="rounded-xl bg-red-600 px-4 py-2 text-sm font-black text-white disabled:bg-neutral-300" disabled={deleteState === "saving"} onClick={() => void submitDeleteRequest()} type="button">
+            <button
+              className="rounded-full bg-red-600 px-5 py-2 text-sm font-black text-white disabled:bg-neutral-300"
+              disabled={deleteState === "saving"}
+              onClick={() => void submitDeleteRequest()}
+              type="button"
+            >
               {deleteState === "saving" ? "Submitting..." : "Delete account"}
             </button>
           </div>
         </div>
       </ModalShell>
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-neutral-200 bg-white/95 px-4 py-3 backdrop-blur sm:hidden" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
-        <div className="mx-auto flex max-w-[1280px] items-center gap-2">
-          <button className="min-h-11 flex-1 rounded-xl border border-neutral-200 text-sm font-black text-neutral-700" onClick={openCart} type="button">
-            Cart
-          </button>
-          <button className="min-h-11 flex-1 rounded-xl bg-leaf-600 text-sm font-black text-white" onClick={openCheckout} type="button">
-            Checkout
-          </button>
+      {!hasAnyModalOpen ? (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-20 border-t border-neutral-200 bg-white/95 px-4 py-3 backdrop-blur sm:hidden"
+          style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+        >
+          <div className="mx-auto flex max-w-[1080px] items-center gap-2">
+            <button
+              className="min-h-11 flex-1 rounded-full border border-neutral-200 text-sm font-black text-neutral-700"
+              onClick={openCart}
+              type="button"
+            >
+              Cart
+            </button>
+            <button className="min-h-11 flex-1 rounded-full bg-leaf-600 text-sm font-black text-white" onClick={openCheckout} type="button">
+              Checkout
+            </button>
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }
 
-function MenuRow({ label, onClick, badge }: { label: string; onClick: () => void; badge?: string }) {
+function MenuRow({
+  badge,
+  icon,
+  label,
+  onClick,
+}: {
+  badge?: string;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
   return (
-    <button className="flex w-full items-center justify-between rounded-2xl border border-neutral-200 px-4 py-3 text-left transition hover:bg-neutral-50" onClick={onClick} type="button">
-      <span className="text-base font-semibold text-neutral-900">{label}</span>
-      <span className="flex items-center gap-3">
-        {badge ? <span className="inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">{badge}</span> : null}
-        <span className="text-xl text-neutral-400">›</span>
+    <button
+      className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-left transition hover:bg-neutral-50"
+      onClick={onClick}
+      type="button"
+    >
+      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
+        {icon}
       </span>
+      <span className="flex-1 text-base font-semibold text-neutral-900">{label}</span>
+      {badge ? (
+        <span className="inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+          {badge}
+        </span>
+      ) : null}
+      <ChevronRight />
     </button>
   );
 }
 
-function SettingsCard({ title, description, onClick }: { title: string; description: string; onClick: () => void }) {
+function SettingsCard({
+  description,
+  icon,
+  onClick,
+  title,
+}: {
+  description: string;
+  icon: ReactNode;
+  onClick: () => void;
+  title: string;
+}) {
   return (
-    <button className="grid w-full gap-1 rounded-2xl border border-neutral-200 bg-white px-4 py-4 text-left transition hover:bg-neutral-50" onClick={onClick} type="button">
+    <button
+      className="grid w-full gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-4 text-left transition hover:bg-neutral-50"
+      onClick={onClick}
+      type="button"
+    >
+      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
+        {icon}
+      </span>
       <span className="text-lg font-black text-neutral-900">{title}</span>
       <span className="text-sm leading-6 text-neutral-600">{description}</span>
-      <span className="mt-1 text-sm font-black text-leaf-700">More</span>
+      <span className="text-sm font-black text-leaf-700">More</span>
     </button>
   );
 }
 
-function SimplePanel({ title, subtitle }: { title: string; subtitle: string }) {
+function SimplePanel({ subtitle, title }: { subtitle: string; title: string }) {
   return (
     <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
       <h2 className="text-lg font-black text-neutral-950">{title}</h2>
@@ -992,9 +1231,9 @@ function SimplePanel({ title, subtitle }: { title: string; subtitle: string }) {
   );
 }
 
-function ToggleRow({ label, value, onChange }: { label: string; value: boolean; onChange: (value: boolean) => void }) {
+function ToggleRow({ label, onChange, value }: { label: string; onChange: (value: boolean) => void; value: boolean }) {
   return (
-    <label className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 px-3 py-2">
+    <label className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 px-3 py-3">
       <span className="text-sm font-semibold text-neutral-800">{label}</span>
       <button
         aria-pressed={value}
@@ -1005,20 +1244,32 @@ function ToggleRow({ label, value, onChange }: { label: string; value: boolean; 
         }}
         type="button"
       >
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-sky-500 transition ${value ? "left-[22px]" : "left-0.5 bg-white"}`} />
+        <span
+          className={`absolute top-0.5 h-5 w-5 rounded-full transition ${value ? "left-[22px] bg-sky-500" : "left-0.5 bg-white"}`}
+        />
       </button>
     </label>
   );
 }
 
-function PasswordField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function PasswordField({ label, onChange, value }: { label: string; onChange: (value: string) => void; value: string }) {
   const [visible, setVisible] = useState(false);
   return (
     <label className="grid gap-1.5">
       <span className="text-sm font-bold text-neutral-700">{label}</span>
       <div className="relative">
-        <input className="min-h-11 w-full rounded-xl border border-neutral-200 px-3 pr-12 text-sm font-semibold outline-none focus:border-leaf-500" onChange={(event) => onChange(event.target.value)} type={visible ? "text" : "password"} value={value} />
-        <button className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-md text-neutral-500" onClick={() => setVisible((current) => !current)} type="button">
+        <input
+          className="min-h-12 w-full rounded-2xl border border-neutral-200 px-3 pr-16 text-sm font-semibold outline-none focus:border-leaf-500"
+          onChange={(event) => onChange(event.target.value)}
+          type={visible ? "text" : "password"}
+          value={value}
+        />
+        <button
+          aria-label={visible ? `Hide ${label}` : `Show ${label}`}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 text-sm font-bold text-neutral-500"
+          onClick={() => setVisible((current) => !current)}
+          type="button"
+        >
           {visible ? "Hide" : "Show"}
         </button>
       </div>
@@ -1037,21 +1288,247 @@ function ModalShell({
   onClose: () => void;
   title: string;
 }) {
-  if (!isOpen) {
-    return null;
-  }
+  const panelReference = useRef<HTMLDivElement | null>(null);
+  const firstFocusableReference = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    firstFocusableReference.current?.focus();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const panel = panelReference.current;
+      if (!panel) return;
+      const focusableElements = panel.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusableElements.length) return;
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[1400] flex items-center justify-center bg-neutral-950/45 p-4">
-      <div className="max-h-[92vh] w-full max-w-3xl overflow-hidden rounded-[24px] bg-white shadow-[0_30px_100px_rgba(15,23,42,0.35)]">
+    <div className="fixed inset-0 z-[2200] flex items-end justify-center bg-neutral-950/45 p-0 sm:items-center sm:p-4">
+      <button
+        aria-label={`Close ${title}`}
+        className="absolute inset-0 cursor-default"
+        onClick={onClose}
+        type="button"
+      />
+      <div
+        aria-modal="true"
+        className="relative max-h-[92vh] w-full max-w-3xl overflow-hidden rounded-t-[28px] bg-white shadow-[0_30px_100px_rgba(15,23,42,0.35)] sm:rounded-[28px]"
+        ref={panelReference}
+        role="dialog"
+      >
         <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
-          <h2 className="text-2xl font-black text-neutral-950">{title}</h2>
-          <button className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-xl text-neutral-600" onClick={onClose} type="button">
+          <h2 className="text-[2rem] font-black leading-none text-neutral-950">{title}</h2>
+          <button
+            aria-label={`Close ${title}`}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-2xl text-neutral-600 transition hover:bg-neutral-200"
+            onClick={onClose}
+            ref={firstFocusableReference}
+            type="button"
+          >
             ×
           </button>
         </div>
-        <div className="max-h-[calc(92vh-68px)] overflow-y-auto px-5 py-4">{children}</div>
+        <div className="max-h-[calc(92vh-84px)] overflow-y-auto px-5 py-4">{children}</div>
       </div>
     </div>
+  );
+}
+
+function ChevronRight() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v5l3 2" />
+    </svg>
+  );
+}
+
+function BoxIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="m3 8 9-5 9 5-9 5-9-5Z" />
+      <path d="M3 8v8l9 5 9-5V8" />
+    </svg>
+  );
+}
+
+function TruckIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M3 6h11v9H3z" />
+      <path d="M14 9h4l3 3v3h-7z" />
+      <circle cx="7" cy="17" r="1.6" />
+      <circle cx="17" cy="17" r="1.6" />
+    </svg>
+  );
+}
+
+function ChatIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M5 6h14v9H8l-3 3z" />
+    </svg>
+  );
+}
+
+function ReturnIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M8 7 4 11l4 4" />
+      <path d="M4 11h9a5 5 0 0 1 5 5v1" />
+    </svg>
+  );
+}
+
+function OrdersRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M7 4h10l1 15H6L7 4Z" />
+      <path d="M9 8h6" />
+      <path d="M9 12h6" />
+    </svg>
+  );
+}
+
+function SavedIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M6 4h12v16l-6-3-6 3z" />
+    </svg>
+  );
+}
+
+function BuyAgainIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v4l3 2" />
+    </svg>
+  );
+}
+
+function AddressBookIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
+      <circle cx="12" cy="10" r="2.2" />
+    </svg>
+  );
+}
+
+function CouponIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M21 12a2.8 2.8 0 0 1-2.8 2.8H5.8V9.2h12.4A2.8 2.8 0 0 1 21 12Z" />
+      <path d="M3 9.2h2.8V14.8H3a2.8 2.8 0 0 0 0-5.6Z" />
+      <path d="M12 9.2v5.6" />
+    </svg>
+  );
+}
+
+function GiftRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M4 8h16v12H4z" />
+      <path d="M2 8h20v4H2z" />
+      <path d="M12 8v12" />
+    </svg>
+  );
+}
+
+function CardRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <rect height="14" rx="2.5" width="20" x="2" y="5" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+    </svg>
+  );
+}
+
+function SettingsRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" />
+      <path d="m19 12 1.6 1-1.6 2.8-1.9-.7a6.8 6.8 0 0 1-1.6.9l-.3 2h-3.2l-.3-2a6.8 6.8 0 0 1-1.6-.9l-1.9.7L3.4 13 5 12l-1.6-1 1.6-2.8 1.9.7c.5-.4 1-.7 1.6-.9l.3-2h3.2l.3 2c.6.2 1.1.5 1.6.9l1.9-.7L20.6 11 19 12Z" />
+    </svg>
+  );
+}
+
+function SignOutRowIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M9 4H5v16h4" />
+      <path d="M13 12h8" />
+      <path d="m18 7 5 5-5 5" />
+    </svg>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M6 9a6 6 0 1 1 12 0v4l1.5 2.2H4.5L6 13V9Z" />
+      <path d="M10 18a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <rect height="10" rx="2" width="14" x="5" y="10" />
+      <path d="M8 10V7a4 4 0 1 1 8 0v3" />
+    </svg>
+  );
+}
+
+function DeleteIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M4 7h16" />
+      <path d="M9 7V5h6v2" />
+      <path d="M7 7l1 12h8l1-12" />
+    </svg>
   );
 }

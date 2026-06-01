@@ -1,6 +1,8 @@
 import type { InputHTMLAttributes } from "react";
 
 export type CountryKey =
+  | "usa"
+  | "uk"
   | "thailand"
   | "japan"
   | "singapore"
@@ -35,6 +37,8 @@ export type AddressValues = Record<string, string>;
 export type FieldErrors = Record<string, string>;
 
 export const countryOrder: CountryKey[] = [
+  "usa",
+  "uk",
   "thailand",
   "japan",
   "singapore",
@@ -47,6 +51,34 @@ export const countryOrder: CountryKey[] = [
 ];
 
 export const addressConfigs: Record<CountryKey, AddressConfig> = {
+  usa: {
+    label: "United States",
+    deliveryHint: "State, city, postal code, and street number are required for delivery routing.",
+    fields: [
+      { key: "fullName", label: "Full name", type: "text", autoComplete: "shipping name", required: true, requiredMessage: "Full name is required." },
+      { key: "phoneNumber", label: "Phone number", type: "tel", autoComplete: "shipping tel", inputMode: "tel", required: true, requiredMessage: "Phone number is required." },
+      { key: "streetAddress", label: "Street / Building No.", autoComplete: "shipping address-line1", required: true, requiredMessage: "House or building number is required." },
+      { key: "unitFloorRoom", label: "Apt / Suite / Floor / Room", autoComplete: "shipping address-line2", required: false },
+      { key: "city", label: "City", autoComplete: "shipping address-level2", required: true, requiredMessage: "Subdistrict is required." },
+      { key: "state", label: "State", autoComplete: "shipping address-level1", required: true, requiredMessage: "Province is required." },
+      { key: "postalCode", label: "ZIP code", type: "postal", autoComplete: "shipping postal-code", inputMode: "numeric", required: true, requiredMessage: "Postal code is required." },
+      { key: "deliveryNote", label: "Delivery note", type: "textarea", autoComplete: "off", required: false, fullWidth: true },
+    ],
+  },
+  uk: {
+    label: "United Kingdom",
+    deliveryHint: "County/region, post code, and street number are required for local fulfillment.",
+    fields: [
+      { key: "fullName", label: "Full name", type: "text", autoComplete: "shipping name", required: true, requiredMessage: "Full name is required." },
+      { key: "phoneNumber", label: "Phone number", type: "tel", autoComplete: "shipping tel", inputMode: "tel", required: true, requiredMessage: "Phone number is required." },
+      { key: "houseBuilding", label: "House / Building No.", autoComplete: "shipping address-line1", required: true, requiredMessage: "House or building number is required." },
+      { key: "streetName", label: "Street Name", autoComplete: "shipping address-line2", required: true, requiredMessage: "Subdistrict is required." },
+      { key: "locality", label: "Town / Locality", autoComplete: "shipping address-level2", required: true, requiredMessage: "Subdistrict is required." },
+      { key: "countyRegion", label: "County / Region", autoComplete: "shipping address-level1", required: true, requiredMessage: "Province is required." },
+      { key: "postalCode", label: "Postcode", type: "postal", autoComplete: "shipping postal-code", required: true, requiredMessage: "Postal code is required." },
+      { key: "deliveryNote", label: "Delivery note", type: "textarea", autoComplete: "off", required: false, fullWidth: true },
+    ],
+  },
   thailand: {
     label: "Thailand",
     deliveryHint: "Province, district, subdistrict, and postal code are used for local delivery routing.",
@@ -252,4 +284,3 @@ export function createAddressSummary(country: CountryKey, values: AddressValues)
     .slice(0, 5);
   return `${config.label} - ${addressParts.join(", ") || "Address details"}`;
 }
-
