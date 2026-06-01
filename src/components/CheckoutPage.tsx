@@ -725,6 +725,7 @@ export function CheckoutPage() {
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [checkoutAddress, setCheckoutAddress] = useState<SavedAddress | null>(null);
+  const [addressFormRestoreAddress, setAddressFormRestoreAddress] = useState<SavedAddress | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [cardValues, setCardValues] = useState<CardFormValues>({
     cardholderName: "",
@@ -826,7 +827,26 @@ export function CheckoutPage() {
     setIsAddressFormOpen(true);
   }
 
+  function restoreAddressCard(address: SavedAddress | null) {
+    if (address) {
+      setSelectedAddressId(address.id);
+      setCheckoutAddress(address);
+      setAddressCountry(address.country);
+      setAddressValues({ ...address.values });
+    } else {
+      setSelectedAddressId(null);
+      setCheckoutAddress(null);
+      setAddressValues(getBlankAddressValues(addressCountry));
+    }
+
+    setAddressErrors({});
+    setAddressTouched({});
+    setIsAddressFormOpen(false);
+    setAddressFormRestoreAddress(null);
+  }
+
   function openBlankAddressForm() {
+    setAddressFormRestoreAddress(selectedAddress ?? checkoutAddress ?? savedAddresses[0] ?? null);
     setAddressValues(getBlankAddressValues(addressCountry));
     setAddressErrors({});
     setAddressTouched({});
@@ -835,12 +855,17 @@ export function CheckoutPage() {
     setIsAddressFormOpen(true);
   }
 
+  function cancelAddressForm() {
+    restoreAddressCard(addressFormRestoreAddress ?? selectedAddress ?? checkoutAddress ?? savedAddresses[0] ?? null);
+  }
+
   function editSelectedAddress() {
     if (!selectedAddress) {
       openBlankAddressForm();
       return;
     }
 
+    setAddressFormRestoreAddress(selectedAddress);
     setAddressCountry(selectedAddress.country);
     setAddressValues({ ...selectedAddress.values });
     setAddressErrors({});
@@ -924,6 +949,7 @@ export function CheckoutPage() {
     setCheckoutAddress(nextAddress);
     setSelectedAddressId(nextAddress.id);
     setIsAddressFormOpen(false);
+    setAddressFormRestoreAddress(null);
 
     if (currentUser && saveAddressForFuture) {
       setSavedAddresses((current) => [nextAddress, ...current.filter((address) => address.summary !== nextAddress.summary)].slice(0, 4));
@@ -940,6 +966,7 @@ export function CheckoutPage() {
     setAddressTouched({});
     setCheckoutAddress(address);
     setIsAddressFormOpen(false);
+    setAddressFormRestoreAddress(null);
   }
 
   function updateCardValue(field: keyof CardFormValues, value: string | boolean) {
@@ -1209,12 +1236,21 @@ export function CheckoutPage() {
 
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-xs font-semibold leading-5 text-neutral-500">Spaces and international phone formats are accepted while typing.</p>
-                        <button
-                          className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-leaf-600 px-5 text-sm font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-                          type="submit"
-                        >
-                          Use this address
-                        </button>
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                          <button
+                            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-slate-100 px-5 text-sm font-black text-neutral-700 transition hover:bg-slate-200"
+                            onClick={cancelAddressForm}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-leaf-600 px-5 text-sm font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                            type="submit"
+                          >
+                            Use this address
+                          </button>
+                        </div>
                       </div>
                     </form>
                   ) : null}

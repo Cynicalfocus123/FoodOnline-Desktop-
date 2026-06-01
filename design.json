@@ -254,6 +254,7 @@
         "add_new_address_opens_blank_form": true,
         "add_new_address_clears_selected_saved_address": true,
         "add_new_address_resets_errors_and_touched_state": true,
+        "cancel_restores_previous_selected_address_card_when_available": true,
         "country_switch_preserves_shared_field_keys": true,
         "irrelevant_fields_reset_on_country_change": true,
         "delivery_note_optional": true,
