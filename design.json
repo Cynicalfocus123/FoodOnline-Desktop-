@@ -75,7 +75,8 @@
       "behavior": {
         "left_side_country_code_dropdown": true,
         "native_select_for_mobile_browser_reliability": true,
-        "options_show_flag_country_name_and_dial_code": true,
+        "closed_selector_shows_short_country_code_and_dial_code_only": true,
+        "dropdown_options_include_country_name": true,
         "email_and_phone_login_modes_separate": true,
         "stored_phone_value_includes_selected_dial_code": true
       }

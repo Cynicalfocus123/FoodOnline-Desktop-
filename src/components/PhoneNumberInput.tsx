@@ -2,25 +2,24 @@ import { useMemo, useState } from "react";
 
 export type CallingCodeCountry = {
   id: string;
-  flag: string;
   iso: string;
   name: string;
   dialCode: string;
 };
 
 export const callingCodeCountries: CallingCodeCountry[] = [
-  { id: "us", flag: "🇺🇸", iso: "US", name: "United States", dialCode: "+1" },
-  { id: "gb", flag: "🇬🇧", iso: "UK", name: "United Kingdom", dialCode: "+44" },
-  { id: "tr", flag: "🇹🇷", iso: "TR", name: "Turkey", dialCode: "+90" },
-  { id: "th", flag: "🇹🇭", iso: "TH", name: "Thailand", dialCode: "+66" },
-  { id: "jp", flag: "🇯🇵", iso: "JP", name: "Japan", dialCode: "+81" },
-  { id: "sg", flag: "🇸🇬", iso: "SG", name: "Singapore", dialCode: "+65" },
-  { id: "tw", flag: "🇹🇼", iso: "TW", name: "Taiwan", dialCode: "+886" },
-  { id: "cn", flag: "🇨🇳", iso: "CN", name: "China", dialCode: "+86" },
-  { id: "ph", flag: "🇵🇭", iso: "PH", name: "Philippines", dialCode: "+63" },
-  { id: "my", flag: "🇲🇾", iso: "MY", name: "Malaysia", dialCode: "+60" },
-  { id: "id", flag: "🇮🇩", iso: "ID", name: "Indonesia", dialCode: "+62" },
-  { id: "hk", flag: "🇭🇰", iso: "HK", name: "Hong Kong", dialCode: "+852" },
+  { id: "us", iso: "US", name: "United States", dialCode: "+1" },
+  { id: "gb", iso: "UK", name: "United Kingdom", dialCode: "+44" },
+  { id: "tr", iso: "TR", name: "Turkey", dialCode: "+90" },
+  { id: "th", iso: "TH", name: "Thailand", dialCode: "+66" },
+  { id: "jp", iso: "JP", name: "Japan", dialCode: "+81" },
+  { id: "sg", iso: "SG", name: "Singapore", dialCode: "+65" },
+  { id: "tw", iso: "TW", name: "Taiwan", dialCode: "+886" },
+  { id: "cn", iso: "CN", name: "China", dialCode: "+86" },
+  { id: "ph", iso: "PH", name: "Philippines", dialCode: "+63" },
+  { id: "my", iso: "MY", name: "Malaysia", dialCode: "+60" },
+  { id: "id", iso: "ID", name: "Indonesia", dialCode: "+62" },
+  { id: "hk", iso: "HK", name: "Hong Kong", dialCode: "+852" },
 ];
 
 function normalizeDialCode(value: string) {
@@ -90,23 +89,32 @@ export function PhoneNumberInput({
         <label className="sr-only" htmlFor={`${id}-country`}>
           Phone country code
         </label>
-        <select
-          aria-label="Phone country code"
-          className="min-h-14 w-[116px] shrink-0 border-0 border-r border-neutral-200 bg-white px-3 text-sm font-black text-neutral-800 outline-none sm:w-[128px]"
-          id={`${id}-country`}
-          onChange={(event) => {
-            const nextCountry = callingCodeCountries.find((country) => country.id === event.target.value) ?? callingCodeCountries[0];
-            setSelectedCountryId(nextCountry.id);
-            emitPhoneValue(nextCountry, localNumber);
-          }}
-          value={selectedCountry.id}
-        >
-          {callingCodeCountries.map((country) => (
-            <option key={country.id} value={country.id}>
-              {country.flag} {country.iso} {country.dialCode} - {country.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative min-h-14 w-[96px] shrink-0 border-r border-neutral-200 bg-white sm:w-[104px]">
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-1.5 px-2 text-sm font-black text-neutral-900">
+            <span>{selectedCountry.iso}</span>
+            <span>{selectedCountry.dialCode}</span>
+            <svg aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-neutral-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <select
+            aria-label="Phone country code"
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            id={`${id}-country`}
+            onChange={(event) => {
+              const nextCountry = callingCodeCountries.find((country) => country.id === event.target.value) ?? callingCodeCountries[0];
+              setSelectedCountryId(nextCountry.id);
+              emitPhoneValue(nextCountry, localNumber);
+            }}
+            value={selectedCountry.id}
+          >
+            {callingCodeCountries.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.iso} {country.dialCode} - {country.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <input
           aria-describedby={error ? errorId : undefined}
           aria-invalid={Boolean(error)}
