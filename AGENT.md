@@ -493,7 +493,7 @@
   - Main `#account` overview now shows the only account logout action as a centered `Log out` row near the bottom.
 - Account navigation:
   - Added Back headers for account subpages and modal-detail flows so users can return to the main account dashboard without title/back overlap.
-  - Added hash-safe account sections for `About FoodOnlines` and `Language`, preserving existing `orders`, `saved`, `refer`, `coupon`, and `settings` sections.
+  - Added hash-safe account section for `Language`, preserving existing `orders`, `saved`, `refer`, `coupon`, and `settings` sections.
 - Order shortcut UI:
   - Reworked the account order shortcut row into five compact status controls with equal circular outline icons and labels below: Pending, Unshipped, Shipped, To Review, and Returns.
 - Modal/mobile form fixes:
@@ -550,3 +550,15 @@
 - Promo overlay now has its own vertical scroll container with safe-area top/bottom padding and centers the modal inside the available viewport.
 - Desktop and mobile promo cards now use viewport-safe `max-height` plus internal scrolling so the top art, code copy, benefits, and Copy Code button stay reachable on short screens.
 - Sticky promo bar bottom offset now includes `env(safe-area-inset-bottom)` so mobile browser chrome does not cut it off.
+
+## Account Menu Row Removal + Scroll Centering (2026-06-02)
+
+- Files changed:
+  - `src/components/AccountPage.tsx`
+  - `src/store/homeStore.ts`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed `About FoodOnlines` and account `ID` rows from the main My Account page.
+- Removed the hidden `about` account route from the account section type/hash parser so users cannot land on an unused account subpage.
+- Account page row clicks now route through a shared helper that scrolls the account panel into the center of the viewport after section changes, covering Orders, Saved items, Buy again, Coupons, Refer a friend, Settings, Language, and Back navigation on mobile, desktop-mobile, tablet, Safari, Chrome, iOS, and Android.

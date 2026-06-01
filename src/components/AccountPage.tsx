@@ -175,7 +175,6 @@ function routeTitle(section: AccountSection) {
   if (section === "refer") return "Refer a friend";
   if (section === "coupon") return "Coupons";
   if (section === "settings") return "Settings";
-  if (section === "about") return "About FoodOnlines";
   if (section === "language") return "Language";
   return "My account";
 }
@@ -273,14 +272,23 @@ export function AccountPage() {
     };
   }, [hasAnyModalOpen]);
 
-  useEffect(() => {
+  function scrollAccountPanelIntoView() {
     const panel = accountPanelReference.current;
     if (!panel) return;
 
     window.requestAnimationFrame(() => {
-      panel.scrollIntoView({ behavior: "auto", block: "start" });
+      panel.scrollIntoView({ behavior: "auto", block: "center" });
     });
+  }
+
+  useEffect(() => {
+    scrollAccountPanelIntoView();
   }, [accountSection]);
+
+  function openAccountSection(section: AccountSection) {
+    openAccount(section);
+    window.setTimeout(scrollAccountPanelIntoView, 0);
+  }
 
   if (!currentUser) {
     return (
@@ -662,7 +670,7 @@ export function AccountPage() {
         <div className="mx-auto max-w-[1080px]" ref={accountPanelReference}>
           <div className="rounded-[24px] border border-neutral-200 bg-white p-4 sm:p-6">
             {accountSection !== "overview" ? (
-              <AccountSubpageHeader title={routeTitle(accountSection)} onBack={() => openAccount("overview")} />
+              <AccountSubpageHeader title={routeTitle(accountSection)} onBack={() => openAccountSection("overview")} />
             ) : null}
 
             {accountSection === "overview" ? (
@@ -685,7 +693,7 @@ export function AccountPage() {
               <div className="mt-6 grid gap-4">
                 <button
                   className="flex w-full items-center justify-between rounded-3xl border border-neutral-200 bg-white px-5 py-5 text-left transition hover:bg-neutral-50"
-                  onClick={() => openAccount("orders")}
+                  onClick={() => openAccountSection("orders")}
                   type="button"
                 >
                   <span className="flex items-center gap-3 text-xl font-black text-neutral-950">
@@ -702,7 +710,7 @@ export function AccountPage() {
                       key={item.key}
                       onClick={() => {
                         setStatusFilter(item.key);
-                        openAccount("orders");
+                        openAccountSection("orders");
                       }}
                       type="button"
                     >
@@ -719,19 +727,17 @@ export function AccountPage() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <MenuRow icon={<SavedIcon />} label="Saved items" onClick={() => openAccount("saved")} />
-                  <MenuRow icon={<BuyAgainIcon />} label="Buy again" onClick={() => openAccount("orders")} />
+                  <MenuRow icon={<SavedIcon />} label="Saved items" onClick={() => openAccountSection("saved")} />
+                  <MenuRow icon={<BuyAgainIcon />} label="Buy again" onClick={() => openAccountSection("orders")} />
                 </div>
 
                 <div className="grid gap-3">
-                  <MenuRow icon={<InfoRowIcon />} label="About FoodOnlines" onClick={() => openAccount("about")} />
-                  <MenuRow icon={<LanguageRowIcon />} label="Language (English)" onClick={() => openAccount("language")} />
-                  <StaticInfoRow icon={<AccountIdIcon />} label={`ID: ${currentUser.id}`} />
+                  <MenuRow icon={<LanguageRowIcon />} label="Language (English)" onClick={() => openAccountSection("language")} />
                   <MenuRow icon={<AddressBookIcon />} label="Address book" onClick={() => setIsAddressModalOpen(true)} />
                   <MenuRow icon={<CardRowIcon />} label="Payment methods" onClick={() => setIsPaymentModalOpen(true)} />
-                  <MenuRow badge={couponCount > 0 ? String(couponCount) : undefined} icon={<CouponIcon />} label="Coupons" onClick={() => openAccount("coupon")} />
-                  <MenuRow icon={<GiftRowIcon />} label="Refer a friend" onClick={() => openAccount("refer")} />
-                  <MenuRow icon={<SettingsRowIcon />} label="Settings" onClick={() => openAccount("settings")} />
+                  <MenuRow badge={couponCount > 0 ? String(couponCount) : undefined} icon={<CouponIcon />} label="Coupons" onClick={() => openAccountSection("coupon")} />
+                  <MenuRow icon={<GiftRowIcon />} label="Refer a friend" onClick={() => openAccountSection("refer")} />
+                  <MenuRow icon={<SettingsRowIcon />} label="Settings" onClick={() => openAccountSection("settings")} />
                 </div>
 
                 <button
@@ -761,10 +767,6 @@ export function AccountPage() {
 
             {accountSection === "coupon" ? (
               <SimplePanel title="Coupons" subtitle="Coupon view is ready for coupon-list endpoint and redemption history." />
-            ) : null}
-
-            {accountSection === "about" ? (
-              <SimplePanel title="About FoodOnlines" subtitle="FoodOnlines delivers grocery, pantry, and fresh food favorites with a mobile-first shopping experience." />
             ) : null}
 
             {accountSection === "language" ? (
@@ -1257,17 +1259,6 @@ function MenuRow({
   );
 }
 
-function StaticInfoRow({ icon, label }: { icon: ReactNode; label: string }) {
-  return (
-    <div className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-left">
-      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1 truncate text-base font-semibold text-neutral-900">{label}</span>
-    </div>
-  );
-}
-
 function AccountSubpageHeader({ onBack, title }: { onBack: () => void; title: string }) {
   return (
     <div className="sticky top-[132px] z-10 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-neutral-100 bg-white px-4 py-3 sm:-mx-6 sm:px-6 lg:top-[154px]">
@@ -1602,31 +1593,12 @@ function SettingsRowIcon() {
   );
 }
 
-function InfoRowIcon() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 10v6" />
-      <path d="M12 7h.01" />
-    </svg>
-  );
-}
-
 function LanguageRowIcon() {
   return (
     <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
       <path d="M3 12h18" />
       <path d="M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z" />
-    </svg>
-  );
-}
-
-function AccountIdIcon() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
-      <circle cx="12" cy="8" r="3.2" />
-      <path d="M5 19c1.4-3.1 4-4.7 7-4.7s5.6 1.6 7 4.7" />
     </svg>
   );
 }

@@ -467,7 +467,7 @@
   - no sign-out action appears in the profile card, header account dropdown, mobile hamburger submenu, or account subpages.
   - one centered `Log out` action appears near the bottom of the main account page.
 - Account menu direction:
-  - overview rows now include About FoodOnlines, Language (English), Account ID, Address book, Payment methods, Coupons, Refer a friend, and Settings.
+  - overview rows now include Language (English), Address book, Payment methods, Coupons, Refer a friend, and Settings.
   - detail sections use a sticky Back/header row with left Back control and centered page title.
 - Order shortcut direction:
   - My orders keeps five shortcuts: Pending, Unshipped, Shipped, To Review, and Returns.
@@ -504,6 +504,12 @@
 - Promo overlay layout uses safe-area-aware vertical padding and an internal scroll container, keeping the card centered when it fits and scrollable when the device/browser height is short.
 - Desktop and mobile promo cards have viewport-safe max heights with internal scrolling so the Copy Code button remains reachable on desktop, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, Chrome desktop, tablet, and narrow responsive views.
 - Sticky promo bar uses safe-area bottom offset to avoid being clipped by phone browser navigation controls.
+
+### Account Menu Row Removal + Scroll Centering (2026-06-02)
+
+- Removed `About FoodOnlines` and `Account ID` from the main My Account list.
+- Account detail navigation now scrolls the account panel into the center of the viewport after changing sections, so taps on Coupons, Refer a friend, Buy again, Saved items, Orders, Settings, Language, or Back do not leave the user at the page bottom.
+- The hidden `about` account route was removed from the account route model to avoid unused account pages.
 
 ## Guardrails
 

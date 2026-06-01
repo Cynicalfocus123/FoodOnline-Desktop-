@@ -17,7 +17,7 @@ import {
 } from "../lib/security";
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 
-export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "about" | "language";
+export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "language";
 export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search" | "account";
 export type SignupStep = "role" | "form" | "complete";
 
@@ -92,7 +92,6 @@ function readAccountSectionFromHash(hash: string): AccountSection | null {
     section === "refer" ||
     section === "coupon" ||
     section === "settings" ||
-    section === "about" ||
     section === "language"
   ) {
     return section;

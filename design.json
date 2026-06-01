@@ -56,7 +56,6 @@
         "refer",
         "coupon",
         "settings",
-        "about",
         "language"
       ]
     }
@@ -146,9 +145,7 @@
           "Returns"
         ],
         "account_rows": [
-          "About FoodOnlines",
           "Language (English)",
-          "Account ID",
           "Saved items",
           "Buy again",
           "Address book",
@@ -160,6 +157,8 @@
         ],
         "large_touch_targets_and_white_rounded_cards": true,
         "account_section_navigation_resets_scroll": true,
+        "account_section_navigation_centers_panel": true,
+        "about_and_account_id_rows_removed": true,
         "logout_site_pill_removed": true
       },
       "settings_sections": [
