@@ -7,6 +7,10 @@ export const driverAssets = {
     src: "foodonlines-driver-earnings.png",
     alt: "FoodOnlines driver checking a delivery phone near a customer doorway",
   },
+  earningsPerson: {
+    src: "driver-earnings-person-crop.png",
+    alt: "FoodOnlines driver checking a phone near a doorway",
+  },
   support: {
     src: "foodonlines-driver-support.png",
     alt: "FoodOnlines drivers loading delivery parcels into a branded van",
@@ -48,8 +52,8 @@ export const driverAssets = {
     alt: "Driver handing a grocery order to a customer",
   },
   appRoute: {
-    src: "driver-app-route.webp",
-    alt: "FoodOnlines route app screen",
+    src: "driver-program-van.png",
+    alt: "FoodOnlines branded delivery van on the road",
   },
   routeSelect: {
     src: "driver-schedule-calendar.png",
@@ -84,7 +88,7 @@ export const successCards = [
     subtitle: "Parcel-based earning potential",
     body: "Most drivers earn between ฿10 and ฿20 per parcel delivered, with total earnings depending on the number of deliveries completed and route availability.",
     accent: "orange",
-    image: "earnings" as DriverAssetKey,
+    image: "earningsPerson" as DriverAssetKey,
   },
   {
     title: "Dedicated Support Around the Clock",

@@ -819,3 +819,15 @@
   - `design.md`
 - Driver page H1 elements now use `font-bold` instead of overly heavy or light weights, matching the Poppins Bold direction.
 - Driver page paragraph/body copy now uses regular or medium weight classes, with normal copy in grey and bold heading/subtitle text kept black.
+
+## Driver Program Van + Earnings Person Crop (2026-06-03)
+
+- Files changed:
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/driver-earnings-person-crop.png`
+  - `public/images/drivers/driver-program-van.png`
+  - `AGENT.md`
+  - `design.md`
+- Added a dedicated cropped person image for the first earning card so the driver's face stays visible inside the existing aligned image box.
+- Replaced the missing/placeholder Driver Program image source with the supplied branded van image.
+- No driver page copy was changed in this pass.

@@ -640,6 +640,12 @@
 - Driver page H1 text uses Poppins-style `font-bold` weight rather than extra-heavy or light styling.
 - Driver page paragraph/body copy uses regular or medium weights, with grey normal copy and black bold headings/subtitles.
 
+### Driver Program Van + Earnings Person Crop (2026-06-03)
+
+- The first earning card now uses a dedicated person-focused cropped image asset so the driver's face remains visible within the aligned card image box.
+- The FoodOnline Driver Program image panel now uses the supplied branded van image instead of the missing placeholder route image.
+- This pass changes image assets and wiring only; driver-page copy remains unchanged.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
