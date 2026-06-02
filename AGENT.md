@@ -709,3 +709,17 @@
 - Swapped the `How Much Can You Earn?` image to the doorway delivery driver image.
 - Swapped the `Dedicated Support Around the Clock` image to the two-driver van loading image.
 - Recolored the compact earning/support/community section to FoodOnlines green and orange with a light orange-to-green background.
+
+## Driver Readability + Grouped Delivery Update (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/driver-schedule-calendar.png`
+  - `public/images/drivers/driver-route-delivery.png`
+  - `public/images/drivers/driver-payout-phone.png`
+  - `AGENT.md`
+  - `design.md`
+- Driver hero text is bolder, the background image is dimmed, and the hero image uses contain-style sizing so the supplied header image remains visible without harsh cropping across desktop, tablet, mobile, Safari, and Chrome.
+- The compact earning/support/community boxes now use matching vertical alignment with centered images and stronger body text.
+- Grouped deliveries now uses `Enjoy Greater Schedule Stability.`, keeps `Grouped deliveries` as an H3, adds the requested pre-planned assignment copy, and updates all three step titles, bodies, and images.

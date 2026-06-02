@@ -32,16 +32,16 @@ export const driverAssets = {
     alt: "FoodOnlines route app screen",
   },
   routeSelect: {
-    src: "driver-route-select.webp",
-    alt: "Delivery route selection on a phone",
+    src: "driver-schedule-calendar.png",
+    alt: "Delivery schedule calendar with planned route stops",
   },
   doorDelivery: {
-    src: "driver-door-delivery.webp",
-    alt: "Driver delivering groceries to a home",
+    src: "driver-route-delivery.png",
+    alt: "FoodOnlines driver loading delivery boxes into a van",
   },
   payout: {
-    src: "driver-payout.webp",
-    alt: "Driver payout confirmation screen",
+    src: "driver-payout-phone.png",
+    alt: "Driver payout confirmation on a phone",
   },
   team: {
     src: "driver-team.webp",
@@ -84,18 +84,18 @@ export const successCards = [
 
 export const groupedDeliverySteps = [
   {
-    title: "Choose the deliveries you want to fulfill for the day",
-    body: "Pick as few or as many route stops as fit your workday.",
+    title: "Choose the Deliveries That Fit Your Schedule",
+    body: "Select as few or as many deliveries as you want each day, giving you the flexibility to work at a pace that suits your availability and earning goals.",
     image: "routeSelect" as DriverAssetKey,
   },
   {
-    title: "Deliver your orders within the delivery window",
-    body: "Bring groceries to customers on your selected route.",
+    title: "Timely Deliveries, Satisfied Customers",
+    body: "Complete your chosen deliveries efficiently and ensure customers receive their orders on schedule throughout your route.",
     image: "doorDelivery" as DriverAssetKey,
   },
   {
-    title: "Get paid for completed deliveries",
-    body: "Track your progress and receive payout information clearly.",
+    title: "Get Paid for Every Delivery",
+    body: "Earn income for the deliveries you complete, with your earnings growing as you consistently fulfill orders on time.",
     image: "payout" as DriverAssetKey,
   },
 ] as const;

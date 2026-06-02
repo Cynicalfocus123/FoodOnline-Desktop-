@@ -583,6 +583,12 @@
 - `2. Dedicated Support Around the Clock / A Better Experience for Independent Contractors` uses the two-driver van loading image.
 - The compact earning/support/community section uses FoodOnlines logo colors: green and orange text with a light orange-to-green background.
 
+### Driver Readability + Grouped Delivery Update (2026-06-02)
+
+- Driver hero readability direction: hero headline/support text use heavier weights, the image is dimmed with a stronger dark overlay, and the header image uses contain-style sizing so the full supplied image remains visible across desktop, tablet, mobile, Safari, and Chrome.
+- The compact earning/support/community columns keep equal top alignment, centered images, lower image placement, and bolder green/orange copy.
+- Grouped deliveries direction: eyebrow reads `Enjoy Greater Schedule Stability.`, `Grouped deliveries` is an H3, the intro explains pre-planned delivery assignments, and the three steps use the requested schedule, timely-delivery, and paid-for-every-delivery copy with the calendar, van-loading, and payout-phone images.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

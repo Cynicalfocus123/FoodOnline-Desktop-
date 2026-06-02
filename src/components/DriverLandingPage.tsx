@@ -221,14 +221,15 @@ function DriverHero() {
   return (
     <section className="relative isolate min-h-[720px] overflow-hidden bg-neutral-950 pt-[156px] sm:pt-[172px] lg:pt-[184px]">
       <div className="absolute inset-0">
-        <DriverImage assetKey="hero" eager className="h-full min-h-full rounded-none opacity-80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/48 to-black/10" />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/55 to-transparent" />
+        <DriverImage assetKey="hero" eager className="h-full min-h-full rounded-none object-contain opacity-70 brightness-[0.82]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/58 to-black/24" />
+        <div className="absolute inset-0 bg-black/18" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
       <div className="relative z-10 mx-auto flex min-h-[calc(720px-184px)] max-w-[1180px] items-center px-4 py-20 sm:px-6">
         <div className="driver-hero-text grid max-w-3xl gap-3 text-white">
-          <p className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-none">Drivers</p>
-          <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.96] tracking-[-0.05em]">
+          <p className="text-[clamp(2rem,4vw,3.25rem)] font-black leading-none">Drivers</p>
+          <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-black leading-[0.96] tracking-[-0.05em]">
             Start earning.<br />Drive with us.
           </h1>
           <h4 className="text-[clamp(1.45rem,2.7vw,2.15rem)] font-black leading-tight tracking-[-0.02em]">
@@ -237,7 +238,7 @@ function DriverHero() {
             Work on Your Terms.
           </h4>
           <div className="grid max-w-sm gap-2">
-            <p className="text-lg font-semibold leading-7 text-white/92">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
+            <p className="text-lg font-black leading-7 text-white">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="#apply">Get started</DriverButton>
@@ -406,15 +407,15 @@ function DriverBenefitCards() {
         <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#15803D]">
           How Much Can You <span className="text-[#F97316]">Earn?</span>
         </h2>
-        <div className="mt-10 grid gap-8 lg:grid-cols-3">
+        <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
           {successCards.map((card) => (
-            <div key={card.title}>
+            <div className="grid h-full content-start" key={card.title}>
               <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
               <p className="mt-1 min-h-[56px] text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
-              <div className="mt-6 aspect-[16/9] overflow-hidden rounded-[18px]">
-                <DriverImage assetKey={card.image} />
+              <div className="mt-8 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-[18px] bg-white">
+                <DriverImage assetKey={card.image} className="object-center" />
               </div>
-              {card.body ? <p className="mt-5 text-lg font-medium leading-7 text-[#15803D]">{card.body}</p> : null}
+              {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#15803D]">{card.body}</p> : null}
             </div>
           ))}
         </div>
@@ -452,8 +453,11 @@ function GroupedDeliveryTimeline() {
     <DriverSection id="jobs" className="bg-[#FFF7ED] px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.94fr_1.06fr] lg:items-start">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#16A34A]">Say goodbye to last-minute delivery chaos</p>
-          <h2 className="mt-3 text-[clamp(2.4rem,5vw,4.6rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Grouped deliveries</h2>
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#16A34A]">Enjoy Greater Schedule Stability.</p>
+          <h3 className="mt-3 text-[clamp(2.4rem,5vw,4.6rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Grouped deliveries</h3>
+          <p className="mt-5 max-w-2xl text-xl font-black leading-8 text-[#15803D]">
+            With pre-planned delivery assignments, you can focus on earning while maintaining better control over your day.
+          </p>
           <div className="relative mt-8 grid gap-4">
             <span className="absolute left-5 top-5 hidden h-[calc(100%-40px)] w-1 rounded-full bg-orange-200 md:block" />
             <span
@@ -477,16 +481,16 @@ function GroupedDeliveryTimeline() {
                   {index + 1}
                 </span>
                 <span className="text-xl font-black leading-7">{step.title}</span>
-                <span className="text-sm leading-6 text-[#6B7280]">{step.body}</span>
+                <span className="text-sm font-bold leading-6 text-[#4B5563]">{step.body}</span>
               </button>
             ))}
           </div>
         </div>
         <div className="sticky top-[170px] overflow-hidden rounded-[40px]">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[26px]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] bg-white">
             {groupedDeliverySteps.map((step, index) => (
               <div className={`absolute inset-0 transition duration-500 ${activeStep === index ? "opacity-100" : "opacity-0"}`} key={step.image}>
-                <DriverImage assetKey={step.image} />
+                <DriverImage assetKey={step.image} className="object-center" />
               </div>
             ))}
           </div>
