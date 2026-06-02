@@ -19,6 +19,22 @@ export const driverAssets = {
     src: "driver-apply-team.png",
     alt: "FoodOnlines drivers standing in front of a branded delivery truck",
   },
+  valueLoading: {
+    src: "driver-value-loading.png",
+    alt: "FoodOnlines drivers loading delivery boxes into a truck",
+  },
+  valueCab: {
+    src: "driver-value-cab.png",
+    alt: "FoodOnlines driver seated in a delivery truck cab",
+  },
+  valueTeam: {
+    src: "driver-value-team.png",
+    alt: "FoodOnlines driver team standing together in an office",
+  },
+  valuePair: {
+    src: "driver-value-pair.png",
+    alt: "Two FoodOnlines drivers standing near a delivery truck",
+  },
   flex: {
     src: "driver-flex.webp",
     alt: "Driver using a phone to choose grocery delivery routes",

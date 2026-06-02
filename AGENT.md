@@ -767,3 +767,17 @@
   - `design.md`
 - Replaced the circular image collage in the `Efficient Routes / Reliable Daily Schedule` section with square and rectangular image boxes.
 - The collage uses a responsive two-column CSS grid with mixed box sizes, small gaps, light shadows, and no circular clipping so it stacks cleanly across desktop, tablet, mobile, Safari, and Chrome.
+
+## Driver Value Collage Uploaded Images (2026-06-03)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/driver-value-loading.png`
+  - `public/images/drivers/driver-value-cab.png`
+  - `public/images/drivers/driver-value-team.png`
+  - `public/images/drivers/driver-value-pair.png`
+  - `AGENT.md`
+  - `design.md`
+- Added the four supplied FoodOnlines driver images to the value collage boxes.
+- The collage now explicitly places the lower small box under the right-side tall box, with centered object-fit images and stable two-column grid sizing for desktop, mobile, iOS Safari, Android Chrome, Safari, and Chrome.

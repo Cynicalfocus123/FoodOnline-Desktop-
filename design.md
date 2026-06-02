@@ -614,6 +614,11 @@
 - The `Efficient Routes / Reliable Daily Schedule` visual collage now uses square and rectangular image boxes instead of circular image crops.
 - The collage layout uses a responsive two-column CSS grid with mixed small/large image boxes, compact spacing, subtle shadows, and no circular clipping so it remains stable on desktop, tablet, mobile, Safari, and Chrome.
 
+### Driver Value Collage Uploaded Images (2026-06-03)
+
+- The value collage now uses the four supplied FoodOnlines driver photos: truck loading, driver in cab, office team, and two drivers by truck.
+- The lower right image is explicitly positioned under the right-side tall image, while all four images use centered cover fitting inside square/rectangular boxes that remain stable on desktop, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

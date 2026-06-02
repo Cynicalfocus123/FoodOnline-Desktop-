@@ -263,12 +263,12 @@ function ValueAndStats() {
           </p>
         </div>
         <div className="driver-slide-in">
-          <div className="mx-auto grid max-w-[620px] grid-cols-2 gap-3 sm:gap-4 lg:max-w-none">
+          <div className="mx-auto grid max-w-[620px] grid-cols-2 grid-rows-[auto_auto_auto] gap-3 sm:gap-4 lg:max-w-none">
             {[
-              { image: "applyTeam" as DriverAssetKey, className: "aspect-[4/3] self-end" },
-              { image: "earnings" as DriverAssetKey, className: "row-span-2 aspect-[3/4]" },
-              { image: "support" as DriverAssetKey, className: "aspect-square" },
-              { image: "community" as DriverAssetKey, className: "aspect-[4/3]" },
+              { image: "valueLoading" as DriverAssetKey, className: "col-start-1 row-start-1 aspect-[4/3] self-end" },
+              { image: "valueCab" as DriverAssetKey, className: "col-start-2 row-span-2 row-start-1 aspect-[3/4]" },
+              { image: "valueTeam" as DriverAssetKey, className: "col-start-1 row-span-2 row-start-2 aspect-[3/4]" },
+              { image: "valuePair" as DriverAssetKey, className: "col-start-2 row-start-3 aspect-[4/3]" },
             ].map((item) => (
               <div
                 className={`overflow-hidden rounded-[10px] bg-white shadow-[0_18px_42px_rgba(17,24,39,0.12)] ring-1 ring-black/5 ${item.className}`}
