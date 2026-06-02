@@ -624,6 +624,11 @@
 - The `How Much Can You Earn?` three-card section reserves equal desktop title/subtitle height before the image row so all three image boxes align horizontally.
 - The image boxes keep matching responsive heights and centered object-fit behavior; no individual image is shifted up or down to force alignment.
 
+### Driver Highlight Text Color Update (2026-06-03)
+
+- In the driver grouped-delivery and earning/support/community sections, bold highlight headings and subtitles now render black rather than green/orange.
+- Supporting paragraph copy in those sections now renders grey, matching the FoodOnline Driver Program body-copy treatment, with no copy changes.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

@@ -790,3 +790,12 @@
   - `design.md`
 - The `How Much Can You Earn?` three-card section now reserves equal desktop title/subtitle space above each image so all three image boxes start on the same row.
 - All three images use the same centered crop behavior and fixed responsive image-box heights; this aligns boxes without individually shifting images up or down.
+
+## Driver Highlight Text Color Update (2026-06-03)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Updated the driver grouped-delivery and earning/support/community sections so bold highlight headings/subtitles use black instead of green/orange.
+- Normal supporting paragraph copy in those sections now uses grey, matching the FoodOnline Driver Program paragraph styling direction, without changing any text content.

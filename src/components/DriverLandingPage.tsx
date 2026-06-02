@@ -404,20 +404,20 @@ function DriverBenefitCards() {
   return (
     <DriverSection className="bg-gradient-to-br from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-20">
       <div className="mx-auto max-w-[1180px]">
-        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#15803D]">
-          How Much Can You <span className="text-[#F97316]">Earn?</span>
+        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#111827]">
+          How Much Can You <span className="text-[#111827]">Earn?</span>
         </h2>
         <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
           {successCards.map((card) => (
             <div className="grid h-full grid-rows-[auto_auto_1fr] content-start" key={card.title}>
               <div className="lg:min-h-[112px]">
-                <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
-                <p className="mt-1 text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
+                <h3 className="text-2xl font-black tracking-[-0.04em] text-[#111827]">{card.title}</h3>
+                <p className="mt-1 text-xl font-black leading-7 text-[#111827]">{card.subtitle}</p>
               </div>
               <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:mt-0 lg:h-[220px] xl:h-[250px]">
                 <DriverImage assetKey={card.image} className="object-center" />
               </div>
-              {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#15803D]">{card.body}</p> : null}
+              {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#4B5563]">{card.body}</p> : null}
             </div>
           ))}
         </div>
@@ -431,9 +431,9 @@ function GroupedDeliveryTimeline() {
     <DriverSection id="jobs" className="bg-[#FFF7ED] px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto max-w-[1180px]">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#16A34A]">Enjoy Greater Schedule Stability.</p>
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#111827]">Enjoy Greater Schedule Stability.</p>
           <h3 className="mt-3 text-[clamp(2.4rem,5vw,4.6rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Grouped deliveries</h3>
-          <p className="mt-5 max-w-2xl text-xl font-black leading-8 text-[#15803D]">
+          <p className="mt-5 max-w-2xl text-xl font-black leading-8 text-[#111827]">
             With pre-planned delivery assignments, you can focus on earning while maintaining better control over your day.
           </p>
           <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
@@ -445,7 +445,7 @@ function GroupedDeliveryTimeline() {
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#16A34A] text-sm font-black text-white">
                   {index + 1}
                 </span>
-                <h4 className="text-xl font-black leading-7 text-[#15803D]">{step.title}</h4>
+                <h4 className="text-xl font-black leading-7 text-[#111827]">{step.title}</h4>
                 <p className="text-sm font-bold leading-6 text-[#4B5563]">{step.body}</p>
                 <div className="mt-2 h-[260px] overflow-hidden rounded-[26px] bg-white sm:h-[320px] lg:h-[280px]">
                   <DriverImage assetKey={step.image} className="object-center" />
