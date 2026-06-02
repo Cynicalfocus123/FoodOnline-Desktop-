@@ -549,6 +549,13 @@
 - Hero support copy now emphasizes choosing a schedule, controlling time, and freedom to live and work the way the driver wants.
 - The Fleet/Flex intro heading now reads `Maximize Your Income Potential / Unmatched Earning Opportunities`, with support copy focused on compensation that rewards ambition, performance, and results.
 
+### Driver Page Program Copy + Section Removal (2026-06-02)
+
+- The Fleet/Flex driver path row section was removed from the driver page body.
+- The driver value section now reads `3. Efficient Routes / Reliable Daily Schedule`, with support copy about organized routes and consistent daily deliveries.
+- The program explanation section now uses `How Does the FoodOnline Driver Program Work?` and explains local grocery delivery earning, onboarding, accepting opportunities, and full-time or part-time flexibility.
+- The three program rows now include longer supporting copy for independent contractor scheduling, no minimum hour requirements, and flexible work supported by customer demand.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

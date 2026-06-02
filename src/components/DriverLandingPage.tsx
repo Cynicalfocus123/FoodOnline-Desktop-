@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   driverAssets,
-  driverPathCards,
   driverStats,
   eligibilityItems,
   fleetBenefits,
@@ -150,15 +149,6 @@ function ChevronIcon() {
   );
 }
 
-function ArrowIcon() {
-  return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
 function DriverButton({
   children,
   href,
@@ -262,60 +252,17 @@ function DriverHero() {
   );
 }
 
-function DriverPathCards() {
-  return (
-    <DriverSection id="delivery" className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div>
-          <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-light leading-[1.05] tracking-[-0.04em] text-[#111827]">
-            Maximize Your Income Potential
-            <span className="block font-black">Unmatched Earning Opportunities</span>
-          </h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B7280]">
-            Take your career to the next level with a compensation package designed to reward ambition, performance, and results.
-          </p>
-          <div className="mt-10 divide-y divide-[#E5E7EB]">
-            {driverPathCards.map((card, index) => (
-              <a
-                className="group flex min-h-[92px] items-center gap-5 py-5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#16A34A]"
-                href={card.href}
-                key={card.title}
-              >
-                <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${card.accent === "orange" ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
-                  <Icon type={index === 0 ? "car" : "van"} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-xl font-black text-[#111827]">{card.title}</span>
-                  <span className="mt-1 block text-sm font-black uppercase tracking-[0.12em] text-[#475569]">{card.cta}</span>
-                </span>
-                <span className="text-[#111827] transition group-hover:translate-x-1 group-hover:text-[#16A34A]">
-                  <ArrowIcon />
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className="mx-auto aspect-square w-full max-w-[560px] rounded-full bg-emerald-100 p-7">
-          <div className="h-full overflow-hidden rounded-full">
-            <DriverImage assetKey="fleet" className="rounded-full" />
-          </div>
-        </div>
-      </div>
-    </DriverSection>
-  );
-}
-
 function ValueAndStats() {
   return (
     <DriverSection id="driver-company" className="px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="text-lg font-black text-[#B45309]">Drivers move our company forward</p>
+          <p className="text-lg font-black text-[#B45309]">3. Efficient Routes</p>
           <h2 className="mt-5 text-[clamp(2.6rem,6vw,4.8rem)] font-light leading-none tracking-[-0.06em] text-[#111827]">
-            Delivered with heart
+            Reliable Daily Schedule
           </h2>
           <p className="mt-6 max-w-2xl text-xl leading-9 text-[#111827]">
-            We deeply believe that our drivers are the heartbeat of FoodOnlines. Their dedication, reliability, and care help customers receive groceries on time, every time.
+            Spend less time on the road and more time focusing on what matters with organized routes and consistent daily deliveries.
           </p>
         </div>
         <div className="relative min-h-[460px] overflow-hidden">
@@ -427,23 +374,47 @@ function FlexProgram() {
 }
 
 function HowFlexWorks() {
+  const programHighlights = [
+    {
+      title: "Work on Your Schedule as an Independent Contractor.",
+      body: "With the FoodOnline Driver Program, you have the flexibility to decide when and how often you work. Take control of your schedule and create a work-life balance that fits your personal and professional goals.",
+    },
+    {
+      title: "No Minimum Hour Requirements",
+      subtitle: "Choose the Deliveries That Work for You.",
+      body: "Enjoy the freedom to select delivery opportunities that fit your availability. With no fixed hourly commitments, you can create a schedule that matches your lifestyle while maximizing your earning potential.",
+    },
+    {
+      title: "Flexible Work That Fits Your Lifestyle",
+      subtitle: "Supported by Strong Customer Demand",
+      body: "As part of our delivery network, you'll benefit from consistent order volume and the freedom to choose when you're available, creating a rewarding and flexible earning experience.",
+    },
+  ];
+
   return (
     <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
         <div className="grid gap-5">
           <h2 className="text-[clamp(2.2rem,5vw,4.3rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">
-            How does the Flex driver program work?
+            How Does the FoodOnline Driver Program Work?
           </h2>
           <p className="text-lg leading-8 text-[#6B7280]">
-            FoodOnlines Flex gives independent drivers a flexible way to deliver groceries. Sign up, choose available routes, complete deliveries, and get paid for the work you finish.
+            The FoodOnline Driver Program provides a flexible and rewarding opportunity to earn income by delivering groceries to customers in your local area. As a driver, you have the freedom to choose when and how often you work, allowing you to create a schedule that fits your lifestyle.
+            <br />
+            <br />
+            Simply sign up, complete the onboarding process, and start accepting delivery opportunities. Whether you're looking for a full-time career or a part-time source of income, FoodOnline gives you the flexibility to work on your terms while helping customers receive their groceries conveniently and reliably.
           </p>
           <div className="grid gap-3">
-            {["Choose your own hours", "No hourly requirements", "Flexible availability"].map((item, index) => (
-              <div className="driver-check-item flex items-center gap-3 border-b border-[#E5E7EB] py-4" key={item} style={{ transitionDelay: `${index * 80}ms` }}>
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ECFDF5] text-[#15803D]">
+            {programHighlights.map((item, index) => (
+              <div className="driver-check-item flex items-start gap-3 border-b border-[#E5E7EB] py-4" key={item.title} style={{ transitionDelay: `${index * 80}ms` }}>
+                <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ECFDF5] text-[#15803D]">
                   <Icon type="check" />
                 </span>
-                <span className="font-black text-[#111827]">{item}</span>
+                <span className="grid gap-1">
+                  <span className="font-black text-[#111827]">{item.title}</span>
+                  {item.subtitle ? <span className="font-black text-[#475569]">{item.subtitle}</span> : null}
+                  <span className="text-sm leading-6 text-[#6B7280]">{item.body}</span>
+                </span>
               </div>
             ))}
           </div>
@@ -723,7 +694,6 @@ export function DriverLandingPage() {
     <div className="bg-white text-[#111827]">
       <script type="application/ld+json">{JSON.stringify(pageJsonLd)}</script>
       <DriverHero />
-      <DriverPathCards />
       <ValueAndStats />
       <FlexProgram />
       <HowFlexWorks />

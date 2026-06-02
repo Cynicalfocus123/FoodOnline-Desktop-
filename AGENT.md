@@ -636,3 +636,14 @@
   - `AGENT.md`
   - `design.md`
 - Updated the driver hero and income section copy per request: hero now includes "Be Your Own Boss / Work on Your Terms", the intro paragraph focuses on schedule freedom, and the Fleet/Flex intro now uses the "Maximize Your Income Potential / Unmatched Earning Opportunities" wording.
+
+## Driver Page Program Copy + Section Removal (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the Fleet/Flex driver path row section from the driver page body.
+- Replaced the driver value section copy with `Efficient Routes / Reliable Daily Schedule` and updated the paragraph to focus on organized routes and consistent daily deliveries.
+- Replaced the Flex program explanation with the FoodOnline Driver Program copy and expanded the three checklist rows into title/subtitle/supporting text blocks for schedule control, no minimum hour requirements, and flexible work supported by customer demand.
