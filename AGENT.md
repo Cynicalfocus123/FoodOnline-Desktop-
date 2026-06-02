@@ -799,3 +799,23 @@
   - `design.md`
 - Updated the driver grouped-delivery and earning/support/community sections so bold highlight headings/subtitles use black instead of green/orange.
 - Normal supporting paragraph copy in those sections now uses grey, matching the FoodOnline Driver Program paragraph styling direction, without changing any text content.
+
+## Driver Benefit Card Structure Alignment Fix (2026-06-03)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `AGENT.md`
+  - `design.md`
+- Fixed the root alignment issue in the earning/support/community section by removing the separate standalone section heading and rendering all three titles/subtitles inside identical card header slots.
+- Removed the `2.` and `3.` prefixes from the second and third card titles.
+- All three desktop cards now share the same title/subtitle header height, image-box height, centered image fitting, and body-copy start position.
+
+## Driver Typography Weight Update (2026-06-03)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Driver page H1 elements now use `font-bold` instead of overly heavy or light weights, matching the Poppins Bold direction.
+- Driver page paragraph/body copy now uses regular or medium weight classes, with normal copy in grey and bold heading/subtitle text kept black.

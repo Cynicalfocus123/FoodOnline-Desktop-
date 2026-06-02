@@ -225,8 +225,8 @@ function DriverHero() {
       </div>
       <div className="relative z-10 mx-auto flex min-h-[calc(720px-184px)] max-w-[1180px] items-center px-4 py-20 sm:px-6">
         <div className="driver-hero-text grid max-w-3xl gap-3 text-white">
-          <p className="text-[clamp(2rem,4vw,3.25rem)] font-black leading-none">Drivers</p>
-          <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-black leading-[0.96] tracking-[-0.05em]">
+          <p className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-none">Drivers</p>
+          <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-bold leading-[0.96] tracking-[-0.05em]">
             Start earning.<br />Drive with us.
           </h1>
           <h4 className="text-[clamp(1.45rem,2.7vw,2.15rem)] font-black leading-tight tracking-[-0.02em]">
@@ -235,7 +235,7 @@ function DriverHero() {
             Work on Your Terms.
           </h4>
           <div className="grid max-w-sm gap-2">
-            <p className="text-lg font-black leading-7 text-white">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
+            <p className="text-lg font-medium leading-7 text-white">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="#apply">Get started</DriverButton>
@@ -255,10 +255,10 @@ function ValueAndStats() {
       <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <h2 className="text-[clamp(2.2rem,5vw,4rem)] font-black leading-none tracking-[-0.05em] text-[#B45309]">Efficient Routes</h2>
-          <h1 className="mt-5 text-[clamp(2.8rem,7vw,5.4rem)] font-light leading-none tracking-[-0.06em] text-[#111827]">
+          <h1 className="mt-5 text-[clamp(2.8rem,7vw,5.4rem)] font-bold leading-none tracking-[-0.06em] text-[#111827]">
             Reliable Daily Schedule
           </h1>
-          <p className="mt-6 max-w-2xl text-xl leading-9 text-[#111827]">
+          <p className="mt-6 max-w-2xl text-xl font-normal leading-9 text-[#6B7280]">
             Spend less time on the road and more time focusing on what matters with organized routes and consistent daily deliveries.
           </p>
         </div>
@@ -329,7 +329,7 @@ function CountUpStat({ label, suffix, value }: { label: string; suffix: string; 
         {displayValue.toLocaleString()}
         {suffix}
       </p>
-      <p className="mt-2 text-sm font-bold leading-5 text-[#6B7280]">{label}</p>
+      <p className="mt-2 text-sm font-medium leading-5 text-[#6B7280]">{label}</p>
     </div>
   );
 }
@@ -369,7 +369,7 @@ function HowFlexWorks() {
           <h2 className="text-[clamp(2.2rem,5vw,4.3rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">
             How Does the FoodOnline Driver Program Work?
           </h2>
-          <p className="text-lg leading-8 text-[#6B7280]">
+          <p className="text-lg font-normal leading-8 text-[#6B7280]">
             The FoodOnline Driver Program provides a flexible and rewarding opportunity to earn income by delivering groceries to customers in your local area. As a driver, you have the freedom to choose when and how often you work, allowing you to create a schedule that fits your lifestyle.
             <br />
             <br />
@@ -404,20 +404,17 @@ function DriverBenefitCards() {
   return (
     <DriverSection className="bg-gradient-to-br from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-20">
       <div className="mx-auto max-w-[1180px]">
-        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#111827]">
-          How Much Can You <span className="text-[#111827]">Earn?</span>
-        </h2>
-        <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
+        <div className="grid items-stretch gap-8 lg:grid-cols-3">
           {successCards.map((card) => (
             <div className="grid h-full grid-rows-[auto_auto_1fr] content-start" key={card.title}>
-              <div className="lg:min-h-[112px]">
+              <div className="lg:min-h-[136px]">
                 <h3 className="text-2xl font-black tracking-[-0.04em] text-[#111827]">{card.title}</h3>
-                <p className="mt-1 text-xl font-black leading-7 text-[#111827]">{card.subtitle}</p>
+                <h4 className="mt-1 text-xl font-bold leading-7 text-[#111827]">{card.subtitle}</h4>
               </div>
               <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:mt-0 lg:h-[220px] xl:h-[250px]">
                 <DriverImage assetKey={card.image} className="object-center" />
               </div>
-              {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#4B5563]">{card.body}</p> : null}
+              {card.body ? <p className="mt-5 text-lg font-medium leading-8 text-[#6B7280]">{card.body}</p> : null}
             </div>
           ))}
         </div>
@@ -431,9 +428,9 @@ function GroupedDeliveryTimeline() {
     <DriverSection id="jobs" className="bg-[#FFF7ED] px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto max-w-[1180px]">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#111827]">Enjoy Greater Schedule Stability.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#111827]">Enjoy Greater Schedule Stability.</p>
           <h3 className="mt-3 text-[clamp(2.4rem,5vw,4.6rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Grouped deliveries</h3>
-          <p className="mt-5 max-w-2xl text-xl font-black leading-8 text-[#111827]">
+          <p className="mt-5 max-w-2xl text-xl font-medium leading-8 text-[#111827]">
             With pre-planned delivery assignments, you can focus on earning while maintaining better control over your day.
           </p>
           <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
@@ -446,7 +443,7 @@ function GroupedDeliveryTimeline() {
                   {index + 1}
                 </span>
                 <h4 className="text-xl font-black leading-7 text-[#111827]">{step.title}</h4>
-                <p className="text-sm font-bold leading-6 text-[#4B5563]">{step.body}</p>
+                <p className="text-sm font-medium leading-6 text-[#6B7280]">{step.body}</p>
                 <div className="mt-2 h-[260px] overflow-hidden rounded-[26px] bg-white sm:h-[320px] lg:h-[280px]">
                   <DriverImage assetKey={step.image} className="object-center" />
                 </div>
@@ -494,7 +491,7 @@ function DriverAccordion({ heading, idPrefix, items }: { heading: string; idPref
                   role="region"
                 >
                   <div className="overflow-hidden">
-                    <p className="pb-5 text-base leading-7 text-[#6B7280]">{item.body}</p>
+                    <p className="pb-5 text-base font-normal leading-7 text-[#6B7280]">{item.body}</p>
                   </div>
                 </div>
               </div>
@@ -513,7 +510,7 @@ function ApplyCta() {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(360px,1.1fr)] lg:items-center">
           <div>
             <h2 className="text-[clamp(2.2rem,5vw,4.2rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Apply here to start driving</h2>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-[#6B7280]">Choose the driving path that fits you and start delivering with FoodOnlines.</p>
+            <p className="mt-4 max-w-2xl text-lg font-normal leading-8 text-[#6B7280]">Choose the driving path that fits you and start delivering with FoodOnlines.</p>
             <div className="mt-6">
               <DriverButton href="/drivers/apply">Apply now</DriverButton>
             </div>

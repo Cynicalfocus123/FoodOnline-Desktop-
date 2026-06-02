@@ -87,14 +87,14 @@ export const successCards = [
     image: "earnings" as DriverAssetKey,
   },
   {
-    title: "2. Dedicated Support Around the Clock",
+    title: "Dedicated Support Around the Clock",
     subtitle: "A Better Experience for Independent Contractors",
     body: "From onboarding to daily operations, we provide the resources, assistance, and benefits that help you perform at your best and earn with confidence.",
     accent: "green",
     image: "support" as DriverAssetKey,
   },
   {
-    title: "3. Drive Together. Grow Together.",
+    title: "Drive Together. Grow Together.",
     subtitle: "A Community That Invests in Your Success.",
     body: "Join a network of dedicated drivers where collaboration, support, and career opportunities help you achieve more than just earnings.",
     accent: "orange",
