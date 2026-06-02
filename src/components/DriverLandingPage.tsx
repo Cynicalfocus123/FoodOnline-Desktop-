@@ -241,16 +241,15 @@ function DriverHero() {
           <p className="text-lg font-semibold">Drivers</p>
           <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.96] tracking-[-0.05em]">
             Start earning.<br />Drive with us.
+            <span className="mt-5 block text-[clamp(1.6rem,3vw,2.4rem)] font-black leading-tight tracking-[-0.02em]">
+              1. Be Your Own Boss
+              <br />
+              Work on Your Terms.
+            </span>
           </h1>
           <div className="mt-6 grid max-w-sm gap-2">
-            <p className="text-3xl font-black">Get started</p>
-            <p className="text-lg font-semibold leading-7 text-white/92">
-              We offer two ways for you to start driving with us.
-            </p>
+            <p className="text-lg font-semibold leading-7 text-white/92">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
           </div>
-          <p className="max-w-xl text-lg font-medium leading-8 text-white/82">
-            Deliver global groceries and fresh food to customers while choosing the driving path that fits your schedule.
-          </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="#apply">Get started</DriverButton>
             <DriverButton href="#fleet" variant="white">
@@ -269,10 +268,11 @@ function DriverPathCards() {
       <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-light leading-[1.05] tracking-[-0.04em] text-[#111827]">
-            What is the difference between Fleet and Flex?
+            Maximize Your Income Potential
+            <span className="block font-black">Unmatched Earning Opportunities</span>
           </h2>
           <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B7280]">
-            Choose between full-time employee routes and independent contractor flexibility. Each path keeps groceries moving with FoodOnlines support.
+            Take your career to the next level with a compensation package designed to reward ambition, performance, and results.
           </p>
           <div className="mt-10 divide-y divide-[#E5E7EB]">
             {driverPathCards.map((card, index) => (

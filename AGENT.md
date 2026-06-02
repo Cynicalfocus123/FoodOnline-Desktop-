@@ -628,3 +628,11 @@
 - Converted the driver hero into a full-bleed image header with dark overlay and text/CTA content placed on top of the image, matching the requested sample direction without copying external brand assets.
 - Flattened box-heavy driver text sections into open rows, divider lists, circular image treatments, and lightweight columns for Fleet/Flex, driver value, Flex benefits, success points, timeline steps, accordions, apply CTA, and positions CTA.
 - Cleaned old driver card/floating-card CSS rules that no longer apply to the simplified page body.
+
+## Driver Page Copy Update (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Updated the driver hero and income section copy per request: hero now includes "Be Your Own Boss / Work on Your Terms", the intro paragraph focuses on schedule freedom, and the Fleet/Flex intro now uses the "Maximize Your Income Potential / Unmatched Earning Opportunities" wording.

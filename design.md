@@ -543,6 +543,12 @@
 - Driver body text should not sit inside repeated card boxes. Fleet/Flex choice, value statement, Flex benefits, success points, timeline steps, accordions, apply CTA, Fleet content, and open positions use open rows, section dividers, circular image treatments, and simple columns instead.
 - Keep FoodOnlines orange/green brand accents for buttons, icons, active timeline state, and links. Avoid reintroducing the old boxed driver-card presentation unless a future design explicitly asks for cards.
 
+### Driver Page Copy Update (2026-06-02)
+
+- Hero headline keeps `Start earning. Drive with us.` and adds `Be Your Own Boss / Work on Your Terms.`
+- Hero support copy now emphasizes choosing a schedule, controlling time, and freedom to live and work the way the driver wants.
+- The Fleet/Flex intro heading now reads `Maximize Your Income Potential / Unmatched Earning Opportunities`, with support copy focused on compensation that rewards ambition, performance, and results.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
