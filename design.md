@@ -570,6 +570,12 @@
 - The support block reads `2. Dedicated Support Around the Clock / A Better Experience for Independent Contractors` with copy about onboarding, daily operations, resources, assistance, benefits, and earning confidence, followed by its supplied image.
 - The community block reads `3. Drive Together. Grow Together. / A Community That Invests in Your Success.` with copy about collaboration, support, and career opportunities, followed by its supplied team image.
 
+### Driver GitHub Pages Route/Image Fix (2026-06-02)
+
+- GitHub Pages production builds use `/FoodOnline-Desktop-/` as the asset base so driver images and bundled assets do not resolve relative to `/company/drivers`; the deploy workflow passes this as `VITE_BASE_PATH`.
+- `public/404.html` redirects hard refreshes on project routes such as `/FoodOnline-Desktop-/company/drivers` into the hash route `/#company/drivers`, preventing GitHub Pages file-not-found errors for SPA routes.
+- The earning/support/community content is compact: a large `How Much Can You Earn?` section heading, three image columns, headings above each image, and explanatory text below each image.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

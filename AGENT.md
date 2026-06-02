@@ -677,3 +677,19 @@
 - Replaced the driver hero image with the provided doorway delivery image.
 - Reworked the success/earning section so `How Much Can You Earn?` is the main section heading with the parcel-rate support copy and image below it.
 - Updated the support and community blocks to the requested `Dedicated Support Around the Clock` and `Drive Together. Grow Together.` copy, each with its own supplied image below the text.
+
+## Driver GitHub Pages Route/Image Fix (2026-06-02)
+
+- Files changed:
+  - `.github/workflows/deploy-pages.yml`
+  - `vite.config.ts`
+  - `public/404.html`
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Fixed deployed image 404s by using a production base path of `/FoodOnline-Desktop-/` for GitHub Pages builds, with `VITE_BASE_PATH` still available for other hosts.
+- GitHub Pages workflow now passes `VITE_BASE_PATH=/FoodOnline-Desktop-/` during `npm run build`.
+- Added a GitHub Pages `404.html` SPA fallback so hard refresh / Ctrl+F5 on `/FoodOnline-Desktop-/company/drivers` redirects to `/#company/drivers` and loads the React app instead of GitHub's file-not-found page.
+- Reworked the earning/support/community area into a compact three-column image layout with the section heading above, individual headings above each image, and explanatory text below each image.

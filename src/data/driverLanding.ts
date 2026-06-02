@@ -61,8 +61,8 @@ export const driverStats = [
 export const successCards = [
   {
     title: "How Much Can You Earn?",
-    subtitle: "Most drivers earn between ฿10 and ฿20 per parcel delivered, with total earnings depending on the number of deliveries completed and route availability.",
-    body: "",
+    subtitle: "Parcel-based earning potential",
+    body: "Most drivers earn between ฿10 and ฿20 per parcel delivered, with total earnings depending on the number of deliveries completed and route availability.",
     accent: "orange",
     image: "earnings" as DriverAssetKey,
   },
