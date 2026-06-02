@@ -400,20 +400,28 @@ function HowFlexWorks() {
 }
 
 function DriverBenefitCards() {
+  const [earningsCard, ...supportCards] = successCards;
+
   return (
     <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto max-w-[1180px]">
-        <p className="text-sm font-black uppercase tracking-[0.22em] text-[#F97316]">Earning potential beyond the road</p>
-        <h2 className="mt-3 text-[clamp(2.3rem,5vw,4.4rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Drive toward success</h2>
-        <div className="mt-10 grid gap-8 lg:grid-cols-3">
-          {successCards.map((card, index) => (
+        <h2 className="text-[clamp(2.3rem,5vw,4.4rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">{earningsCard.title}</h2>
+        <p className="mt-5 max-w-3xl text-lg font-semibold leading-8 text-[#6B7280]">{earningsCard.subtitle}</p>
+        <div className="mt-8 aspect-[16/8] min-h-[280px] overflow-hidden rounded-[36px]">
+          <DriverImage assetKey={earningsCard.image} />
+        </div>
+        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          {supportCards.map((card, index) => (
             <div className="border-t border-[#E5E7EB] pt-6" key={card.title}>
               <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.14em] ${card.accent === "orange" ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
-                {index + 1}
+                {index + 2}
               </span>
               <h3 className="mt-5 text-2xl font-black tracking-[-0.04em] text-[#111827]">{card.title}</h3>
-              <p className="mt-2 text-sm font-black text-[#16A34A]">{card.subtitle}</p>
+              <p className="mt-2 text-base font-black leading-7 text-[#16A34A]">{card.subtitle}</p>
               <p className="mt-4 text-base leading-7 text-[#6B7280]">{card.body}</p>
+              <div className="mt-6 aspect-[4/3] overflow-hidden rounded-[28px]">
+                <DriverImage assetKey={card.image} />
+              </div>
             </div>
           ))}
         </div>

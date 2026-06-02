@@ -558,10 +558,17 @@
 
 ### Driver Hero Image + Flex Section Removal (2026-06-02)
 
-- Driver hero background uses `public/images/drivers/foodonlines-driver-hero.png`, the provided FoodOnlines driver loading boxes into a branded van image.
+- Driver hero background uses `public/images/drivers/foodonlines-driver-hero.png`, the provided FoodOnlines doorway delivery image.
 - Hero typography direction: `Drivers` is a large label above the hero H1, `Be Your Own Boss / Work on Your Terms.` is an H4 without numbering, and its spacing sits close to the schedule-freedom support copy.
 - Driver value typography direction: `Efficient Routes` appears as a large H2 without numbering, and `Reliable Daily Schedule` appears as the main large heading for that section.
 - The large `FoodOnlines Flex` promotional section with three columns is removed from the page body.
+
+### Driver Earnings/Support Image Blocks (2026-06-02)
+
+- Hero image now uses the provided doorway delivery image at `public/images/drivers/foodonlines-driver-hero.png`.
+- The earning section heading is `How Much Can You Earn?` with support copy about drivers earning between `฿10` and `฿20` per parcel, followed by a wide delivery image.
+- The support block reads `2. Dedicated Support Around the Clock / A Better Experience for Independent Contractors` with copy about onboarding, daily operations, resources, assistance, benefits, and earning confidence, followed by its supplied image.
+- The community block reads `3. Drive Together. Grow Together. / A Community That Invests in Your Success.` with copy about collaboration, support, and career opportunities, followed by its supplied team image.
 
 ## Guardrails
 

@@ -661,3 +661,19 @@
 - Increased the `Drivers` hero label size, changed `Be Your Own Boss / Work on Your Terms.` into an H4 without numbering, and tightened spacing between that H4 and the hero support copy.
 - Promoted `Efficient Routes` to a large H2 and `Reliable Daily Schedule` to an H1-style heading, with the numeric prefix removed.
 - Removed the large `FoodOnlines Flex` section from the driver page body.
+
+## Driver Earnings/Support Image Blocks (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/foodonlines-driver-hero.png`
+  - `public/images/drivers/foodonlines-driver-earnings.png`
+  - `public/images/drivers/foodonlines-driver-support.png`
+  - `public/images/drivers/foodonlines-driver-community.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Replaced the driver hero image with the provided doorway delivery image.
+- Reworked the success/earning section so `How Much Can You Earn?` is the main section heading with the parcel-rate support copy and image below it.
+- Updated the support and community blocks to the requested `Dedicated Support Around the Clock` and `Drive Together. Grow Together.` copy, each with its own supplied image below the text.

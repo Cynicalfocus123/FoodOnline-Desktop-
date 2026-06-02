@@ -1,7 +1,19 @@
 export const driverAssets = {
   hero: {
     src: "foodonlines-driver-hero.png",
-    alt: "FoodOnlines driver loading delivery boxes into a branded van",
+    alt: "FoodOnlines driver checking a delivery phone near a customer doorway",
+  },
+  earnings: {
+    src: "foodonlines-driver-earnings.png",
+    alt: "FoodOnlines drivers loading delivery parcels into a branded van",
+  },
+  support: {
+    src: "foodonlines-driver-support.png",
+    alt: "FoodOnlines driver loading branded boxes into a delivery van",
+  },
+  community: {
+    src: "foodonlines-driver-community.png",
+    alt: "FoodOnlines driver team standing together",
   },
   flex: {
     src: "driver-flex.webp",
@@ -39,25 +51,6 @@ export const driverAssets = {
 
 export type DriverAssetKey = keyof typeof driverAssets;
 
-export const driverPathCards = [
-  {
-    title: "Flex & part time",
-    body: "Work on your own schedule. Drive your own car.",
-    cta: "Drive part time",
-    href: "#flex",
-    accent: "orange",
-    image: "flex" as DriverAssetKey,
-  },
-  {
-    title: "Full-time fleet",
-    body: "Work full time, get team support, benefits, and scheduled routes.",
-    cta: "Drive full time",
-    href: "#fleet",
-    accent: "green",
-    image: "fleet" as DriverAssetKey,
-  },
-] as const;
-
 export const driverStats = [
   { value: 500, suffix: "+", label: "Delivery partners" },
   { value: 20000, suffix: "+", label: "Deliveries supported monthly" },
@@ -65,42 +58,27 @@ export const driverStats = [
   { value: 11, suffix: "", label: "Operating hubs and service areas" },
 ] as const;
 
-export const flexBenefits = [
-  {
-    title: "Be your own boss",
-    subtitle: "Choose your own schedule",
-    body: "Take control of your time and create a work-life balance that fits you.",
-  },
-  {
-    title: "Competitive earning",
-    subtitle: "Earn for completed routes",
-    body: "Get paid for reliable grocery deliveries and completed orders.",
-  },
-  {
-    title: "Streamlined routes",
-    subtitle: "Grouped daily deliveries",
-    body: "Routes are grouped to reduce wasted travel time and make each shift easier to plan.",
-  },
-] as const;
-
 export const successCards = [
   {
-    title: "Drive toward success",
-    subtitle: "Earning potential beyond the road",
-    body: "FoodOnlines offers delivery opportunities that help drivers grow their income with reliable grocery demand.",
+    title: "How Much Can You Earn?",
+    subtitle: "Most drivers earn between ฿10 and ฿20 per parcel delivered, with total earnings depending on the number of deliveries completed and route availability.",
+    body: "",
     accent: "orange",
+    image: "earnings" as DriverAssetKey,
   },
   {
-    title: "Full support, always",
-    subtitle: "Support for every route",
-    body: "Give drivers clear route information, helpful resources, and support when issues happen.",
+    title: "2. Dedicated Support Around the Clock",
+    subtitle: "A Better Experience for Independent Contractors",
+    body: "From onboarding to daily operations, we provide the resources, assistance, and benefits that help you perform at your best and earn with confidence.",
     accent: "green",
+    image: "support" as DriverAssetKey,
   },
   {
-    title: "Join the family",
-    subtitle: "Benefits beyond earnings",
-    body: "Build a connection with the FoodOnlines driver community and grow into full-time opportunities.",
+    title: "3. Drive Together. Grow Together.",
+    subtitle: "A Community That Invests in Your Success.",
+    body: "Join a network of dedicated drivers where collaboration, support, and career opportunities help you achieve more than just earnings.",
     accent: "orange",
+    image: "community" as DriverAssetKey,
   },
 ] as const;
 

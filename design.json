@@ -111,6 +111,11 @@
       },
       "image_base_path": "/images/drivers/",
       "hero_image": "/images/drivers/foodonlines-driver-hero.png",
+      "success_images": [
+        "/images/drivers/foodonlines-driver-earnings.png",
+        "/images/drivers/foodonlines-driver-support.png",
+        "/images/drivers/foodonlines-driver-community.png"
+      ],
       "image_fallback": "soft orange green placeholder if owned image is missing"
     },
     "footer": {
