@@ -758,3 +758,12 @@
 - Added the provided FoodOnlines driver team/truck image to the `Apply here to start driving` section.
 - Tuned the `How Much Can You Earn?` image crop so the driver's face remains visible.
 - Grouped delivery step cards now use equal row structure so their image boxes stay aligned even when text lengths differ.
+
+## Driver Value Collage Square Layout (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Replaced the circular image collage in the `Efficient Routes / Reliable Daily Schedule` section with square and rectangular image boxes.
+- The collage uses a responsive two-column CSS grid with mixed box sizes, small gaps, light shadows, and no circular clipping so it stacks cleanly across desktop, tablet, mobile, Safari, and Chrome.

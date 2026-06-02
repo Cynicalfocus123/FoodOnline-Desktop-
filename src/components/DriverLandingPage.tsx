@@ -262,19 +262,22 @@ function ValueAndStats() {
             Spend less time on the road and more time focusing on what matters with organized routes and consistent daily deliveries.
           </p>
         </div>
-        <div className="relative min-h-[460px] overflow-hidden">
-          <div className="absolute left-[24%] top-[22%] h-40 w-40 rounded-full bg-orange-100" />
-          <div className="absolute bottom-0 left-[52%] h-36 w-36 rounded-full bg-emerald-100" />
-          {[
-            { image: "team" as DriverAssetKey, className: "left-[28%] top-0 h-56 w-56 sm:h-72 sm:w-72" },
-            { image: "handoff" as DriverAssetKey, className: "right-2 top-10 h-36 w-36 sm:h-44 sm:w-44" },
-            { image: "flex" as DriverAssetKey, className: "left-[18%] bottom-16 h-36 w-36 sm:h-44 sm:w-44" },
-            { image: "fleet" as DriverAssetKey, className: "right-0 bottom-4 h-52 w-52 sm:h-64 sm:w-64" },
-          ].map((item) => (
-            <div className={`absolute overflow-hidden rounded-full border-4 border-white shadow-[0_12px_34px_rgba(17,24,39,0.16)] ${item.className}`} key={item.image}>
-              <DriverImage assetKey={item.image} className="rounded-full" />
-            </div>
-          ))}
+        <div className="driver-slide-in">
+          <div className="mx-auto grid max-w-[620px] grid-cols-2 gap-3 sm:gap-4 lg:max-w-none">
+            {[
+              { image: "applyTeam" as DriverAssetKey, className: "aspect-[4/3] self-end" },
+              { image: "earnings" as DriverAssetKey, className: "row-span-2 aspect-[3/4]" },
+              { image: "support" as DriverAssetKey, className: "aspect-square" },
+              { image: "community" as DriverAssetKey, className: "aspect-[4/3]" },
+            ].map((item) => (
+              <div
+                className={`overflow-hidden rounded-[10px] bg-white shadow-[0_18px_42px_rgba(17,24,39,0.12)] ring-1 ring-black/5 ${item.className}`}
+                key={item.image}
+              >
+                <DriverImage assetKey={item.image} className="rounded-[10px] object-center" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <StatsRow />

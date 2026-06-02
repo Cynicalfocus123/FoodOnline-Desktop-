@@ -609,6 +609,11 @@
 - The `How Much Can You Earn?` image crop is biased upward enough to keep the driver's face visible in the fixed-height card.
 - Grouped delivery step cards use equal row structure so the image panels align consistently even when the copy length varies.
 
+### Driver Value Collage Square Layout (2026-06-02)
+
+- The `Efficient Routes / Reliable Daily Schedule` visual collage now uses square and rectangular image boxes instead of circular image crops.
+- The collage layout uses a responsive two-column CSS grid with mixed small/large image boxes, compact spacing, subtle shadows, and no circular clipping so it remains stable on desktop, tablet, mobile, Safari, and Chrome.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
