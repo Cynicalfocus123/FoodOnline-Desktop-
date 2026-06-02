@@ -601,7 +601,7 @@
   - `design.json`
 - Added the FoodOnlines driver recruitment landing page at `/company/drivers`, with hash fallback `#company/drivers` for SPA-safe navigation.
 - Driver page follows `pages/driver page/foodonlines-drivers-design.md` and `.json`: FoodOnlines orange/green branding, hero, driver path cards, value/stat section, Flex section, How Flex Works section, success cards, grouped-delivery timeline, eligibility accordion, apply CTA, Fleet section, more-info accordion, and final positions CTA.
-- Motion implemented with CSS and IntersectionObserver: hero fade/slide, floating cards, scroll reveal, card/button/image hover motion, accordion open/close with chevron rotation, count-up stats, timeline progress, active timeline steps, crossfading timeline images, and reduced-motion support.
+- Motion implemented with CSS and IntersectionObserver: hero fade-up, scroll reveal, button hover motion, accordion open/close with chevron rotation, count-up stats, timeline progress, active timeline steps, crossfading timeline images, and reduced-motion support.
 - Driver images resolve from `/images/drivers/`; if owned image files are missing, the UI renders FoodOnlines orange/green placeholder blocks instead of broken images.
 - Existing site header and footer were left unchanged per latest instruction; the driver-specific navigation and CTAs live inside the driver page body only.
 
@@ -647,3 +647,17 @@
 - Removed the Fleet/Flex driver path row section from the driver page body.
 - Replaced the driver value section copy with `Efficient Routes / Reliable Daily Schedule` and updated the paragraph to focus on organized routes and consistent daily deliveries.
 - Replaced the Flex program explanation with the FoodOnline Driver Program copy and expanded the three checklist rows into title/subtitle/supporting text blocks for schedule control, no minimum hour requirements, and flexible work supported by customer demand.
+
+## Driver Hero Image + Flex Section Removal (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/foodonlines-driver-hero.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the provided FoodOnlines driver/van image to the public driver image folder and set it as the driver page hero background.
+- Increased the `Drivers` hero label size, changed `Be Your Own Boss / Work on Your Terms.` into an H4 without numbering, and tightened spacing between that H4 and the hero support copy.
+- Promoted `Efficient Routes` to a large H2 and `Reliable Daily Schedule` to an H1-style heading, with the numeric prefix removed.
+- Removed the large `FoodOnlines Flex` section from the driver page body.

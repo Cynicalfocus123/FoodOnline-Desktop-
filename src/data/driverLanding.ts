@@ -1,7 +1,7 @@
 export const driverAssets = {
   hero: {
-    src: "driver-hero.webp",
-    alt: "FoodOnlines delivery driver holding grocery bags",
+    src: "foodonlines-driver-hero.png",
+    alt: "FoodOnlines driver loading delivery boxes into a branded van",
   },
   flex: {
     src: "driver-flex.webp",

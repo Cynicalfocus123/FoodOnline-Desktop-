@@ -525,8 +525,8 @@
 ## Driver Landing Page Design (2026-06-02)
 
 - Added `Drive with FoodOnlines` at `/company/drivers` with `#company/drivers` as a SPA-safe fallback route.
-- The page follows the driver-page design spec with FoodOnlines-owned orange and green styling, existing public header/footer, a driver-page subnav, and recruitment sections for Hero, driver path cards, value statement, stats, Flex, How Flex Works, success cards, grouped deliveries, eligibility, Apply, Fleet, more information, and open positions.
-- Motion direction: hero text fades up, hero image fades/slides in, floating cards drift subtly, sections reveal on scroll, cards lift on hover, buttons lift/scale with shadow, images zoom on hover, accordions animate open/closed with rotating chevrons, stats count up once, grouped-delivery timeline progress fills on scroll, active steps highlight green, and step images crossfade.
+- The page follows the driver-page design spec with FoodOnlines-owned orange and green styling, existing public header/footer, a full-bleed image hero, value statement, stats, How Flex Works, success points, grouped deliveries, eligibility, Apply, Fleet, more information, and open positions.
+- Motion direction: hero text fades up, sections reveal on scroll, buttons lift/scale with shadow, accordions animate open/closed with rotating chevrons, stats count up once, grouped-delivery timeline progress fills on scroll, active steps highlight green, and step images crossfade.
 - Reduced-motion direction: driver transforms and looping motion are disabled under `prefers-reduced-motion`, with opacity-only reveal preserved where appropriate.
 - Driver images load from `/images/drivers/` using the filenames in `pages/driver page/foodonlines-drivers-design.json`; missing files show orange/green FoodOnlines fallback placeholders so the page does not ship broken image boxes.
 - Existing site header and footer remain unchanged. Driver-specific Company/Delivery/Partners/Jobs/Earn navigation plus Shop now/Apply to drive CTAs live inside the driver page body.
@@ -552,9 +552,16 @@
 ### Driver Page Program Copy + Section Removal (2026-06-02)
 
 - The Fleet/Flex driver path row section was removed from the driver page body.
-- The driver value section now reads `3. Efficient Routes / Reliable Daily Schedule`, with support copy about organized routes and consistent daily deliveries.
+- The driver value section now reads `Efficient Routes / Reliable Daily Schedule`, with support copy about organized routes and consistent daily deliveries.
 - The program explanation section now uses `How Does the FoodOnline Driver Program Work?` and explains local grocery delivery earning, onboarding, accepting opportunities, and full-time or part-time flexibility.
 - The three program rows now include longer supporting copy for independent contractor scheduling, no minimum hour requirements, and flexible work supported by customer demand.
+
+### Driver Hero Image + Flex Section Removal (2026-06-02)
+
+- Driver hero background uses `public/images/drivers/foodonlines-driver-hero.png`, the provided FoodOnlines driver loading boxes into a branded van image.
+- Hero typography direction: `Drivers` is a large label above the hero H1, `Be Your Own Boss / Work on Your Terms.` is an H4 without numbering, and its spacing sits close to the schedule-freedom support copy.
+- Driver value typography direction: `Efficient Routes` appears as a large H2 without numbering, and `Reliable Daily Schedule` appears as the main large heading for that section.
+- The large `FoodOnlines Flex` promotional section with three columns is removed from the page body.
 
 ## Guardrails
 

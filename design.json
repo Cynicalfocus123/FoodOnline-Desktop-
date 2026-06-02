@@ -86,7 +86,6 @@
         "hero",
         "driver_value_statement",
         "stats_count_up",
-        "flex_program",
         "how_flex_works",
         "success_points",
         "grouped_delivery_timeline",
@@ -111,6 +110,7 @@
         "prefers_reduced_motion_supported": true
       },
       "image_base_path": "/images/drivers/",
+      "hero_image": "/images/drivers/foodonlines-driver-hero.png",
       "image_fallback": "soft orange green placeholder if owned image is missing"
     },
     "footer": {

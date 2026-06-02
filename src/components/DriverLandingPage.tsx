@@ -5,7 +5,6 @@ import {
   eligibilityItems,
   fleetBenefits,
   fleetCards,
-  flexBenefits,
   groupedDeliverySteps,
   moreInfoItems,
   successCards,
@@ -227,17 +226,17 @@ function DriverHero() {
         <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/55 to-transparent" />
       </div>
       <div className="relative z-10 mx-auto flex min-h-[calc(720px-184px)] max-w-[1180px] items-center px-4 py-20 sm:px-6">
-        <div className="driver-hero-text grid max-w-3xl gap-6 text-white">
-          <p className="text-lg font-semibold">Drivers</p>
+        <div className="driver-hero-text grid max-w-3xl gap-3 text-white">
+          <p className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-none">Drivers</p>
           <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.96] tracking-[-0.05em]">
             Start earning.<br />Drive with us.
-            <span className="mt-5 block text-[clamp(1.6rem,3vw,2.4rem)] font-black leading-tight tracking-[-0.02em]">
-              1. Be Your Own Boss
-              <br />
-              Work on Your Terms.
-            </span>
           </h1>
-          <div className="mt-6 grid max-w-sm gap-2">
+          <h4 className="text-[clamp(1.45rem,2.7vw,2.15rem)] font-black leading-tight tracking-[-0.02em]">
+            Be Your Own Boss
+            <br />
+            Work on Your Terms.
+          </h4>
+          <div className="grid max-w-sm gap-2">
             <p className="text-lg font-semibold leading-7 text-white/92">Choose your schedule, control your time, and enjoy the freedom to live and work the way you want.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -257,10 +256,10 @@ function ValueAndStats() {
     <DriverSection id="driver-company" className="px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="text-lg font-black text-[#B45309]">3. Efficient Routes</p>
-          <h2 className="mt-5 text-[clamp(2.6rem,6vw,4.8rem)] font-light leading-none tracking-[-0.06em] text-[#111827]">
+          <h2 className="text-[clamp(2.2rem,5vw,4rem)] font-black leading-none tracking-[-0.05em] text-[#B45309]">Efficient Routes</h2>
+          <h1 className="mt-5 text-[clamp(2.8rem,7vw,5.4rem)] font-light leading-none tracking-[-0.06em] text-[#111827]">
             Reliable Daily Schedule
-          </h2>
+          </h1>
           <p className="mt-6 max-w-2xl text-xl leading-9 text-[#111827]">
             Spend less time on the road and more time focusing on what matters with organized routes and consistent daily deliveries.
           </p>
@@ -341,35 +340,6 @@ function StatsRow() {
         <CountUpStat key={stat.label} {...stat} />
       ))}
     </div>
-  );
-}
-
-function FlexProgram() {
-  return (
-    <DriverSection id="flex" className="bg-[#FFF1F2] px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto max-w-[1180px]">
-        <div className="grid gap-5">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-            <h2 className="text-[clamp(3.8rem,12vw,8rem)] font-black leading-[0.82] tracking-[-0.08em] text-[#F97316]">FoodOnlines Flex</h2>
-            <DriverButton href="#apply" variant="outline">
-              Sign up here
-            </DriverButton>
-          </div>
-        </div>
-        <div className="mt-14 grid gap-10 md:grid-cols-3">
-          {flexBenefits.map((benefit, index) => (
-            <div key={benefit.title}>
-              <span className="inline-flex h-16 w-16 items-center justify-center rounded-lg bg-white text-[#16A34A] shadow-[0_10px_22px_rgba(17,24,39,0.08)]">
-                <Icon type={index === 0 ? "clock" : index === 1 ? "pay" : "route"} />
-              </span>
-              <h3 className="mt-7 text-3xl font-light tracking-[-0.04em] text-[#7C3AED]">{benefit.title}</h3>
-              <p className="mt-1 text-2xl font-medium text-[#1D4ED8]">{benefit.subtitle}</p>
-              <p className="mt-5 text-base leading-7 text-[#1D4ED8]">{benefit.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </DriverSection>
   );
 }
 
@@ -695,7 +665,6 @@ export function DriverLandingPage() {
       <script type="application/ld+json">{JSON.stringify(pageJsonLd)}</script>
       <DriverHero />
       <ValueAndStats />
-      <FlexProgram />
       <HowFlexWorks />
       <DriverBenefitCards />
       <GroupedDeliveryTimeline />
