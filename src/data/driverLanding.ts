@@ -1,15 +1,15 @@
 export const driverAssets = {
   hero: {
     src: "foodonlines-driver-hero.png",
-    alt: "FoodOnlines driver checking a delivery phone near a customer doorway",
+    alt: "FoodOnlines driver loading branded delivery boxes into a van",
   },
   earnings: {
     src: "foodonlines-driver-earnings.png",
-    alt: "FoodOnlines drivers loading delivery parcels into a branded van",
+    alt: "FoodOnlines driver checking a delivery phone near a customer doorway",
   },
   support: {
     src: "foodonlines-driver-support.png",
-    alt: "FoodOnlines driver loading branded boxes into a delivery van",
+    alt: "FoodOnlines drivers loading delivery parcels into a branded van",
   },
   community: {
     src: "foodonlines-driver-community.png",

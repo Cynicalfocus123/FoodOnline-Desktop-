@@ -401,18 +401,20 @@ function HowFlexWorks() {
 
 function DriverBenefitCards() {
   return (
-    <DriverSection className="bg-[#F6F7FF] px-4 py-14 sm:px-6 lg:py-20">
+    <DriverSection className="bg-gradient-to-br from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-20">
       <div className="mx-auto max-w-[1180px]">
-        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-light leading-none tracking-[-0.07em] text-[#1D4ED8]">How Much Can You Earn?</h2>
+        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#15803D]">
+          How Much Can You <span className="text-[#F97316]">Earn?</span>
+        </h2>
         <div className="mt-10 grid gap-8 lg:grid-cols-3">
           {successCards.map((card) => (
             <div key={card.title}>
-              <h3 className="text-2xl font-light tracking-[-0.04em] text-[#7C3AED]">{card.title}</h3>
-              <p className="mt-1 min-h-[56px] text-xl font-medium leading-7 text-[#111827]">{card.subtitle}</p>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
+              <p className="mt-1 min-h-[56px] text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
               <div className="mt-6 aspect-[16/9] overflow-hidden rounded-[18px]">
                 <DriverImage assetKey={card.image} />
               </div>
-              {card.body ? <p className="mt-5 text-lg leading-7 text-[#1D4ED8]">{card.body}</p> : null}
+              {card.body ? <p className="mt-5 text-lg font-medium leading-7 text-[#15803D]">{card.body}</p> : null}
             </div>
           ))}
         </div>

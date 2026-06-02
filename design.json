@@ -121,6 +121,13 @@
         "/images/drivers/foodonlines-driver-community.png"
       ],
       "success_layout": "compact_three_column_images_with_headings_above_and_copy_below",
+      "success_color_theme": "foodonlines_green_orange_on_light_orange_to_green_background",
+      "image_assignments": {
+        "hero": "/images/drivers/foodonlines-driver-hero.png",
+        "earnings": "/images/drivers/foodonlines-driver-earnings.png",
+        "support": "/images/drivers/foodonlines-driver-support.png",
+        "community": "/images/drivers/foodonlines-driver-community.png"
+      },
       "image_fallback": "soft orange green placeholder if owned image is missing"
     },
     "footer": {

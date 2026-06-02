@@ -693,3 +693,19 @@
 - GitHub Pages workflow now passes `VITE_BASE_PATH=/FoodOnline-Desktop-/` during `npm run build`.
 - Added a GitHub Pages `404.html` SPA fallback so hard refresh / Ctrl+F5 on `/FoodOnline-Desktop-/company/drivers` redirects to `/#company/drivers` and loads the React app instead of GitHub's file-not-found page.
 - Reworked the earning/support/community area into a compact three-column image layout with the section heading above, individual headings above each image, and explanatory text below each image.
+
+## Driver Image Swap + Brand Colors (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/foodonlines-driver-hero.png`
+  - `public/images/drivers/foodonlines-driver-earnings.png`
+  - `public/images/drivers/foodonlines-driver-support.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Swapped the main driver hero image to the FoodOnlines van/box loading image.
+- Swapped the `How Much Can You Earn?` image to the doorway delivery driver image.
+- Swapped the `Dedicated Support Around the Clock` image to the two-driver van loading image.
+- Recolored the compact earning/support/community section to FoodOnlines green and orange with a light orange-to-green background.

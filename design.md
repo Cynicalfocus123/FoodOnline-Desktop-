@@ -576,6 +576,13 @@
 - `public/404.html` redirects hard refreshes on project routes such as `/FoodOnline-Desktop-/company/drivers` into the hash route `/#company/drivers`, preventing GitHub Pages file-not-found errors for SPA routes.
 - The earning/support/community content is compact: a large `How Much Can You Earn?` section heading, three image columns, headings above each image, and explanatory text below each image.
 
+### Driver Image Swap + Brand Colors (2026-06-02)
+
+- Driver hero image uses the FoodOnlines van/box loading image.
+- `How Much Can You Earn? / Parcel-based earning potential` uses the doorway delivery driver image.
+- `2. Dedicated Support Around the Clock / A Better Experience for Independent Contractors` uses the two-driver van loading image.
+- The compact earning/support/community section uses FoodOnlines logo colors: green and orange text with a light orange-to-green background.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
