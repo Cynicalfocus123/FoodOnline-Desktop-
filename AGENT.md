@@ -604,3 +604,14 @@
 - Motion implemented with CSS and IntersectionObserver: hero fade/slide, floating cards, scroll reveal, card/button/image hover motion, accordion open/close with chevron rotation, count-up stats, timeline progress, active timeline steps, crossfading timeline images, and reduced-motion support.
 - Driver images resolve from `/images/drivers/`; if owned image files are missing, the UI renders FoodOnlines orange/green placeholder blocks instead of broken images.
 - Existing site header and footer were left unchanged per latest instruction; the driver-specific navigation and CTAs live inside the driver page body only.
+
+## Driver Footer Link Correction (2026-06-02)
+
+- Files changed:
+  - `src/components/Footer.tsx`
+  - `src/data/home.ts`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Updated the existing shared footer item from `Farm Business` to `Become Our Drivers`.
+- The new footer item opens the existing driver landing page route at `/company/drivers` without changing the rest of the footer or header layout.

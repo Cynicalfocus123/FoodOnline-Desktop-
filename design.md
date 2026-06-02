@@ -531,6 +531,11 @@
 - Driver images load from `/images/drivers/` using the filenames in `pages/driver page/foodonlines-drivers-design.json`; missing files show orange/green FoodOnlines fallback placeholders so the page does not ship broken image boxes.
 - Existing site header and footer remain unchanged. Driver-specific Company/Delivery/Partners/Jobs/Earn navigation plus Shop now/Apply to drive CTAs live inside the driver page body.
 
+### Driver Footer Link Correction (2026-06-02)
+
+- The shared footer data now renames `Farm Business` to `Become Our Drivers`.
+- Clicking `Become Our Drivers` opens the driver landing page route at `/company/drivers`; all other footer links and header behavior remain unchanged.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

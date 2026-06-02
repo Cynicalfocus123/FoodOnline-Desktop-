@@ -1294,7 +1294,7 @@ export type FooterContactItem = {
 
 export type FooterLinkColumn = {
   title: string;
-  links: string[];
+  links: Array<string | { label: string; href: string }>;
 };
 
 export const footerDescription = "We bring Grocery to your door for less";
@@ -1354,7 +1354,7 @@ export const footerColumns: FooterLinkColumn[] = [
     links: [
       "Become a Vendor",
       "Affiliate Program",
-      "Farm Business",
+      { label: "Become Our Drivers", href: "/company/drivers" },
       "Farm Careers",
       "Our Suppliers",
       "Accessibility",

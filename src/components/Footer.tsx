@@ -1,4 +1,5 @@
 import { assets, footerColumns, footerContactItems, footerDescription } from "../data/home";
+import { useHomeStore } from "../store/homeStore";
 
 function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }) {
   const commonProps = {
@@ -45,6 +46,8 @@ function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }
 }
 
 export function Footer() {
+  const openDrivers = useHomeStore((state) => state.openDrivers);
+
   return (
     <footer id="company" className="border-t border-neutral-200 bg-white px-4 py-14 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-7xl">
@@ -76,11 +79,29 @@ export function Footer() {
             <div key={column.title}>
               <h2 className="text-[30px] font-bold tracking-[-0.03em] text-slate-800">{column.title}</h2>
               <nav className="mt-7 flex flex-col gap-5 text-[16px] text-slate-800 sm:text-[17px]">
-                {column.links.map((link) => (
-                  <a className="transition hover:text-citrus-500" href="#company" key={link}>
-                    {link}
-                  </a>
-                ))}
+                {column.links.map((link) => {
+                  const label = typeof link === "string" ? link : link.label;
+                  const href = typeof link === "string" ? "#company" : link.href;
+                  const isDriverLink = href === "/company/drivers";
+
+                  return (
+                    <a
+                      className="transition hover:text-citrus-500"
+                      href={href}
+                      key={label}
+                      onClick={
+                        isDriverLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openDrivers();
+                            }
+                          : undefined
+                      }
+                    >
+                      {label}
+                    </a>
+                  );
+                })}
               </nav>
             </div>
           ))}

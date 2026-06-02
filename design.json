@@ -126,6 +126,16 @@
       "image_base_path": "/images/drivers/",
       "image_fallback": "soft orange green placeholder if owned image is missing"
     },
+    "footer": {
+      "file": "src/components/Footer.tsx",
+      "data_source": "src/data/home.ts",
+      "updated_driver_link": {
+        "old_label": "Farm Business",
+        "new_label": "Become Our Drivers",
+        "href": "/company/drivers",
+        "opens_driver_landing_route": true
+      }
+    },
     "shortcut_row": {
       "file": "src/components/ShortcutRow.tsx",
       "rendered_on_homepage": false
