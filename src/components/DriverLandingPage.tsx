@@ -12,7 +12,6 @@ import {
   successCards,
   type DriverAssetKey,
 } from "../data/driverLanding";
-import { useHomeStore } from "../store/homeStore";
 
 type AccordionItem = {
   title: string;
@@ -229,81 +228,35 @@ function DriverImage({
   );
 }
 
-function DriverPageNav() {
-  const backToHome = useHomeStore((state) => state.backToHome);
-
-  return (
-    <div className="sticky top-[116px] z-[40] border-b border-[#E5E7EB] bg-white/92 px-4 py-3 backdrop-blur-md sm:top-[128px] sm:px-6 lg:top-[138px]">
-      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3">
-        <nav aria-label="Driver page navigation" className="hidden items-center gap-6 text-sm font-black text-neutral-700 lg:flex">
-          {[
-            { label: "Company", href: "#driver-company" },
-            { label: "Delivery", href: "#delivery" },
-            { label: "Partners", href: "#apply" },
-            { label: "Jobs", href: "#jobs" },
-          ].map((item) => (
-            <a className="transition hover:text-[#F97316] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F97316]" href={item.href} key={item.label}>
-              {item.label}
-            </a>
-          ))}
-          <a className="rounded-full bg-[#ECFDF5] px-4 py-2 text-[#15803D]" href="#flex">
-            Earn
-          </a>
-        </nav>
-        <p className="min-w-0 text-sm font-black uppercase tracking-[0.2em] text-[#F97316] lg:hidden">FoodOnlines Drivers</p>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            className="driver-button hidden min-h-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 text-sm font-black text-neutral-900 transition hover:border-[#16A34A] hover:bg-[#ECFDF5] sm:inline-flex"
-            onClick={backToHome}
-            type="button"
-          >
-            Shop now
-          </button>
-          <a className="driver-button inline-flex min-h-10 items-center justify-center rounded-full bg-[#F97316] px-4 text-sm font-black text-white transition hover:bg-[#EA580C]" href="#apply">
-            Apply to drive
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function DriverHero() {
   return (
-    <section className="overflow-hidden px-4 pb-16 pt-[196px] sm:px-6 sm:pt-[216px] lg:pt-[230px]">
-      <div className="mx-auto grid min-h-[640px] max-w-[1180px] items-center gap-12 lg:grid-cols-[0.94fr_1.06fr]">
-        <div className="driver-hero-text grid gap-6">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#F97316]">FoodOnlines Drivers</p>
-          <h1 className="max-w-[660px] text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-[0.9] tracking-[-0.07em] text-[#111827]">
-            Start earning. Drive with us.
+    <section className="relative isolate min-h-[720px] overflow-hidden bg-neutral-950 pt-[156px] sm:pt-[172px] lg:pt-[184px]">
+      <div className="absolute inset-0">
+        <DriverImage assetKey="hero" eager className="h-full min-h-full rounded-none opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/48 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/55 to-transparent" />
+      </div>
+      <div className="relative z-10 mx-auto flex min-h-[calc(720px-184px)] max-w-[1180px] items-center px-4 py-20 sm:px-6">
+        <div className="driver-hero-text grid max-w-3xl gap-6 text-white">
+          <p className="text-lg font-semibold">Drivers</p>
+          <h1 className="max-w-[760px] text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.96] tracking-[-0.05em]">
+            Start earning.<br />Drive with us.
           </h1>
-          <p className="max-w-xl text-lg font-medium leading-8 text-[#6B7280]">
+          <div className="mt-6 grid max-w-sm gap-2">
+            <p className="text-3xl font-black">Get started</p>
+            <p className="text-lg font-semibold leading-7 text-white/92">
+              We offer two ways for you to start driving with us.
+            </p>
+          </div>
+          <p className="max-w-xl text-lg font-medium leading-8 text-white/82">
             Deliver global groceries and fresh food to customers while choosing the driving path that fits your schedule.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="#apply">Get started</DriverButton>
-            <DriverButton href="#fleet" variant="outline">
+            <DriverButton href="#fleet" variant="white">
               See full-time roles
             </DriverButton>
           </div>
-        </div>
-
-        <div className="driver-hero-image relative rounded-[36px] bg-gradient-to-br from-orange-100 via-white to-emerald-100 p-4 shadow-[0_24px_70px_rgba(17,24,39,0.12)]">
-          <div className="aspect-[4/3] overflow-hidden rounded-[28px]">
-            <DriverImage assetKey="hero" eager />
-          </div>
-          {["Flexible routes", "Fresh grocery delivery", "Fast weekly payouts"].map((item, index) => (
-            <div
-              className={`driver-float-card absolute rounded-2xl border border-white/80 bg-white/92 px-4 py-3 text-sm font-black text-neutral-900 shadow-[0_14px_38px_rgba(17,24,39,0.14)] backdrop-blur ${
-                index === 0 ? "left-3 top-8" : index === 1 ? "right-3 top-[42%]" : "bottom-6 left-10"
-              }`}
-              key={item}
-              style={{ animationDelay: `${index * 260}ms` }}
-            >
-              <span className="mr-2 inline-flex h-2.5 w-2.5 rounded-full bg-[#16A34A]" />
-              {item}
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -313,33 +266,39 @@ function DriverHero() {
 function DriverPathCards() {
   return (
     <DriverSection id="delivery" className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto max-w-[1180px]">
-        <h2 className="text-[clamp(2.1rem,5vw,4rem)] font-black leading-none tracking-[-0.05em] text-[#111827]">Choose how you want to drive</h2>
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          {driverPathCards.map((card) => (
-            <a
-              className={`driver-card group grid gap-5 overflow-hidden rounded-[28px] border bg-white p-5 shadow-[0_16px_40px_rgba(17,24,39,0.08)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${
-                card.accent === "orange" ? "border-orange-100 focus-visible:outline-[#F97316] hover:border-[#F97316]" : "border-emerald-100 focus-visible:outline-[#16A34A] hover:border-[#16A34A]"
-              }`}
-              href={card.href}
-              key={card.title}
-            >
-              <div className="aspect-[16/10] overflow-hidden rounded-[22px]">
-                <DriverImage assetKey={card.image} />
-              </div>
-              <div className="grid gap-3">
-                <span className={`inline-flex h-12 w-12 items-center justify-center rounded-full ${card.accent === "orange" ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
-                  <Icon type={card.accent === "orange" ? "car" : "van"} />
+      <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-light leading-[1.05] tracking-[-0.04em] text-[#111827]">
+            What is the difference between Fleet and Flex?
+          </h2>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B7280]">
+            Choose between full-time employee routes and independent contractor flexibility. Each path keeps groceries moving with FoodOnlines support.
+          </p>
+          <div className="mt-10 divide-y divide-[#E5E7EB]">
+            {driverPathCards.map((card, index) => (
+              <a
+                className="group flex min-h-[92px] items-center gap-5 py-5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#16A34A]"
+                href={card.href}
+                key={card.title}
+              >
+                <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${card.accent === "orange" ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
+                  <Icon type={index === 0 ? "car" : "van"} />
                 </span>
-                <h3 className="text-3xl font-black tracking-[-0.04em] text-[#111827]">{card.title}</h3>
-                <p className="text-base leading-7 text-[#6B7280]">{card.body}</p>
-                <span className={`inline-flex items-center gap-2 text-sm font-black ${card.accent === "orange" ? "text-[#EA580C]" : "text-[#15803D]"}`}>
-                  {card.cta}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xl font-black text-[#111827]">{card.title}</span>
+                  <span className="mt-1 block text-sm font-black uppercase tracking-[0.12em] text-[#475569]">{card.cta}</span>
+                </span>
+                <span className="text-[#111827] transition group-hover:translate-x-1 group-hover:text-[#16A34A]">
                   <ArrowIcon />
                 </span>
-              </div>
-            </a>
-          ))}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div className="mx-auto aspect-square w-full max-w-[560px] rounded-full bg-emerald-100 p-7">
+          <div className="h-full overflow-hidden rounded-full">
+            <DriverImage assetKey="fleet" className="rounded-full" />
+          </div>
         </div>
       </div>
     </DriverSection>
@@ -349,21 +308,32 @@ function DriverPathCards() {
 function ValueAndStats() {
   return (
     <DriverSection id="driver-company" className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto max-w-[1180px] text-center">
-        <p className="text-sm font-black uppercase tracking-[0.22em] text-[#16A34A]">Delivered with care</p>
-        <h2 className="mx-auto mt-4 max-w-4xl text-[clamp(2.2rem,6vw,4.8rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">
-          Drivers move FoodOnlines forward
-        </h2>
-        <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-[#6B7280]">
-          Our drivers are the heartbeat of FoodOnlines. They help customers receive groceries, pantry staples, and fresh food safely, reliably, and on time.
-        </p>
-        <div className="relative mt-10 overflow-hidden rounded-[32px]">
-          <div className="aspect-[16/7] min-h-[300px]">
-            <DriverImage assetKey="handoff" />
-          </div>
-          <StatsRow />
+      <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p className="text-lg font-black text-[#B45309]">Drivers move our company forward</p>
+          <h2 className="mt-5 text-[clamp(2.6rem,6vw,4.8rem)] font-light leading-none tracking-[-0.06em] text-[#111827]">
+            Delivered with heart
+          </h2>
+          <p className="mt-6 max-w-2xl text-xl leading-9 text-[#111827]">
+            We deeply believe that our drivers are the heartbeat of FoodOnlines. Their dedication, reliability, and care help customers receive groceries on time, every time.
+          </p>
+        </div>
+        <div className="relative min-h-[460px] overflow-hidden">
+          <div className="absolute left-[24%] top-[22%] h-40 w-40 rounded-full bg-orange-100" />
+          <div className="absolute bottom-0 left-[52%] h-36 w-36 rounded-full bg-emerald-100" />
+          {[
+            { image: "team" as DriverAssetKey, className: "left-[28%] top-0 h-56 w-56 sm:h-72 sm:w-72" },
+            { image: "handoff" as DriverAssetKey, className: "right-2 top-10 h-36 w-36 sm:h-44 sm:w-44" },
+            { image: "flex" as DriverAssetKey, className: "left-[18%] bottom-16 h-36 w-36 sm:h-44 sm:w-44" },
+            { image: "fleet" as DriverAssetKey, className: "right-0 bottom-4 h-52 w-52 sm:h-64 sm:w-64" },
+          ].map((item) => (
+            <div className={`absolute overflow-hidden rounded-full border-4 border-white shadow-[0_12px_34px_rgba(17,24,39,0.16)] ${item.className}`} key={item.image}>
+              <DriverImage assetKey={item.image} className="rounded-full" />
+            </div>
+          ))}
         </div>
       </div>
+      <StatsRow />
     </DriverSection>
   );
 }
@@ -407,7 +377,7 @@ function CountUpStat({ label, suffix, value }: { label: string; suffix: string; 
   }, [value]);
 
   return (
-    <div ref={ref} className="rounded-[24px] border border-white/80 bg-white/92 p-5 text-left shadow-[0_16px_40px_rgba(17,24,39,0.08)] backdrop-blur">
+    <div ref={ref} className="border-t border-[#E5E7EB] pt-5 text-left">
       <p className="text-3xl font-black tracking-[-0.04em] text-[#111827]">
         {displayValue.toLocaleString()}
         {suffix}
@@ -419,7 +389,7 @@ function CountUpStat({ label, suffix, value }: { label: string; suffix: string; 
 
 function StatsRow() {
   return (
-    <div className="left-6 right-6 bottom-6 grid gap-3 rounded-[28px] bg-gradient-to-r from-orange-50/95 to-emerald-50/95 p-4 shadow-[0_18px_50px_rgba(17,24,39,0.12)] md:absolute md:grid-cols-4">
+    <div className="mx-auto mt-12 grid max-w-[1180px] gap-6 md:grid-cols-4">
       {driverStats.map((stat) => (
         <CountUpStat key={stat.label} {...stat} />
       ))}
@@ -429,27 +399,25 @@ function StatsRow() {
 
 function FlexProgram() {
   return (
-    <DriverSection id="flex" className="bg-[#ECFDF5] px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+    <DriverSection id="flex" className="bg-[#FFF1F2] px-4 py-14 sm:px-6 lg:py-24">
+      <div className="mx-auto max-w-[1180px]">
         <div className="grid gap-5">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#F97316]">Introducing</p>
-          <h2 className="text-[clamp(3.6rem,11vw,8rem)] font-black leading-[0.82] tracking-[-0.08em] text-[#111827]">Flex</h2>
-          <p className="text-lg leading-8 text-[#6B7280]">Independent driving with grouped grocery routes, flexible availability, and route details that make the day easier to plan.</p>
-          <div>
-            <DriverButton href="#apply" variant="green">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <h2 className="text-[clamp(3.8rem,12vw,8rem)] font-black leading-[0.82] tracking-[-0.08em] text-[#F97316]">FoodOnlines Flex</h2>
+            <DriverButton href="#apply" variant="outline">
               Sign up here
             </DriverButton>
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="mt-14 grid gap-10 md:grid-cols-3">
           {flexBenefits.map((benefit, index) => (
-            <div className="driver-card rounded-[26px] border border-emerald-100 bg-white p-5 shadow-[0_16px_40px_rgba(17,24,39,0.08)]" key={benefit.title}>
-              <span className={`inline-flex h-12 w-12 items-center justify-center rounded-full ${index % 2 ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
+            <div key={benefit.title}>
+              <span className="inline-flex h-16 w-16 items-center justify-center rounded-lg bg-white text-[#16A34A] shadow-[0_10px_22px_rgba(17,24,39,0.08)]">
                 <Icon type={index === 0 ? "clock" : index === 1 ? "pay" : "route"} />
               </span>
-              <h3 className="mt-5 text-xl font-black text-[#111827]">{benefit.title}</h3>
-              <p className="mt-2 text-sm font-black text-[#16A34A]">{benefit.subtitle}</p>
-              <p className="mt-3 text-sm leading-6 text-[#6B7280]">{benefit.body}</p>
+              <h3 className="mt-7 text-3xl font-light tracking-[-0.04em] text-[#7C3AED]">{benefit.title}</h3>
+              <p className="mt-1 text-2xl font-medium text-[#1D4ED8]">{benefit.subtitle}</p>
+              <p className="mt-5 text-base leading-7 text-[#1D4ED8]">{benefit.body}</p>
             </div>
           ))}
         </div>
@@ -471,7 +439,7 @@ function HowFlexWorks() {
           </p>
           <div className="grid gap-3">
             {["Choose your own hours", "No hourly requirements", "Flexible availability"].map((item, index) => (
-              <div className="driver-check-item flex items-center gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm" key={item} style={{ transitionDelay: `${index * 80}ms` }}>
+              <div className="driver-check-item flex items-center gap-3 border-b border-[#E5E7EB] py-4" key={item} style={{ transitionDelay: `${index * 80}ms` }}>
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#ECFDF5] text-[#15803D]">
                   <Icon type="check" />
                 </span>
@@ -480,8 +448,8 @@ function HowFlexWorks() {
             ))}
           </div>
         </div>
-        <div className="driver-slide-in rounded-[32px] bg-gradient-to-br from-orange-50 to-emerald-50 p-5 shadow-[0_24px_70px_rgba(17,24,39,0.12)]">
-          <div className="aspect-[4/3] overflow-hidden rounded-[26px]">
+        <div className="driver-slide-in">
+          <div className="aspect-[4/3] overflow-hidden rounded-[40px]">
             <DriverImage assetKey="appRoute" />
           </div>
         </div>
@@ -496,9 +464,9 @@ function DriverBenefitCards() {
       <div className="mx-auto max-w-[1180px]">
         <p className="text-sm font-black uppercase tracking-[0.22em] text-[#F97316]">Earning potential beyond the road</p>
         <h2 className="mt-3 text-[clamp(2.3rem,5vw,4.4rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Drive toward success</h2>
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <div className="mt-10 grid gap-8 lg:grid-cols-3">
           {successCards.map((card, index) => (
-            <div className="driver-card rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-[0_16px_40px_rgba(17,24,39,0.08)]" key={card.title}>
+            <div className="border-t border-[#E5E7EB] pt-6" key={card.title}>
               <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.14em] ${card.accent === "orange" ? "bg-orange-100 text-[#EA580C]" : "bg-emerald-100 text-[#15803D]"}`}>
                 {index + 1}
               </span>
@@ -552,8 +520,8 @@ function GroupedDeliveryTimeline() {
             />
             {groupedDeliverySteps.map((step, index) => (
               <button
-                className={`relative grid gap-2 rounded-[24px] border bg-white p-5 pl-5 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#16A34A] md:pl-14 ${
-                  activeStep === index ? "border-[#16A34A] shadow-[0_18px_48px_rgba(22,163,74,0.16)]" : "border-[#E5E7EB]"
+                className={`relative grid gap-2 border-b border-orange-200 py-5 pl-5 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#16A34A] md:pl-14 ${
+                  activeStep === index ? "text-[#15803D]" : "text-[#111827]"
                 }`}
                 data-step-index={index}
                 key={step.title}
@@ -566,13 +534,13 @@ function GroupedDeliveryTimeline() {
                 <span className={`hidden h-11 w-11 items-center justify-center rounded-full border-4 border-white text-sm font-black md:absolute md:left-0 md:top-5 md:flex ${activeStep === index ? "bg-[#16A34A] text-white" : "bg-orange-100 text-[#EA580C]"}`}>
                   {index + 1}
                 </span>
-                <span className="text-xl font-black leading-7 text-[#111827]">{step.title}</span>
+                <span className="text-xl font-black leading-7">{step.title}</span>
                 <span className="text-sm leading-6 text-[#6B7280]">{step.body}</span>
               </button>
             ))}
           </div>
         </div>
-        <div className="sticky top-[210px] overflow-hidden rounded-[32px] bg-white p-4 shadow-[0_24px_70px_rgba(17,24,39,0.12)]">
+        <div className="sticky top-[170px] overflow-hidden rounded-[40px]">
           <div className="relative aspect-[4/3] overflow-hidden rounded-[26px]">
             {groupedDeliverySteps.map((step, index) => (
               <div className={`absolute inset-0 transition duration-500 ${activeStep === index ? "opacity-100" : "opacity-0"}`} key={step.image}>
@@ -593,7 +561,7 @@ function DriverAccordion({ heading, idPrefix, items }: { heading: string; idPref
     <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto max-w-[920px]">
         <h2 className="text-[clamp(2rem,5vw,3.6rem)] font-black leading-none tracking-[-0.05em] text-[#111827]">{heading}</h2>
-        <div className="mt-7 divide-y divide-[#E5E7EB] overflow-hidden rounded-[28px] border border-[#E5E7EB] bg-white shadow-[0_16px_40px_rgba(17,24,39,0.08)]">
+        <div className="mt-7 divide-y divide-[#E5E7EB] border-y border-[#E5E7EB]">
           {items.map((item, index) => {
             const isOpen = openIndex === index;
             const panelId = `${idPrefix}-panel-${index}`;
@@ -604,7 +572,7 @@ function DriverAccordion({ heading, idPrefix, items }: { heading: string; idPref
                 <button
                   aria-controls={panelId}
                   aria-expanded={isOpen}
-                  className="flex min-h-[64px] w-full items-center justify-between gap-4 px-5 py-4 text-left text-lg font-black text-[#111827] transition hover:bg-orange-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#F97316] sm:px-6"
+                  className="flex min-h-[64px] w-full items-center justify-between gap-4 py-4 text-left text-lg font-black text-[#111827] transition hover:text-[#EA580C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#F97316]"
                   id={buttonId}
                   onClick={() => setOpenIndex(isOpen ? -1 : index)}
                   type="button"
@@ -621,7 +589,7 @@ function DriverAccordion({ heading, idPrefix, items }: { heading: string; idPref
                   role="region"
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 pb-5 text-base leading-7 text-[#6B7280] sm:px-6">{item.body}</p>
+                    <p className="pb-5 text-base leading-7 text-[#6B7280]">{item.body}</p>
                   </div>
                 </div>
               </div>
@@ -635,9 +603,9 @@ function DriverAccordion({ heading, idPrefix, items }: { heading: string; idPref
 
 function ApplyCta() {
   return (
-    <DriverSection id="apply" className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto max-w-[1180px] rounded-[36px] bg-gradient-to-br from-[#F97316] to-[#16A34A] p-4 shadow-[0_24px_70px_rgba(17,24,39,0.16)]">
-        <div className="grid gap-6 rounded-[28px] bg-white/94 p-6 backdrop-blur sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
+    <DriverSection id="apply" className="bg-gradient-to-r from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-24">
+      <div className="mx-auto max-w-[1180px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <h2 className="text-[clamp(2.2rem,5vw,4.2rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Apply here to start driving</h2>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-[#6B7280]">Choose the driving path that fits you and start delivering with FoodOnlines.</p>
@@ -667,9 +635,9 @@ function FleetProgram() {
               </DriverButton>
             </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="divide-y divide-white/10 md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
             {fleetBenefits.map((item, index) => (
-              <div className="driver-card rounded-[26px] border border-white/10 bg-white/8 p-5" key={item.title}>
+              <div className="py-5 md:px-5" key={item.title}>
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-orange-300">
                   <Icon type={index === 0 ? "team" : index === 1 ? "route" : "shield"} />
                 </span>
@@ -679,11 +647,11 @@ function FleetProgram() {
             ))}
           </div>
         </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
           {fleetCards.map((card) => (
-            <div className="rounded-[24px] border border-white/10 bg-white p-5 text-[#111827]" key={card.title}>
+            <div className="border-t border-white/15 pt-5" key={card.title}>
               <h3 className="text-xl font-black">{card.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#6B7280]">{card.subtitle}</p>
+              <p className="mt-2 text-sm leading-6 text-white/68">{card.subtitle}</p>
             </div>
           ))}
         </div>
@@ -695,13 +663,14 @@ function FleetProgram() {
 function OpenPositionsCta() {
   return (
     <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto grid max-w-[1180px] overflow-hidden rounded-[36px] border border-[#E5E7EB] bg-white shadow-[0_18px_56px_rgba(17,24,39,0.1)] lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="min-h-[320px]">
-          <DriverImage assetKey="team" />
+      <div className="relative mx-auto min-h-[420px] max-w-[1180px] overflow-hidden rounded-[40px] bg-neutral-950">
+        <div className="absolute inset-0">
+          <DriverImage assetKey="team" className="rounded-none opacity-70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/45 to-black/12" />
         </div>
-        <div className="grid content-center gap-5 p-6 sm:p-10">
-          <h2 className="text-[clamp(2.2rem,5vw,4rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Check our open positions</h2>
-          <p className="text-lg leading-8 text-[#6B7280]">Explore FoodOnlines driver and operations roles.</p>
+        <div className="relative z-10 grid min-h-[420px] content-center gap-5 p-6 text-white sm:p-10">
+          <h2 className="max-w-2xl text-[clamp(2.2rem,5vw,4rem)] font-black leading-none tracking-[-0.06em]">Check our open positions</h2>
+          <p className="max-w-xl text-lg leading-8 text-white/78">Explore FoodOnlines driver and operations roles.</p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="/careers" variant="green">
               See positions
@@ -753,7 +722,6 @@ export function DriverLandingPage() {
   return (
     <div className="bg-white text-[#111827]">
       <script type="application/ld+json">{JSON.stringify(pageJsonLd)}</script>
-      <DriverPageNav />
       <DriverHero />
       <DriverPathCards />
       <ValueAndStats />

@@ -615,3 +615,16 @@
   - `design.json`
 - Updated the existing shared footer item from `Farm Business` to `Become Our Drivers`.
 - The new footer item opens the existing driver landing page route at `/company/drivers` without changing the rest of the footer or header layout.
+
+## Driver Page Body Visual Simplification (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the driver-page-only sticky header/subnav strip (`Company`, `Delivery`, `Partners`, `Jobs`, `Earn`, `Shop now`, `Apply to drive`) so the existing FoodOnlines site header remains the only page header.
+- Converted the driver hero into a full-bleed image header with dark overlay and text/CTA content placed on top of the image, matching the requested sample direction without copying external brand assets.
+- Flattened box-heavy driver text sections into open rows, divider lists, circular image treatments, and lightweight columns for Fleet/Flex, driver value, Flex benefits, success points, timeline steps, accordions, apply CTA, and positions CTA.
+- Cleaned old driver card/floating-card CSS rules that no longer apply to the simplified page body.

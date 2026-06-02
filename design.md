@@ -536,6 +536,13 @@
 - The shared footer data now renames `Farm Business` to `Become Our Drivers`.
 - Clicking `Become Our Drivers` opens the driver landing page route at `/company/drivers`; all other footer links and header behavior remain unchanged.
 
+### Driver Page Body Visual Simplification (2026-06-02)
+
+- The driver page no longer has its own sticky page header/subnav. The normal FoodOnlines header remains the only header, and the driver body starts directly with the hero.
+- Driver hero direction is now a full-bleed image header with a dark overlay and white text/CTA content on top of the image, following the uploaded sample style while using FoodOnlines-owned driver imagery or the existing FoodOnlines fallback.
+- Driver body text should not sit inside repeated card boxes. Fleet/Flex choice, value statement, Flex benefits, success points, timeline steps, accordions, apply CTA, Fleet content, and open positions use open rows, section dividers, circular image treatments, and simple columns instead.
+- Keep FoodOnlines orange/green brand accents for buttons, icons, active timeline state, and links. Avoid reintroducing the old boxed driver-card presentation unless a future design explicitly asks for cards.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

@@ -191,27 +191,9 @@ video {
   animation: driverFadeUp 620ms ease both;
 }
 
-.driver-hero-image {
-  animation: driverImageIn 720ms ease 120ms both;
-}
-
-.driver-float-card {
-  animation: driverFloat 4.8s ease-in-out infinite;
-}
-
-.driver-card,
 .driver-button,
 .driver-image {
   will-change: transform;
-}
-
-.driver-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 60px rgba(17, 24, 39, 0.14);
-}
-
-.driver-card:hover .driver-image {
-  transform: scale(1.03);
 }
 
 .driver-button:hover {
@@ -259,27 +241,6 @@ video {
   }
 }
 
-@keyframes driverImageIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes driverFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -288,9 +249,6 @@ video {
   .driver-reveal,
   .driver-reveal.is-visible,
   .driver-hero-text,
-  .driver-hero-image,
-  .driver-float-card,
-  .driver-card,
   .driver-button,
   .driver-image,
   .driver-check-item,

@@ -79,27 +79,17 @@
       "route": "/company/drivers",
       "uses_existing_site_header_footer": true,
       "site_header_footer_unchanged": true,
-      "page_subnav": {
-        "links": [
-          "Company",
-          "Delivery",
-          "Partners",
-          "Jobs",
-          "Earn"
-        ],
-        "ctas": [
-          "Shop now",
-          "Apply to drive"
-        ]
-      },
+      "page_subnav_removed": true,
+      "hero_style": "full_bleed_image_with_dark_overlay_and_text_on_top",
+      "text_presentation": "open_rows_dividers_columns_and_circular_images_not_repeated_card_boxes",
       "sections": [
         "hero",
-        "driver_path_cards",
+        "driver_path_rows",
         "driver_value_statement",
         "stats_count_up",
         "flex_program",
         "how_flex_works",
-        "success_cards",
+        "success_points",
         "grouped_delivery_timeline",
         "eligibility_accordion",
         "apply_cta",
@@ -109,12 +99,10 @@
       ],
       "motion": {
         "hero_text_fade_up": true,
-        "hero_image_fade_slide_in": true,
-        "floating_cards_vertical_drift": true,
+        "hero_image_overlay": true,
+        "floating_cards_vertical_drift": false,
         "section_scroll_reveal": true,
-        "card_hover_lift": true,
         "button_hover_lift_scale_shadow": true,
-        "image_hover_zoom": true,
         "accordion_smooth_open_close": true,
         "chevron_rotation": true,
         "stats_count_up": true,
