@@ -596,6 +596,12 @@
 - Removed the compact earning/support/community image section, the dark Fleet opportunities section, and the More information accordion from the driver page.
 - Eligibility accordion copy now reflects vehicle requirements for grocery and restaurant deliveries, age over 18, Thailand work authorization and insurance, required background screening, six months of delivery driving experience, GPS comfort, 23 kg lifting capability, and customer-service/communication expectations.
 
+### Driver Three-Card Restore + Image Alignment (2026-06-02)
+
+- The three-card earning/support/community section is restored beneath the FoodOnline Driver Program explanation.
+- The FoodOnline Driver Program image column uses a constrained image box and wide-screen grid sizing so the visual does not overlap the text column.
+- Grouped delivery image boxes use consistent fixed heights across desktop, tablet, and mobile widths so the three step images align evenly below their own copy.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

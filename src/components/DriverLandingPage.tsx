@@ -4,6 +4,7 @@ import {
   driverStats,
   eligibilityItems,
   groupedDeliverySteps,
+  successCards,
   type DriverAssetKey,
 } from "../data/driverLanding";
 
@@ -359,9 +360,9 @@ function HowFlexWorks() {
   ];
 
   return (
-    <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-        <div className="grid gap-5">
+    <DriverSection id="flex" className="px-4 py-14 sm:px-6 lg:py-24">
+      <div className="mx-auto grid max-w-[1180px] gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] xl:items-center">
+        <div className="grid min-w-0 gap-5">
           <h2 className="text-[clamp(2.2rem,5vw,4.3rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">
             How Does the FoodOnline Driver Program Work?
           </h2>
@@ -386,10 +387,34 @@ function HowFlexWorks() {
             ))}
           </div>
         </div>
-        <div className="driver-slide-in">
-          <div className="aspect-[4/3] overflow-hidden rounded-[40px]">
-            <DriverImage assetKey="appRoute" />
+        <div className="driver-slide-in w-full max-w-[420px] justify-self-center xl:justify-self-end">
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-[40px] bg-white">
+            <DriverImage assetKey="appRoute" className="object-center" />
           </div>
+        </div>
+      </div>
+    </DriverSection>
+  );
+}
+
+function DriverBenefitCards() {
+  return (
+    <DriverSection className="bg-gradient-to-br from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-20">
+      <div className="mx-auto max-w-[1180px]">
+        <h2 className="text-[clamp(2.8rem,7vw,5.8rem)] font-black leading-none tracking-[-0.07em] text-[#15803D]">
+          How Much Can You <span className="text-[#F97316]">Earn?</span>
+        </h2>
+        <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
+          {successCards.map((card) => (
+            <div className="grid h-full content-start" key={card.title}>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
+              <p className="mt-1 min-h-[56px] text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
+              <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:h-[220px] xl:h-[250px]">
+                <DriverImage assetKey={card.image} className="object-center" />
+              </div>
+              {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#15803D]">{card.body}</p> : null}
+            </div>
+          ))}
         </div>
       </div>
     </DriverSection>
@@ -417,7 +442,7 @@ function GroupedDeliveryTimeline() {
                 </span>
                 <h4 className="text-xl font-black leading-7 text-[#15803D]">{step.title}</h4>
                 <p className="text-sm font-bold leading-6 text-[#4B5563]">{step.body}</p>
-                <div className="mt-2 aspect-[4/3] overflow-hidden rounded-[26px] bg-white">
+                <div className="mt-2 h-[260px] overflow-hidden rounded-[26px] bg-white sm:h-[320px] lg:h-[280px]">
                   <DriverImage assetKey={step.image} className="object-center" />
                 </div>
               </article>
@@ -557,6 +582,7 @@ export function DriverLandingPage() {
       <DriverHero />
       <ValueAndStats />
       <HowFlexWorks />
+      <DriverBenefitCards />
       <GroupedDeliveryTimeline />
       <DriverAccordion heading="Requirements for eligibility" idPrefix="driver-eligibility" items={eligibilityItems} />
       <ApplyCta />

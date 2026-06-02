@@ -735,3 +735,13 @@
 - Driver hero image positioning now centers the supplied banner and shifts the image lower so the driver's face is visible while keeping text readable.
 - Removed the compact earning/support/community section, the Fleet full-time opportunities section, and the More information accordion from the driver page.
 - Updated eligibility accordion copy for vehicle requirements, age, license/work authorization/insurance, background screening, and other experience/GPS/lifting/customer-service requirements.
+
+## Driver Three-Card Restore + Image Alignment (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Restored the three-card earning/support/community section below the FoodOnline Driver Program section.
+- The FoodOnline Driver Program image column now uses a constrained right-side image box on wide screens and stacks cleanly on narrower widths so it does not overlap text.
+- Grouped delivery step images now use equal fixed-height boxes at desktop/tablet/mobile breakpoints so the three boxes align consistently.
