@@ -103,23 +103,23 @@ export const groupedDeliverySteps = [
 export const eligibilityItems = [
   {
     title: "Vehicle requirements",
-    body: "Reliable vehicle, clean condition, enough space for grocery bags, and ability to safely complete delivery routes.",
+    body: "To participate in grocery deliveries, drivers must own and operate a personal minivan, delivery van, or large SUV. For restaurant deliveries, eligible vehicles also include sedans, bicycles, motorcycles, and small to mid-sized SUVs.",
   },
   {
     title: "Age requirements",
-    body: "Drivers must meet the minimum legal driving age in their service area.",
+    body: "You must be over 18 years of age.",
   },
   {
-    title: "License, authorization, and insurance",
-    body: "Valid driver's license, work authorization where required, and active vehicle insurance.",
+    title: "License, Work Authorization & Insurance Requirements",
+    body: "Drivers must possess a valid driver's license, maintain current auto insurance coverage, and be legally authorized to work for any employer in Thailand.",
   },
   {
     title: "Background check",
-    body: "Applicants may need to complete a background check before starting deliveries.",
+    body: "All applicants must successfully pass a background screening as part of the onboarding process.",
   },
   {
     title: "Other requirements",
-    body: "Smartphone access, customer-service mindset, and ability to carry grocery orders safely.",
+    body: "Applicants must have a minimum of six months of delivery driving experience. Drivers should be comfortable using GPS navigation and route-mapping tools, be capable of lifting up to (23 kg), and possess strong customer service and communication skills with a positive, professional attitude.",
   },
 ] as const;
 

@@ -723,3 +723,15 @@
 - Driver hero text is bolder, the background image is dimmed, and the hero image uses contain-style sizing so the supplied header image remains visible without harsh cropping across desktop, tablet, mobile, Safari, and Chrome.
 - The compact earning/support/community boxes now use matching vertical alignment with centered images and stronger body text.
 - Grouped deliveries now uses `Enjoy Greater Schedule Stability.`, keeps `Grouped deliveries` as an H3, adds the requested pre-planned assignment copy, and updates all three step titles, bodies, and images.
+
+## Driver Section Removal + Eligibility Copy Update (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `AGENT.md`
+  - `design.md`
+- Grouped delivery step images now sit directly under each step's own text instead of using one sticky side image.
+- Driver hero image positioning now centers the supplied banner and shifts the image lower so the driver's face is visible while keeping text readable.
+- Removed the compact earning/support/community section, the Fleet full-time opportunities section, and the More information accordion from the driver page.
+- Updated eligibility accordion copy for vehicle requirements, age, license/work authorization/insurance, background screening, and other experience/GPS/lifting/customer-service requirements.

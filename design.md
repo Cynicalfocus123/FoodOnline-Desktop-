@@ -589,6 +589,13 @@
 - The compact earning/support/community columns keep equal top alignment, centered images, lower image placement, and bolder green/orange copy.
 - Grouped deliveries direction: eyebrow reads `Enjoy Greater Schedule Stability.`, `Grouped deliveries` is an H3, the intro explains pre-planned delivery assignments, and the three steps use the requested schedule, timely-delivery, and paid-for-every-delivery copy with the calendar, van-loading, and payout-phone images.
 
+### Driver Section Removal + Eligibility Copy Update (2026-06-02)
+
+- Grouped deliveries now displays each step image below that step's title/body text in a three-column layout instead of a separate sticky side image.
+- Driver hero banner image is centered and shifted lower so the driver face remains visible while preserving the darker readability overlay.
+- Removed the compact earning/support/community image section, the dark Fleet opportunities section, and the More information accordion from the driver page.
+- Eligibility accordion copy now reflects vehicle requirements for grocery and restaurant deliveries, age over 18, Thailand work authorization and insurance, required background screening, six months of delivery driving experience, GPS comfort, 23 kg lifting capability, and customer-service/communication expectations.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
