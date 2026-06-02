@@ -15,6 +15,10 @@ export const driverAssets = {
     src: "foodonlines-driver-community.png",
     alt: "FoodOnlines driver team standing together",
   },
+  applyTeam: {
+    src: "driver-apply-team.png",
+    alt: "FoodOnlines drivers standing in front of a branded delivery truck",
+  },
   flex: {
     src: "driver-flex.webp",
     alt: "Driver using a phone to choose grocery delivery routes",

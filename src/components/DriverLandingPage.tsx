@@ -410,7 +410,7 @@ function DriverBenefitCards() {
               <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
               <p className="mt-1 min-h-[56px] text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
               <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:h-[220px] xl:h-[250px]">
-                <DriverImage assetKey={card.image} className="object-center" />
+                <DriverImage assetKey={card.image} className={card.image === "earnings" ? "object-[center_28%]" : "object-center"} />
               </div>
               {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#15803D]">{card.body}</p> : null}
             </div>
@@ -431,10 +431,10 @@ function GroupedDeliveryTimeline() {
           <p className="mt-5 max-w-2xl text-xl font-black leading-8 text-[#15803D]">
             With pre-planned delivery assignments, you can focus on earning while maintaining better control over your day.
           </p>
-          <div className="mt-10 grid gap-8 lg:grid-cols-3">
+          <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
             {groupedDeliverySteps.map((step, index) => (
               <article
-                className="grid content-start gap-4 border-t border-orange-200 pt-6"
+                className="grid h-full grid-rows-[auto_auto_1fr_auto] gap-4 border-t border-orange-200 pt-6"
                 key={step.title}
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#16A34A] text-sm font-black text-white">
@@ -505,36 +505,18 @@ function ApplyCta() {
   return (
     <DriverSection id="apply" className="bg-gradient-to-r from-orange-50 via-white to-emerald-50 px-4 py-14 sm:px-6 lg:py-24">
       <div className="mx-auto max-w-[1180px]">
-        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(360px,1.1fr)] lg:items-center">
           <div>
             <h2 className="text-[clamp(2.2rem,5vw,4.2rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Apply here to start driving</h2>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-[#6B7280]">Choose the driving path that fits you and start delivering with FoodOnlines.</p>
+            <div className="mt-6">
+              <DriverButton href="/drivers/apply">Apply now</DriverButton>
+            </div>
           </div>
-          <DriverButton href="/drivers/apply">Apply now</DriverButton>
-        </div>
-      </div>
-    </DriverSection>
-  );
-}
-
-function OpenPositionsCta() {
-  return (
-    <DriverSection className="px-4 py-14 sm:px-6 lg:py-24">
-      <div className="relative mx-auto min-h-[420px] max-w-[1180px] overflow-hidden rounded-[40px] bg-neutral-950">
-        <div className="absolute inset-0">
-          <DriverImage assetKey="team" className="rounded-none opacity-70" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/45 to-black/12" />
-        </div>
-        <div className="relative z-10 grid min-h-[420px] content-center gap-5 p-6 text-white sm:p-10">
-          <h2 className="max-w-2xl text-[clamp(2.2rem,5vw,4rem)] font-black leading-none tracking-[-0.06em]">Check our open positions</h2>
-          <p className="max-w-xl text-lg leading-8 text-white/78">Explore FoodOnlines driver and operations roles.</p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <DriverButton href="/careers" variant="green">
-              See positions
-            </DriverButton>
-            <DriverButton href="#flex" variant="outline">
-              Looking for part-time driving? Learn more here.
-            </DriverButton>
+          <div className="overflow-hidden rounded-[32px] bg-white shadow-[0_20px_45px_rgba(17,24,39,0.12)]">
+            <div className="h-[280px] sm:h-[360px] lg:h-[390px]">
+              <DriverImage assetKey="applyTeam" className="object-center" />
+            </div>
           </div>
         </div>
       </div>
@@ -586,7 +568,6 @@ export function DriverLandingPage() {
       <GroupedDeliveryTimeline />
       <DriverAccordion heading="Requirements for eligibility" idPrefix="driver-eligibility" items={eligibilityItems} />
       <ApplyCta />
-      <OpenPositionsCta />
     </div>
   );
 }

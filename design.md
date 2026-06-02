@@ -602,6 +602,13 @@
 - The FoodOnline Driver Program image column uses a constrained image box and wide-screen grid sizing so the visual does not overlap the text column.
 - Grouped delivery image boxes use consistent fixed heights across desktop, tablet, and mobile widths so the three step images align evenly below their own copy.
 
+### Driver Apply Image + Final CTA Removal (2026-06-02)
+
+- Removed the final `Check our open positions` CTA card from the driver page.
+- The `Apply here to start driving` section now includes the FoodOnlines driver team/truck image in a rounded image panel beside the apply copy and CTA.
+- The `How Much Can You Earn?` image crop is biased upward enough to keep the driver's face visible in the fixed-height card.
+- Grouped delivery step cards use equal row structure so the image panels align consistently even when the copy length varies.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

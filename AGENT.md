@@ -745,3 +745,16 @@
 - Restored the three-card earning/support/community section below the FoodOnline Driver Program section.
 - The FoodOnline Driver Program image column now uses a constrained right-side image box on wide screens and stacks cleanly on narrower widths so it does not overlap text.
 - Grouped delivery step images now use equal fixed-height boxes at desktop/tablet/mobile breakpoints so the three boxes align consistently.
+
+## Driver Apply Image + Final CTA Removal (2026-06-02)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `public/images/drivers/driver-apply-team.png`
+  - `AGENT.md`
+  - `design.md`
+- Removed the final `Check our open positions` CTA section from the driver page.
+- Added the provided FoodOnlines driver team/truck image to the `Apply here to start driving` section.
+- Tuned the `How Much Can You Earn?` image crop so the driver's face remains visible.
+- Grouped delivery step cards now use equal row structure so their image boxes stay aligned even when text lengths differ.
