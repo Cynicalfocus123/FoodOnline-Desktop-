@@ -5,6 +5,7 @@ import { CategoryStrip } from "./components/CategoryStrip";
 import { CategoryListingPage } from "./components/CategoryListingPage";
 import { CheckoutPage } from "./components/CheckoutPage";
 import { DealsGrid } from "./components/DealsGrid";
+import { DriverLandingPage } from "./components/DriverLandingPage";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
@@ -35,14 +36,16 @@ export default function App() {
   useEffect(() => {
     syncRouteFromHash(window.location.hash);
 
-    const handleHashChange = () => {
+    const handleRouteChange = () => {
       syncRouteFromHash(window.location.hash);
     };
 
-    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("hashchange", handleRouteChange);
+    window.addEventListener("popstate", handleRouteChange);
 
     return () => {
-      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("hashchange", handleRouteChange);
+      window.removeEventListener("popstate", handleRouteChange);
     };
   }, [syncRouteFromHash]);
 
@@ -70,6 +73,7 @@ export default function App() {
       {siteView === "product" ? <ProductDetailPage /> : null}
       {siteView === "search" ? <SearchResultsPage /> : null}
       {siteView === "account" ? <AccountPage /> : null}
+      {siteView === "drivers" ? <DriverLandingPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

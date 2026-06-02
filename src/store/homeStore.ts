@@ -18,7 +18,7 @@ import {
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 
 export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "language";
-export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search" | "account";
+export type SiteView = "home" | "signup" | "login" | "product" | "category" | "cart" | "checkout" | "search" | "account" | "drivers";
 export type SignupStep = "role" | "form" | "complete";
 
 function readAuthReturnRoute(
@@ -77,6 +77,18 @@ function isCheckoutHash(hash: string) {
   return /^#checkout(?:[/?#].*)?$/i.test(hash);
 }
 
+function isDriversRoute(hash: string) {
+  if (/^#company\/drivers(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/company\/drivers\/?$/i.test(window.location.pathname);
+}
+
 function readAccountSectionFromHash(hash: string): AccountSection | null {
   const match = hash.match(/^#account(?:\/([^?#/]+))?/i);
 
@@ -106,6 +118,11 @@ function writeRouteHash(route: string | null) {
   }
 
   if (route) {
+    if (/\/company\/drivers\/?$/i.test(window.location.pathname)) {
+      window.history.pushState(null, "", `${import.meta.env.BASE_URL}#${route}`);
+      return;
+    }
+
     window.location.hash = route;
     return;
   }
@@ -116,9 +133,11 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#search/") ||
     window.location.hash.startsWith("#cart") ||
     window.location.hash.startsWith("#checkout") ||
-    window.location.hash.startsWith("#account")
+    window.location.hash.startsWith("#account") ||
+    window.location.hash.startsWith("#company/drivers") ||
+    /\/company\/drivers\/?$/i.test(window.location.pathname)
   ) {
-    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#home`);
+    window.history.replaceState(null, "", `${import.meta.env.BASE_URL}#home`);
   }
 }
 
@@ -148,6 +167,7 @@ type HomeState = {
   openCategory: (categorySlug: string) => void;
   openCart: () => void;
   openCheckout: () => void;
+  openDrivers: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
   openAccount: (section?: AccountSection) => void;
@@ -298,6 +318,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openDrivers: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}company/drivers`);
+      }
+
+      return {
+        siteView: "drivers",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openProduct: (productId) =>
     set(() => {
       writeRouteHash(`product/${productId}`);
@@ -358,6 +392,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       const categorySlug = readCategorySlugFromHash(hash);
       const searchQuery = readSearchQueryFromHash(hash);
       const accountSection = readAccountSectionFromHash(hash);
+
+      if (isDriversRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "drivers",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
 
       if (productId) {
         return {
@@ -422,7 +466,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "search" ||
         state.siteView === "cart" ||
         state.siteView === "checkout" ||
-        state.siteView === "account"
+        state.siteView === "account" ||
+        state.siteView === "drivers"
       ) {
         return {
           authReturnRoute: state.authReturnRoute,

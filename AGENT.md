@@ -586,3 +586,21 @@
   - `design.json`
 - Removed the static `Proceed to Checkout` button from the cart order-summary/service-guarantee card.
 - Cart now uses only the fixed bottom footer checkout bar while scrolling, across desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.
+
+## Driver Landing Page (2026-06-02)
+
+- Context7 note for this pass: Context7 MCP discovery was attempted with `tool_search`, but no Context7 resolve/query tools were exposed in this session. Continued with local React/Vite/Tailwind patterns and the provided driver-page design files as the source of truth.
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `src/data/driverLanding.ts`
+  - `src/store/homeStore.ts`
+  - `src/App.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the FoodOnlines driver recruitment landing page at `/company/drivers`, with hash fallback `#company/drivers` for SPA-safe navigation.
+- Driver page follows `pages/driver page/foodonlines-drivers-design.md` and `.json`: FoodOnlines orange/green branding, hero, driver path cards, value/stat section, Flex section, How Flex Works section, success cards, grouped-delivery timeline, eligibility accordion, apply CTA, Fleet section, more-info accordion, and final positions CTA.
+- Motion implemented with CSS and IntersectionObserver: hero fade/slide, floating cards, scroll reveal, card/button/image hover motion, accordion open/close with chevron rotation, count-up stats, timeline progress, active timeline steps, crossfading timeline images, and reduced-motion support.
+- Driver images resolve from `/images/drivers/`; if owned image files are missing, the UI renders FoodOnlines orange/green placeholder blocks instead of broken images.
+- Existing site header and footer were left unchanged per latest instruction; the driver-specific navigation and CTAs live inside the driver page body only.

@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-06-01",
+    "updated_at": "2026-06-02",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -58,9 +58,74 @@
         "settings",
         "language"
       ]
+    },
+    "drivers": {
+      "path": "/company/drivers",
+      "hash_fallback": "#company/drivers",
+      "view": "drivers",
+      "title": "Drive with FoodOnlines",
+      "seo_title": "Drive with FoodOnlines | Grocery Delivery Driver Jobs",
+      "seo_description": "Join FoodOnlines as a flexible or full-time grocery delivery driver. Choose routes, earn with grocery deliveries, and help bring global food to customers."
     }
   },
   "components": {
+    "driver_landing_page": {
+      "file": "src/components/DriverLandingPage.tsx",
+      "data_file": "src/data/driverLanding.ts",
+      "source_specs": [
+        "pages/driver page/foodonlines-drivers-design.md",
+        "pages/driver page/foodonlines-drivers-design.json"
+      ],
+      "route": "/company/drivers",
+      "uses_existing_site_header_footer": true,
+      "site_header_footer_unchanged": true,
+      "page_subnav": {
+        "links": [
+          "Company",
+          "Delivery",
+          "Partners",
+          "Jobs",
+          "Earn"
+        ],
+        "ctas": [
+          "Shop now",
+          "Apply to drive"
+        ]
+      },
+      "sections": [
+        "hero",
+        "driver_path_cards",
+        "driver_value_statement",
+        "stats_count_up",
+        "flex_program",
+        "how_flex_works",
+        "success_cards",
+        "grouped_delivery_timeline",
+        "eligibility_accordion",
+        "apply_cta",
+        "fleet_program",
+        "more_information_accordion",
+        "open_positions_cta"
+      ],
+      "motion": {
+        "hero_text_fade_up": true,
+        "hero_image_fade_slide_in": true,
+        "floating_cards_vertical_drift": true,
+        "section_scroll_reveal": true,
+        "card_hover_lift": true,
+        "button_hover_lift_scale_shadow": true,
+        "image_hover_zoom": true,
+        "accordion_smooth_open_close": true,
+        "chevron_rotation": true,
+        "stats_count_up": true,
+        "timeline_scroll_progress": true,
+        "active_timeline_step_highlight": true,
+        "step_image_crossfade": true,
+        "prefers_reduced_motion_supported": true
+      },
+      "image_base_path": "/images/drivers/",
+      "image_fallback": "soft orange green placeholder if owned image is missing"
+    },
     "shortcut_row": {
       "file": "src/components/ShortcutRow.tsx",
       "rendered_on_homepage": false

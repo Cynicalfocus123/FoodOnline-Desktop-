@@ -522,6 +522,15 @@
 - The cart order-summary/service-guarantee card no longer contains a static `Proceed to Checkout` button.
 - Cart checkout action now lives only in the fixed safe-area-aware bottom footer bar while users scroll up and down, keeping one clear checkout entry point on desktop, tablet, desktop-mobile, iOS Safari, Android Chrome, Safari desktop, and Chrome desktop.
 
+## Driver Landing Page Design (2026-06-02)
+
+- Added `Drive with FoodOnlines` at `/company/drivers` with `#company/drivers` as a SPA-safe fallback route.
+- The page follows the driver-page design spec with FoodOnlines-owned orange and green styling, existing public header/footer, a driver-page subnav, and recruitment sections for Hero, driver path cards, value statement, stats, Flex, How Flex Works, success cards, grouped deliveries, eligibility, Apply, Fleet, more information, and open positions.
+- Motion direction: hero text fades up, hero image fades/slides in, floating cards drift subtly, sections reveal on scroll, cards lift on hover, buttons lift/scale with shadow, images zoom on hover, accordions animate open/closed with rotating chevrons, stats count up once, grouped-delivery timeline progress fills on scroll, active steps highlight green, and step images crossfade.
+- Reduced-motion direction: driver transforms and looping motion are disabled under `prefers-reduced-motion`, with opacity-only reveal preserved where appropriate.
+- Driver images load from `/images/drivers/` using the filenames in `pages/driver page/foodonlines-drivers-design.json`; missing files show orange/green FoodOnlines fallback placeholders so the page does not ship broken image boxes.
+- Existing site header and footer remain unchanged. Driver-specific Company/Delivery/Partners/Jobs/Earn navigation plus Shop now/Apply to drive CTAs live inside the driver page body.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
