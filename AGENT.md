@@ -781,3 +781,12 @@
   - `design.md`
 - Added the four supplied FoodOnlines driver images to the value collage boxes.
 - The collage now explicitly places the lower small box under the right-side tall box, with centered object-fit images and stable two-column grid sizing for desktop, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+
+## Driver Three-Card Desktop Image Alignment (2026-06-03)
+
+- Files changed:
+  - `src/components/DriverLandingPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- The `How Much Can You Earn?` three-card section now reserves equal desktop title/subtitle space above each image so all three image boxes start on the same row.
+- All three images use the same centered crop behavior and fixed responsive image-box heights; this aligns boxes without individually shifting images up or down.

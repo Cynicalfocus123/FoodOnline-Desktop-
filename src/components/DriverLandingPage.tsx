@@ -409,11 +409,13 @@ function DriverBenefitCards() {
         </h2>
         <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
           {successCards.map((card) => (
-            <div className="grid h-full content-start" key={card.title}>
-              <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
-              <p className="mt-1 min-h-[56px] text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
-              <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:h-[220px] xl:h-[250px]">
-                <DriverImage assetKey={card.image} className={card.image === "earnings" ? "object-[center_28%]" : "object-center"} />
+            <div className="grid h-full grid-rows-[auto_auto_1fr] content-start" key={card.title}>
+              <div className="lg:min-h-[112px]">
+                <h3 className="text-2xl font-black tracking-[-0.04em] text-[#15803D]">{card.title}</h3>
+                <p className="mt-1 text-xl font-black leading-7 text-[#EA580C]">{card.subtitle}</p>
+              </div>
+              <div className="mt-8 h-[260px] overflow-hidden rounded-[18px] bg-white sm:h-[300px] lg:mt-0 lg:h-[220px] xl:h-[250px]">
+                <DriverImage assetKey={card.image} className="object-center" />
               </div>
               {card.body ? <p className="mt-5 text-lg font-black leading-8 text-[#15803D]">{card.body}</p> : null}
             </div>

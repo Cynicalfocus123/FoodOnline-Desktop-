@@ -619,6 +619,11 @@
 - The value collage now uses the four supplied FoodOnlines driver photos: truck loading, driver in cab, office team, and two drivers by truck.
 - The lower right image is explicitly positioned under the right-side tall image, while all four images use centered cover fitting inside square/rectangular boxes that remain stable on desktop, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
 
+### Driver Three-Card Desktop Image Alignment (2026-06-03)
+
+- The `How Much Can You Earn?` three-card section reserves equal desktop title/subtitle height before the image row so all three image boxes align horizontally.
+- The image boxes keep matching responsive heights and centered object-fit behavior; no individual image is shifted up or down to force alignment.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
