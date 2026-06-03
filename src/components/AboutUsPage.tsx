@@ -63,6 +63,8 @@ const timelineMilestones = [
     year: "Today",
     title: "Global Digital Supermarket",
     body: "FoodOnlines is evolving into a global digital supermarket platform, making products from every culture accessible and affordable while connecting manufacturers and consumers through technology-driven commerce.",
+    image: `${basePath}images/about/timeline/timeline-today.png`,
+    imageAlt: "FoodOnlines warehouse with delivery trucks",
   },
 ];
 

@@ -902,3 +902,13 @@
   - `design.json`
 - Added the supplied real images to the 1999, 2005, 2007, 2015, and 2019 timeline circles; Today keeps the abstract placeholder until a real image is provided.
 - Moved each green year pill closer to its circle by grouping the badge directly above the circular visual.
+
+## About Us Today Timeline Image (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `public/images/about/timeline/timeline-today.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the supplied FoodOnlines warehouse image to the Today timeline circle, replacing the abstract placeholder for that milestone.

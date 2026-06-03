@@ -120,7 +120,7 @@
           "2007": "/images/about/timeline/timeline-2007.png",
           "2015": "/images/about/timeline/timeline-2015.png",
           "2019": "/images/about/timeline/timeline-2019.png",
-          "Today": "abstract placeholder until a real image is provided"
+          "Today": "/images/about/timeline/timeline-today.png"
         },
         "pagination_dots": "light gray inactive, green active",
         "milestones": [

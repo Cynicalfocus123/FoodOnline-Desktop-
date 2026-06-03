@@ -680,6 +680,11 @@
 - Timeline circles for 1999, 2005, 2007, 2015, and 2019 now use the supplied real images from `public/images/about/timeline/`; the Today milestone remains an abstract placeholder.
 - Green year pills are positioned directly above their circles with tighter spacing so the badge feels visually attached to each milestone.
 
+### About Us Today Timeline Image (2026-06-04)
+
+- The Today timeline circle now uses the supplied FoodOnlines warehouse image as `public/images/about/timeline/timeline-today.png`.
+- The abstract placeholder remains available in component logic for any future milestone without an assigned image.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
