@@ -113,6 +113,15 @@
         "connecting_line": "green",
         "image_areas": "large circular placeholders with subtle shadows",
         "milestone_layout": "no per-milestone boxes; year, circle, text, and line sit directly on the shared light background",
+        "year_badge_spacing": "green year pills sit directly above the circle visuals with tight spacing",
+        "timeline_images": {
+          "1999": "/images/about/timeline/timeline-1999.png",
+          "2005": "/images/about/timeline/timeline-2005.png",
+          "2007": "/images/about/timeline/timeline-2007.png",
+          "2015": "/images/about/timeline/timeline-2015.png",
+          "2019": "/images/about/timeline/timeline-2019.png",
+          "Today": "abstract placeholder until a real image is provided"
+        },
         "pagination_dots": "light gray inactive, green active",
         "milestones": [
           "1999",

@@ -675,6 +675,11 @@
 - Timeline milestone boxes are removed; each milestone now appears directly on the shared light background with the green line, rounded year pill, circular placeholder visual, heading, and body copy floating in one continuous timeline field.
 - Desktop users can click, hold, and drag the timeline horizontally. Touch devices keep native swipe/scroll behavior, and dot navigation remains available.
 
+### About Us Timeline Image Assignment (2026-06-04)
+
+- Timeline circles for 1999, 2005, 2007, 2015, and 2019 now use the supplied real images from `public/images/about/timeline/`; the Today milestone remains an abstract placeholder.
+- Green year pills are positioned directly above their circles with tighter spacing so the badge feels visually attached to each milestone.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

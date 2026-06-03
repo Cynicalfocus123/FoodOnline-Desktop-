@@ -887,3 +887,18 @@
   - `design.md`
 - Removed the boxed background/shadow treatment from each timeline milestone so the year, circle, text, and green line sit directly on the shared light timeline background.
 - Added desktop mouse drag support so users can click, hold, and drag the horizontal timeline left or right while keeping native swipe behavior on touch devices.
+
+## About Us Timeline Image Assignment (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `public/images/about/timeline/timeline-1999.png`
+  - `public/images/about/timeline/timeline-2005.png`
+  - `public/images/about/timeline/timeline-2007.png`
+  - `public/images/about/timeline/timeline-2015.png`
+  - `public/images/about/timeline/timeline-2019.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the supplied real images to the 1999, 2005, 2007, 2015, and 2019 timeline circles; Today keeps the abstract placeholder until a real image is provided.
+- Moved each green year pill closer to its circle by grouping the badge directly above the circular visual.
