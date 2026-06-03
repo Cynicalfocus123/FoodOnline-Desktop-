@@ -922,3 +922,5 @@
   - `design.json`
 - Updated timeline wheel/touch handling so normal vertical scrolling continues down or up the About Us page when the pointer is over the horizontal timeline.
 - Horizontal timeline movement remains available through desktop drag, horizontal trackpad movement, Shift+wheel, touch swipe, and dot navigation.
+- Removed the timeline tagline `A FoodOnlines timeline built for global grocery access` and made `Our Story` the larger primary timeline heading.
+- Changed the timeline from mandatory snapping to proximity snapping and added vertical touch-intent detection that temporarily disables snapping during up/down swipes on mobile Chrome/Safari.

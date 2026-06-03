@@ -208,6 +208,17 @@ video {
   transition: height 360ms ease;
 }
 
+.about-timeline-scroller {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+}
+
+.about-timeline-scroller.timeline-vertical-pan {
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+}
+
 .driver-check-item {
   opacity: 0;
   transform: translateX(-14px);

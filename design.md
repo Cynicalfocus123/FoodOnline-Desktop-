@@ -689,6 +689,8 @@
 
 - The About Us timeline no longer traps normal vertical wheel/touch scrolling; users can continue scrolling up and down the page when passing through the timeline section.
 - Horizontal movement remains supported with desktop click-drag, horizontal trackpad gestures, Shift+wheel, native touch swipe on mobile/tablet/iOS/Android, and pagination dots.
+- Timeline header copy now uses a larger standalone `Our Story` heading, and the old `A FoodOnlines timeline built for global grocery access` line is removed.
+- Timeline snapping should stay soft/proximity-based, with vertical touch intent disabling snap during mobile up/down swipes so Chrome and Safari do not bounce around the timeline.
 
 ## Guardrails
 

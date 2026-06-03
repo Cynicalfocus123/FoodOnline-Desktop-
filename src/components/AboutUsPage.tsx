@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type WheelEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -141,6 +141,7 @@ function AboutTimelineSection() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
   const dragState = useRef({ startX: 0, scrollLeft: 0 });
+  const touchState = useRef({ startX: 0, startY: 0, isVerticalPan: false });
 
   useEffect(() => {
     const scroller = scrollRef.current;
@@ -226,6 +227,36 @@ function AboutTimelineSection() {
     }
   };
 
+  const startTouch = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    touchState.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      isVerticalPan: false,
+    };
+    event.currentTarget.classList.remove("timeline-vertical-pan");
+  };
+
+  const trackTouchIntent = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    const deltaX = Math.abs(touch.clientX - touchState.current.startX);
+    const deltaY = Math.abs(touch.clientY - touchState.current.startY);
+
+    if (!touchState.current.isVerticalPan && deltaY > deltaX + 8) {
+      touchState.current.isVerticalPan = true;
+      event.currentTarget.classList.add("timeline-vertical-pan");
+    }
+  };
+
+  const stopTouch = (event: TouchEvent<HTMLDivElement>) => {
+    touchState.current.isVerticalPan = false;
+    event.currentTarget.classList.remove("timeline-vertical-pan");
+  };
+
   const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
     const scroller = scrollRef.current;
     if (!scroller) return;
@@ -252,15 +283,14 @@ function AboutTimelineSection() {
     <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1648px]">
         <div className="px-4 text-center sm:px-6">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-leaf-600">Our Story</p>
-          <h2 className="mt-3 text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl lg:text-5xl">
-            A FoodOnlines timeline built for global grocery access
+          <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
+            Our Story
           </h2>
         </div>
 
         <div
           ref={scrollRef}
-          className={`relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-x_pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
+          className={`about-timeline-scroller relative mt-10 flex snap-x snap-proximity gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-x_pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
             isDragging ? "cursor-grabbing select-none" : "cursor-grab"
           }`}
           onPointerCancel={stopDrag}
@@ -268,6 +298,10 @@ function AboutTimelineSection() {
           onPointerLeave={stopDrag}
           onPointerMove={dragTimeline}
           onPointerUp={stopDrag}
+          onTouchCancel={stopTouch}
+          onTouchEnd={stopTouch}
+          onTouchMove={trackTouchIntent}
+          onTouchStart={startTouch}
           onWheel={handleTimelineWheel}
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
