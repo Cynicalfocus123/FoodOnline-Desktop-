@@ -646,6 +646,11 @@
 - The FoodOnline Driver Program image panel now uses the supplied branded van image instead of the missing placeholder route image.
 - This pass changes image assets and wiring only; driver-page copy remains unchanged.
 
+### Driver Payout Card Image Update (2026-06-03)
+
+- The `Get Paid for Every Delivery` card now uses the supplied payment-received phone screenshot as `public/images/drivers/driver-payout-phone.png`.
+- This pass changes only that card image asset plus documentation notes; no CSS, text, layout, component code, or other images were changed.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

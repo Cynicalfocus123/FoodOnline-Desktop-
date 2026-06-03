@@ -831,3 +831,12 @@
 - Added a dedicated cropped person image for the first earning card so the driver's face stays visible inside the existing aligned image box.
 - Replaced the missing/placeholder Driver Program image source with the supplied branded van image.
 - No driver page copy was changed in this pass.
+
+## Driver Payout Card Image Update (2026-06-03)
+
+- Files changed:
+  - `public/images/drivers/driver-payout-phone.png`
+  - `AGENT.md`
+  - `design.md`
+- Replaced only the `Get Paid for Every Delivery` card image with the supplied payment-received phone screenshot.
+- No CSS, copy, component code, or other image assets were changed.
