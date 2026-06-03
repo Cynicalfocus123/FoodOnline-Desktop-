@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-06-03",
+    "updated_at": "2026-06-04",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -84,6 +84,12 @@
       "github_pages_hash_fallback": "/FoodOnline-Desktop-/#about-us",
       "uses_existing_site_header_footer": true,
       "background": "white",
+      "sections": [
+        "top_banner_image",
+        "horizontal_company_timeline",
+        "mission_image",
+        "delivery_scale_image"
+      ],
       "image_base_path": "/images/about/",
       "images": [
         "/images/about/about-hero.png",
@@ -98,6 +104,30 @@
         "middle_and_bottom_lazy_loaded": true,
         "no_horizontal_overflow": true,
         "no_text_crop": true
+      },
+      "timeline": {
+        "placement": "directly_below_top_banner",
+        "style": "horizontal_snap_scrolling_story_path",
+        "accent_color": "FoodOnlines green",
+        "year_badges": "green rounded pills with white text",
+        "connecting_line": "green",
+        "image_areas": "large circular placeholders with subtle shadows",
+        "pagination_dots": "light gray inactive, green active",
+        "milestones": [
+          "1999",
+          "2005",
+          "2007",
+          "2015",
+          "2019",
+          "Today"
+        ],
+        "interaction": {
+          "touch_swipe": true,
+          "horizontal_scroll": true,
+          "snap_scrolling": true,
+          "dot_navigation": true,
+          "keyboard_focusable_dots": true
+        }
       }
     },
     "driver_landing_page": {

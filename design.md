@@ -663,6 +663,13 @@
 - The shared footer FoodOnlines logo is reduced to `h-10 sm:h-12` with a `max-w-[140px]` cap, making it substantially smaller on every public page that uses the common footer.
 - This update affects only the footer logo size; footer links, contact copy, header logo, routing, and other images remain unchanged.
 
+### About Us Timeline Section (2026-06-04)
+
+- The About Us page now includes a horizontally scrollable company timeline directly below the top banner and before the mission/delivery visual sections.
+- The timeline follows the sample story-path direction while replacing all red accents with FoodOnlines green: green connecting line, rounded year pills, circular nodes, and active pagination dots.
+- Each milestone is a large snap-scrolling card with a light background, oversized faint year text, circular placeholder visual area for future imagery, subtle depth shadow, milestone heading, and readable body copy.
+- Desktop, tablet, Android, and iOS behavior uses native horizontal overflow, `snap-x snap-mandatory`, smooth dot navigation, touch swipe support, and no page-level horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

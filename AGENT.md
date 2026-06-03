@@ -867,3 +867,14 @@
   - `design.md`
 - Reduced the shared footer FoodOnlines logo from the oversized `h-24 sm:h-28` treatment to `h-10 sm:h-12`, making the footer logo much smaller across all pages.
 - No footer links, header logo, page routing, or other imagery changed.
+
+## About Us Timeline Section (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added a horizontally scrollable company timeline directly below the About Us banner and before the mission/delivery image sections.
+- Timeline uses FoodOnlines green for the connecting line, year pills, active node treatment, and active pagination dot; inactive dots are light gray.
+- Timeline cards use large circular placeholder image areas with shadows, native snap scrolling, touch-friendly horizontal swipe, smooth dot navigation, and accessible dot labels.
