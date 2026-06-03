@@ -1330,7 +1330,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Apply Credit",
       "Privacy Policy",
       "Terms & Conditions",
-      "About Us",
+      { label: "About Us", href: "/about-us" },
       "Contact Us",
       "Complaint",
       "Careers",

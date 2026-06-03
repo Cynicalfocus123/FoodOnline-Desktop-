@@ -840,3 +840,21 @@
   - `design.md`
 - Replaced only the `Get Paid for Every Delivery` card image with the supplied payment-received phone screenshot.
 - No CSS, copy, component code, or other image assets were changed.
+
+## About Us Page Launch (2026-06-03)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `src/components/Footer.tsx`
+  - `src/data/home.ts`
+  - `public/images/about/about-hero.png`
+  - `public/images/about/about-mission.png`
+  - `public/images/about/about-delivery-scale.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the FoodOnlines About Us page at `/about-us`, with `#about-us` support for the existing SPA fallback routing.
+- The page uses the three supplied About Us images exactly as static assets, with responsive contained image rendering, no text cropping, and lazy loading on the middle and bottom sections.
+- Updated the existing footer `About Us` link to open the new About Us page while preserving the current footer styling, header, and footer structure.

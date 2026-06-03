@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AccountPage } from "./components/AccountPage";
+import { AboutUsPage } from "./components/AboutUsPage";
 import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
 import { CategoryListingPage } from "./components/CategoryListingPage";
@@ -73,6 +74,7 @@ export default function App() {
       {siteView === "product" ? <ProductDetailPage /> : null}
       {siteView === "search" ? <SearchResultsPage /> : null}
       {siteView === "account" ? <AccountPage /> : null}
+      {siteView === "aboutUs" ? <AboutUsPage /> : null}
       {siteView === "drivers" ? <DriverLandingPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}

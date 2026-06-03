@@ -46,6 +46,7 @@ function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }
 }
 
 export function Footer() {
+  const openAboutUs = useHomeStore((state) => state.openAboutUs);
   const openDrivers = useHomeStore((state) => state.openDrivers);
 
   return (
@@ -82,6 +83,7 @@ export function Footer() {
                 {column.links.map((link) => {
                   const label = typeof link === "string" ? link : link.label;
                   const href = typeof link === "string" ? "#company" : link.href;
+                  const isAboutUsLink = href === "/about-us";
                   const isDriverLink = href === "/company/drivers";
 
                   return (
@@ -90,7 +92,12 @@ export function Footer() {
                       href={href}
                       key={label}
                       onClick={
-                        isDriverLink
+                        isAboutUsLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openAboutUs();
+                            }
+                          : isDriverLink
                           ? (event) => {
                               event.preventDefault();
                               openDrivers();

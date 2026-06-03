@@ -651,6 +651,13 @@
 - The `Get Paid for Every Delivery` card now uses the supplied payment-received phone screenshot as `public/images/drivers/driver-payout-phone.png`.
 - This pass changes only that card image asset plus documentation notes; no CSS, text, layout, component code, or other images were changed.
 
+### About Us Page Launch (2026-06-03)
+
+- Added a dedicated FoodOnlines About Us page at `/about-us`, with `#about-us` fallback support for the current SPA/GitHub Pages routing pattern.
+- The page keeps the existing public header and footer, then presents three large white-background visual storytelling sections using the supplied images: `about-hero.png`, `about-mission.png`, and `about-delivery-scale.png`.
+- Images render centered with contained responsive sizing, `width: 100%`, automatic height, safe max-width behavior, no horizontal overflow, and lazy loading for the middle and bottom sections.
+- The footer `About Us` item now links to the new page without changing footer styling.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

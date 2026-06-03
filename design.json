@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-06-02",
+    "updated_at": "2026-06-03",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -59,6 +59,15 @@
         "language"
       ]
     },
+    "about_us": {
+      "path": "/about-us",
+      "hash_fallback": "#about-us",
+      "view": "aboutUs",
+      "title": "About FoodOnlines",
+      "seo_title": "About FoodOnlines | Asian Groceries Online",
+      "seo_description": "Learn about FoodOnlines.com, our mission to make authentic Asian groceries more accessible, affordable, and easy to receive.",
+      "uses_existing_site_header_footer": true
+    },
     "drivers": {
       "path": "/company/drivers",
       "hash_fallback": "#company/drivers",
@@ -69,6 +78,28 @@
     }
   },
   "components": {
+    "about_us_page": {
+      "file": "src/components/AboutUsPage.tsx",
+      "route": "/about-us",
+      "github_pages_hash_fallback": "/FoodOnline-Desktop-/#about-us",
+      "uses_existing_site_header_footer": true,
+      "background": "white",
+      "image_base_path": "/images/about/",
+      "images": [
+        "/images/about/about-hero.png",
+        "/images/about/about-mission.png",
+        "/images/about/about-delivery-scale.png"
+      ],
+      "image_behavior": {
+        "object_fit": "contain",
+        "width": "100%",
+        "height": "auto",
+        "max_width": "1648px",
+        "middle_and_bottom_lazy_loaded": true,
+        "no_horizontal_overflow": true,
+        "no_text_crop": true
+      }
+    },
     "driver_landing_page": {
       "file": "src/components/DriverLandingPage.tsx",
       "data_file": "src/data/driverLanding.ts",
@@ -133,6 +164,11 @@
     "footer": {
       "file": "src/components/Footer.tsx",
       "data_source": "src/data/home.ts",
+      "about_us_link": {
+        "label": "About Us",
+        "href": "/about-us",
+        "opens_about_us_route": true
+      },
       "updated_driver_link": {
         "old_label": "Farm Business",
         "new_label": "Become Our Drivers",
