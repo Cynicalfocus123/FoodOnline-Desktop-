@@ -692,7 +692,7 @@
 - Timeline header copy now uses a larger standalone `Our Story` heading, and the old `A FoodOnlines timeline built for global grocery access` line is removed.
 - Timeline snapping should stay soft/proximity-based, with vertical touch intent disabling snap during mobile up/down swipes so Chrome and Safari do not bounce around the timeline.
 - Follow-up scroll behavior: keep the About Us timeline in the original non-sticky open layout so milestone images remain fully visible across desktop and mobile desktop widths.
-- Timeline interaction should follow a Yami-style controlled carousel pattern: vertical page scrolling must always pass through, native touch horizontal scrolling should not create a tap-to-focus state, and visible Previous/Next buttons plus pagination dots should move between milestones.
+- Timeline interaction should follow a Yami-style controlled carousel pattern: vertical page scrolling must always pass through, finger left/right swipes on the timeline should move horizontally quickly without a tap-to-focus state, and visible Previous/Next buttons plus pagination dots should move between milestones.
 
 ## Guardrails
 

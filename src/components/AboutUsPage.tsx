@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type WheelEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -141,6 +141,12 @@ function AboutTimelineSection() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
   const dragState = useRef({ startX: 0, scrollLeft: 0 });
+  const touchDragState = useRef({
+    mode: "idle" as "idle" | "horizontal" | "vertical",
+    scrollLeft: 0,
+    startX: 0,
+    startY: 0,
+  });
 
   useEffect(() => {
     const scroller = scrollRef.current;
@@ -226,6 +232,45 @@ function AboutTimelineSection() {
     }
   };
 
+  const startTouchDrag = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    const scroller = scrollRef.current;
+    if (!touch || !scroller) return;
+
+    touchDragState.current = {
+      mode: "idle",
+      scrollLeft: scroller.scrollLeft,
+      startX: touch.clientX,
+      startY: touch.clientY,
+    };
+  };
+
+  const dragTimelineByTouch = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    const scroller = scrollRef.current;
+    if (!touch || !scroller) return;
+
+    const distanceX = touch.clientX - touchDragState.current.startX;
+    const distanceY = touch.clientY - touchDragState.current.startY;
+    const absoluteX = Math.abs(distanceX);
+    const absoluteY = Math.abs(distanceY);
+
+    if (touchDragState.current.mode === "idle" && (absoluteX > 8 || absoluteY > 8)) {
+      touchDragState.current.mode = absoluteX > absoluteY + 4 ? "horizontal" : "vertical";
+    }
+
+    if (touchDragState.current.mode !== "horizontal") {
+      return;
+    }
+
+    event.preventDefault();
+    scroller.scrollLeft = touchDragState.current.scrollLeft - distanceX * 1.65;
+  };
+
+  const stopTouchDrag = () => {
+    touchDragState.current.mode = "idle";
+  };
+
   const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
     const scroller = scrollRef.current;
     if (!scroller) return;
@@ -275,6 +320,10 @@ function AboutTimelineSection() {
           onPointerLeave={stopDrag}
           onPointerMove={dragTimeline}
           onPointerUp={stopDrag}
+          onTouchCancel={stopTouchDrag}
+          onTouchEnd={stopTouchDrag}
+          onTouchMove={dragTimelineByTouch}
+          onTouchStart={startTouchDrag}
           onWheel={handleTimelineWheel}
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />

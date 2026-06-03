@@ -925,4 +925,4 @@
 - Removed the timeline tagline `A FoodOnlines timeline built for global grocery access` and made `Our Story` the larger primary timeline heading.
 - Changed the timeline from mandatory snapping to proximity snapping and added vertical touch-intent detection that temporarily disables snapping during up/down swipes on mobile Chrome/Safari.
 - Follow-up fix: restored the non-sticky open timeline layout so full milestone images remain visible instead of being cropped by a scroll-driven sticky viewport.
-- The timeline now follows a Yami-style controlled carousel pattern: native touch horizontal scrolling is disabled with `touch-action: pan-y`, vertical page scrolling always passes through normally, and visible Previous/Next buttons plus dots move the timeline without requiring users to tap/focus and untap the carousel.
+- The timeline now follows a Yami-style controlled carousel pattern: vertical page scrolling passes through normally, visible Previous/Next buttons plus dots move the timeline, and touch users can swipe left/right directly on the timeline with a custom fast horizontal drag handler that does not require tap/focus or untap.
