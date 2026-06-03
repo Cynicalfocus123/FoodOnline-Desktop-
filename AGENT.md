@@ -858,3 +858,12 @@
 - Added the FoodOnlines About Us page at `/about-us`, with `#about-us` support for the existing SPA fallback routing.
 - The page uses the three supplied About Us images exactly as static assets, with responsive contained image rendering, no text cropping, and lazy loading on the middle and bottom sections.
 - Updated the existing footer `About Us` link to open the new About Us page while preserving the current footer styling, header, and footer structure.
+
+## Footer Logo Size Reduction (2026-06-03)
+
+- Files changed:
+  - `src/components/Footer.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Reduced the shared footer FoodOnlines logo from the oversized `h-24 sm:h-28` treatment to `h-10 sm:h-12`, making the footer logo much smaller across all pages.
+- No footer links, header logo, page routing, or other imagery changed.

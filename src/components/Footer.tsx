@@ -57,7 +57,7 @@ export function Footer() {
             <a aria-label="FoodOnlines home" className="inline-flex items-center" href="#home">
               <img
                 alt="FoodOnlines logo"
-                className="h-24 w-auto max-w-[320px] object-contain sm:h-28"
+                className="h-10 w-auto max-w-[140px] object-contain sm:h-12"
                 src={assets.logo}
               />
             </a>
