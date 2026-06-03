@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type WheelEvent } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -226,6 +226,28 @@ function AboutTimelineSection() {
     }
   };
 
+  const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    const wantsHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
+
+    if (!wantsHorizontalScroll) {
+      return;
+    }
+
+    const nextScrollLeft = scroller.scrollLeft + (event.deltaX || event.deltaY);
+    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+    const canScrollLeft = nextScrollLeft > 0 && event.deltaX < 0;
+    const canScrollRight = nextScrollLeft < maxScrollLeft && event.deltaX > 0;
+    const canShiftScroll = event.shiftKey && nextScrollLeft >= 0 && nextScrollLeft <= maxScrollLeft;
+
+    if (canScrollLeft || canScrollRight || canShiftScroll) {
+      event.preventDefault();
+      scroller.scrollLeft = nextScrollLeft;
+    }
+  };
+
   return (
     <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1648px]">
@@ -238,7 +260,7 @@ function AboutTimelineSection() {
 
         <div
           ref={scrollRef}
-          className={`relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
+          className={`relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-x_pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
             isDragging ? "cursor-grabbing select-none" : "cursor-grab"
           }`}
           onPointerCancel={stopDrag}
@@ -246,6 +268,7 @@ function AboutTimelineSection() {
           onPointerLeave={stopDrag}
           onPointerMove={dragTimeline}
           onPointerUp={stopDrag}
+          onWheel={handleTimelineWheel}
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
           {timelineMilestones.map((milestone, index) => (

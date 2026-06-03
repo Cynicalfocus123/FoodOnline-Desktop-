@@ -912,3 +912,13 @@
   - `design.md`
   - `design.json`
 - Added the supplied FoodOnlines warehouse image to the Today timeline circle, replacing the abstract placeholder for that milestone.
+
+## About Us Timeline Scroll Handling Fix (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Updated timeline wheel/touch handling so normal vertical scrolling continues down or up the About Us page when the pointer is over the horizontal timeline.
+- Horizontal timeline movement remains available through desktop drag, horizontal trackpad movement, Shift+wheel, touch swipe, and dot navigation.

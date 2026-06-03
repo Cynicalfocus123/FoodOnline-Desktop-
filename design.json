@@ -135,6 +135,8 @@
           "touch_swipe": true,
           "horizontal_scroll": true,
           "desktop_mouse_drag": true,
+          "vertical_page_scroll_passthrough": true,
+          "horizontal_trackpad_and_shift_wheel": true,
           "snap_scrolling": true,
           "dot_navigation": true,
           "keyboard_focusable_dots": true

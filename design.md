@@ -685,6 +685,11 @@
 - The Today timeline circle now uses the supplied FoodOnlines warehouse image as `public/images/about/timeline/timeline-today.png`.
 - The abstract placeholder remains available in component logic for any future milestone without an assigned image.
 
+### About Us Timeline Scroll Handling Fix (2026-06-04)
+
+- The About Us timeline no longer traps normal vertical wheel/touch scrolling; users can continue scrolling up and down the page when passing through the timeline section.
+- Horizontal movement remains supported with desktop click-drag, horizontal trackpad gestures, Shift+wheel, native touch swipe on mobile/tablet/iOS/Android, and pagination dots.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
