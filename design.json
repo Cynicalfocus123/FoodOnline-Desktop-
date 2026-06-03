@@ -107,11 +107,12 @@
       },
       "timeline": {
         "placement": "directly_below_top_banner",
-        "style": "horizontal_snap_scrolling_story_path",
+        "style": "open_horizontal_snap_scrolling_story_path",
         "accent_color": "FoodOnlines green",
         "year_badges": "green rounded pills with white text",
         "connecting_line": "green",
         "image_areas": "large circular placeholders with subtle shadows",
+        "milestone_layout": "no per-milestone boxes; year, circle, text, and line sit directly on the shared light background",
         "pagination_dots": "light gray inactive, green active",
         "milestones": [
           "1999",
@@ -124,6 +125,7 @@
         "interaction": {
           "touch_swipe": true,
           "horizontal_scroll": true,
+          "desktop_mouse_drag": true,
           "snap_scrolling": true,
           "dot_navigation": true,
           "keyboard_focusable_dots": true

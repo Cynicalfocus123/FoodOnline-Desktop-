@@ -878,3 +878,12 @@
 - Added a horizontally scrollable company timeline directly below the About Us banner and before the mission/delivery image sections.
 - Timeline uses FoodOnlines green for the connecting line, year pills, active node treatment, and active pagination dot; inactive dots are light gray.
 - Timeline cards use large circular placeholder image areas with shadows, native snap scrolling, touch-friendly horizontal swipe, smooth dot navigation, and accessible dot labels.
+
+## About Us Timeline Open Layout + Drag Update (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Removed the boxed background/shadow treatment from each timeline milestone so the year, circle, text, and green line sit directly on the shared light timeline background.
+- Added desktop mouse drag support so users can click, hold, and drag the horizontal timeline left or right while keeping native swipe behavior on touch devices.

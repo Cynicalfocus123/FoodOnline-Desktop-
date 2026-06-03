@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -125,8 +125,10 @@ function AboutImageSection({
 
 function AboutTimelineSection() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
+  const dragState = useRef({ startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
     const scroller = scrollRef.current;
@@ -177,6 +179,41 @@ function AboutTimelineSection() {
     });
   };
 
+  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    setIsDragging(true);
+    dragState.current = {
+      startX: event.clientX,
+      scrollLeft: scroller.scrollLeft,
+    };
+    scroller.setPointerCapture(event.pointerId);
+  };
+
+  const dragTimeline = (event: PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || event.pointerType !== "mouse") return;
+
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    event.preventDefault();
+    const distance = event.clientX - dragState.current.startX;
+    scroller.scrollLeft = dragState.current.scrollLeft - distance;
+  };
+
+  const stopDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse") return;
+
+    setIsDragging(false);
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
   return (
     <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1648px]">
@@ -189,13 +226,20 @@ function AboutTimelineSection() {
 
         <div
           ref={scrollRef}
-          className="relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] sm:gap-8 sm:px-[12vw] lg:px-[18vw]"
+          className={`relative mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
+            isDragging ? "cursor-grabbing select-none" : "cursor-grab"
+          }`}
+          onPointerCancel={stopDrag}
+          onPointerDown={startDrag}
+          onPointerLeave={stopDrag}
+          onPointerMove={dragTimeline}
+          onPointerUp={stopDrag}
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
           {timelineMilestones.map((milestone, index) => (
             <article
               aria-label={`${milestone.year}: ${milestone.title}`}
-              className="relative z-10 min-h-[560px] w-[84vw] max-w-[820px] shrink-0 snap-center overflow-hidden rounded-[36px] bg-[#e9e9e9] px-6 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.12)] sm:min-h-[600px] sm:w-[70vw] sm:px-10 lg:w-[58vw] lg:px-14"
+              className="relative z-10 min-h-[560px] w-[84vw] max-w-[820px] shrink-0 snap-center overflow-hidden px-6 py-8 sm:min-h-[600px] sm:w-[70vw] sm:px-10 lg:w-[58vw] lg:px-14"
               key={milestone.year}
               ref={(element) => {
                 itemRefs.current[index] = element;

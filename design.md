@@ -670,6 +670,11 @@
 - Each milestone is a large snap-scrolling card with a light background, oversized faint year text, circular placeholder visual area for future imagery, subtle depth shadow, milestone heading, and readable body copy.
 - Desktop, tablet, Android, and iOS behavior uses native horizontal overflow, `snap-x snap-mandatory`, smooth dot navigation, touch swipe support, and no page-level horizontal overflow.
 
+### About Us Timeline Open Layout + Drag Update (2026-06-04)
+
+- Timeline milestone boxes are removed; each milestone now appears directly on the shared light background with the green line, rounded year pill, circular placeholder visual, heading, and body copy floating in one continuous timeline field.
+- Desktop users can click, hold, and drag the timeline horizontally. Touch devices keep native swipe/scroll behavior, and dot navigation remains available.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
