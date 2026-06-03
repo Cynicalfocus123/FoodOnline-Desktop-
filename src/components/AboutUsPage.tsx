@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -137,151 +137,61 @@ function AboutImageSection({
 
 function AboutTimelineSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
-  const dragState = useRef({ startX: 0, scrollLeft: 0 });
-  const touchState = useRef({ startX: 0, startY: 0, isVerticalPan: false });
+  const scrollRangeRef = useRef(0);
 
   useEffect(() => {
+    const section = sectionRef.current;
     const scroller = scrollRef.current;
-    if (!scroller) return;
+    if (!section || !scroller) return;
 
     let frame = 0;
 
-    const updateActiveMilestone = () => {
+    const syncTimelineToPageScroll = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
-        const scrollerCenter = scroller.getBoundingClientRect().left + scroller.clientWidth / 2;
-        let nearestIndex = 0;
-        let nearestDistance = Number.POSITIVE_INFINITY;
+        const maxScrollLeft = Math.max(scroller.scrollWidth - scroller.clientWidth, 0);
+        const scrollRange = Math.max(maxScrollLeft, window.innerHeight * 0.8);
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+        const progress = Math.min(Math.max((window.scrollY - sectionTop) / scrollRange, 0), 1);
 
-        itemRefs.current.forEach((item, index) => {
-          if (!item) return;
-
-          const rect = item.getBoundingClientRect();
-          const itemCenter = rect.left + rect.width / 2;
-          const distance = Math.abs(itemCenter - scrollerCenter);
-
-          if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestIndex = index;
-          }
-        });
-
-        setActiveIndex(nearestIndex);
+        scrollRangeRef.current = scrollRange;
+        section.style.height = `${window.innerHeight + scrollRange}px`;
+        scroller.scrollLeft = maxScrollLeft * progress;
+        setActiveIndex(Math.round(progress * (timelineMilestones.length - 1)));
       });
     };
 
-    updateActiveMilestone();
-    scroller.addEventListener("scroll", updateActiveMilestone, { passive: true });
-    window.addEventListener("resize", updateActiveMilestone);
+    syncTimelineToPageScroll();
+    window.addEventListener("scroll", syncTimelineToPageScroll, { passive: true });
+    window.addEventListener("resize", syncTimelineToPageScroll);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      scroller.removeEventListener("scroll", updateActiveMilestone);
-      window.removeEventListener("resize", updateActiveMilestone);
+      window.removeEventListener("scroll", syncTimelineToPageScroll);
+      window.removeEventListener("resize", syncTimelineToPageScroll);
+      section.style.removeProperty("height");
     };
   }, []);
 
   const scrollToMilestone = (index: number) => {
-    itemRefs.current[index]?.scrollIntoView({
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    const progress = timelineMilestones.length > 1 ? index / (timelineMilestones.length - 1) : 0;
+
+    window.scrollTo({
       behavior: "smooth",
-      block: "nearest",
-      inline: "center",
+      top: sectionTop + scrollRangeRef.current * progress,
     });
   };
 
-  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
-
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    setIsDragging(true);
-    dragState.current = {
-      startX: event.clientX,
-      scrollLeft: scroller.scrollLeft,
-    };
-    scroller.setPointerCapture(event.pointerId);
-  };
-
-  const dragTimeline = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDragging || event.pointerType !== "mouse") return;
-
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    event.preventDefault();
-    const distance = event.clientX - dragState.current.startX;
-    scroller.scrollLeft = dragState.current.scrollLeft - distance;
-  };
-
-  const stopDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse") return;
-
-    setIsDragging(false);
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  const startTouch = (event: TouchEvent<HTMLDivElement>) => {
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    touchState.current = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      isVerticalPan: false,
-    };
-    event.currentTarget.classList.remove("timeline-vertical-pan");
-  };
-
-  const trackTouchIntent = (event: TouchEvent<HTMLDivElement>) => {
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    const deltaX = Math.abs(touch.clientX - touchState.current.startX);
-    const deltaY = Math.abs(touch.clientY - touchState.current.startY);
-
-    if (!touchState.current.isVerticalPan && deltaY > deltaX + 8) {
-      touchState.current.isVerticalPan = true;
-      event.currentTarget.classList.add("timeline-vertical-pan");
-    }
-  };
-
-  const stopTouch = (event: TouchEvent<HTMLDivElement>) => {
-    touchState.current.isVerticalPan = false;
-    event.currentTarget.classList.remove("timeline-vertical-pan");
-  };
-
-  const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    const wantsHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
-
-    if (!wantsHorizontalScroll) {
-      return;
-    }
-
-    const nextScrollLeft = scroller.scrollLeft + (event.deltaX || event.deltaY);
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
-    const canScrollLeft = nextScrollLeft > 0 && event.deltaX < 0;
-    const canScrollRight = nextScrollLeft < maxScrollLeft && event.deltaX > 0;
-    const canShiftScroll = event.shiftKey && nextScrollLeft >= 0 && nextScrollLeft <= maxScrollLeft;
-
-    if (canScrollLeft || canScrollRight || canShiftScroll) {
-      event.preventDefault();
-      scroller.scrollLeft = nextScrollLeft;
-    }
-  };
-
   return (
-    <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto max-w-[1648px]">
+    <section ref={sectionRef} aria-label="FoodOnlines company timeline" className="relative overflow-hidden bg-[#f3f4f2]">
+      <div className="sticky top-[116px] mx-auto flex min-h-[calc(100vh-116px)] max-w-[1648px] flex-col justify-center py-12 sm:top-[128px] sm:min-h-[calc(100vh-128px)] sm:py-16 lg:top-[138px] lg:min-h-[calc(100vh-138px)] lg:py-20">
         <div className="px-4 text-center sm:px-6">
           <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
             Our Story
@@ -290,19 +200,7 @@ function AboutTimelineSection() {
 
         <div
           ref={scrollRef}
-          className={`about-timeline-scroller relative mt-10 flex snap-x snap-proximity gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-x_pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
-            isDragging ? "cursor-grabbing select-none" : "cursor-grab"
-          }`}
-          onPointerCancel={stopDrag}
-          onPointerDown={startDrag}
-          onPointerLeave={stopDrag}
-          onPointerMove={dragTimeline}
-          onPointerUp={stopDrag}
-          onTouchCancel={stopTouch}
-          onTouchEnd={stopTouch}
-          onTouchMove={trackTouchIntent}
-          onTouchStart={startTouch}
-          onWheel={handleTimelineWheel}
+          className="about-timeline-scroller relative mt-10 flex gap-5 overflow-x-hidden px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw]"
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
           {timelineMilestones.map((milestone, index) => (

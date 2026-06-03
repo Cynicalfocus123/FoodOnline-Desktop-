@@ -924,3 +924,5 @@
 - Horizontal timeline movement remains available through desktop drag, horizontal trackpad movement, Shift+wheel, touch swipe, and dot navigation.
 - Removed the timeline tagline `A FoodOnlines timeline built for global grocery access` and made `Our Story` the larger primary timeline heading.
 - Changed the timeline from mandatory snapping to proximity snapping and added vertical touch-intent detection that temporarily disables snapping during up/down swipes on mobile Chrome/Safari.
+- Follow-up fix: removed the nested touch-scroll carousel behavior entirely for the timeline path. The About Us timeline now uses a sticky scroll-driven section where normal page vertical scrolling maps to horizontal timeline progress, so users do not need to tap/focus the timeline to move it or tap again to continue down the page.
+- Timeline dot navigation now scrolls the main page to the matching timeline progress point instead of focusing or scrolling the inner timeline container.
