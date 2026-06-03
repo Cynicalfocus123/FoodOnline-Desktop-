@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type WheelEvent } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -137,61 +137,128 @@ function AboutImageSection({
 
 function AboutTimelineSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
-  const scrollRangeRef = useRef(0);
+  const dragState = useRef({ startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
-    const section = sectionRef.current;
     const scroller = scrollRef.current;
-    if (!section || !scroller) return;
+    if (!scroller) return;
 
     let frame = 0;
 
-    const syncTimelineToPageScroll = () => {
+    const updateActiveMilestone = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
-        const maxScrollLeft = Math.max(scroller.scrollWidth - scroller.clientWidth, 0);
-        const scrollRange = Math.max(maxScrollLeft, window.innerHeight * 0.8);
-        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-        const progress = Math.min(Math.max((window.scrollY - sectionTop) / scrollRange, 0), 1);
+        const scrollerCenter = scroller.getBoundingClientRect().left + scroller.clientWidth / 2;
+        let nearestIndex = 0;
+        let nearestDistance = Number.POSITIVE_INFINITY;
 
-        scrollRangeRef.current = scrollRange;
-        section.style.height = `${window.innerHeight + scrollRange}px`;
-        scroller.scrollLeft = maxScrollLeft * progress;
-        setActiveIndex(Math.round(progress * (timelineMilestones.length - 1)));
+        itemRefs.current.forEach((item, index) => {
+          if (!item) return;
+
+          const rect = item.getBoundingClientRect();
+          const itemCenter = rect.left + rect.width / 2;
+          const distance = Math.abs(itemCenter - scrollerCenter);
+
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
+          }
+        });
+
+        setActiveIndex(nearestIndex);
       });
     };
 
-    syncTimelineToPageScroll();
-    window.addEventListener("scroll", syncTimelineToPageScroll, { passive: true });
-    window.addEventListener("resize", syncTimelineToPageScroll);
+    updateActiveMilestone();
+    scroller.addEventListener("scroll", updateActiveMilestone, { passive: true });
+    window.addEventListener("resize", updateActiveMilestone);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", syncTimelineToPageScroll);
-      window.removeEventListener("resize", syncTimelineToPageScroll);
-      section.style.removeProperty("height");
+      scroller.removeEventListener("scroll", updateActiveMilestone);
+      window.removeEventListener("resize", updateActiveMilestone);
     };
   }, []);
 
   const scrollToMilestone = (index: number) => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-    const progress = timelineMilestones.length > 1 ? index / (timelineMilestones.length - 1) : 0;
-
-    window.scrollTo({
+    itemRefs.current[index]?.scrollIntoView({
       behavior: "smooth",
-      top: sectionTop + scrollRangeRef.current * progress,
+      block: "nearest",
+      inline: "center",
     });
   };
 
+  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    setIsDragging(true);
+    dragState.current = {
+      startX: event.clientX,
+      scrollLeft: scroller.scrollLeft,
+    };
+    scroller.setPointerCapture(event.pointerId);
+  };
+
+  const dragTimeline = (event: PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || event.pointerType !== "mouse") return;
+
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    event.preventDefault();
+    const distance = event.clientX - dragState.current.startX;
+    scroller.scrollLeft = dragState.current.scrollLeft - distance;
+  };
+
+  const stopDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse") return;
+
+    setIsDragging(false);
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    const wantsHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
+
+    if (!wantsHorizontalScroll) {
+      return;
+    }
+
+    const nextScrollLeft = scroller.scrollLeft + (event.deltaX || event.deltaY);
+    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+    const canScrollLeft = nextScrollLeft > 0 && event.deltaX < 0;
+    const canScrollRight = nextScrollLeft < maxScrollLeft && event.deltaX > 0;
+    const canShiftScroll = event.shiftKey && nextScrollLeft >= 0 && nextScrollLeft <= maxScrollLeft;
+
+    if (canScrollLeft || canScrollRight || canShiftScroll) {
+      event.preventDefault();
+      scroller.scrollLeft = nextScrollLeft;
+    }
+  };
+
+  const showPreviousMilestone = () => {
+    scrollToMilestone(Math.max(activeIndex - 1, 0));
+  };
+
+  const showNextMilestone = () => {
+    scrollToMilestone(Math.min(activeIndex + 1, timelineMilestones.length - 1));
+  };
+
   return (
-    <section ref={sectionRef} aria-label="FoodOnlines company timeline" className="relative overflow-hidden bg-[#f3f4f2]">
-      <div className="sticky top-[116px] mx-auto flex min-h-[calc(100vh-116px)] max-w-[1648px] flex-col justify-center py-12 sm:top-[128px] sm:min-h-[calc(100vh-128px)] sm:py-16 lg:top-[138px] lg:min-h-[calc(100vh-138px)] lg:py-20">
+    <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-[1648px]">
         <div className="px-4 text-center sm:px-6">
           <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
             Our Story
@@ -200,7 +267,15 @@ function AboutTimelineSection() {
 
         <div
           ref={scrollRef}
-          className="about-timeline-scroller relative mt-10 flex gap-5 overflow-x-hidden px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw]"
+          className={`about-timeline-scroller relative mt-10 flex snap-x snap-proximity gap-5 overflow-x-hidden scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
+            isDragging ? "cursor-grabbing select-none" : "cursor-grab"
+          }`}
+          onPointerCancel={stopDrag}
+          onPointerDown={startDrag}
+          onPointerLeave={stopDrag}
+          onPointerMove={dragTimeline}
+          onPointerUp={stopDrag}
+          onWheel={handleTimelineWheel}
         >
           <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
           {timelineMilestones.map((milestone, index) => (
@@ -262,23 +337,43 @@ function AboutTimelineSection() {
           ))}
         </div>
 
-        <div aria-label="Timeline slide navigation" className="mt-3 flex justify-center gap-3">
-          {timelineMilestones.map((milestone, index) => {
-            const isActive = index === activeIndex;
+        <div className="mt-4 flex items-center justify-center gap-4 px-4 sm:mt-5">
+          <button
+            aria-label="Show previous timeline milestone"
+            className="min-w-[92px] rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-black text-neutral-900 shadow-sm transition hover:border-leaf-500 hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={activeIndex === 0}
+            onClick={showPreviousMilestone}
+            type="button"
+          >
+            Previous
+          </button>
+          <div aria-label="Timeline slide navigation" className="flex justify-center gap-3">
+            {timelineMilestones.map((milestone, index) => {
+              const isActive = index === activeIndex;
 
-            return (
-              <button
-                aria-current={isActive ? "true" : undefined}
-                aria-label={`Show ${milestone.year} milestone`}
-                className={`h-4 w-4 rounded-full transition focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 ${
-                  isActive ? "bg-leaf-500 shadow-[0_0_0_4px_rgba(111,191,18,0.16)]" : "bg-neutral-300 hover:bg-neutral-400"
-                }`}
-                key={milestone.year}
-                onClick={() => scrollToMilestone(index)}
-                type="button"
-              />
-            );
-          })}
+              return (
+                <button
+                  aria-current={isActive ? "true" : undefined}
+                  aria-label={`Show ${milestone.year} milestone`}
+                  className={`h-4 w-4 rounded-full transition focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 ${
+                    isActive ? "bg-leaf-500 shadow-[0_0_0_4px_rgba(111,191,18,0.16)]" : "bg-neutral-300 hover:bg-neutral-400"
+                  }`}
+                  key={milestone.year}
+                  onClick={() => scrollToMilestone(index)}
+                  type="button"
+                />
+              );
+            })}
+          </div>
+          <button
+            aria-label="Show next timeline milestone"
+            className="min-w-[92px] rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-black text-neutral-900 shadow-sm transition hover:border-leaf-500 hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={activeIndex === timelineMilestones.length - 1}
+            onClick={showNextMilestone}
+            type="button"
+          >
+            Next
+          </button>
         </div>
       </div>
     </section>
