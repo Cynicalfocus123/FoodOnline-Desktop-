@@ -1,26 +1,8 @@
 import { useEffect, type ReactNode } from "react";
-import { assets } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
-
-const heroProduce = [
-  {
-    alt: "Fresh orange product visual",
-    className: "left-[14%] top-[2%] w-[42%] rotate-[-8deg]",
-    src: `${basePath}assets/drinks-beverage-mockups/drinks-beverage-04.avif`,
-  },
-  {
-    alt: "Fresh tomato product visual",
-    className: "bottom-[4%] right-[5%] w-[48%] rotate-[6deg]",
-    src: `${basePath}assets/fruits-vegetables-mockups/fruits-vegetables-09.avif`,
-  },
-  {
-    alt: "Fresh leafy product visual",
-    className: "bottom-[25%] left-[4%] w-[34%] rotate-[-12deg]",
-    src: `${basePath}assets/organic-healthy-living-mockups/organic-healthy-living-08.avif`,
-  },
-];
+const vendorHeroImage = `${basePath}images/become-vendor/vendor-hero.png`;
 
 const stats = [
   {
@@ -110,7 +92,7 @@ function VendorCtaButton({
 }) {
   return (
     <button
-      className={`inline-flex min-h-14 items-center justify-center gap-4 rounded-full border-[6px] border-[#ff6b1a] bg-white px-7 font-medium text-[#ff6b1a] shadow-[0_12px_30px_rgba(54,91,31,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(54,91,31,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30 ${
+      className={`inline-flex min-h-14 items-center justify-center gap-4 rounded-full border-[6px] border-[#ff6b1a] bg-white px-7 font-semibold text-[#ff6b1a] shadow-[0_12px_30px_rgba(54,91,31,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(54,91,31,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30 ${
         variant === "large" ? "text-[clamp(2rem,5vw,3.8rem)] lg:min-h-28 lg:px-16" : "text-[clamp(1.25rem,2.6vw,2.15rem)]"
       } ${className}`}
       onClick={onClick}
@@ -193,7 +175,7 @@ function BusinessProfileIllustration() {
           <span className="ml-3 h-4 flex-1 rounded bg-neutral-500" />
         </div>
         <div className="grid gap-4 p-4">
-          <div className="rounded-md bg-[#e95c42] px-4 py-2 text-center text-4xl font-black leading-none text-white">WWW.</div>
+          <div className="rounded-md bg-[#e95c42] px-4 py-2 text-center text-4xl font-semibold leading-none text-white">WWW.</div>
           <div className="grid grid-cols-[64px_1fr] gap-4">
             <div className="grid h-16 place-items-center rounded-lg bg-[#49bfea]">
               <svg className="h-10 w-10 text-black" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 48 48">
@@ -241,7 +223,7 @@ function CertificateIllustration() {
   return (
     <div aria-hidden="true" className="mx-auto grid h-[210px] w-full max-w-[260px] place-items-center">
       <div className="relative w-full rounded bg-white p-7 shadow-lg">
-        <div className="text-center text-2xl font-black uppercase text-neutral-600">Certificate</div>
+        <div className="text-center text-2xl font-semibold uppercase text-neutral-600">Certificate</div>
         <div className="mx-auto mt-5 h-2 w-28 rounded bg-neutral-300" />
         <div className="mx-auto mt-3 h-2 w-36 rounded bg-neutral-300" />
         <div className="absolute -bottom-9 left-1/2 h-20 w-20 -translate-x-1/2">
@@ -280,11 +262,14 @@ export function BecomeVendorPage() {
   }, []);
 
   return (
-    <div className="overflow-hidden bg-[#c4dfb8] pt-[116px] text-black sm:pt-[128px] lg:pt-[138px]">
+    <div
+      className="overflow-hidden bg-[#c4dfb8] pt-[116px] text-black sm:pt-[128px] lg:pt-[138px]"
+      style={{ fontFamily: 'Poppins, Inter, "Nunito Sans", ui-sans-serif, system-ui, sans-serif' }}
+    >
       <SectionShell className="grid min-h-[calc(100vh-138px)] items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_0.72fr] lg:py-20">
         <div className="relative z-10 max-w-[1040px]">
           <p className="text-[clamp(2.35rem,5vw,4.7rem)] font-normal leading-none">Sell Globally</p>
-          <h1 className="mt-8 max-w-[1040px] text-[clamp(3.1rem,6.8vw,7.8rem)] font-black uppercase leading-[0.98] tracking-[-0.04em]">
+          <h1 className="mt-8 max-w-[1040px] text-[clamp(3.1rem,6.8vw,7.8rem)] font-semibold uppercase leading-[0.98]">
             REACH MORE CUSTOMERS.
             <br />
             GROW FASTER.
@@ -298,23 +283,27 @@ export function BecomeVendorPage() {
         </div>
 
         <div className="relative mx-auto h-[340px] w-full max-w-[610px] sm:h-[460px] lg:h-[650px]" aria-hidden="true">
-          <div className="absolute -right-16 top-0 h-[46%] w-[66%] rounded-full bg-[#a8cbda]" />
-          <div className="absolute -bottom-5 left-8 h-[62%] w-[82%] rounded-full bg-[#f6cf74]" />
-          {heroProduce.map((image) => (
-            <img
-              alt={image.alt}
-              className={`absolute rounded-full object-cover shadow-[0_20px_50px_rgba(33,62,22,0.16)] ${image.className}`}
-              draggable={false}
-              key={image.src}
-              src={image.src}
-            />
-          ))}
+          <div
+            className="absolute -right-16 top-0 h-[42%] w-[68%] rounded-full bg-[#a8cbda] bg-no-repeat sm:-right-20 lg:-right-24"
+            style={{
+              backgroundImage: `url("${vendorHeroImage}")`,
+              backgroundPosition: "right top",
+              backgroundSize: "1650px auto",
+            }}
+          />
+          <div
+            className="absolute -bottom-4 left-[6%] h-[60%] w-[88%] rounded-full bg-[#f6cf74] bg-no-repeat sm:-bottom-6 lg:-bottom-8"
+            style={{
+              backgroundImage: `url("${vendorHeroImage}")`,
+              backgroundPosition: "right bottom",
+              backgroundSize: "2100px auto",
+            }}
+          />
         </div>
       </SectionShell>
 
       <SectionShell className="py-12 sm:py-16">
         <div className="flex flex-wrap items-center gap-3">
-          <img alt="FoodOnlines logo" className="h-12 w-auto max-w-[180px] object-contain sm:h-16 sm:max-w-[240px]" src={assets.logo} />
           <p className="text-[clamp(1.8rem,3vw,3.2rem)] leading-none">Sell Globally</p>
         </div>
         <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr] xl:items-center xl:gap-8">
@@ -322,7 +311,7 @@ export function BecomeVendorPage() {
             <div className="contents" key={stat.label}>
               <SparkIcon />
               <div className="rounded-[28px] bg-[#c4dfb8] p-2 text-center sm:text-left xl:p-0">
-                <p className="text-[clamp(2.6rem,4.6vw,5.1rem)] font-black uppercase leading-[1.05] tracking-[-0.04em]">{stat.label}</p>
+                <p className="text-[clamp(2.6rem,4.6vw,5.1rem)] font-semibold uppercase leading-[1.05]">{stat.label}</p>
                 <p className="mt-3 text-[clamp(1rem,1.6vw,1.28rem)] leading-snug">{stat.supportingText}</p>
               </div>
             </div>
@@ -332,7 +321,7 @@ export function BecomeVendorPage() {
 
       <SectionShell className="grid items-center gap-8 py-12 sm:py-16 lg:grid-cols-[1fr_auto] lg:py-20">
         <div className="max-w-[1160px]">
-          <h2 className="text-[clamp(2.6rem,5vw,5.2rem)] font-black leading-tight tracking-[-0.045em]">Who&apos;s Selling on Globally?</h2>
+          <h2 className="text-[clamp(2.6rem,5vw,5.2rem)] font-semibold leading-tight">Who&apos;s Selling on Globally?</h2>
           <p className="mt-6 text-[clamp(1.45rem,3vw,3.2rem)] uppercase leading-[1.18]">
             JOIN THOUSANDS OF TRUSTED BRANDS AND BUSINESSES GROWING THEIR SALES THROUGH OUR GLOBAL MARKETPLACE.
           </p>
@@ -344,7 +333,7 @@ export function BecomeVendorPage() {
 
       <SectionShell className="py-12 sm:py-16 lg:py-20">
         <div className="max-w-[840px]">
-          <h2 className="text-[clamp(2rem,3.2vw,3.4rem)] font-black leading-tight tracking-[-0.04em]">
+          <h2 className="text-[clamp(2rem,3.2vw,3.4rem)] font-semibold leading-tight">
             Everything You Need to Scale Your Business
           </h2>
           <p className="mt-4 text-[clamp(1.05rem,1.7vw,1.45rem)] leading-snug">
@@ -358,7 +347,7 @@ export function BecomeVendorPage() {
               key={card.title}
             >
               <div>{card.icon}</div>
-              <h3 className="mt-5 text-[clamp(1.25rem,2vw,1.65rem)] font-black leading-tight tracking-[-0.03em]">{card.title}</h3>
+              <h3 className="mt-5 text-[clamp(1.25rem,2vw,1.65rem)] font-semibold leading-tight">{card.title}</h3>
               <p className="mt-3 max-w-[390px] text-[clamp(1rem,1.35vw,1.2rem)] leading-snug">{card.body}</p>
             </article>
           ))}
@@ -366,8 +355,8 @@ export function BecomeVendorPage() {
       </SectionShell>
 
       <SectionShell className="py-12 sm:py-16 lg:py-20">
-        <p className="text-[clamp(1.5rem,3vw,3rem)] leading-none tracking-[0.28em]">One of the World&apos;s Largest Online Supermarkets</p>
-        <h2 className="mt-5 text-[clamp(3rem,6.2vw,6.8rem)] font-black uppercase leading-[0.98] tracking-[-0.055em]">
+        <p className="text-[clamp(1rem,2.1vw,2.1rem)] leading-none tracking-[0.18em]">One of the World&apos;s Largest Online Supermarkets</p>
+        <h2 className="mt-4 text-[clamp(2.1rem,4.35vw,4.75rem)] font-semibold uppercase leading-[0.98]">
           START SELLING IN JUST
           <br />
           <span className="text-[#ff6b1a]">THREE SIMPLE STEPS</span>
@@ -379,12 +368,12 @@ export function BecomeVendorPage() {
                 <span className="relative inline-flex h-12 w-16 shrink-0 items-center justify-center">
                   <span className="absolute h-11 w-11 rounded-full border-[6px] border-[#b8c32d] bg-white" />
                   <span className="absolute right-0 h-9 w-9 rotate-45 bg-[#b8c32d]" />
-                  <span className="relative text-xl font-black text-[#9fb000]">{step.number}</span>
+                  <span className="relative text-xl font-semibold text-[#9fb000]">{step.number}</span>
                 </span>
-                <h3 className="text-[clamp(1.25rem,2vw,1.7rem)] font-black leading-tight tracking-[-0.035em]">{step.title}</h3>
+                <h3 className="text-[clamp(1.25rem,2vw,1.7rem)] font-semibold leading-tight">{step.title}</h3>
               </div>
               <div className="mt-8">{step.illustration}</div>
-              <p className="mx-auto mt-8 max-w-[460px] text-center text-[clamp(0.98rem,1.3vw,1.12rem)] leading-snug">{step.body}</p>
+              <p className="mx-auto mt-8 max-w-[520px] text-center text-[clamp(1.15rem,1.55vw,1.38rem)] leading-relaxed">{step.body}</p>
             </article>
           ))}
         </div>
@@ -392,13 +381,13 @@ export function BecomeVendorPage() {
 
       <SectionShell className="grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
         <div>
-          <h2 className="text-[clamp(2.7rem,5vw,5rem)] font-black leading-tight tracking-[-0.05em]">Start Selling Today</h2>
+          <h2 className="text-[clamp(2.7rem,5vw,5rem)] font-semibold leading-tight">Start Selling Today</h2>
           <p className="mt-4 text-[clamp(1.3rem,2.4vw,2.6rem)] leading-tight">
             A Global Marketplace Connecting Sellers with Customers Worldwide
           </p>
           <p className="mt-12 text-[clamp(1.35rem,2.2vw,2.3rem)]">Already have a seller account?</p>
           <button
-            className="mt-4 inline-flex min-h-12 items-center gap-2 text-[clamp(1.15rem,2vw,2rem)] font-black text-black transition hover:text-[#ff6b1a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30"
+            className="mt-4 inline-flex min-h-12 items-center gap-2 text-[clamp(1.15rem,2vw,2rem)] font-semibold text-black transition hover:text-[#ff6b1a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30"
             onClick={openLogin}
             type="button"
           >
