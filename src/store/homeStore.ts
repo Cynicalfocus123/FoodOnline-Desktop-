@@ -29,6 +29,7 @@ export type SiteView =
   | "search"
   | "account"
   | "aboutUs"
+  | "becomeVendor"
   | "drivers";
 export type SignupStep = "role" | "form" | "complete";
 
@@ -112,6 +113,18 @@ function isAboutUsRoute(hash: string) {
   return /\/about-us\/?$/i.test(window.location.pathname);
 }
 
+function isBecomeVendorRoute(hash: string) {
+  if (/^#become-vendor(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/become-vendor\/?$/i.test(window.location.pathname);
+}
+
 function readAccountSectionFromHash(hash: string): AccountSection | null {
   const match = hash.match(/^#account(?:\/([^?#/]+))?/i);
 
@@ -158,8 +171,10 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#checkout") ||
     window.location.hash.startsWith("#account") ||
     window.location.hash.startsWith("#about-us") ||
+    window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#company/drivers") ||
     /\/about-us\/?$/i.test(window.location.pathname) ||
+    /\/become-vendor\/?$/i.test(window.location.pathname) ||
     /\/company\/drivers\/?$/i.test(window.location.pathname)
   ) {
     window.history.replaceState(null, "", `${import.meta.env.BASE_URL}#home`);
@@ -193,6 +208,7 @@ type HomeState = {
   openCart: () => void;
   openCheckout: () => void;
   openAboutUs: () => void;
+  openBecomeVendor: () => void;
   openDrivers: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
@@ -358,6 +374,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openBecomeVendor: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}become-vendor`);
+      }
+
+      return {
+        siteView: "becomeVendor",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openDrivers: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -443,6 +473,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isBecomeVendorRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "becomeVendor",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isDriversRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -518,6 +558,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "checkout" ||
         state.siteView === "account" ||
         state.siteView === "aboutUs" ||
+        state.siteView === "becomeVendor" ||
         state.siteView === "drivers"
       ) {
         return {

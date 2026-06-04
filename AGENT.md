@@ -997,3 +997,24 @@
   - `design.md`
 - Increased the zoom for the first-row leadership portraits, including the fourth Natalie card, by applying the same contained bottom-aligned scale treatment across Jakapun, Paul, Pasit, and Natalie.
 - The row-one portraits now visually match the closer second-row portrait sizing while preserving the existing white card boxes, fixed image frame heights, and responsive one/two/four-column grid behavior across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+
+## Become Vendor Page Launch (2026-06-04)
+
+- Files changed:
+  - `src/components/BecomeVendorPage.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `src/components/Footer.tsx`
+  - `src/data/home.ts`
+  - `public/images/become-vendor/vendor-hero.png`
+  - `public/images/become-vendor/vendor-stats.png`
+  - `public/images/become-vendor/vendor-selling.png`
+  - `public/images/become-vendor/vendor-scale.png`
+  - `public/images/become-vendor/vendor-steps.png`
+  - `public/images/become-vendor/vendor-final-cta.png`
+  - `AGENT.md`
+  - `design.md`
+- Added the `/become-vendor` public page with `#become-vendor` fallback support, using the supplied Sell Globally images as stacked full-width visual sections with no padding, margins, borders, or section gaps.
+- Page metadata now sets `Become a Vendor | FoodOnlines`, and the page background uses the matching light green `#c4dfb8` so any viewport edge/background shows the same green tone as the uploaded designs.
+- Added accessible transparent button overlays on the hero `GET STARTED`, final `Sign up`, and final `Log in` image areas. The vendor signup overlays call the existing `openSignup` flow, and the login overlay calls the existing `openLogin` flow.
+- Updated the shared footer `Become a Vendor` item to point to `/become-vendor` and open the new page through the existing SPA navigation pattern.

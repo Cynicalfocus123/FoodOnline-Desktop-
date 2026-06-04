@@ -47,6 +47,7 @@ function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }
 
 export function Footer() {
   const openAboutUs = useHomeStore((state) => state.openAboutUs);
+  const openBecomeVendor = useHomeStore((state) => state.openBecomeVendor);
   const openDrivers = useHomeStore((state) => state.openDrivers);
 
   return (
@@ -84,6 +85,7 @@ export function Footer() {
                   const label = typeof link === "string" ? link : link.label;
                   const href = typeof link === "string" ? "#company" : link.href;
                   const isAboutUsLink = href === "/about-us";
+                  const isBecomeVendorLink = href === "/become-vendor";
                   const isDriverLink = href === "/company/drivers";
 
                   return (
@@ -96,6 +98,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openAboutUs();
+                            }
+                          : isBecomeVendorLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openBecomeVendor();
                             }
                           : isDriverLink
                           ? (event) => {

@@ -732,6 +732,15 @@
 - The first-row leadership portraits for Jakapun, Paul, Pasit, and Natalie now use a shared closer contained scale so their image size matches the second-row leadership cards more closely.
 - Card dimensions, white boxed backgrounds, bottom alignment, and the responsive 4/2/1-column grid remain unchanged across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
 
+### Become Vendor Page Launch (2026-06-04)
+
+- Added the FoodOnlines `Become a Vendor` / `Sell Globally` page at `/become-vendor`, with `#become-vendor` SPA fallback support.
+- The page uses six supplied full-width image sections in this order: hero, stats, who's selling, scale business, three simple steps, and final start-selling CTA.
+- Section images stack with no padding, margins, borders, white gaps, or crop behavior; the page background uses matching light green `#c4dfb8` so the uploaded green artwork reads as one continuous scroll.
+- Transparent accessible CTA overlays preserve the original raster button visuals while making the hero `GET STARTED`, bottom `Sign up`, and bottom `Log in` areas functional.
+- Vendor signup overlays open the existing public signup/register flow, and the login overlay opens the existing public login flow. The footer `Become a Vendor` link opens the new page.
+- Responsive behavior keeps every section image at `display: block; width: 100%; height: auto;` with no horizontal overflow across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
