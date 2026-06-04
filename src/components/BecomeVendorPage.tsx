@@ -2,8 +2,9 @@ import { useEffect, type ReactNode } from "react";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
-const vendorHeroImage = `${basePath}images/become-vendor/vendor-hero.png`;
-const vendorSellingImage = `${basePath}images/become-vendor/vendor-selling.png`;
+const vendorFoodGlobeImage = `${basePath}images/become-vendor/vendor-food-globe.png`;
+const vendorHeroTomatoImage = `${basePath}images/become-vendor/vendor-hero-tomato-cutout.png`;
+const vendorHeroVegetableImage = `${basePath}images/become-vendor/vendor-hero-vegetable-cutout.png`;
 
 const stats = [
   {
@@ -150,16 +151,13 @@ function FulfillmentIcon() {
 
 function GlobeGraphic() {
   return (
-    <div
-      className="relative h-[220px] w-[220px] overflow-hidden rounded-full bg-[#64bd00] bg-no-repeat sm:h-[280px] sm:w-[280px] lg:h-[350px] lg:w-[350px]"
-      style={{
-        backgroundImage: `url("${vendorSellingImage}")`,
-        backgroundPosition: "right center",
-        backgroundSize: "auto 100%",
-      }}
-    >
-      <span className="absolute inset-0 rounded-full ring-1 ring-black/5" />
-    </div>
+    <img
+      alt=""
+      aria-hidden="true"
+      className="h-auto w-[250px] max-w-full object-contain sm:w-[330px] lg:w-[440px]"
+      loading="lazy"
+      src={vendorFoodGlobeImage}
+    />
   );
 }
 
@@ -282,22 +280,22 @@ export function BecomeVendorPage() {
         </div>
 
         <div className="relative mx-auto h-[310px] w-full max-w-[560px] sm:h-[420px] lg:h-[570px]" aria-hidden="true">
-          <div
-            className="absolute -right-8 top-0 h-[42%] w-[68%] overflow-hidden rounded-full bg-[#a8cbda] bg-no-repeat sm:-right-14 lg:-right-16"
-            style={{
-              backgroundImage: `url("${vendorHeroImage}")`,
-              backgroundPosition: "right 28%",
-              backgroundSize: "145% auto",
-            }}
-          />
-          <div
-            className="absolute -bottom-2 left-[4%] h-[58%] w-[90%] overflow-hidden rounded-full bg-[#f6cf74] bg-no-repeat sm:-bottom-4 lg:-bottom-6"
-            style={{
-              backgroundImage: `url("${vendorHeroImage}")`,
-              backgroundPosition: "center 76%",
-              backgroundSize: "135% auto",
-            }}
-          />
+          <div className="absolute -right-8 top-0 h-[42%] w-[68%] overflow-visible rounded-full bg-[#a8cbda] shadow-[0_18px_40px_rgba(53,96,41,0.08)] sm:-right-14 lg:-right-16">
+            <img
+              alt=""
+              className="pointer-events-none absolute -bottom-[18%] -right-[10%] h-[128%] max-w-none object-contain drop-shadow-[0_16px_20px_rgba(45,73,28,0.12)]"
+              draggable={false}
+              src={vendorHeroVegetableImage}
+            />
+          </div>
+          <div className="absolute -bottom-2 left-[4%] h-[58%] w-[90%] overflow-visible rounded-full bg-[#f6cf74] shadow-[0_18px_40px_rgba(53,96,41,0.08)] sm:-bottom-4 lg:-bottom-6">
+            <img
+              alt=""
+              className="pointer-events-none absolute -bottom-[6%] -right-[4%] h-[112%] max-w-none object-contain drop-shadow-[0_18px_24px_rgba(101,64,22,0.16)]"
+              draggable={false}
+              src={vendorHeroTomatoImage}
+            />
+          </div>
         </div>
       </SectionShell>
 
@@ -325,7 +323,7 @@ export function BecomeVendorPage() {
             JOIN THOUSANDS OF TRUSTED BRANDS AND BUSINESSES GROWING THEIR SALES THROUGH OUR GLOBAL MARKETPLACE.
           </p>
         </div>
-        <div className="justify-self-center lg:-mr-12">
+        <div className="justify-self-center lg:-mr-20">
           <GlobeGraphic />
         </div>
       </SectionShell>
