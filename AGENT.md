@@ -958,10 +958,16 @@
 
 - Files changed:
   - `src/components/AboutUsPage.tsx`
+  - `public/images/about/leadership/jakapun-viwatkurkul.webp`
+  - `public/images/about/leadership/paul-pongpichan.webp`
+  - `public/images/about/leadership/pasit-viwatkurkul.webp`
+  - `public/images/about/leadership/natalie.png`
+  - `public/images/about/leadership/lucas-huber.png`
   - `AGENT.md`
   - `design.md`
   - `design.json`
 - Added an empty leadership placeholder grid directly below the truck/delivery-scale banner image.
 - Added a large bold green `Our leadership` H2 above the first card row, matching the sample heading placement while using FoodOnlines green.
-- Grid has eight blank rounded white boxes, with no names, roles, text, or images added yet.
+- Grid keeps eight rounded white card slots; the first five are filled and the last three remain blank.
 - Layout is 4 columns x 2 rows on desktop, 2 columns on tablet, and 1 column on small mobile so the cards remain clean across desktop, desktop-mobile widths, Android, and iOS.
+- Leadership content update: filled cards 1-5 with supplied headshots and roles for Jakapun Viwatkurkul (President and Founder), Paul Pongpichan (CSCO), Pasit Viwatkurkul (CTO), Natalie (CFO), and Lucas Huber (COO). Cards 6-8 remain blank placeholders.

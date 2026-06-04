@@ -38,7 +38,41 @@ const preTimelineSections = [
   },
 ];
 
-const leadershipPlaceholders = Array.from({ length: 8 }, (_, index) => index);
+const leadershipCards = [
+  {
+    name: "Jakapun Viwatkurkul",
+    role: "President and Founder",
+    image: `${basePath}images/about/leadership/jakapun-viwatkurkul.webp`,
+    imageAlt: "Jakapun Viwatkurkul",
+  },
+  {
+    name: "Paul Pongpichan",
+    role: "CSCO (Chief Supply Chain Officer)",
+    image: `${basePath}images/about/leadership/paul-pongpichan.webp`,
+    imageAlt: "Paul Pongpichan",
+  },
+  {
+    name: "Pasit Viwatkurkul",
+    role: "CTO",
+    image: `${basePath}images/about/leadership/pasit-viwatkurkul.webp`,
+    imageAlt: "Pasit Viwatkurkul",
+  },
+  {
+    name: "Natalie",
+    role: "CFO",
+    image: `${basePath}images/about/leadership/natalie.png`,
+    imageAlt: "Natalie",
+  },
+  {
+    name: "Lucas Huber",
+    role: "COO",
+    image: `${basePath}images/about/leadership/lucas-huber.png`,
+    imageAlt: "Lucas Huber",
+  },
+  null,
+  null,
+  null,
+];
 
 const timelineMilestones = [
   {
@@ -253,12 +287,32 @@ function LeadershipPlaceholderSection() {
         Our leadership
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
-        {leadershipPlaceholders.map((slot) => (
+        {leadershipCards.map((leader, slot) => (
           <article
-            aria-label={`Leadership placeholder ${slot + 1}`}
-            className="min-h-[360px] rounded-[26px] border border-neutral-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.06)] sm:min-h-[420px] lg:min-h-[520px]"
-            key={slot}
-          />
+            aria-label={leader ? `${leader.name}, ${leader.role}` : `Leadership placeholder ${slot + 1}`}
+            className="flex min-h-[360px] flex-col overflow-hidden rounded-[26px] border border-neutral-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.06)] sm:min-h-[420px] lg:min-h-[520px]"
+            key={leader?.name ?? `placeholder-${slot}`}
+          >
+            {leader ? (
+              <>
+                <div className="px-6 pb-4 pt-7 sm:px-7 sm:pt-8 lg:px-8">
+                  <h3 className="text-[1.75rem] font-black leading-tight tracking-normal text-neutral-950 sm:text-[2rem]">
+                    {leader.name}
+                  </h3>
+                  <p className="mt-2 text-lg font-medium leading-snug text-neutral-950 sm:text-xl">{leader.role}</p>
+                </div>
+                <div className="mt-auto flex min-h-[240px] flex-1 items-end justify-center px-2 pt-2 sm:min-h-[280px] lg:min-h-[360px]">
+                  <img
+                    alt={leader.imageAlt}
+                    className="h-full max-h-[420px] w-full object-contain object-bottom"
+                    decoding="async"
+                    loading="lazy"
+                    src={leader.image}
+                  />
+                </div>
+              </>
+            ) : null}
+          </article>
         ))}
       </div>
     </section>

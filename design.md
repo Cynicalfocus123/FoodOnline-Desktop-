@@ -714,8 +714,10 @@
 
 - Added a blank leadership grid directly below the truck/delivery-scale banner image.
 - Added a large bold green `Our leadership` H2 above the first row, matching the sample heading structure while using the FoodOnlines green brand color.
-- The grid contains eight empty white rounded boxes with light borders and subtle shadow, matching the sample card structure without adding any names, roles, images, or placeholder text.
+- The grid contains eight white rounded card slots with light borders and subtle shadow, matching the sample card structure.
 - Desktop uses 4 boxes per row for 2 rows total; tablet uses 2 columns; small mobile stacks to 1 column so the boxes stay usable on Android, iOS, and narrow browser widths.
+- Leadership content update: the first five cards now show supplied headshots plus name/role for Jakapun Viwatkurkul, Paul Pongpichan, Pasit Viwatkurkul, Natalie, and Lucas Huber; cards 6-8 remain blank placeholders.
+- Leadership card image behavior: images sit in the lower card area with `object-contain object-bottom` so portraits remain visible without cropping across desktop, tablet, Android, iOS, and narrow browser widths.
 
 ## Guardrails
 

@@ -116,10 +116,18 @@
         "heading": "Our leadership",
         "heading_style": "large bold H2 in FoodOnlines green, Poppins/system font stack, above first row",
         "count": 8,
+        "filled_cards": [
+          "Jakapun Viwatkurkul - President and Founder",
+          "Paul Pongpichan - CSCO (Chief Supply Chain Officer)",
+          "Pasit Viwatkurkul - CTO",
+          "Natalie - CFO",
+          "Lucas Huber - COO"
+        ],
+        "blank_cards": 3,
         "desktop_layout": "4 columns x 2 rows",
         "tablet_layout": "2 columns",
         "mobile_layout": "1 column",
-        "content": "blank placeholders only; no images or text yet",
+        "content": "first five cards include supplied headshot, name, and role; remaining three cards stay blank placeholders",
         "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes"
       },
       "timeline": {
