@@ -727,6 +727,11 @@
 - Lucas Huber's leadership portrait now uses the same `object-contain object-bottom` image fitting as the other contained leadership portraits, with the existing slight scale-up preserved so the image no longer squeezes on mobile.
 - The Lucas source asset has its connected pale gray studio backdrop cleaned to white so it sits inside the existing white bordered card like the surrounding leadership images.
 
+### About Us Leadership Row One Zoom Update (2026-06-04)
+
+- The first-row leadership portraits for Jakapun, Paul, Pasit, and Natalie now use a shared closer contained scale so their image size matches the second-row leadership cards more closely.
+- Card dimensions, white boxed backgrounds, bottom alignment, and the responsive 4/2/1-column grid remain unchanged across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

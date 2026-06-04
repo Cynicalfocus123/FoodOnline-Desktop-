@@ -988,3 +988,12 @@
   - `design.md`
 - Restored Lucas Huber's leadership image to the shared `object-contain object-bottom` portrait fitting while keeping the slight scale-up, preventing mobile browser widths from squeezing the image inside the fixed portrait frame.
 - Cleaned the connected pale gray studio backdrop in the Lucas asset to read as a white card background without changing the card layout or other leadership portraits.
+
+## About Us Leadership Row One Zoom Update (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Increased the zoom for the first-row leadership portraits, including the fourth Natalie card, by applying the same contained bottom-aligned scale treatment across Jakapun, Paul, Pasit, and Natalie.
+- The row-one portraits now visually match the closer second-row portrait sizing while preserving the existing white card boxes, fixed image frame heights, and responsive one/two/four-column grid behavior across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.

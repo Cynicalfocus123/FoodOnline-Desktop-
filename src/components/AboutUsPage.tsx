@@ -44,24 +44,28 @@ const leadershipCards = [
     role: "President and Founder",
     image: `${basePath}images/about/leadership/jakapun-viwatkurkul.webp`,
     imageAlt: "Jakapun Viwatkurkul",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
   },
   {
     name: "Paul Pongpichan",
     role: "CSCO (Chief Supply Chain Officer)",
     image: `${basePath}images/about/leadership/paul-pongpichan.webp`,
     imageAlt: "Paul Pongpichan",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
   },
   {
     name: "Pasit Viwatkurkul",
     role: "CTO",
     image: `${basePath}images/about/leadership/pasit-viwatkurkul.webp`,
     imageAlt: "Pasit Viwatkurkul",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
   },
   {
     name: "Natalie",
     role: "CFO",
     image: `${basePath}images/about/leadership/natalie.png`,
     imageAlt: "Natalie",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
   },
   {
     name: "Lucas Huber",
