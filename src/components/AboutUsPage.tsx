@@ -286,10 +286,17 @@ export function AboutUsPage() {
               <LogoMark />
             </div>
 
-            <h2 className="mt-12 max-w-[1160px] text-[clamp(1.75rem,7.4vw,4.15rem)] font-extrabold uppercase leading-[1.22] tracking-normal text-[#64bd00] [overflow-wrap:anywhere] sm:[overflow-wrap:normal]">
-              OUR MISSION IS TO MAKE AUTHENTIC ASIAN
-              <br />
-              GROCERIES AFFORDABLE FOR EVERYONE
+            <h2 className="mt-10 max-w-[1160px] text-[clamp(1.22rem,5.2vw,2.25rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00] sm:mt-12 sm:text-[clamp(2.05rem,4.6vw,4.15rem)] sm:leading-[1.22]">
+              <span className="block sm:hidden">
+                <span className="block">OUR MISSION IS TO MAKE</span>
+                <span className="block">AUTHENTIC ASIAN GROCERIES</span>
+                <span className="block">AFFORDABLE FOR EVERYONE</span>
+              </span>
+              <span className="hidden sm:block">
+                OUR MISSION IS TO MAKE AUTHENTIC ASIAN
+                <br />
+                GROCERIES AFFORDABLE FOR EVERYONE
+              </span>
             </h2>
 
             <p className="mt-5 max-w-4xl text-[clamp(1.08rem,1.8vw,1.7rem)] font-normal leading-snug">
@@ -298,12 +305,21 @@ export function AboutUsPage() {
               directly from factories to consumers at exceptional value.
             </p>
 
-            <p className="mt-9 max-w-4xl text-[clamp(1.75rem,3.5vw,3.15rem)] font-bold leading-tight text-[#ff6b1a]">
-              Proudly serving customers worldwide,
-              <br />
-              We are one of the largest online
-              <br />
-              destinations for Asian groceries.
+            <p className="mt-7 max-w-4xl text-[clamp(1.22rem,5.1vw,2rem)] font-bold leading-[1.16] text-[#ff6b1a] sm:mt-9 sm:text-[clamp(1.75rem,3.5vw,3.15rem)] sm:leading-tight">
+              <span className="block sm:hidden">
+                <span className="block">Proudly serving customers</span>
+                <span className="block">worldwide,</span>
+                <span className="block">We are one of the largest</span>
+                <span className="block">online destinations for</span>
+                <span className="block">Asian groceries.</span>
+              </span>
+              <span className="hidden sm:block">
+                Proudly serving customers worldwide,
+                <br />
+                We are one of the largest online
+                <br />
+                destinations for Asian groceries.
+              </span>
             </p>
           </div>
 

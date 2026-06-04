@@ -746,6 +746,7 @@
 - The visual structure keeps the original story rhythm: large hero text plus rounded image area, centered logo/mission copy, four flavor circles, left mission copy with right decorative shapes, a delivery truck composition, and the original leadership/team card grid with its images.
 - Image regions are clean placeholder circles/areas with clear class names such as `about-hero-image-placeholder`, `about-grocery-bag-placeholder`, `about-flavor-circle-placeholder`, `about-cart-placeholder`, `about-plate-placeholder`, and `about-truck-placeholder` so real assets can be swapped in later without changing the text layout; placeholder interiors should not show dashed boxes, labels, or box panels.
 - Responsive behavior stacks or reduces decorative compositions across tablet and 430px/390px/360px mobile widths so text remains selectable, readable, and free of horizontal scroll.
+- Mission-section mobile typography uses smaller mobile-only line groups for the green mission headline and orange global-serving statement so iOS, Android, and desktop-mobile browser widths stay readable without clipping; desktop keeps the larger original-style scale.
 
 ### Become Vendor Page Launch (2026-06-04)
 

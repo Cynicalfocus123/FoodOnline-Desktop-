@@ -1014,6 +1014,7 @@
 - All major About Us story text is now real selectable HTML/React content using Poppins-first typography instead of text embedded inside full-width images.
 - The previous story banner images are no longer rendered as page content; decorative image areas now use named placeholder divs and visible circle layouts ready for future asset replacement, without dashed placeholder boxes or label boxes inside the image areas.
 - The existing `/about-us` route and footer About Us link behavior remain unchanged.
+- Follow-up mobile typography update: the mission headline and orange global-serving statement use smaller mobile-only line layouts and font clamps for iOS/Android/desktop-mobile readability while preserving larger desktop sizing.
 
 ## Become Vendor Page Launch (2026-06-04)
 
