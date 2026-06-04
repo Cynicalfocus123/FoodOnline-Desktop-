@@ -749,6 +749,8 @@
 - Mission-section mobile typography uses smaller mobile-only line groups for the green mission headline and orange global-serving statement so iOS, Android, and desktop-mobile browser widths stay readable without clipping; desktop keeps the larger original-style scale.
 - Janet Weiler's leadership portrait uses the exact supplied `.jfif` headshot copied into the public leadership assets and is rendered with contained bottom alignment plus a small CSS scale-down so the original image stays intact while fitting closer to the other leadership cards.
 - The standalone FoodOnlines logo marks that previously sat above the `ASIAN GROCERIES...` intro and `OUR MISSION...` sections are removed; the page should rely on the persistent site header/footer branding instead.
+- Janet Weiler's displayed card image should use a transparent-background PNG cutout generated from the supplied `.jfif` so the portrait blends into the white leadership card; keep the source `.jfif` available in public assets for reference.
+- Desktop hero heading copy should read as one continuous phrase, `CONNECTING PEOPLE AROUND THE WORLD WITH THE FOODS THEY LOVE MOST`, without a forced line break between clauses; the support paragraph belongs directly below the headline on desktop.
 
 ### Become Vendor Page Launch (2026-06-04)
 

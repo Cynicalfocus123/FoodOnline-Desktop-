@@ -1016,6 +1016,7 @@
 - The existing `/about-us` route and footer About Us link behavior remain unchanged.
 - Follow-up mobile typography update: the mission headline and orange global-serving statement use smaller mobile-only line layouts and font clamps for iOS/Android/desktop-mobile readability while preserving larger desktop sizing.
 - Follow-up leadership/logo update: Janet Weiler's leadership portrait now uses an exact copied public asset from the supplied `pages/about us page/4f8fea1f-e350-45d7-ab02-5bd999df95a3.jfif` file at `public/images/about/leadership/janet-weiler.jfif`, rendered with contained bottom fitting and a slight CSS scale-down so the original image is preserved while matching the other team portrait sizing. The in-page FoodOnlines logos above the `ASIAN GROCERIES...` and `OUR MISSION...` About sections were removed while leaving the shared site header/footer logos unchanged.
+- Follow-up Janet cutout and hero update: Janet Weiler's displayed leadership asset now uses a transparent-background PNG cutout generated from the supplied `.jfif` source so the portrait blends into the white card; the source `.jfif` remains in public assets for reference. The desktop hero headline no longer forces a break between `CONNECTING PEOPLE AROUND THE WORLD` and `WITH THE FOODS THEY LOVE MOST`, and the hero support paragraph now sits below the headline on desktop instead of in a right column.
 
 ## Become Vendor Page Launch (2026-06-04)
 

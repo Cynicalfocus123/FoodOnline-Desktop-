@@ -55,7 +55,7 @@ const leadershipCards = [
   {
     name: "Janet Weiler",
     role: "Chief Commercial Officer / CCO",
-    image: `${basePath}images/about/leadership/janet-weiler.jfif`,
+    image: `${basePath}images/about/leadership/janet-weiler.png`,
     imageAlt: "Janet Weiler",
     imageClassName: "object-contain object-bottom scale-[0.92]",
   },
@@ -164,7 +164,7 @@ export function AboutUsPage() {
     <div className="overflow-x-clip bg-white pt-[116px] font-['Poppins',Inter,'Nunito_Sans',ui-sans-serif,system-ui,sans-serif] text-black sm:pt-[128px] lg:pt-[138px]">
       <section className="bg-[#fff9ed] px-4 pb-8 pt-8 sm:px-6 sm:pb-10 sm:pt-10 lg:px-8 lg:pb-12">
         <div className="mx-auto max-w-[1648px]">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-14">
+          <div className="space-y-6">
             <h1 className="min-w-0 max-w-full text-[clamp(1.75rem,8vw,4.45rem)] font-extrabold uppercase leading-[1.14] tracking-normal sm:max-w-6xl">
               <span className="block sm:hidden">
                 <span className="block">CONNECTING PEOPLE</span>
@@ -173,12 +173,10 @@ export function AboutUsPage() {
                 <span className="block">THEY LOVE MOST</span>
               </span>
               <span className="hidden sm:block">
-                CONNECTING PEOPLE AROUND THE WORLD
-                <br />
-                WITH THE FOODS THEY LOVE MOST
+                CONNECTING PEOPLE AROUND THE WORLD WITH THE FOODS THEY LOVE MOST
               </span>
             </h1>
-            <p className="min-w-0 max-w-sm text-[clamp(1.1rem,2vw,1.55rem)] font-normal leading-snug lg:pt-3">
+            <p className="min-w-0 max-w-xl text-[clamp(1.1rem,2vw,1.55rem)] font-normal leading-snug">
               We are dedicated to serving
               <br />
               the world with high-quality
