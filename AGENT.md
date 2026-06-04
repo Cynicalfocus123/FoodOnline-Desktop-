@@ -940,3 +940,15 @@
 - Removed horizontal drag/touch/wheel carousel handlers, Previous/Next controls, pagination dots, and the old `.about-timeline-scroller` CSS because vertical native page scrolling is now the only timeline interaction.
 - Follow-up scroll fix: timeline containers now use horizontal-only overflow guarding plus explicit vertical pan behavior so users do not need to tap/focus the timeline area before continuing down the page.
 - Static-scroll follow-up: removed `overflow-x-hidden` and touch-action overrides from the About page wrapper and timeline section so no nested scroll container can form; the timeline is now plain static page content with body/document scrolling only.
+
+## About Us Pre-Timeline Story Images (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `public/images/about/about-global-foods.png`
+  - `public/images/about/about-authentic-flavors.png`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the supplied `Connecting People around the World with the Foods They Love Most` image above the timeline, followed immediately by the supplied `Bringing the world's authentic flavors to every table` image.
+- Both images use the existing About page responsive image component with full-width contain rendering, lazy loading, no crop, and normal static page scroll behavior for desktop, desktop-mobile browser widths, tablet, Android, and iOS.

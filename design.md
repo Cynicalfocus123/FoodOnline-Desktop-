@@ -703,6 +703,12 @@
 - Follow-up scroll fix: the timeline section now only guards horizontal overflow and explicitly uses vertical pan behavior, so users do not need to tap/focus the timeline before scrolling down through it.
 - Static-scroll follow-up: the About page wrapper and timeline section must not use `overflow-x-hidden`, `overflow-hidden`, sticky positioning, touch-action overrides, or any nested scroll container. Body/document scrolling should carry users normally up and down through the complete timeline.
 
+### About Us Pre-Timeline Story Images (2026-06-04)
+
+- Added two full-width static image sections above the vertical timeline: `public/images/about/about-global-foods.png` followed by `public/images/about/about-authentic-flavors.png`.
+- The images keep the shared About page responsive image treatment: max-width `1648px`, `width: 100%`, `height: auto`, `object-contain`, no crop, lazy loading, and normal body/document scrolling across desktop, desktop-mobile browser widths, tablet, Android, and iOS.
+- Timeline placement now starts after these two story images, then continues into the existing mission and delivery-scale image sections.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

@@ -86,13 +86,17 @@
       "background": "white",
       "sections": [
         "top_banner_image",
-        "horizontal_company_timeline",
+        "global_foods_image",
+        "authentic_flavors_image",
+        "vertical_company_timeline",
         "mission_image",
         "delivery_scale_image"
       ],
       "image_base_path": "/images/about/",
       "images": [
         "/images/about/about-hero.png",
+        "/images/about/about-global-foods.png",
+        "/images/about/about-authentic-flavors.png",
         "/images/about/about-mission.png",
         "/images/about/about-delivery-scale.png"
       ],
@@ -106,7 +110,7 @@
         "no_text_crop": true
       },
       "timeline": {
-        "placement": "directly_below_top_banner",
+        "placement": "below the two pre-timeline story images",
         "style": "open_vertical_scroll_story_path",
         "accent_color": "FoodOnlines green",
         "year_badges": "green rounded pills with white text",

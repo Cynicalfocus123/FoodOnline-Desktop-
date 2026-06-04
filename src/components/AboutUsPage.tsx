@@ -23,6 +23,21 @@ const aboutSections = [
   },
 ];
 
+const preTimelineSections = [
+  {
+    src: `${basePath}images/about/about-global-foods.png`,
+    alt: "Connecting people around the world with the foods they love most",
+    loading: "lazy" as const,
+    className: "pt-10 sm:pt-14 lg:pt-16",
+  },
+  {
+    src: `${basePath}images/about/about-authentic-flavors.png`,
+    alt: "Bringing the world's authentic flavors to every table",
+    loading: "lazy" as const,
+    className: "pt-8 sm:pt-10 lg:pt-12",
+  },
+];
+
 const timelineMilestones = [
   {
     year: "1999",
@@ -243,6 +258,9 @@ export function AboutUsPage() {
   return (
     <div className="bg-white pt-[116px] sm:pt-[128px] lg:pt-[138px]">
       <AboutImageSection {...aboutSections[0]} />
+      {preTimelineSections.map((section) => (
+        <AboutImageSection key={section.src} {...section} />
+      ))}
       <AboutTimelineSection />
       {aboutSections.slice(1).map((section) => (
         <AboutImageSection key={section.src} {...section} />
