@@ -90,7 +90,8 @@
         "authentic_flavors_image",
         "vertical_company_timeline",
         "mission_image",
-        "delivery_scale_image"
+        "delivery_scale_image",
+        "leadership_placeholder_grid"
       ],
       "image_base_path": "/images/about/",
       "images": [
@@ -109,6 +110,15 @@
         "middle_and_bottom_lazy_loaded": true,
         "no_horizontal_overflow": true,
         "no_text_crop": true
+      },
+      "leadership_placeholders": {
+        "placement": "directly below delivery_scale_image",
+        "count": 8,
+        "desktop_layout": "4 columns x 2 rows",
+        "tablet_layout": "2 columns",
+        "mobile_layout": "1 column",
+        "content": "blank placeholders only; no images or text yet",
+        "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes"
       },
       "timeline": {
         "placement": "below the two pre-timeline story images",

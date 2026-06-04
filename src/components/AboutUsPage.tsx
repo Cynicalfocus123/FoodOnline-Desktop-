@@ -38,6 +38,8 @@ const preTimelineSections = [
   },
 ];
 
+const leadershipPlaceholders = Array.from({ length: 8 }, (_, index) => index);
+
 const timelineMilestones = [
   {
     year: "1999",
@@ -238,6 +240,28 @@ function AboutTimelineSection() {
   );
 }
 
+function LeadershipPlaceholderSection() {
+  const reveal = useReveal<HTMLElement>();
+
+  return (
+    <section
+      aria-label="FoodOnlines leadership"
+      ref={reveal.ref}
+      className={`mx-auto w-full max-w-[1648px] px-4 pb-12 pt-0 transition-all duration-700 ease-out sm:px-6 sm:pb-16 lg:px-8 lg:pb-20 ${reveal.className}`}
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+        {leadershipPlaceholders.map((slot) => (
+          <article
+            aria-label={`Leadership placeholder ${slot + 1}`}
+            className="min-h-[360px] rounded-[26px] border border-neutral-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.06)] sm:min-h-[420px] lg:min-h-[520px]"
+            key={slot}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function AboutUsPage() {
   useEffect(() => {
     document.title = "About FoodOnlines | Asian Groceries Online";
@@ -265,6 +289,7 @@ export function AboutUsPage() {
       {aboutSections.slice(1).map((section) => (
         <AboutImageSection key={section.src} {...section} />
       ))}
+      <LeadershipPlaceholderSection />
     </div>
   );
 }

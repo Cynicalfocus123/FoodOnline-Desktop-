@@ -953,3 +953,14 @@
 - Added the supplied `Connecting People around the World with the Foods They Love Most` image above the timeline, followed immediately by the supplied `Bringing the world's authentic flavors to every table` image.
 - Both images use the existing About page responsive image component with full-width contain rendering, lazy loading, no crop, and normal static page scroll behavior for desktop, desktop-mobile browser widths, tablet, Android, and iOS.
 - Follow-up spacing fix: removed the second pre-timeline image section's top padding so the two supplied story images sit close and seamless together.
+
+## About Us Leadership Placeholder Grid (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added an empty leadership placeholder grid directly below the truck/delivery-scale banner image.
+- Grid has eight blank rounded white boxes, with no names, roles, text, or images added yet.
+- Layout is 4 columns x 2 rows on desktop, 2 columns on tablet, and 1 column on small mobile so the cards remain clean across desktop, desktop-mobile widths, Android, and iOS.

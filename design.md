@@ -710,6 +710,12 @@
 - The two pre-timeline story images should sit flush together with no added section gap between them, so the second image uses `pt-0`.
 - Timeline placement now starts after these two story images, then continues into the existing mission and delivery-scale image sections.
 
+### About Us Leadership Placeholder Grid (2026-06-04)
+
+- Added a blank leadership grid directly below the truck/delivery-scale banner image.
+- The grid contains eight empty white rounded boxes with light borders and subtle shadow, matching the sample card structure without adding any names, roles, images, or placeholder text.
+- Desktop uses 4 boxes per row for 2 rows total; tablet uses 2 columns; small mobile stacks to 1 column so the boxes stay usable on Android, iOS, and narrow browser widths.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
