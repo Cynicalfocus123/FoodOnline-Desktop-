@@ -51,6 +51,7 @@
 - Logged-in users stay on the public homepage storefront design and see account identity only in the header account control/dropdown. The homepage must not render a separate signed-in account summary block or extra logout panel.
 - Public page switches reset scroll position to the top for home, signup, and login so navigation never inherits the previous page's scroll depth.
 - Become-a-vendor signup/login CTAs preserve browser history. Clicking the image-overlay buttons routes to explicit `#signup` or `#login` entries while leaving `/become-vendor` behind them, so browser Back returns to the vendor page and Forward restores the auth screen. Successful auth can also return to `become-vendor`, `about-us`, or `company/drivers` through the shared auth return-route logic.
+- Become Vendor page design update on 2026-06-04: the page is now a continuous responsive light-green landing page (`#c4dfb8`-style background) built from real React/HTML sections instead of full text-banner images. It preserves the original black bold headline style, orange outline CTA buttons, green brand accents, stats row, selling/globe section, white scale cards, colorful three-step cards, and final signup/login CTA while keeping all text editable and readable on desktop, tablet, and mobile. Banner images are no longer used as full text sections because the embedded text was too small on mobile; local logo/product assets and code-drawn decorative icons/illustrations are used only as visuals.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
 - Production build now uses relative asset paths so the frontend can be uploaded safely into `public_html/app/` on cPanel without breaking asset URLs.
@@ -736,11 +737,11 @@
 ### Become Vendor Page Launch (2026-06-04)
 
 - Added the FoodOnlines `Become a Vendor` / `Sell Globally` page at `/become-vendor`, with `#become-vendor` SPA fallback support.
-- The page uses six supplied full-width image sections in this order: hero, stats, who's selling, scale business, three simple steps, and final start-selling CTA.
-- Section images stack with no padding, margins, borders, white gaps, or crop behavior; the page background uses matching light green `#c4dfb8` so the uploaded green artwork reads as one continuous scroll.
-- Transparent accessible CTA overlays preserve the original raster button visuals while making the hero `GET STARTED`, bottom `Sign up`, and bottom `Log in` areas functional.
-- Vendor signup overlays open the existing public signup/register flow, and the login overlay opens the existing public login flow. The footer `Become a Vendor` link opens the new page.
-- Responsive behavior keeps every section image at `display: block; width: 100%; height: auto;` with no horizontal overflow across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
+- The page now uses six hardcoded responsive React sections in this order: hero, stats, who's selling, scale business, three simple steps, and final start-selling CTA.
+- Sections use the matching light green `#c4dfb8` background as one continuous scroll, with real editable text instead of full banner-image text.
+- Real accessible CTA buttons preserve the orange outline/circle-arrow visual style while making hero `GET STARTED`, bottom `Sign up`, and bottom `Log in` functional.
+- Vendor signup buttons open the existing public signup/register flow, and the login button opens the existing public login flow. The footer `Become a Vendor` link opens the rebuilt page.
+- Responsive behavior uses code-native layout, readable `clamp()` type, stacked mobile cards, and resized decorative assets with no intended horizontal overflow across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
 
 ## Guardrails
 
