@@ -307,11 +307,9 @@ export function AboutUsPage() {
 
             <p className="mt-7 max-w-4xl text-[clamp(1.22rem,5.1vw,2rem)] font-bold leading-[1.16] text-[#ff6b1a] sm:mt-9 sm:text-[clamp(1.75rem,3.5vw,3.15rem)] sm:leading-tight">
               <span className="block sm:hidden">
-                <span className="block">Proudly serving customers</span>
-                <span className="block">worldwide,</span>
-                <span className="block">We are one of the largest</span>
-                <span className="block">online destinations for</span>
-                <span className="block">Asian groceries.</span>
+                <span className="block">Proudly serving customers worldwide,</span>
+                <span className="block">We are one of the largest online</span>
+                <span className="block">destinations for Asian groceries.</span>
               </span>
               <span className="hidden sm:block">
                 Proudly serving customers worldwide,
