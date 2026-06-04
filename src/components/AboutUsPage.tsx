@@ -68,7 +68,7 @@ const leadershipCards = [
     role: "COO",
     image: `${basePath}images/about/leadership/lucas-huber.png`,
     imageAlt: "Lucas Huber",
-    imageClassName: "scale-[1.13]",
+    imageClassName: "object-contain object-bottom scale-[1.13]",
   },
   {
     name: "Anna Goldstein",

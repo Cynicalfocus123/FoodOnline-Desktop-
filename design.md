@@ -722,6 +722,11 @@
 - Follow-up image sizing: Lucas and Ahmet are slightly scaled up inside the same portrait frame, while the newer Anna/Janet white-background images replace the earlier gray-background female portraits and use object-cover positioning to keep the card image areas visually consistent.
 - Gray-backdrop fix: Anna, Janet, and Ahmet leadership assets have their connected light gray studio backdrop whitened so the portraits sit on the white card background; Ahmet uses a top-weighted object-cover crop to avoid lower source artifacts.
 
+### About Us Lucas Leadership Image Fix (2026-06-04)
+
+- Lucas Huber's leadership portrait now uses the same `object-contain object-bottom` image fitting as the other contained leadership portraits, with the existing slight scale-up preserved so the image no longer squeezes on mobile.
+- The Lucas source asset has its connected pale gray studio backdrop cleaned to white so it sits inside the existing white bordered card like the surrounding leadership images.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

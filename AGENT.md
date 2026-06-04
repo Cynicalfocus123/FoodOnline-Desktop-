@@ -978,3 +978,13 @@
 - Follow-up styling update: softened names to semibold, roles to normal weight, and set every filled card to use the same fixed-height lower portrait frame with `object-contain object-bottom` so images align evenly.
 - Latest content update: filled card 8 with Ahmet Yılmaz (Chief Customer & Experience Officer / CXO), replaced Anna and Janet with the newer white-background images, and scaled Lucas/Ahmet slightly larger within the same fixed portrait frame.
 - Gray-backdrop fix: whitened the connected light gray studio backdrop in Anna, Janet, and Ahmet public image assets, then changed Ahmet to a top-weighted object-cover crop so lower source artifacts do not show in the leadership card.
+
+## About Us Lucas Leadership Image Fix (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `public/images/about/leadership/lucas-huber.png`
+  - `AGENT.md`
+  - `design.md`
+- Restored Lucas Huber's leadership image to the shared `object-contain object-bottom` portrait fitting while keeping the slight scale-up, preventing mobile browser widths from squeezing the image inside the fixed portrait frame.
+- Cleaned the connected pale gray studio backdrop in the Lucas asset to read as a white card background without changing the card layout or other leadership portraits.
