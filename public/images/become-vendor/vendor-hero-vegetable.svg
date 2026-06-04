@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 340" role="img" aria-label="Leafy vegetable">
+  <defs>
+    <linearGradient id="leaf-a" x1="0" x2="1" y1="1" y2="0">
+      <stop offset="0" stop-color="#2f7d28"/>
+      <stop offset="0.52" stop-color="#65ad3d"/>
+      <stop offset="1" stop-color="#cce59b"/>
+    </linearGradient>
+    <linearGradient id="leaf-b" x1="0" x2="1" y1="1" y2="0">
+      <stop offset="0" stop-color="#1f6a24"/>
+      <stop offset="0.55" stop-color="#68b44a"/>
+      <stop offset="1" stop-color="#e1efb7"/>
+    </linearGradient>
+    <linearGradient id="stalk" x1="0" x2="1" y1="1" y2="0">
+      <stop offset="0" stop-color="#f5f7d2"/>
+      <stop offset="1" stop-color="#76bd4b"/>
+    </linearGradient>
+    <filter id="veg-shadow" color-interpolation-filters="sRGB" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="12" stdDeviation="9" flood-color="#294b22" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <g filter="url(#veg-shadow)">
+    <path d="M172 330c12-80 37-164 74-253 9-20 39-10 33 11-23 82-42 161-47 242Z" fill="url(#stalk)"/>
+    <path d="M229 321c4-71 26-149 71-235 11-21 41-7 32 14-32 76-50 148-48 221Z" fill="url(#stalk)"/>
+    <path d="M118 301c28-76 64-143 111-200 15-18 42 2 29 22-43 62-72 123-91 189Z" fill="url(#stalk)"/>
+    <path d="M160 156C89 115 84 51 127 19c53-39 129 25 126 91-3 72-52 87-93 46Z" fill="url(#leaf-a)"/>
+    <path d="M257 134c-30-73 14-128 70-125 68 4 102 101 57 157-48 60-102 25-127-32Z" fill="url(#leaf-b)"/>
+    <path d="M88 236C25 213 9 158 41 121c39-45 120-8 135 50 17 66-43 92-88 65Z" fill="url(#leaf-a)"/>
+    <path d="M218 245c-42-61-18-121 32-132 61-13 116 67 90 130-29 70-88 50-122 2Z" fill="url(#leaf-b)"/>
+    <path d="M152 48c25 55 31 92 10 117M317 32c-26 57-40 92-33 126M67 138c45 32 73 59 84 96M262 135c9 45 1 79-29 109" fill="none" stroke="#e3f4c2" stroke-linecap="round" stroke-width="8" opacity=".82"/>
+    <path d="M123 91c35 8 60 25 74 51M297 77c32 17 48 43 47 78M76 178c31 2 55 14 73 35M251 186c30 2 54 16 72 42" fill="none" stroke="#386c2d" stroke-linecap="round" stroke-width="4" opacity=".35"/>
+  </g>
+</svg>

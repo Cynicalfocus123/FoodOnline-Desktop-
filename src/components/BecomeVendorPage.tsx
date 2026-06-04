@@ -2,9 +2,9 @@ import { useEffect, type ReactNode } from "react";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
-const vendorFoodGlobeImage = `${basePath}images/become-vendor/vendor-food-globe.png`;
-const vendorHeroTomatoImage = `${basePath}images/become-vendor/vendor-hero-tomato-cutout.png`;
-const vendorHeroVegetableImage = `${basePath}images/become-vendor/vendor-hero-vegetable-cutout.png`;
+const vendorFoodGlobeImage = `${basePath}images/become-vendor/vendor-food-globe-transparent.png`;
+const vendorHeroTomatoImage = `${basePath}images/become-vendor/vendor-hero-tomato.svg`;
+const vendorHeroVegetableImage = `${basePath}images/become-vendor/vendor-hero-vegetable.svg`;
 
 const stats = [
   {
@@ -283,7 +283,7 @@ export function BecomeVendorPage() {
           <div className="absolute -right-8 top-0 h-[42%] w-[68%] overflow-visible rounded-full bg-[#a8cbda] shadow-[0_18px_40px_rgba(53,96,41,0.08)] sm:-right-14 lg:-right-16">
             <img
               alt=""
-              className="pointer-events-none absolute -bottom-[18%] -right-[10%] h-[128%] max-w-none object-contain drop-shadow-[0_16px_20px_rgba(45,73,28,0.12)]"
+              className="pointer-events-none absolute -right-[8%] top-[-16%] h-[118%] max-w-none object-contain drop-shadow-[0_16px_20px_rgba(45,73,28,0.12)]"
               draggable={false}
               src={vendorHeroVegetableImage}
             />
@@ -291,7 +291,7 @@ export function BecomeVendorPage() {
           <div className="absolute -bottom-2 left-[4%] h-[58%] w-[90%] overflow-visible rounded-full bg-[#f6cf74] shadow-[0_18px_40px_rgba(53,96,41,0.08)] sm:-bottom-4 lg:-bottom-6">
             <img
               alt=""
-              className="pointer-events-none absolute -bottom-[6%] -right-[4%] h-[112%] max-w-none object-contain drop-shadow-[0_18px_24px_rgba(101,64,22,0.16)]"
+              className="pointer-events-none absolute -bottom-[10%] left-[18%] h-[88%] max-w-none object-contain drop-shadow-[0_18px_24px_rgba(101,64,22,0.16)]"
               draggable={false}
               src={vendorHeroTomatoImage}
             />
