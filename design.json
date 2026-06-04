@@ -123,16 +123,17 @@
           "Natalie - CFO",
           "Lucas Huber - COO",
           "Anna Goldstein - Chief Marketing Officer / CMO",
-          "Janet Weiler - Chief Commercial Officer / CCO"
+          "Janet Weiler - Chief Commercial Officer / CCO",
+          "Ahmet Yılmaz - Chief Customer & Experience Officer / CXO"
         ],
-        "blank_cards": 1,
+        "blank_cards": 0,
         "desktop_layout": "4 columns x 2 rows",
         "tablet_layout": "2 columns",
         "mobile_layout": "1 column",
-        "content": "first seven cards include supplied headshot, name, and role; final card stays blank placeholder",
+        "content": "all eight cards include supplied headshot, name, and role",
         "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes",
         "typography": "names use semibold weight and roles use normal weight so text is not overly bold",
-        "image_alignment": "all filled cards use the same fixed portrait frame height with object-contain object-bottom"
+        "image_alignment": "all filled cards use the same fixed portrait frame height; Lucas and Ahmet are slightly scaled up, and the newer Anna/Janet white-background portraits fill the frame with object-cover"
       },
       "timeline": {
         "placement": "below the two pre-timeline story images",

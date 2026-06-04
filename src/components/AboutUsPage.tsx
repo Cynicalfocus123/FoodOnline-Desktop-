@@ -68,20 +68,29 @@ const leadershipCards = [
     role: "COO",
     image: `${basePath}images/about/leadership/lucas-huber.png`,
     imageAlt: "Lucas Huber",
+    imageClassName: "scale-[1.13]",
   },
   {
     name: "Anna Goldstein",
     role: "Chief Marketing Officer / CMO",
     image: `${basePath}images/about/leadership/anna-goldstein.png`,
     imageAlt: "Anna Goldstein",
+    imageClassName: "object-cover object-[50%_20%]",
   },
   {
     name: "Janet Weiler",
     role: "Chief Commercial Officer / CCO",
     image: `${basePath}images/about/leadership/janet-weiler.png`,
     imageAlt: "Janet Weiler",
+    imageClassName: "object-cover object-[50%_18%]",
   },
-  null,
+  {
+    name: "Ahmet Yılmaz",
+    role: "Chief Customer & Experience Officer / CXO",
+    image: `${basePath}images/about/leadership/ahmet-yilmaz.png`,
+    imageAlt: "Ahmet Yılmaz",
+    imageClassName: "object-contain object-bottom scale-[1.08]",
+  },
 ];
 
 const timelineMilestones = [
@@ -314,7 +323,7 @@ function LeadershipPlaceholderSection() {
                 <div className="mt-auto flex h-[260px] items-end justify-center px-2 pt-2 sm:h-[310px] lg:h-[380px]">
                   <img
                     alt={leader.imageAlt}
-                    className="h-full w-full object-contain object-bottom"
+                    className={`h-full w-full ${leader.imageClassName ?? "object-contain object-bottom"}`}
                     decoding="async"
                     loading="lazy"
                     src={leader.image}

@@ -965,13 +965,15 @@
   - `public/images/about/leadership/lucas-huber.png`
   - `public/images/about/leadership/anna-goldstein.png`
   - `public/images/about/leadership/janet-weiler.png`
+  - `public/images/about/leadership/ahmet-yilmaz.png`
   - `AGENT.md`
   - `design.md`
   - `design.json`
 - Added an empty leadership placeholder grid directly below the truck/delivery-scale banner image.
 - Added a large bold green `Our leadership` H2 above the first card row, matching the sample heading placement while using FoodOnlines green.
-- Grid keeps eight rounded white card slots; the first seven are filled and the last one remains blank.
+- Grid keeps eight rounded white card slots and all eight are now filled.
 - Layout is 4 columns x 2 rows on desktop, 2 columns on tablet, and 1 column on small mobile so the cards remain clean across desktop, desktop-mobile widths, Android, and iOS.
 - Leadership content update: filled cards 1-5 with supplied headshots and roles for Jakapun Viwatkurkul (President and Founder), Paul Pongpichan (CSCO), Pasit Viwatkurkul (CTO), Natalie (CFO), and Lucas Huber (COO).
-- Follow-up content update: filled cards 6-7 with Anna Goldstein (Chief Marketing Officer / CMO) and Janet Weiler (Chief Commercial Officer / CCO), leaving only card 8 blank.
+- Follow-up content update: filled cards 6-7 with Anna Goldstein (Chief Marketing Officer / CMO) and Janet Weiler (Chief Commercial Officer / CCO).
 - Follow-up styling update: softened names to semibold, roles to normal weight, and set every filled card to use the same fixed-height lower portrait frame with `object-contain object-bottom` so images align evenly.
+- Latest content update: filled card 8 with Ahmet Yılmaz (Chief Customer & Experience Officer / CXO), replaced Anna and Janet with the newer white-background images, and scaled Lucas/Ahmet slightly larger within the same fixed portrait frame.
