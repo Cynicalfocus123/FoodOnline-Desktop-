@@ -140,7 +140,9 @@
           "snap_scrolling": false,
           "dot_navigation": false,
           "keyboard_focusable_dots": false,
-          "native_down_page_scroll_to_end": true
+          "native_down_page_scroll_to_end": true,
+          "requires_tap_or_focus_before_scroll": false,
+          "touch_action": "pan-y"
         }
       }
     },

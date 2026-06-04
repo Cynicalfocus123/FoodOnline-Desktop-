@@ -700,6 +700,7 @@
 - The green connector line now runs vertically through the section, with circular green nodes and the existing real milestone images preserved.
 - Mobile uses a single left-side vertical path with content flowing downward; wider screens alternate text and image columns around the center line.
 - Horizontal drag, touch-swipe, wheel interception, Previous/Next buttons, and pagination dots are removed because native vertical page scrolling is now the intended interaction.
+- Follow-up scroll fix: the timeline section now only guards horizontal overflow and explicitly uses vertical pan behavior, so users do not need to tap/focus the timeline before scrolling down through it.
 
 ## Guardrails
 

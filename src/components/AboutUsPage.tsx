@@ -137,7 +137,10 @@ function AboutImageSection({
 
 function AboutTimelineSection() {
   return (
-    <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
+    <section
+      aria-label="FoodOnlines company timeline"
+      className="overflow-x-hidden bg-[#f3f4f2] py-12 [touch-action:pan-y] sm:py-16 lg:py-20"
+    >
       <div className="mx-auto max-w-[1648px] px-4 sm:px-6 lg:px-8">
         <div className="px-4 text-center sm:px-6">
           <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
@@ -145,10 +148,10 @@ function AboutTimelineSection() {
           </h2>
         </div>
 
-        <div className="relative mx-auto mt-12 max-w-6xl pb-2 sm:mt-16 lg:mt-20">
+        <div className="relative mx-auto mt-12 max-w-6xl pb-2 [touch-action:pan-y] sm:mt-16 lg:mt-20">
           <div
             aria-hidden="true"
-            className="absolute bottom-10 left-[34px] top-6 w-1 rounded-full bg-leaf-500 sm:left-1/2 sm:-translate-x-1/2"
+            className="pointer-events-none absolute bottom-10 left-[34px] top-6 w-1 rounded-full bg-leaf-500 sm:left-1/2 sm:-translate-x-1/2"
           />
           <div className="space-y-12 sm:space-y-16 lg:space-y-20">
             {timelineMilestones.map((milestone, index) => {
@@ -159,7 +162,7 @@ function AboutTimelineSection() {
               return (
                 <article
                   aria-label={`${milestone.year}: ${milestone.title}`}
-                  className="relative grid gap-6 pl-24 sm:grid-cols-2 sm:items-center sm:gap-0 sm:pl-0"
+                  className="relative grid gap-6 pl-24 [touch-action:pan-y] sm:grid-cols-2 sm:items-center sm:gap-0 sm:pl-0"
                   key={milestone.year}
                 >
                   <span
