@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { assets } from "../data/home";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -58,7 +57,7 @@ const leadershipCards = [
     role: "Chief Commercial Officer / CCO",
     image: `${basePath}images/about/leadership/janet-weiler.png`,
     imageAlt: "Janet Weiler",
-    imageClassName: "object-cover object-[50%_18%]",
+    imageClassName: "object-contain object-bottom",
   },
   {
     name: "Ahmet Yılmaz",
@@ -68,17 +67,6 @@ const leadershipCards = [
     imageClassName: "object-cover object-[50%_12%]",
   },
 ];
-
-function LogoMark({ className = "" }: { className?: string }) {
-  return (
-    <img
-      alt="FoodOnlines.com"
-      className={`h-auto w-full object-contain ${className}`}
-      decoding="async"
-      src={assets.logo}
-    />
-  );
-}
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -209,11 +197,7 @@ export function AboutUsPage() {
 
       <section className="relative overflow-hidden bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-[1648px] text-center">
-          <div className="mx-auto w-[min(480px,78vw)]">
-            <LogoMark />
-          </div>
-
-          <h2 className="mx-auto mt-16 max-w-[1320px] text-[clamp(1.7rem,7.6vw,4.6rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00]">
+          <h2 className="mx-auto max-w-[1320px] text-[clamp(1.7rem,7.6vw,4.6rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00]">
             <span className="block sm:hidden">
               <span className="block">ASIAN GROCERIES</span>
               <span className="block">SHOULD BE WIDELY</span>
@@ -282,11 +266,7 @@ export function AboutUsPage() {
       <section className="overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-[4.5rem] lg:px-8 lg:py-20">
         <div className="mx-auto grid max-w-[1648px] gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center lg:gap-14">
           <div>
-            <div className="w-[min(350px,74vw)]">
-              <LogoMark />
-            </div>
-
-            <h2 className="mt-10 max-w-[1160px] text-[clamp(1.22rem,5.2vw,2.25rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00] sm:mt-12 sm:text-[clamp(2.05rem,4.6vw,4.15rem)] sm:leading-[1.22]">
+            <h2 className="max-w-[1160px] text-[clamp(1.22rem,5.2vw,2.25rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00] sm:text-[clamp(2.05rem,4.6vw,4.15rem)] sm:leading-[1.22]">
               <span className="block sm:hidden">
                 <span className="block">OUR MISSION IS TO MAKE</span>
                 <span className="block">AUTHENTIC ASIAN GROCERIES</span>

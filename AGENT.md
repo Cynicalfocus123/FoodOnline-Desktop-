@@ -1015,6 +1015,7 @@
 - The previous story banner images are no longer rendered as page content; decorative image areas now use named placeholder divs and visible circle layouts ready for future asset replacement, without dashed placeholder boxes or label boxes inside the image areas.
 - The existing `/about-us` route and footer About Us link behavior remain unchanged.
 - Follow-up mobile typography update: the mission headline and orange global-serving statement use smaller mobile-only line layouts and font clamps for iOS/Android/desktop-mobile readability while preserving larger desktop sizing.
+- Follow-up leadership/logo update: Janet Weiler's leadership portrait now uses the supplied `4f8fea1f-e350-45d7-ab02-5bd999df95a3.jfif` source as a padded `public/images/about/leadership/janet-weiler.png` asset with contained bottom fitting so it appears zoomed out like the other team portraits. The in-page FoodOnlines logos above the `ASIAN GROCERIES...` and `OUR MISSION...` About sections were removed while leaving the shared site header/footer logos unchanged.
 
 ## Become Vendor Page Launch (2026-06-04)
 
