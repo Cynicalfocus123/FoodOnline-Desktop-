@@ -53,6 +53,12 @@ function readAuthReturnRoute(
       return "checkout";
     case "account":
       return state.accountSection === "overview" ? "account" : `account/${state.accountSection}`;
+    case "aboutUs":
+      return "about-us";
+    case "becomeVendor":
+      return "become-vendor";
+    case "drivers":
+      return "company/drivers";
     default:
       return null;
   }
@@ -87,6 +93,22 @@ function isCartHash(hash: string) {
 
 function isCheckoutHash(hash: string) {
   return /^#checkout(?:[/?#].*)?$/i.test(hash);
+}
+
+function isSignupHash(hash: string) {
+  return /^#signup(?:[/?#].*)?$/i.test(hash);
+}
+
+function isLoginHash(hash: string) {
+  return /^#login(?:[/?#].*)?$/i.test(hash);
+}
+
+function writeAuthRouteHash(route: "signup" | "login") {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.history.pushState(null, "", `${import.meta.env.BASE_URL}#${route}`);
 }
 
 function isDriversRoute(hash: string) {
@@ -170,6 +192,8 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#cart") ||
     window.location.hash.startsWith("#checkout") ||
     window.location.hash.startsWith("#account") ||
+    window.location.hash.startsWith("#signup") ||
+    window.location.hash.startsWith("#login") ||
     window.location.hash.startsWith("#about-us") ||
     window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#company/drivers") ||
@@ -283,7 +307,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   isSubmittingSignup: false,
   openSignup: () =>
     set((state) => {
-      writeRouteHash(null);
+      writeAuthRouteHash("signup");
       return {
         siteView: "signup",
         authReturnRoute: readAuthReturnRoute(state),
@@ -300,7 +324,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }),
   openLogin: () =>
     set((state) => {
-      writeRouteHash(null);
+      writeAuthRouteHash("login");
       return {
         siteView: "login",
         authReturnRoute: readAuthReturnRoute(state),
@@ -462,6 +486,27 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       const categorySlug = readCategorySlugFromHash(hash);
       const searchQuery = readSearchQueryFromHash(hash);
       const accountSection = readAccountSectionFromHash(hash);
+
+      if (isSignupHash(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "signup",
+          signupStep: state.signupStep,
+          selectedProductId: null,
+          selectedCategorySlug: null,
+          accountSection: "overview",
+        };
+      }
+
+      if (isLoginHash(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "login",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+          accountSection: "overview",
+        };
+      }
 
       if (isAboutUsRoute(hash)) {
         return {

@@ -50,6 +50,7 @@
 - Mobile signup inputs disable autocapitalization/autocorrection for email, Line ID, password, and confirm password to prevent mobile keyboard mutation without changing layout.
 - Logged-in users stay on the public homepage storefront design and see account identity only in the header account control/dropdown. The homepage must not render a separate signed-in account summary block or extra logout panel.
 - Public page switches reset scroll position to the top for home, signup, and login so navigation never inherits the previous page's scroll depth.
+- Become-a-vendor signup/login CTAs preserve browser history. Clicking the image-overlay buttons routes to explicit `#signup` or `#login` entries while leaving `/become-vendor` behind them, so browser Back returns to the vendor page and Forward restores the auth screen. Successful auth can also return to `become-vendor`, `about-us`, or `company/drivers` through the shared auth return-route logic.
 - Generated build, dependency, and dev-log folders stay untracked via `.gitignore`.
 - README documents local install, dev, and build commands.
 - Production build now uses relative asset paths so the frontend can be uploaded safely into `public_html/app/` on cPanel without breaking asset URLs.
