@@ -121,14 +121,18 @@
           "Paul Pongpichan - CSCO (Chief Supply Chain Officer)",
           "Pasit Viwatkurkul - CTO",
           "Natalie - CFO",
-          "Lucas Huber - COO"
+          "Lucas Huber - COO",
+          "Anna Goldstein - Chief Marketing Officer / CMO",
+          "Janet Weiler - Chief Commercial Officer / CCO"
         ],
-        "blank_cards": 3,
+        "blank_cards": 1,
         "desktop_layout": "4 columns x 2 rows",
         "tablet_layout": "2 columns",
         "mobile_layout": "1 column",
-        "content": "first five cards include supplied headshot, name, and role; remaining three cards stay blank placeholders",
-        "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes"
+        "content": "first seven cards include supplied headshot, name, and role; final card stays blank placeholder",
+        "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes",
+        "typography": "names use semibold weight and roles use normal weight so text is not overly bold",
+        "image_alignment": "all filled cards use the same fixed portrait frame height with object-contain object-bottom"
       },
       "timeline": {
         "placement": "below the two pre-timeline story images",

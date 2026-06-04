@@ -69,8 +69,18 @@ const leadershipCards = [
     image: `${basePath}images/about/leadership/lucas-huber.png`,
     imageAlt: "Lucas Huber",
   },
-  null,
-  null,
+  {
+    name: "Anna Goldstein",
+    role: "Chief Marketing Officer / CMO",
+    image: `${basePath}images/about/leadership/anna-goldstein.png`,
+    imageAlt: "Anna Goldstein",
+  },
+  {
+    name: "Janet Weiler",
+    role: "Chief Commercial Officer / CCO",
+    image: `${basePath}images/about/leadership/janet-weiler.png`,
+    imageAlt: "Janet Weiler",
+  },
   null,
 ];
 
@@ -296,15 +306,15 @@ function LeadershipPlaceholderSection() {
             {leader ? (
               <>
                 <div className="px-6 pb-4 pt-7 sm:px-7 sm:pt-8 lg:px-8">
-                  <h3 className="text-[1.75rem] font-black leading-tight tracking-normal text-neutral-950 sm:text-[2rem]">
+                  <h3 className="text-[1.75rem] font-semibold leading-tight tracking-normal text-neutral-950 sm:text-[2rem]">
                     {leader.name}
                   </h3>
-                  <p className="mt-2 text-lg font-medium leading-snug text-neutral-950 sm:text-xl">{leader.role}</p>
+                  <p className="mt-2 text-lg font-normal leading-snug text-neutral-950 sm:text-xl">{leader.role}</p>
                 </div>
-                <div className="mt-auto flex min-h-[240px] flex-1 items-end justify-center px-2 pt-2 sm:min-h-[280px] lg:min-h-[360px]">
+                <div className="mt-auto flex h-[260px] items-end justify-center px-2 pt-2 sm:h-[310px] lg:h-[380px]">
                   <img
                     alt={leader.imageAlt}
-                    className="h-full max-h-[420px] w-full object-contain object-bottom"
+                    className="h-full w-full object-contain object-bottom"
                     decoding="async"
                     loading="lazy"
                     src={leader.image}
