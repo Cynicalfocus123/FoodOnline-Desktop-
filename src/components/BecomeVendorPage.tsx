@@ -3,6 +3,7 @@ import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
 const vendorHeroImage = `${basePath}images/become-vendor/vendor-hero.png`;
+const vendorSellingImage = `${basePath}images/become-vendor/vendor-selling.png`;
 
 const stats = [
   {
@@ -92,21 +93,21 @@ function VendorCtaButton({
 }) {
   return (
     <button
-      className={`inline-flex min-h-14 items-center justify-center gap-4 rounded-full border-[6px] border-[#ff6b1a] bg-white px-7 font-semibold text-[#ff6b1a] shadow-[0_12px_30px_rgba(54,91,31,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(54,91,31,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30 ${
-        variant === "large" ? "text-[clamp(2rem,5vw,3.8rem)] lg:min-h-28 lg:px-16" : "text-[clamp(1.25rem,2.6vw,2.15rem)]"
+      className={`inline-flex min-h-12 items-center justify-center gap-3 rounded-full border-[5px] border-[#ff6b1a] bg-white px-6 font-semibold text-[#ff6b1a] shadow-[0_12px_30px_rgba(54,91,31,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(54,91,31,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30 sm:min-h-14 sm:gap-4 sm:px-7 ${
+        variant === "large" ? "text-[clamp(1.45rem,3.2vw,2.8rem)] lg:min-h-24 lg:px-14" : "text-[clamp(1.05rem,1.9vw,1.55rem)]"
       } ${className}`}
       onClick={onClick}
       type="button"
     >
       <span>{children}</span>
-      <ArrowCircle className={variant === "large" ? "h-14 w-14 lg:h-20 lg:w-20" : ""} />
+      <ArrowCircle className={variant === "large" ? "h-12 w-12 lg:h-16 lg:w-16" : ""} />
     </button>
   );
 }
 
 function SparkIcon() {
   return (
-    <svg aria-hidden="true" className="h-12 w-12 shrink-0 text-black sm:h-16 sm:w-16" fill="currentColor" viewBox="0 0 64 64">
+    <svg aria-hidden="true" className="h-8 w-8 shrink-0 text-black sm:h-11 sm:w-11 lg:h-12 lg:w-12" fill="currentColor" viewBox="0 0 64 64">
       <path d="M32 2c3.7 16.1 8.9 24.3 25 30-16.1 5.7-24.3 13.9-30 30-5.7-16.1-13.9-24.3-30-30 16.1-5.7 24.3-13.9 30-30Z" />
     </svg>
   );
@@ -149,17 +150,15 @@ function FulfillmentIcon() {
 
 function GlobeGraphic() {
   return (
-    <div aria-hidden="true" className="relative h-[230px] w-[230px] sm:h-[310px] sm:w-[310px] lg:h-[400px] lg:w-[400px]">
-      <div className="absolute inset-0 rounded-full bg-[#64bd00]" />
-      <svg className="absolute inset-[10%] h-[80%] w-[80%] text-black" fill="none" viewBox="0 0 300 300">
-        <circle cx="150" cy="150" r="138" stroke="currentColor" strokeWidth="3" />
-        <path d="M32 118c46-18 87-20 124-4 42 17 83 9 112-4M42 202c35-18 72-20 111-3 38 16 77 13 116-9M150 12c-34 37-51 84-51 140s17 102 51 136M150 12c34 37 51 84 51 140s-17 102-51 136" stroke="currentColor" strokeWidth="2" />
-        <path d="M49 84 95 52l59 23 59-40 38 72-41 45 29 66-88 28-52-33-65 24-19-74Z" fill="currentColor" opacity="0.94" />
-        {[50, 95, 154, 213, 251, 75, 119, 184, 231].map((cx, index) => (
-          <circle cx={cx} cy={[84, 52, 75, 35, 107, 163, 213, 152, 218][index]} fill="currentColor" key={cx} r="4" />
-        ))}
-        <path d="m50 84 45-32 59 23 59-40 38 72M75 163l44 50 65-61 47 66M95 52l24 161M154 75l30 77M213 35l-29 117" stroke="#c4dfb8" strokeWidth="2" />
-      </svg>
+    <div
+      className="relative h-[220px] w-[220px] overflow-hidden rounded-full bg-[#64bd00] bg-no-repeat sm:h-[280px] sm:w-[280px] lg:h-[350px] lg:w-[350px]"
+      style={{
+        backgroundImage: `url("${vendorSellingImage}")`,
+        backgroundPosition: "right center",
+        backgroundSize: "auto 100%",
+      }}
+    >
+      <span className="absolute inset-0 rounded-full ring-1 ring-black/5" />
     </div>
   );
 }
@@ -266,128 +265,128 @@ export function BecomeVendorPage() {
       className="overflow-hidden bg-[#c4dfb8] pt-[116px] text-black sm:pt-[128px] lg:pt-[138px]"
       style={{ fontFamily: 'Poppins, Inter, "Nunito Sans", ui-sans-serif, system-ui, sans-serif' }}
     >
-      <SectionShell className="grid min-h-[calc(100vh-138px)] items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_0.72fr] lg:py-20">
-        <div className="relative z-10 max-w-[1040px]">
-          <p className="text-[clamp(2.35rem,5vw,4.7rem)] font-normal leading-none">Sell Globally</p>
-          <h1 className="mt-8 max-w-[1040px] text-[clamp(3.1rem,6.8vw,7.8rem)] font-semibold uppercase leading-[0.98]">
+      <SectionShell className="grid min-h-[calc(100vh-138px)] items-center gap-8 py-10 sm:py-14 lg:grid-cols-[1fr_0.72fr] lg:py-16">
+        <div className="relative z-10 max-w-[960px]">
+          <p className="text-[clamp(1.65rem,3.1vw,3.15rem)] font-normal leading-none">Sell Globally</p>
+          <h1 className="mt-5 max-w-[960px] text-[clamp(2.55rem,5.4vw,5.9rem)] font-semibold uppercase leading-[0.98]">
             REACH MORE CUSTOMERS.
             <br />
             GROW FASTER.
           </h1>
-          <p className="mt-8 max-w-[920px] text-[clamp(1.25rem,2.4vw,2.45rem)] leading-[1.22]">
+          <p className="mt-6 max-w-[760px] text-[clamp(1.05rem,1.65vw,1.65rem)] font-medium leading-[1.28]">
             Join a global marketplace designed to help food brands and suppliers expand into new markets and increase sales.
           </p>
-          <VendorCtaButton className="mt-10" onClick={openSignup}>
+          <VendorCtaButton className="mt-8" onClick={openSignup}>
             GET STARTED
           </VendorCtaButton>
         </div>
 
-        <div className="relative mx-auto h-[340px] w-full max-w-[610px] sm:h-[460px] lg:h-[650px]" aria-hidden="true">
+        <div className="relative mx-auto h-[310px] w-full max-w-[560px] sm:h-[420px] lg:h-[570px]" aria-hidden="true">
           <div
-            className="absolute -right-16 top-0 h-[42%] w-[68%] rounded-full bg-[#a8cbda] bg-no-repeat sm:-right-20 lg:-right-24"
+            className="absolute -right-8 top-0 h-[42%] w-[68%] overflow-hidden rounded-full bg-[#a8cbda] bg-no-repeat sm:-right-14 lg:-right-16"
             style={{
               backgroundImage: `url("${vendorHeroImage}")`,
-              backgroundPosition: "right top",
-              backgroundSize: "1650px auto",
+              backgroundPosition: "right 28%",
+              backgroundSize: "145% auto",
             }}
           />
           <div
-            className="absolute -bottom-4 left-[6%] h-[60%] w-[88%] rounded-full bg-[#f6cf74] bg-no-repeat sm:-bottom-6 lg:-bottom-8"
+            className="absolute -bottom-2 left-[4%] h-[58%] w-[90%] overflow-hidden rounded-full bg-[#f6cf74] bg-no-repeat sm:-bottom-4 lg:-bottom-6"
             style={{
               backgroundImage: `url("${vendorHeroImage}")`,
-              backgroundPosition: "right bottom",
-              backgroundSize: "2100px auto",
+              backgroundPosition: "center 76%",
+              backgroundSize: "135% auto",
             }}
           />
         </div>
       </SectionShell>
 
-      <SectionShell className="py-12 sm:py-16">
+      <SectionShell className="py-10 sm:py-14">
         <div className="flex flex-wrap items-center gap-3">
-          <p className="text-[clamp(1.8rem,3vw,3.2rem)] leading-none">Sell Globally</p>
+          <p className="text-[clamp(1.45rem,2.25vw,2.35rem)] leading-none">Sell Globally</p>
         </div>
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr] xl:items-center xl:gap-8">
+        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:mt-10 sm:gap-x-8 sm:gap-y-10 xl:grid-cols-4 xl:items-start xl:gap-x-10">
           {stats.map((stat) => (
-            <div className="contents" key={stat.label}>
+            <div className="grid grid-cols-[auto_1fr] items-start gap-2.5 sm:gap-3" key={stat.label}>
               <SparkIcon />
-              <div className="rounded-[28px] bg-[#c4dfb8] p-2 text-center sm:text-left xl:p-0">
-                <p className="text-[clamp(2.6rem,4.6vw,5.1rem)] font-semibold uppercase leading-[1.05]">{stat.label}</p>
-                <p className="mt-3 text-[clamp(1rem,1.6vw,1.28rem)] leading-snug">{stat.supportingText}</p>
+              <div className="min-w-0 text-left">
+                <p className="text-[clamp(1.95rem,4vw,3.55rem)] font-normal uppercase leading-none tracking-normal text-[#ff6b1a]">{stat.label}</p>
+                <p className="mt-2 text-[clamp(0.9rem,1.35vw,1.08rem)] font-medium leading-snug text-[#58677b]">{stat.supportingText}</p>
               </div>
             </div>
           ))}
         </div>
       </SectionShell>
 
-      <SectionShell className="grid items-center gap-8 py-12 sm:py-16 lg:grid-cols-[1fr_auto] lg:py-20">
-        <div className="max-w-[1160px]">
-          <h2 className="text-[clamp(2.6rem,5vw,5.2rem)] font-semibold leading-tight">Who&apos;s Selling on Globally?</h2>
-          <p className="mt-6 text-[clamp(1.45rem,3vw,3.2rem)] uppercase leading-[1.18]">
+      <SectionShell className="grid items-center gap-7 py-10 sm:py-14 lg:grid-cols-[1fr_auto] lg:py-16">
+        <div className="max-w-[980px]">
+          <h2 className="text-[clamp(2rem,3.7vw,3.65rem)] font-semibold leading-tight">Who&apos;s Selling on Globally?</h2>
+          <p className="mt-5 text-[clamp(1.05rem,1.95vw,2.05rem)] uppercase leading-[1.22]">
             JOIN THOUSANDS OF TRUSTED BRANDS AND BUSINESSES GROWING THEIR SALES THROUGH OUR GLOBAL MARKETPLACE.
           </p>
         </div>
-        <div className="justify-self-center lg:-mr-24">
+        <div className="justify-self-center lg:-mr-12">
           <GlobeGraphic />
         </div>
       </SectionShell>
 
-      <SectionShell className="py-12 sm:py-16 lg:py-20">
-        <div className="max-w-[840px]">
-          <h2 className="text-[clamp(2rem,3.2vw,3.4rem)] font-semibold leading-tight">
+      <SectionShell className="py-10 sm:py-14 lg:py-16">
+        <div className="max-w-[760px]">
+          <h2 className="text-[clamp(1.65rem,2.7vw,2.75rem)] font-semibold leading-tight">
             Everything You Need to Scale Your Business
           </h2>
-          <p className="mt-4 text-[clamp(1.05rem,1.7vw,1.45rem)] leading-snug">
+          <p className="mt-4 text-[clamp(0.98rem,1.35vw,1.2rem)] leading-snug">
             Leverage our advanced Seller Portal to streamline operations, manage your products, and grow your sales with confidence.
           </p>
         </div>
-        <div className="mt-12 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {businessCards.map((card) => (
             <article
-              className="grid min-h-[280px] place-items-center rounded-[26px] bg-white px-6 py-8 text-center shadow-[0_24px_55px_rgba(55,91,38,0.12)] sm:px-9"
+              className="grid min-h-[250px] place-items-center rounded-[20px] bg-white px-6 py-7 text-center shadow-[0_24px_55px_rgba(55,91,38,0.12)] sm:px-8"
               key={card.title}
             >
               <div>{card.icon}</div>
-              <h3 className="mt-5 text-[clamp(1.25rem,2vw,1.65rem)] font-semibold leading-tight">{card.title}</h3>
-              <p className="mt-3 max-w-[390px] text-[clamp(1rem,1.35vw,1.2rem)] leading-snug">{card.body}</p>
+              <h3 className="mt-4 text-[clamp(1.08rem,1.55vw,1.35rem)] font-semibold leading-tight">{card.title}</h3>
+              <p className="mt-3 max-w-[360px] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-snug">{card.body}</p>
             </article>
           ))}
         </div>
       </SectionShell>
 
-      <SectionShell className="py-12 sm:py-16 lg:py-20">
-        <p className="text-[clamp(1rem,2.1vw,2.1rem)] leading-none tracking-[0.18em]">One of the World&apos;s Largest Online Supermarkets</p>
-        <h2 className="mt-4 text-[clamp(2.1rem,4.35vw,4.75rem)] font-semibold uppercase leading-[0.98]">
+      <SectionShell className="py-10 sm:py-14 lg:py-16">
+        <p className="text-[clamp(0.85rem,1.45vw,1.4rem)] leading-tight tracking-[0.12em]">One of the World&apos;s Largest Online Supermarkets</p>
+        <h2 className="mt-4 text-[clamp(1.85rem,3.55vw,3.75rem)] font-semibold uppercase leading-[1.02]">
           START SELLING IN JUST
           <br />
           <span className="text-[#ff6b1a]">THREE SIMPLE STEPS</span>
         </h2>
-        <div className="mt-12 grid gap-8 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {steps.map((step) => (
-            <article className={`rounded-[30px] px-6 py-8 shadow-[0_24px_55px_rgba(55,91,38,0.12)] sm:px-9 ${step.className}`} key={step.number}>
+            <article className={`rounded-[22px] px-5 py-7 shadow-[0_24px_55px_rgba(55,91,38,0.12)] sm:px-7 ${step.className}`} key={step.number}>
               <div className="flex items-start gap-5">
                 <span className="relative inline-flex h-12 w-16 shrink-0 items-center justify-center">
                   <span className="absolute h-11 w-11 rounded-full border-[6px] border-[#b8c32d] bg-white" />
                   <span className="absolute right-0 h-9 w-9 rotate-45 bg-[#b8c32d]" />
                   <span className="relative text-xl font-semibold text-[#9fb000]">{step.number}</span>
                 </span>
-                <h3 className="text-[clamp(1.25rem,2vw,1.7rem)] font-semibold leading-tight">{step.title}</h3>
+                <h3 className="text-[clamp(1.08rem,1.55vw,1.36rem)] font-semibold leading-tight">{step.title}</h3>
               </div>
               <div className="mt-8">{step.illustration}</div>
-              <p className="mx-auto mt-8 max-w-[520px] text-center text-[clamp(1.15rem,1.55vw,1.38rem)] leading-relaxed">{step.body}</p>
+              <p className="mx-auto mt-7 max-w-[500px] text-center text-[clamp(0.98rem,1.2vw,1.08rem)] leading-relaxed">{step.body}</p>
             </article>
           ))}
         </div>
       </SectionShell>
 
-      <SectionShell className="grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
+      <SectionShell className="grid items-center gap-8 py-14 sm:py-16 lg:grid-cols-[1fr_auto] lg:py-20">
         <div>
-          <h2 className="text-[clamp(2.7rem,5vw,5rem)] font-semibold leading-tight">Start Selling Today</h2>
-          <p className="mt-4 text-[clamp(1.3rem,2.4vw,2.6rem)] leading-tight">
+          <h2 className="text-[clamp(2rem,3.8vw,3.85rem)] font-semibold leading-tight">Start Selling Today</h2>
+          <p className="mt-4 text-[clamp(1.05rem,1.8vw,1.9rem)] leading-tight">
             A Global Marketplace Connecting Sellers with Customers Worldwide
           </p>
-          <p className="mt-12 text-[clamp(1.35rem,2.2vw,2.3rem)]">Already have a seller account?</p>
+          <p className="mt-10 text-[clamp(1.05rem,1.7vw,1.75rem)]">Already have a seller account?</p>
           <button
-            className="mt-4 inline-flex min-h-12 items-center gap-2 text-[clamp(1.15rem,2vw,2rem)] font-semibold text-black transition hover:text-[#ff6b1a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30"
+            className="mt-4 inline-flex min-h-12 items-center gap-2 text-[clamp(1rem,1.45vw,1.45rem)] font-semibold text-black transition hover:text-[#ff6b1a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30"
             onClick={openLogin}
             type="button"
           >
@@ -395,7 +394,7 @@ export function BecomeVendorPage() {
             <ArrowCircle className="h-8 w-8" />
           </button>
         </div>
-        <VendorCtaButton className="w-full min-w-0 sm:min-w-[520px]" onClick={openSignup} variant="large">
+        <VendorCtaButton className="w-full min-w-0 sm:min-w-[430px]" onClick={openSignup} variant="large">
           Sign up
         </VendorCtaButton>
       </SectionShell>
