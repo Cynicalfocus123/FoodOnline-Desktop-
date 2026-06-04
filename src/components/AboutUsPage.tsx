@@ -1,344 +1,29 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect } from "react";
+import { assets } from "../data/home";
 
-const basePath = import.meta.env.BASE_URL;
-
-const aboutSections = [
-  {
-    src: `${basePath}images/about/about-hero.png`,
-    alt: "FoodOnlines.com message that Asian groceries should be widely accessible and affordable for all",
-    loading: "eager" as const,
-    className: "pt-8 sm:pt-10 lg:pt-12",
-  },
-  {
-    src: `${basePath}images/about/about-mission.png`,
-    alt: "FoodOnlines.com mission to make authentic Asian groceries affordable for everyone",
-    loading: "lazy" as const,
-    className: "pt-10 sm:pt-14 lg:pt-16",
-  },
-  {
-    src: `${basePath}images/about/about-delivery-scale.png`,
-    alt: "FoodOnlines.com teams fulfill and deliver more than 100,000 orders every day",
-    loading: "lazy" as const,
-    className: "py-10 sm:py-14 lg:py-16",
-  },
+const flavorCircles = [
+  "bg-[#b7dce8]",
+  "bg-[#d7ecc5]",
+  "bg-[#ffd779]",
+  "bg-[#ffd0df]",
 ];
 
-const preTimelineSections = [
-  {
-    src: `${basePath}images/about/about-global-foods.png`,
-    alt: "Connecting people around the world with the foods they love most",
-    loading: "lazy" as const,
-    className: "pt-10 sm:pt-14 lg:pt-16",
-  },
-  {
-    src: `${basePath}images/about/about-authentic-flavors.png`,
-    alt: "Bringing the world's authentic flavors to every table",
-    loading: "lazy" as const,
-    className: "pt-0",
-  },
-];
-
-const leadershipCards = [
-  {
-    name: "Jakapun Viwatkurkul",
-    role: "President and Founder",
-    image: `${basePath}images/about/leadership/jakapun-viwatkurkul.webp`,
-    imageAlt: "Jakapun Viwatkurkul",
-    imageClassName: "object-contain object-bottom scale-[1.24]",
-  },
-  {
-    name: "Paul Pongpichan",
-    role: "CSCO (Chief Supply Chain Officer)",
-    image: `${basePath}images/about/leadership/paul-pongpichan.webp`,
-    imageAlt: "Paul Pongpichan",
-    imageClassName: "object-contain object-bottom scale-[1.24]",
-  },
-  {
-    name: "Pasit Viwatkurkul",
-    role: "CTO",
-    image: `${basePath}images/about/leadership/pasit-viwatkurkul.webp`,
-    imageAlt: "Pasit Viwatkurkul",
-    imageClassName: "object-contain object-bottom scale-[1.24]",
-  },
-  {
-    name: "Natalie",
-    role: "CFO",
-    image: `${basePath}images/about/leadership/natalie.png`,
-    imageAlt: "Natalie",
-    imageClassName: "object-contain object-bottom scale-[1.24]",
-  },
-  {
-    name: "Lucas Huber",
-    role: "COO",
-    image: `${basePath}images/about/leadership/lucas-huber.png`,
-    imageAlt: "Lucas Huber",
-    imageClassName: "object-contain object-bottom scale-[1.13]",
-  },
-  {
-    name: "Anna Goldstein",
-    role: "Chief Marketing Officer / CMO",
-    image: `${basePath}images/about/leadership/anna-goldstein.png`,
-    imageAlt: "Anna Goldstein",
-    imageClassName: "object-cover object-[50%_20%]",
-  },
-  {
-    name: "Janet Weiler",
-    role: "Chief Commercial Officer / CCO",
-    image: `${basePath}images/about/leadership/janet-weiler.png`,
-    imageAlt: "Janet Weiler",
-    imageClassName: "object-cover object-[50%_18%]",
-  },
-  {
-    name: "Ahmet Yılmaz",
-    role: "Chief Customer & Experience Officer / CXO",
-    image: `${basePath}images/about/leadership/ahmet-yilmaz.png`,
-    imageAlt: "Ahmet Yılmaz",
-    imageClassName: "object-cover object-[50%_12%]",
-  },
-];
-
-const timelineMilestones = [
-  {
-    year: "1999",
-    title: "Global Sourcing Foundation",
-    body: "Established as a global sourcing and procurement company under American Buying Service, providing purchasing, product development, and supply chain solutions for major retail chains across the United States.",
-    image: `${basePath}images/about/timeline/timeline-1999.png`,
-    imageAlt: "American Buying Service warehouse building",
-  },
-  {
-    year: "2005",
-    title: "Manufacturing And Brand Development",
-    body: "Expanded into product manufacturing and proprietary consumer brands distributed through leading national retail chains, later transitioning several food brands through strategic acquisitions by major manufacturers.",
-    image: `${basePath}images/about/timeline/timeline-2005.png`,
-    imageAlt: "Food manufacturing visitors wearing lab coats",
-  },
-  {
-    year: "2007",
-    title: "Technology And Capital Expansion",
-    body: "Diversified with Mstar Technologies for website, e-commerce, and digital marketing services, while Mstar Capital Group provided investment capital and strategic support to startups and growth-stage companies.",
-    image: `${basePath}images/about/timeline/timeline-2007.png`,
-    imageAlt: "Technology team gathered in an office",
-  },
-  {
-    year: "2015",
-    title: "Unified Holding Platform",
-    body: "Consolidated affiliated businesses under Mstar Holding Inc., creating a unified investment and operating platform focused on technology ventures and successful startup exits.",
-    image: `${basePath}images/about/timeline/timeline-2015.png`,
-    imageAlt: "Supermarket checkout and grocery aisles",
-  },
-  {
-    year: "2019",
-    title: "FoodOnlines.com Launch",
-    body: "Launched FoodOnlines.com as an e-commerce marketplace originating in the United States, later expanding into Southeast Asia and building a global food commerce ecosystem.",
-    image: `${basePath}images/about/timeline/timeline-2019.png`,
-    imageAlt: "FoodOnlines driver loading branded boxes into a van",
-  },
-  {
-    year: "Today",
-    title: "Global Digital Supermarket",
-    body: "FoodOnlines is evolving into a global digital supermarket platform, making products from every culture accessible and affordable while connecting manufacturers and consumers through technology-driven commerce.",
-    image: `${basePath}images/about/timeline/timeline-today.png`,
-    imageAlt: "FoodOnlines warehouse with delivery trucks",
-  },
-];
-
-function useReveal<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIsVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 },
-    );
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
-  return {
-    ref,
-    className: isVisible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0",
-  };
-}
-
-function AboutImageSection({
-  alt,
-  children,
-  className,
-  loading,
-  src,
-}: {
-  alt: string;
-  children?: ReactNode;
-  className: string;
-  loading: "eager" | "lazy";
-  src: string;
-}) {
-  const reveal = useReveal<HTMLElement>();
-
+function LogoMark({ className = "" }: { className?: string }) {
   return (
-    <section
-      ref={reveal.ref}
-      className={`mx-auto w-full max-w-[1648px] px-0 transition-all duration-700 ease-out sm:px-4 lg:px-6 ${reveal.className} ${className}`}
-    >
-      {children}
-      <img
-        alt={alt}
-        className="block h-auto w-full max-w-full object-contain"
-        decoding="async"
-        fetchPriority={loading === "eager" ? "high" : "auto"}
-        loading={loading}
-        src={src}
-      />
-    </section>
+    <img
+      alt="FoodOnlines.com"
+      className={`h-auto w-full object-contain ${className}`}
+      decoding="async"
+      src={assets.logo}
+    />
   );
 }
 
-function AboutTimelineSection() {
+function PlaceholderLabel({ label }: { label: string }) {
   return (
-    <section
-      aria-label="FoodOnlines company timeline"
-      className="bg-[#f3f4f2] py-12 sm:py-16 lg:py-20"
-    >
-      <div className="mx-auto max-w-[1648px] px-4 sm:px-6 lg:px-8">
-        <div className="px-4 text-center sm:px-6">
-          <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
-            Our Story
-          </h2>
-        </div>
-
-        <div className="relative mx-auto mt-12 max-w-6xl pb-2 sm:mt-16 lg:mt-20">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-10 left-[34px] top-6 w-1 rounded-full bg-leaf-500 sm:left-1/2 sm:-translate-x-1/2"
-          />
-          <div className="space-y-12 sm:space-y-16 lg:space-y-20">
-            {timelineMilestones.map((milestone, index) => {
-              const textAlignClass = index % 2 === 0 ? "sm:pr-14 sm:text-right" : "sm:col-start-2 sm:pl-14 sm:text-left";
-              const bodyAlignClass = index % 2 === 0 ? "sm:ml-auto" : "";
-              const imageAlignClass = index % 2 === 0 ? "sm:col-start-2 sm:pl-14" : "sm:col-start-1 sm:row-start-1 sm:pr-14";
-
-              return (
-                <article
-                  aria-label={`${milestone.year}: ${milestone.title}`}
-                  className="relative grid gap-6 pl-24 sm:grid-cols-2 sm:items-center sm:gap-0 sm:pl-0"
-                  key={milestone.year}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`pointer-events-none absolute -top-8 hidden text-[8rem] font-light leading-none text-white/70 sm:block lg:text-[12rem] ${
-                      index % 2 === 0 ? "left-4" : "right-4"
-                    }`}
-                  >
-                    {milestone.year === "Today" ? "Now" : milestone.year}
-                  </span>
-                  <div
-                    aria-hidden="true"
-                    className="absolute left-[26px] top-[126px] z-10 h-5 w-5 rounded-full border-4 border-white bg-leaf-500 shadow-[0_0_0_8px_rgba(111,191,18,0.16)] sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
-                  />
-
-                  <div className={`relative z-10 ${textAlignClass}`}>
-                    <div className="inline-flex w-fit rounded-[18px] bg-leaf-500 px-5 py-2 text-xl font-black text-white shadow-[0_10px_24px_rgba(111,191,18,0.28)]">
-                      {milestone.year}
-                    </div>
-                    <h3 className="mt-5 text-[2rem] font-black leading-tight tracking-[-0.03em] text-neutral-950 sm:text-[2.45rem]">
-                      {milestone.title}
-                    </h3>
-                    <p className={`mt-4 max-w-xl text-base font-medium leading-8 text-neutral-700 sm:text-lg ${bodyAlignClass}`}>
-                      {milestone.body}
-                    </p>
-                  </div>
-
-                  <div className={`relative z-10 flex justify-start sm:justify-center ${imageAlignClass}`}>
-                    <div className="relative flex h-[224px] w-[224px] items-center justify-center rounded-full border-[14px] border-white bg-[radial-gradient(circle_at_35%_30%,#ffffff_0%,#eef8df_40%,#d9efbe_100%)] shadow-[0_24px_56px_rgba(15,23,42,0.22)] sm:h-[284px] sm:w-[284px] lg:h-[320px] lg:w-[320px]">
-                    {milestone.image ? (
-                      <img
-                        alt={milestone.imageAlt}
-                        className="h-full w-full rounded-full object-cover"
-                        decoding="async"
-                        draggable={false}
-                        loading="lazy"
-                        src={milestone.image}
-                      />
-                    ) : (
-                      <>
-                        <div className="absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-[5px] border-white bg-leaf-500 shadow-[0_0_0_8px_rgba(111,191,18,0.18)]" />
-                        <div className="relative h-24 w-24 rounded-full bg-white/90 shadow-[0_16px_34px_rgba(15,23,42,0.12)]" aria-hidden="true">
-                          <span className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-leaf-500/70" />
-                          <span className="absolute right-4 top-4 h-4 w-4 rounded-full bg-citrus-500/80" />
-                          <span className="absolute bottom-5 left-5 h-3 w-10 rounded-full bg-leaf-500/50" />
-                        </div>
-                      </>
-                    )}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function LeadershipPlaceholderSection() {
-  const reveal = useReveal<HTMLElement>();
-
-  return (
-    <section
-      aria-label="FoodOnlines leadership"
-      ref={reveal.ref}
-      className={`mx-auto w-full max-w-[1648px] px-4 pb-12 pt-0 transition-all duration-700 ease-out sm:px-6 sm:pb-16 lg:px-8 lg:pb-20 ${reveal.className}`}
-    >
-      <h2 className="mb-7 text-[2.65rem] font-black leading-none tracking-normal text-leaf-700 sm:mb-9 sm:text-[3.4rem] lg:mb-10 lg:text-[4rem]">
-        Our leadership
-      </h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
-        {leadershipCards.map((leader, slot) => (
-          <article
-            aria-label={leader ? `${leader.name}, ${leader.role}` : `Leadership placeholder ${slot + 1}`}
-            className="flex min-h-[360px] flex-col overflow-hidden rounded-[26px] border border-neutral-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.06)] sm:min-h-[420px] lg:min-h-[520px]"
-            key={leader?.name ?? `placeholder-${slot}`}
-          >
-            {leader ? (
-              <>
-                <div className="px-6 pb-4 pt-7 sm:px-7 sm:pt-8 lg:px-8">
-                  <h3 className="text-[1.75rem] font-semibold leading-tight tracking-normal text-neutral-950 sm:text-[2rem]">
-                    {leader.name}
-                  </h3>
-                  <p className="mt-2 text-lg font-normal leading-snug text-neutral-950 sm:text-xl">{leader.role}</p>
-                </div>
-                <div className="mt-auto flex h-[260px] items-end justify-center px-2 pt-2 sm:h-[310px] lg:h-[380px]">
-                  <img
-                    alt={leader.imageAlt}
-                    className={`h-full w-full ${leader.imageClassName ?? "object-contain object-bottom"}`}
-                    decoding="async"
-                    loading="lazy"
-                    src={leader.image}
-                  />
-                </div>
-              </>
-            ) : null}
-          </article>
-        ))}
-      </div>
-    </section>
+    <span className="text-center text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+      {label}
+    </span>
   );
 }
 
@@ -360,16 +45,198 @@ export function AboutUsPage() {
   }, []);
 
   return (
-    <div className="bg-white pt-[116px] sm:pt-[128px] lg:pt-[138px]">
-      <AboutImageSection {...aboutSections[0]} />
-      {preTimelineSections.map((section) => (
-        <AboutImageSection key={section.src} {...section} />
-      ))}
-      <AboutTimelineSection />
-      {aboutSections.slice(1).map((section) => (
-        <AboutImageSection key={section.src} {...section} />
-      ))}
-      <LeadershipPlaceholderSection />
+    <div className="overflow-x-clip bg-white pt-[116px] font-['Poppins',Inter,'Nunito_Sans',ui-sans-serif,system-ui,sans-serif] text-black sm:pt-[128px] lg:pt-[138px]">
+      <section className="bg-[#fff9ed] px-4 pb-8 pt-8 sm:px-6 sm:pb-10 sm:pt-10 lg:px-8 lg:pb-12">
+        <div className="mx-auto max-w-[1648px]">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-14">
+            <h1 className="min-w-0 max-w-full text-[clamp(1.75rem,8vw,4.45rem)] font-extrabold uppercase leading-[1.14] tracking-normal sm:max-w-6xl">
+              <span className="block sm:hidden">
+                <span className="block">CONNECTING PEOPLE</span>
+                <span className="block">AROUND THE WORLD</span>
+                <span className="block">WITH THE FOODS</span>
+                <span className="block">THEY LOVE MOST</span>
+              </span>
+              <span className="hidden sm:block">
+                CONNECTING PEOPLE AROUND THE WORLD
+                <br />
+                WITH THE FOODS THEY LOVE MOST
+              </span>
+            </h1>
+            <p className="min-w-0 max-w-sm text-[clamp(1.1rem,2vw,1.55rem)] font-normal leading-snug lg:pt-3">
+              We are dedicated to serving
+              <br />
+              the world with high-quality
+              <br />
+              food at affordable prices.
+            </p>
+          </div>
+
+          {/* TODO: Replace this placeholder with the food-table image asset when it is ready. */}
+          <div
+            aria-label="Future food table image"
+            className="about-hero-image-placeholder mt-8 flex aspect-[2.9/1] min-h-[210px] w-full items-center justify-center overflow-hidden rounded-[18px] border border-[#ece2d5] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]"
+          >
+            <div className="h-[72%] w-[88%] rounded-[16px] border border-dashed border-neutral-300 bg-white/35" />
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-[1648px] text-center">
+          <div className="mx-auto w-[min(480px,78vw)]">
+            <LogoMark />
+          </div>
+
+          <h2 className="mx-auto mt-16 max-w-[1320px] text-[clamp(1.7rem,7.6vw,4.6rem)] font-extrabold uppercase leading-[1.18] tracking-normal text-[#64bd00]">
+            <span className="block sm:hidden">
+              <span className="block">ASIAN GROCERIES</span>
+              <span className="block">SHOULD BE WIDELY</span>
+              <span className="block">ACCESSIBLE AND</span>
+              <span className="block">AFFORDABLE FOR ALL</span>
+            </span>
+            <span className="hidden sm:block">
+              ASIAN GROCERIES SHOULD BE WIDELY
+              <br />
+              ACCESSIBLE AND AFFORDABLE FOR ALL
+            </span>
+          </h2>
+
+          <p className="mt-8 text-[clamp(1.55rem,3.1vw,2.75rem)] font-bold leading-tight text-[#ff6b1a]">
+            One of the World's Largest Online Supermarkets
+          </p>
+
+          <div className="pointer-events-none mt-10 grid min-h-[170px] grid-cols-2 items-end gap-8 sm:min-h-[210px] lg:absolute lg:inset-x-0 lg:bottom-0 lg:mx-auto lg:max-w-[1648px] lg:px-8">
+            <div className="flex justify-start">
+              <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
+                <span className="absolute bottom-0 left-0 h-[120px] w-[120px] rounded-full bg-[#b6d532] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
+                {/* TODO: Replace with grocery bag image asset. */}
+                <div className="about-grocery-bag-placeholder absolute bottom-4 left-8 flex h-[92px] w-[98px] items-center justify-center rounded-[8px] border border-dashed border-neutral-300 bg-white/55 shadow-sm sm:h-[122px] sm:w-[132px] lg:h-[164px] lg:w-[176px]">
+                  <PlaceholderLabel label="grocery bag" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
+                <span className="absolute bottom-0 right-0 h-[120px] w-[120px] rounded-full bg-[#ff6b1a] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
+                {/* TODO: Replace with fruit image asset. */}
+                <div className="about-fruit-placeholder absolute bottom-2 right-8 flex h-[98px] w-[112px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/55 shadow-sm sm:h-[130px] sm:w-[146px] lg:h-[176px] lg:w-[198px]">
+                  <PlaceholderLabel label="fruit" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#fff9ed] px-4 py-14 sm:px-6 sm:py-[4.5rem] lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-[1648px] text-center">
+          <h2 className="mx-auto max-w-5xl text-[clamp(1.8rem,7.4vw,3.75rem)] font-extrabold uppercase leading-[1.22] tracking-normal [overflow-wrap:anywhere] sm:[overflow-wrap:normal]">
+            BRINGING THE WORLD'S AUTHENTIC
+            <br />
+            FLAVORS TO EVERY TABLE.
+          </h2>
+          <p className="mx-auto mt-5 max-w-5xl text-[clamp(1.12rem,2.2vw,2rem)] font-normal leading-snug">
+            We create new and convenient ways for shoppers to discover, enjoy,
+            <br className="hidden sm:block" />
+            and reconnect with foods from every culture and corner of the world.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 justify-items-center gap-8 min-[430px]:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+            {flavorCircles.map((colorClass, index) => (
+              <div
+                aria-label={`Future flavor image ${index + 1}`}
+                className={`about-flavor-circle-placeholder flex aspect-square w-[min(76vw,330px)] items-center justify-center rounded-full ${colorClass}`}
+                key={colorClass}
+              >
+                {/* TODO: Replace each circle's inner placeholder with a food image asset. */}
+                <div className="flex h-[38%] w-[48%] items-center justify-center rounded-[12px] border border-dashed border-neutral-300 bg-white/45">
+                  <PlaceholderLabel label="food image" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-[4.5rem] lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-[1648px] gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center lg:gap-14">
+          <div>
+            <div className="w-[min(350px,74vw)]">
+              <LogoMark />
+            </div>
+
+            <h2 className="mt-12 max-w-[1160px] text-[clamp(1.75rem,7.4vw,4.15rem)] font-extrabold uppercase leading-[1.22] tracking-normal text-[#64bd00] [overflow-wrap:anywhere] sm:[overflow-wrap:normal]">
+              OUR MISSION IS TO MAKE AUTHENTIC ASIAN
+              <br />
+              GROCERIES AFFORDABLE FOR EVERYONE
+            </h2>
+
+            <p className="mt-5 max-w-4xl text-[clamp(1.08rem,1.8vw,1.7rem)] font-normal leading-snug">
+              By eliminating unnecessary middlemen, we deliver high-quality products
+              <br className="hidden sm:block" />
+              directly from factories to consumers at exceptional value.
+            </p>
+
+            <p className="mt-9 max-w-4xl text-[clamp(1.75rem,3.5vw,3.15rem)] font-bold leading-tight text-[#ff6b1a]">
+              Proudly serving customers worldwide,
+              <br />
+              We are one of the largest online
+              <br />
+              destinations for Asian groceries.
+            </p>
+          </div>
+
+          <div className="relative mx-auto h-[430px] w-full max-w-[560px] sm:h-[560px] lg:h-[680px]">
+            <div className="absolute right-0 top-0 h-[190px] w-[190px] rounded-full bg-[#ffd6bd] sm:h-[250px] sm:w-[250px] lg:h-[320px] lg:w-[320px]" />
+            {/* TODO: Replace with shopping cart image asset. */}
+            <div className="about-cart-placeholder absolute right-4 top-8 flex h-[132px] w-[170px] items-center justify-center rounded-[10px] border border-dashed border-neutral-300 bg-white/65 shadow-sm sm:h-[178px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
+              <PlaceholderLabel label="shopping cart" />
+            </div>
+
+            <div className="absolute bottom-0 left-0 h-[250px] w-[250px] rounded-full bg-[#d7ecc5] sm:h-[360px] sm:w-[360px] lg:h-[480px] lg:w-[480px]" />
+            {/* TODO: Replace with food plate image asset. */}
+            <div className="about-plate-placeholder absolute bottom-10 left-8 flex h-[146px] w-[210px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/70 shadow-sm sm:h-[206px] sm:w-[300px] lg:h-[266px] lg:w-[390px]">
+              <PlaceholderLabel label="food plate" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="overflow-hidden bg-white px-4 pb-16 pt-8 sm:px-6 sm:pb-20 sm:pt-10 lg:px-8">
+        <div className="mx-auto max-w-[1648px] text-center">
+          <h2 className="mx-auto max-w-[1250px] text-[clamp(1.9rem,8vw,4.9rem)] font-extrabold leading-[1.2] tracking-normal text-[#64bd00] [overflow-wrap:anywhere] sm:[overflow-wrap:normal]">
+            Our teams fulfill and deliver more
+            <br />
+            than <span className="text-[#ff6b1a]">100,000</span> orders every day
+          </h2>
+
+          <div className="relative mx-auto mt-10 min-h-[520px] max-w-[1160px] sm:min-h-[630px] lg:min-h-[700px]">
+            <div className="absolute left-1/2 top-[22%] h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-[#d7ecc5] sm:h-[420px] sm:w-[420px] lg:h-[560px] lg:w-[560px]" />
+
+            {/* TODO: Replace with delivery truck image asset. */}
+            <div className="about-truck-placeholder absolute bottom-0 left-1/2 z-10 flex h-[190px] w-[min(92vw,760px)] -translate-x-1/2 items-center justify-center rounded-[14px] border border-dashed border-neutral-300 bg-white/80 shadow-[0_18px_48px_rgba(15,23,42,0.12)] sm:h-[250px] lg:h-[300px]">
+              <PlaceholderLabel label="delivery truck" />
+            </div>
+
+            {[
+              "left-0 top-12",
+              "bottom-28 left-4 sm:bottom-20",
+              "right-0 top-16",
+              "bottom-28 right-4 sm:bottom-24",
+            ].map((position, index) => (
+              <div
+                aria-label={`Future surrounding dish image ${index + 1}`}
+                className={`about-dish-placeholder absolute ${position} z-20 hidden h-[104px] w-[142px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/80 shadow-[0_12px_30px_rgba(15,23,42,0.12)] min-[430px]:flex sm:h-[130px] sm:w-[184px] lg:h-[150px] lg:w-[220px]`}
+                key={position}
+              >
+                {/* TODO: Replace with surrounding food dish image asset. */}
+                <PlaceholderLabel label="dish" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

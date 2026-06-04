@@ -1004,6 +1004,17 @@
 - Increased the zoom for the first-row leadership portraits, including the fourth Natalie card, by applying the same contained bottom-aligned scale treatment across Jakapun, Paul, Pasit, and Natalie.
 - The row-one portraits now visually match the closer second-row portrait sizing while preserving the existing white card boxes, fixed image frame heights, and responsive one/two/four-column grid behavior across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
 
+## About Us Hardcoded Section Rebuild (2026-06-05)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Rebuilt the About Us page from banner-image content into five responsive hardcoded React sections: food connection hero, brand mission intro, authentic flavors, affordable groceries mission, and fulfillment/delivery scale.
+- All major About Us story text is now real selectable HTML/React content using Poppins-first typography instead of text embedded inside full-width images.
+- The previous story banner images are no longer rendered as page content; decorative image areas now use named placeholder divs and visible circle layouts ready for future asset replacement.
+- The existing `/about-us` route and footer About Us link behavior remain unchanged.
+
 ## Become Vendor Page Launch (2026-06-04)
 
 - Files changed:
