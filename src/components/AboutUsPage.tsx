@@ -55,9 +55,9 @@ const leadershipCards = [
   {
     name: "Janet Weiler",
     role: "Chief Commercial Officer / CCO",
-    image: `${basePath}images/about/leadership/janet-weiler.png`,
+    image: `${basePath}images/about/leadership/janet-weiler.jfif`,
     imageAlt: "Janet Weiler",
-    imageClassName: "object-contain object-bottom",
+    imageClassName: "object-contain object-bottom scale-[0.92]",
   },
   {
     name: "Ahmet Yılmaz",

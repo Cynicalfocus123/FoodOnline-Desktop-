@@ -747,7 +747,7 @@
 - Image regions are clean placeholder circles/areas with clear class names such as `about-hero-image-placeholder`, `about-grocery-bag-placeholder`, `about-flavor-circle-placeholder`, `about-cart-placeholder`, `about-plate-placeholder`, and `about-truck-placeholder` so real assets can be swapped in later without changing the text layout; placeholder interiors should not show dashed boxes, labels, or box panels.
 - Responsive behavior stacks or reduces decorative compositions across tablet and 430px/390px/360px mobile widths so text remains selectable, readable, and free of horizontal scroll.
 - Mission-section mobile typography uses smaller mobile-only line groups for the green mission headline and orange global-serving statement so iOS, Android, and desktop-mobile browser widths stay readable without clipping; desktop keeps the larger original-style scale.
-- Janet Weiler's leadership portrait uses the newer supplied headshot, converted into a padded white PNG and rendered with contained bottom alignment so the portrait is zoomed out to better match the other leadership cards.
+- Janet Weiler's leadership portrait uses the exact supplied `.jfif` headshot copied into the public leadership assets and is rendered with contained bottom alignment plus a small CSS scale-down so the original image stays intact while fitting closer to the other leadership cards.
 - The standalone FoodOnlines logo marks that previously sat above the `ASIAN GROCERIES...` intro and `OUR MISSION...` sections are removed; the page should rely on the persistent site header/footer branding instead.
 
 ### Become Vendor Page Launch (2026-06-04)
