@@ -1,11 +1,72 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { assets } from "../data/home";
+
+const basePath = import.meta.env.BASE_URL;
 
 const flavorCircles = [
   "bg-[#b7dce8]",
   "bg-[#d7ecc5]",
   "bg-[#ffd779]",
   "bg-[#ffd0df]",
+];
+
+const leadershipCards = [
+  {
+    name: "Jakapun Viwatkurkul",
+    role: "President and Founder",
+    image: `${basePath}images/about/leadership/jakapun-viwatkurkul.webp`,
+    imageAlt: "Jakapun Viwatkurkul",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
+  },
+  {
+    name: "Paul Pongpichan",
+    role: "CSCO (Chief Supply Chain Officer)",
+    image: `${basePath}images/about/leadership/paul-pongpichan.webp`,
+    imageAlt: "Paul Pongpichan",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
+  },
+  {
+    name: "Pasit Viwatkurkul",
+    role: "CTO",
+    image: `${basePath}images/about/leadership/pasit-viwatkurkul.webp`,
+    imageAlt: "Pasit Viwatkurkul",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
+  },
+  {
+    name: "Natalie",
+    role: "CFO",
+    image: `${basePath}images/about/leadership/natalie.png`,
+    imageAlt: "Natalie",
+    imageClassName: "object-contain object-bottom scale-[1.24]",
+  },
+  {
+    name: "Lucas Huber",
+    role: "COO",
+    image: `${basePath}images/about/leadership/lucas-huber.png`,
+    imageAlt: "Lucas Huber",
+    imageClassName: "object-contain object-bottom scale-[1.13]",
+  },
+  {
+    name: "Anna Goldstein",
+    role: "Chief Marketing Officer / CMO",
+    image: `${basePath}images/about/leadership/anna-goldstein.png`,
+    imageAlt: "Anna Goldstein",
+    imageClassName: "object-cover object-[50%_20%]",
+  },
+  {
+    name: "Janet Weiler",
+    role: "Chief Commercial Officer / CCO",
+    image: `${basePath}images/about/leadership/janet-weiler.png`,
+    imageAlt: "Janet Weiler",
+    imageClassName: "object-cover object-[50%_18%]",
+  },
+  {
+    name: "Ahmet Yılmaz",
+    role: "Chief Customer & Experience Officer / CXO",
+    image: `${basePath}images/about/leadership/ahmet-yilmaz.png`,
+    imageAlt: "Ahmet Yılmaz",
+    imageClassName: "object-cover object-[50%_12%]",
+  },
 ];
 
 function LogoMark({ className = "" }: { className?: string }) {
@@ -19,11 +80,78 @@ function LogoMark({ className = "" }: { className?: string }) {
   );
 }
 
-function PlaceholderLabel({ label }: { label: string }) {
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 },
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return {
+    ref,
+    className: isVisible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0",
+  };
+}
+
+function LeadershipSection() {
+  const reveal = useReveal<HTMLElement>();
+
   return (
-    <span className="text-center text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-neutral-500">
-      {label}
-    </span>
+    <section
+      aria-label="FoodOnlines leadership"
+      ref={reveal.ref}
+      className={`mx-auto w-full max-w-[1648px] px-4 pb-12 pt-0 transition-all duration-700 ease-out sm:px-6 sm:pb-16 lg:px-8 lg:pb-20 ${reveal.className}`}
+    >
+      <h2 className="mb-7 text-[2.65rem] font-black leading-none tracking-normal text-leaf-700 sm:mb-9 sm:text-[3.4rem] lg:mb-10 lg:text-[4rem]">
+        Our leadership
+      </h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+        {leadershipCards.map((leader) => (
+          <article
+            aria-label={`${leader.name}, ${leader.role}`}
+            className="flex min-h-[360px] flex-col overflow-hidden rounded-[26px] border border-neutral-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.06)] sm:min-h-[420px] lg:min-h-[520px]"
+            key={leader.name}
+          >
+            <div className="px-6 pb-4 pt-7 sm:px-7 sm:pt-8 lg:px-8">
+              <h3 className="text-[1.75rem] font-semibold leading-tight tracking-normal text-neutral-950 sm:text-[2rem]">
+                {leader.name}
+              </h3>
+              <p className="mt-2 text-lg font-normal leading-snug text-neutral-950 sm:text-xl">{leader.role}</p>
+            </div>
+            <div className="mt-auto flex h-[260px] items-end justify-center px-2 pt-2 sm:h-[310px] lg:h-[380px]">
+              <img
+                alt={leader.imageAlt}
+                className={`h-full w-full ${leader.imageClassName}`}
+                decoding="async"
+                loading="lazy"
+                src={leader.image}
+              />
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -74,10 +202,8 @@ export function AboutUsPage() {
           {/* TODO: Replace this placeholder with the food-table image asset when it is ready. */}
           <div
             aria-label="Future food table image"
-            className="about-hero-image-placeholder mt-8 flex aspect-[2.9/1] min-h-[210px] w-full items-center justify-center overflow-hidden rounded-[18px] border border-[#ece2d5] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]"
-          >
-            <div className="h-[72%] w-[88%] rounded-[16px] border border-dashed border-neutral-300 bg-white/35" />
-          </div>
+            className="about-hero-image-placeholder mt-8 aspect-[2.9/1] min-h-[210px] w-full overflow-hidden rounded-[18px] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]"
+          />
         </div>
       </section>
 
@@ -110,9 +236,7 @@ export function AboutUsPage() {
               <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
                 <span className="absolute bottom-0 left-0 h-[120px] w-[120px] rounded-full bg-[#b6d532] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
                 {/* TODO: Replace with grocery bag image asset. */}
-                <div className="about-grocery-bag-placeholder absolute bottom-4 left-8 flex h-[92px] w-[98px] items-center justify-center rounded-[8px] border border-dashed border-neutral-300 bg-white/55 shadow-sm sm:h-[122px] sm:w-[132px] lg:h-[164px] lg:w-[176px]">
-                  <PlaceholderLabel label="grocery bag" />
-                </div>
+                <div className="about-grocery-bag-placeholder absolute bottom-4 left-8 h-[92px] w-[98px] sm:h-[122px] sm:w-[132px] lg:h-[164px] lg:w-[176px]" />
               </div>
             </div>
 
@@ -120,9 +244,7 @@ export function AboutUsPage() {
               <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
                 <span className="absolute bottom-0 right-0 h-[120px] w-[120px] rounded-full bg-[#ff6b1a] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
                 {/* TODO: Replace with fruit image asset. */}
-                <div className="about-fruit-placeholder absolute bottom-2 right-8 flex h-[98px] w-[112px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/55 shadow-sm sm:h-[130px] sm:w-[146px] lg:h-[176px] lg:w-[198px]">
-                  <PlaceholderLabel label="fruit" />
-                </div>
+                <div className="about-fruit-placeholder absolute bottom-2 right-8 h-[98px] w-[112px] rounded-full sm:h-[130px] sm:w-[146px] lg:h-[176px] lg:w-[198px]" />
               </div>
             </div>
           </div>
@@ -150,9 +272,7 @@ export function AboutUsPage() {
                 key={colorClass}
               >
                 {/* TODO: Replace each circle's inner placeholder with a food image asset. */}
-                <div className="flex h-[38%] w-[48%] items-center justify-center rounded-[12px] border border-dashed border-neutral-300 bg-white/45">
-                  <PlaceholderLabel label="food image" />
-                </div>
+                <div className="h-[38%] w-[48%]" />
               </div>
             ))}
           </div>
@@ -190,15 +310,11 @@ export function AboutUsPage() {
           <div className="relative mx-auto h-[430px] w-full max-w-[560px] sm:h-[560px] lg:h-[680px]">
             <div className="absolute right-0 top-0 h-[190px] w-[190px] rounded-full bg-[#ffd6bd] sm:h-[250px] sm:w-[250px] lg:h-[320px] lg:w-[320px]" />
             {/* TODO: Replace with shopping cart image asset. */}
-            <div className="about-cart-placeholder absolute right-4 top-8 flex h-[132px] w-[170px] items-center justify-center rounded-[10px] border border-dashed border-neutral-300 bg-white/65 shadow-sm sm:h-[178px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
-              <PlaceholderLabel label="shopping cart" />
-            </div>
+            <div className="about-cart-placeholder absolute right-4 top-8 h-[132px] w-[170px] sm:h-[178px] sm:w-[230px] lg:h-[230px] lg:w-[300px]" />
 
             <div className="absolute bottom-0 left-0 h-[250px] w-[250px] rounded-full bg-[#d7ecc5] sm:h-[360px] sm:w-[360px] lg:h-[480px] lg:w-[480px]" />
             {/* TODO: Replace with food plate image asset. */}
-            <div className="about-plate-placeholder absolute bottom-10 left-8 flex h-[146px] w-[210px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/70 shadow-sm sm:h-[206px] sm:w-[300px] lg:h-[266px] lg:w-[390px]">
-              <PlaceholderLabel label="food plate" />
-            </div>
+            <div className="about-plate-placeholder absolute bottom-10 left-8 h-[146px] w-[210px] rounded-full sm:h-[206px] sm:w-[300px] lg:h-[266px] lg:w-[390px]" />
           </div>
         </div>
       </section>
@@ -215,9 +331,7 @@ export function AboutUsPage() {
             <div className="absolute left-1/2 top-[22%] h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-[#d7ecc5] sm:h-[420px] sm:w-[420px] lg:h-[560px] lg:w-[560px]" />
 
             {/* TODO: Replace with delivery truck image asset. */}
-            <div className="about-truck-placeholder absolute bottom-0 left-1/2 z-10 flex h-[190px] w-[min(92vw,760px)] -translate-x-1/2 items-center justify-center rounded-[14px] border border-dashed border-neutral-300 bg-white/80 shadow-[0_18px_48px_rgba(15,23,42,0.12)] sm:h-[250px] lg:h-[300px]">
-              <PlaceholderLabel label="delivery truck" />
-            </div>
+            <div className="about-truck-placeholder absolute bottom-0 left-1/2 z-10 h-[190px] w-[min(92vw,760px)] -translate-x-1/2 sm:h-[250px] lg:h-[300px]" />
 
             {[
               "left-0 top-12",
@@ -227,16 +341,16 @@ export function AboutUsPage() {
             ].map((position, index) => (
               <div
                 aria-label={`Future surrounding dish image ${index + 1}`}
-                className={`about-dish-placeholder absolute ${position} z-20 hidden h-[104px] w-[142px] items-center justify-center rounded-full border border-dashed border-neutral-300 bg-white/80 shadow-[0_12px_30px_rgba(15,23,42,0.12)] min-[430px]:flex sm:h-[130px] sm:w-[184px] lg:h-[150px] lg:w-[220px]`}
+                className={`about-dish-placeholder absolute ${position} z-20 hidden h-[104px] w-[142px] rounded-full min-[430px]:block sm:h-[130px] sm:w-[184px] lg:h-[150px] lg:w-[220px]`}
                 key={position}
               >
                 {/* TODO: Replace with surrounding food dish image asset. */}
-                <PlaceholderLabel label="dish" />
               </div>
             ))}
           </div>
         </div>
       </section>
+      <LeadershipSection />
     </div>
   );
 }

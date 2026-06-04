@@ -1010,9 +1010,9 @@
   - `src/components/AboutUsPage.tsx`
   - `AGENT.md`
   - `design.md`
-- Rebuilt the About Us page from banner-image content into five responsive hardcoded React sections: food connection hero, brand mission intro, authentic flavors, affordable groceries mission, and fulfillment/delivery scale.
+- Rebuilt the About Us page from banner-image content into five responsive hardcoded React sections: food connection hero, brand mission intro, authentic flavors, affordable groceries mission, and fulfillment/delivery scale, while preserving the original leadership/team section below the delivery section.
 - All major About Us story text is now real selectable HTML/React content using Poppins-first typography instead of text embedded inside full-width images.
-- The previous story banner images are no longer rendered as page content; decorative image areas now use named placeholder divs and visible circle layouts ready for future asset replacement.
+- The previous story banner images are no longer rendered as page content; decorative image areas now use named placeholder divs and visible circle layouts ready for future asset replacement, without dashed placeholder boxes or label boxes inside the image areas.
 - The existing `/about-us` route and footer About Us link behavior remain unchanged.
 
 ## Become Vendor Page Launch (2026-06-04)

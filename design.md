@@ -743,8 +743,8 @@
 - The About Us page is rebuilt as responsive hardcoded React sections instead of full banner images with embedded text, because the banner text became too small on mobile.
 - Typography is Poppins-first across the About Us page: bold Poppins-style headings, normal Poppins-style paragraph text, readable `clamp()` sizing, and no negative letter spacing.
 - Brand color usage follows FoodOnlines green `#64bd00` and orange `#ff6b1a`, with black body/headline text and mostly white or warm off-white section backgrounds.
-- The visual structure keeps the original story rhythm: large hero text plus rounded image area, centered logo/mission copy, four flavor circles, left mission copy with right decorative shapes, and a delivery truck composition.
-- Image regions are placeholder circles/blocks with clear class names such as `about-hero-image-placeholder`, `about-grocery-bag-placeholder`, `about-flavor-circle-placeholder`, `about-cart-placeholder`, `about-plate-placeholder`, and `about-truck-placeholder` so real assets can be swapped in later without changing the text layout.
+- The visual structure keeps the original story rhythm: large hero text plus rounded image area, centered logo/mission copy, four flavor circles, left mission copy with right decorative shapes, a delivery truck composition, and the original leadership/team card grid with its images.
+- Image regions are clean placeholder circles/areas with clear class names such as `about-hero-image-placeholder`, `about-grocery-bag-placeholder`, `about-flavor-circle-placeholder`, `about-cart-placeholder`, `about-plate-placeholder`, and `about-truck-placeholder` so real assets can be swapped in later without changing the text layout; placeholder interiors should not show dashed boxes, labels, or box panels.
 - Responsive behavior stacks or reduces decorative compositions across tablet and 430px/390px/360px mobile widths so text remains selectable, readable, and free of horizontal scroll.
 
 ### Become Vendor Page Launch (2026-06-04)
