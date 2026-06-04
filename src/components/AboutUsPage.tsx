@@ -249,6 +249,9 @@ function LeadershipPlaceholderSection() {
       ref={reveal.ref}
       className={`mx-auto w-full max-w-[1648px] px-4 pb-12 pt-0 transition-all duration-700 ease-out sm:px-6 sm:pb-16 lg:px-8 lg:pb-20 ${reveal.className}`}
     >
+      <h2 className="mb-7 text-[2.65rem] font-black leading-none tracking-normal text-leaf-700 sm:mb-9 sm:text-[3.4rem] lg:mb-10 lg:text-[4rem]">
+        Our leadership
+      </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
         {leadershipPlaceholders.map((slot) => (
           <article

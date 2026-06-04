@@ -113,6 +113,8 @@
       },
       "leadership_placeholders": {
         "placement": "directly below delivery_scale_image",
+        "heading": "Our leadership",
+        "heading_style": "large bold H2 in FoodOnlines green, Poppins/system font stack, above first row",
         "count": 8,
         "desktop_layout": "4 columns x 2 rows",
         "tablet_layout": "2 columns",

@@ -962,5 +962,6 @@
   - `design.md`
   - `design.json`
 - Added an empty leadership placeholder grid directly below the truck/delivery-scale banner image.
+- Added a large bold green `Our leadership` H2 above the first card row, matching the sample heading placement while using FoodOnlines green.
 - Grid has eight blank rounded white boxes, with no names, roles, text, or images added yet.
 - Layout is 4 columns x 2 rows on desktop, 2 columns on tablet, and 1 column on small mobile so the cards remain clean across desktop, desktop-mobile widths, Android, and iOS.
