@@ -34,7 +34,7 @@ const preTimelineSections = [
     src: `${basePath}images/about/about-authentic-flavors.png`,
     alt: "Bringing the world's authentic flavors to every table",
     loading: "lazy" as const,
-    className: "pt-8 sm:pt-10 lg:pt-12",
+    className: "pt-0",
   },
 ];
 

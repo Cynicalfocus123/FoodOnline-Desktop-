@@ -100,6 +100,7 @@
         "/images/about/about-mission.png",
         "/images/about/about-delivery-scale.png"
       ],
+      "pre_timeline_image_spacing": "flush; no added gap between global_foods_image and authentic_flavors_image",
       "image_behavior": {
         "object_fit": "contain",
         "width": "100%",

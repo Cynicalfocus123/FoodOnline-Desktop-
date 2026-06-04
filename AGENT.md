@@ -952,3 +952,4 @@
   - `design.json`
 - Added the supplied `Connecting People around the World with the Foods They Love Most` image above the timeline, followed immediately by the supplied `Bringing the world's authentic flavors to every table` image.
 - Both images use the existing About page responsive image component with full-width contain rendering, lazy loading, no crop, and normal static page scroll behavior for desktop, desktop-mobile browser widths, tablet, Android, and iOS.
+- Follow-up spacing fix: removed the second pre-timeline image section's top padding so the two supplied story images sit close and seamless together.

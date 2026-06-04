@@ -707,6 +707,7 @@
 
 - Added two full-width static image sections above the vertical timeline: `public/images/about/about-global-foods.png` followed by `public/images/about/about-authentic-flavors.png`.
 - The images keep the shared About page responsive image treatment: max-width `1648px`, `width: 100%`, `height: auto`, `object-contain`, no crop, lazy loading, and normal body/document scrolling across desktop, desktop-mobile browser widths, tablet, Android, and iOS.
+- The two pre-timeline story images should sit flush together with no added section gap between them, so the second image uses `pt-0`.
 - Timeline placement now starts after these two story images, then continues into the existing mission and delivery-scale image sections.
 
 ## Guardrails
