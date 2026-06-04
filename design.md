@@ -694,6 +694,13 @@
 - Follow-up scroll behavior: keep the About Us timeline in the original non-sticky open layout so milestone images remain fully visible across desktop and mobile desktop widths.
 - Timeline interaction should follow a Yami-style controlled carousel pattern: vertical page scrolling must always pass through, finger left/right swipes on the timeline should move horizontally quickly without a tap-to-focus state, and visible Previous/Next buttons plus pagination dots should move between milestones.
 
+### About Us Vertical Timeline Update (2026-06-04)
+
+- The About Us timeline is now a vertical story path instead of a horizontal carousel, so users scroll down the page and pass every milestone all the way to Today.
+- The green connector line now runs vertically through the section, with circular green nodes and the existing real milestone images preserved.
+- Mobile uses a single left-side vertical path with content flowing downward; wider screens alternate text and image columns around the center line.
+- Horizontal drag, touch-swipe, wheel interception, Previous/Next buttons, and pagination dots are removed because native vertical page scrolling is now the intended interaction.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

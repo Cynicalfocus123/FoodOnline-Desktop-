@@ -208,11 +208,6 @@ video {
   transition: height 360ms ease;
 }
 
-.about-timeline-scroller {
-  -webkit-overflow-scrolling: auto;
-  overscroll-behavior: none;
-}
-
 .driver-check-item {
   opacity: 0;
   transform: translateX(-14px);

@@ -926,3 +926,15 @@
 - Changed the timeline from mandatory snapping to proximity snapping and added vertical touch-intent detection that temporarily disables snapping during up/down swipes on mobile Chrome/Safari.
 - Follow-up fix: restored the non-sticky open timeline layout so full milestone images remain visible instead of being cropped by a scroll-driven sticky viewport.
 - The timeline now follows a Yami-style controlled carousel pattern: vertical page scrolling passes through normally, visible Previous/Next buttons plus dots move the timeline, and touch users can swipe left/right directly on the timeline with a custom fast horizontal drag handler that does not require tap/focus or untap.
+
+## About Us Vertical Timeline Update (2026-06-04)
+
+- Files changed:
+  - `src/components/AboutUsPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Converted the About Us timeline from a horizontal carousel into a vertical story path so users can scroll downward through all milestones to Today.
+- Preserved the green brand connector, year pills, circular nodes, and real milestone images while changing layout to a left-side vertical path on mobile and alternating center-line columns on wider screens.
+- Removed horizontal drag/touch/wheel carousel handlers, Previous/Next controls, pagination dots, and the old `.about-timeline-scroller` CSS because vertical native page scrolling is now the only timeline interaction.

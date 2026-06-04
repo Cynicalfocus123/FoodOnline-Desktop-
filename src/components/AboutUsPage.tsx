@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -136,223 +136,59 @@ function AboutImageSection({
 }
 
 function AboutTimelineSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Array<HTMLElement | null>>([]);
-  const dragState = useRef({ startX: 0, scrollLeft: 0 });
-  const touchDragState = useRef({
-    mode: "idle" as "idle" | "horizontal" | "vertical",
-    scrollLeft: 0,
-    startX: 0,
-    startY: 0,
-  });
-
-  useEffect(() => {
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    let frame = 0;
-
-    const updateActiveMilestone = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        const scrollerCenter = scroller.getBoundingClientRect().left + scroller.clientWidth / 2;
-        let nearestIndex = 0;
-        let nearestDistance = Number.POSITIVE_INFINITY;
-
-        itemRefs.current.forEach((item, index) => {
-          if (!item) return;
-
-          const rect = item.getBoundingClientRect();
-          const itemCenter = rect.left + rect.width / 2;
-          const distance = Math.abs(itemCenter - scrollerCenter);
-
-          if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestIndex = index;
-          }
-        });
-
-        setActiveIndex(nearestIndex);
-      });
-    };
-
-    updateActiveMilestone();
-    scroller.addEventListener("scroll", updateActiveMilestone, { passive: true });
-    window.addEventListener("resize", updateActiveMilestone);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      scroller.removeEventListener("scroll", updateActiveMilestone);
-      window.removeEventListener("resize", updateActiveMilestone);
-    };
-  }, []);
-
-  const scrollToMilestone = (index: number) => {
-    itemRefs.current[index]?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
-  };
-
-  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
-
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    setIsDragging(true);
-    dragState.current = {
-      startX: event.clientX,
-      scrollLeft: scroller.scrollLeft,
-    };
-    scroller.setPointerCapture(event.pointerId);
-  };
-
-  const dragTimeline = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDragging || event.pointerType !== "mouse") return;
-
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    event.preventDefault();
-    const distance = event.clientX - dragState.current.startX;
-    scroller.scrollLeft = dragState.current.scrollLeft - distance;
-  };
-
-  const stopDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse") return;
-
-    setIsDragging(false);
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  const startTouchDrag = (event: TouchEvent<HTMLDivElement>) => {
-    const touch = event.touches[0];
-    const scroller = scrollRef.current;
-    if (!touch || !scroller) return;
-
-    touchDragState.current = {
-      mode: "idle",
-      scrollLeft: scroller.scrollLeft,
-      startX: touch.clientX,
-      startY: touch.clientY,
-    };
-  };
-
-  const dragTimelineByTouch = (event: TouchEvent<HTMLDivElement>) => {
-    const touch = event.touches[0];
-    const scroller = scrollRef.current;
-    if (!touch || !scroller) return;
-
-    const distanceX = touch.clientX - touchDragState.current.startX;
-    const distanceY = touch.clientY - touchDragState.current.startY;
-    const absoluteX = Math.abs(distanceX);
-    const absoluteY = Math.abs(distanceY);
-
-    if (touchDragState.current.mode === "idle" && (absoluteX > 8 || absoluteY > 8)) {
-      touchDragState.current.mode = absoluteX > absoluteY + 4 ? "horizontal" : "vertical";
-    }
-
-    if (touchDragState.current.mode !== "horizontal") {
-      return;
-    }
-
-    event.preventDefault();
-    scroller.scrollLeft = touchDragState.current.scrollLeft - distanceX * 1.65;
-  };
-
-  const stopTouchDrag = () => {
-    touchDragState.current.mode = "idle";
-  };
-
-  const handleTimelineWheel = (event: WheelEvent<HTMLDivElement>) => {
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-
-    const wantsHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
-
-    if (!wantsHorizontalScroll) {
-      return;
-    }
-
-    const nextScrollLeft = scroller.scrollLeft + (event.deltaX || event.deltaY);
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
-    const canScrollLeft = nextScrollLeft > 0 && event.deltaX < 0;
-    const canScrollRight = nextScrollLeft < maxScrollLeft && event.deltaX > 0;
-    const canShiftScroll = event.shiftKey && nextScrollLeft >= 0 && nextScrollLeft <= maxScrollLeft;
-
-    if (canScrollLeft || canScrollRight || canShiftScroll) {
-      event.preventDefault();
-      scroller.scrollLeft = nextScrollLeft;
-    }
-  };
-
-  const showPreviousMilestone = () => {
-    scrollToMilestone(Math.max(activeIndex - 1, 0));
-  };
-
-  const showNextMilestone = () => {
-    scrollToMilestone(Math.min(activeIndex + 1, timelineMilestones.length - 1));
-  };
-
   return (
     <section aria-label="FoodOnlines company timeline" className="overflow-hidden bg-[#f3f4f2] py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto max-w-[1648px]">
+      <div className="mx-auto max-w-[1648px] px-4 sm:px-6 lg:px-8">
         <div className="px-4 text-center sm:px-6">
           <h2 className="text-5xl font-black leading-none tracking-[-0.03em] text-neutral-950 sm:text-6xl lg:text-7xl">
             Our Story
           </h2>
         </div>
 
-        <div
-          ref={scrollRef}
-          className={`about-timeline-scroller relative mt-10 flex snap-x snap-proximity gap-5 overflow-x-hidden scroll-smooth px-[8vw] pb-4 pt-2 [scrollbar-width:none] [touch-action:pan-y_pinch-zoom] sm:gap-8 sm:px-[12vw] lg:px-[18vw] ${
-            isDragging ? "cursor-grabbing select-none" : "cursor-grab"
-          }`}
-          onPointerCancel={stopDrag}
-          onPointerDown={startDrag}
-          onPointerLeave={stopDrag}
-          onPointerMove={dragTimeline}
-          onPointerUp={stopDrag}
-          onTouchCancel={stopTouchDrag}
-          onTouchEnd={stopTouchDrag}
-          onTouchMove={dragTimelineByTouch}
-          onTouchStart={startTouchDrag}
-          onWheel={handleTimelineWheel}
-        >
-          <div className="pointer-events-none absolute left-0 right-0 top-[234px] z-0 h-1 bg-leaf-500 sm:top-[254px]" aria-hidden="true" />
-          {timelineMilestones.map((milestone, index) => (
-            <article
-              aria-label={`${milestone.year}: ${milestone.title}`}
-              className="relative z-10 min-h-[560px] w-[84vw] max-w-[820px] shrink-0 snap-center overflow-hidden px-6 py-8 sm:min-h-[600px] sm:w-[70vw] sm:px-10 lg:w-[58vw] lg:px-14"
-              key={milestone.year}
-              ref={(element) => {
-                itemRefs.current[index] = element;
-              }}
-            >
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-8 -top-20 text-[12rem] font-light leading-none text-white/70 sm:-right-12 sm:text-[18rem] lg:text-[24rem]"
-              >
-                {milestone.year === "Today" ? "Now" : milestone.year}
-              </span>
-              <div className="absolute left-0 right-0 top-[232px] h-1 bg-leaf-500 sm:top-[252px]" aria-hidden="true" />
+        <div className="relative mx-auto mt-12 max-w-6xl pb-2 sm:mt-16 lg:mt-20">
+          <div
+            aria-hidden="true"
+            className="absolute bottom-10 left-[34px] top-6 w-1 rounded-full bg-leaf-500 sm:left-1/2 sm:-translate-x-1/2"
+          />
+          <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+            {timelineMilestones.map((milestone, index) => {
+              const textAlignClass = index % 2 === 0 ? "sm:pr-14 sm:text-right" : "sm:col-start-2 sm:pl-14 sm:text-left";
+              const bodyAlignClass = index % 2 === 0 ? "sm:ml-auto" : "";
+              const imageAlignClass = index % 2 === 0 ? "sm:col-start-2 sm:pl-14" : "sm:col-start-1 sm:row-start-1 sm:pr-14";
 
-              <div className="relative z-10 flex h-full flex-col">
-                <div className="flex flex-col items-center">
-                  <div className="inline-flex w-fit rounded-[18px] bg-leaf-500 px-5 py-2 text-xl font-black text-white shadow-[0_10px_24px_rgba(111,191,18,0.28)]">
-                    {milestone.year}
+              return (
+                <article
+                  aria-label={`${milestone.year}: ${milestone.title}`}
+                  className="relative grid gap-6 pl-24 sm:grid-cols-2 sm:items-center sm:gap-0 sm:pl-0"
+                  key={milestone.year}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute -top-8 hidden text-[8rem] font-light leading-none text-white/70 sm:block lg:text-[12rem] ${
+                      index % 2 === 0 ? "left-4" : "right-4"
+                    }`}
+                  >
+                    {milestone.year === "Today" ? "Now" : milestone.year}
+                  </span>
+                  <div
+                    aria-hidden="true"
+                    className="absolute left-[26px] top-[126px] z-10 h-5 w-5 rounded-full border-4 border-white bg-leaf-500 shadow-[0_0_0_8px_rgba(111,191,18,0.16)] sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
+                  />
+
+                  <div className={`relative z-10 ${textAlignClass}`}>
+                    <div className="inline-flex w-fit rounded-[18px] bg-leaf-500 px-5 py-2 text-xl font-black text-white shadow-[0_10px_24px_rgba(111,191,18,0.28)]">
+                      {milestone.year}
+                    </div>
+                    <h3 className="mt-5 text-[2rem] font-black leading-tight tracking-[-0.03em] text-neutral-950 sm:text-[2.45rem]">
+                      {milestone.title}
+                    </h3>
+                    <p className={`mt-4 max-w-xl text-base font-medium leading-8 text-neutral-700 sm:text-lg ${bodyAlignClass}`}>
+                      {milestone.body}
+                    </p>
                   </div>
-                </div>
 
-                <div className="mt-5 flex items-center justify-center">
-                  <div className="relative flex h-[248px] w-[248px] items-center justify-center rounded-full border-[14px] border-white bg-[radial-gradient(circle_at_35%_30%,#ffffff_0%,#eef8df_40%,#d9efbe_100%)] shadow-[0_24px_56px_rgba(15,23,42,0.22)] sm:h-[300px] sm:w-[300px]">
+                  <div className={`relative z-10 flex justify-start sm:justify-center ${imageAlignClass}`}>
+                    <div className="relative flex h-[224px] w-[224px] items-center justify-center rounded-full border-[14px] border-white bg-[radial-gradient(circle_at_35%_30%,#ffffff_0%,#eef8df_40%,#d9efbe_100%)] shadow-[0_24px_56px_rgba(15,23,42,0.22)] sm:h-[284px] sm:w-[284px] lg:h-[320px] lg:w-[320px]">
                     {milestone.image ? (
                       <img
                         alt={milestone.imageAlt}
@@ -372,57 +208,12 @@ function AboutTimelineSection() {
                         </div>
                       </>
                     )}
+                    </div>
                   </div>
-                </div>
-
-                <div className="mt-auto max-w-2xl pt-10">
-                  <h3 className="text-[2rem] font-black leading-tight tracking-[-0.03em] text-neutral-950 sm:text-[2.45rem]">
-                    {milestone.title}
-                  </h3>
-                  <p className="mt-4 text-base font-medium leading-8 text-neutral-700 sm:text-lg">{milestone.body}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-center justify-center gap-4 px-4 sm:mt-5">
-          <button
-            aria-label="Show previous timeline milestone"
-            className="min-w-[92px] rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-black text-neutral-900 shadow-sm transition hover:border-leaf-500 hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={activeIndex === 0}
-            onClick={showPreviousMilestone}
-            type="button"
-          >
-            Previous
-          </button>
-          <div aria-label="Timeline slide navigation" className="flex justify-center gap-3">
-            {timelineMilestones.map((milestone, index) => {
-              const isActive = index === activeIndex;
-
-              return (
-                <button
-                  aria-current={isActive ? "true" : undefined}
-                  aria-label={`Show ${milestone.year} milestone`}
-                  className={`h-4 w-4 rounded-full transition focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 ${
-                    isActive ? "bg-leaf-500 shadow-[0_0_0_4px_rgba(111,191,18,0.16)]" : "bg-neutral-300 hover:bg-neutral-400"
-                  }`}
-                  key={milestone.year}
-                  onClick={() => scrollToMilestone(index)}
-                  type="button"
-                />
+                </article>
               );
             })}
           </div>
-          <button
-            aria-label="Show next timeline milestone"
-            className="min-w-[92px] rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-black text-neutral-900 shadow-sm transition hover:border-leaf-500 hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-leaf-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={activeIndex === timelineMilestones.length - 1}
-            onClick={showNextMilestone}
-            type="button"
-          >
-            Next
-          </button>
         </div>
       </div>
     </section>

@@ -107,12 +107,12 @@
       },
       "timeline": {
         "placement": "directly_below_top_banner",
-        "style": "open_horizontal_snap_scrolling_story_path",
+        "style": "open_vertical_scroll_story_path",
         "accent_color": "FoodOnlines green",
         "year_badges": "green rounded pills with white text",
         "connecting_line": "green",
         "image_areas": "large circular placeholders with subtle shadows",
-        "milestone_layout": "no per-milestone boxes; year, circle, text, and line sit directly on the shared light background",
+        "milestone_layout": "no per-milestone boxes; year, circle, text, and image sit on a vertical green story path",
         "year_badge_spacing": "green year pills sit directly above the circle visuals with tight spacing",
         "timeline_images": {
           "1999": "/images/about/timeline/timeline-1999.png",
@@ -122,7 +122,7 @@
           "2019": "/images/about/timeline/timeline-2019.png",
           "Today": "/images/about/timeline/timeline-today.png"
         },
-        "pagination_dots": "light gray inactive, green active",
+        "pagination_dots": "removed for vertical native page scrolling",
         "milestones": [
           "1999",
           "2005",
@@ -132,14 +132,15 @@
           "Today"
         ],
         "interaction": {
-          "touch_swipe": true,
-          "horizontal_scroll": true,
-          "desktop_mouse_drag": true,
+          "touch_swipe": false,
+          "horizontal_scroll": false,
+          "desktop_mouse_drag": false,
           "vertical_page_scroll_passthrough": true,
-          "horizontal_trackpad_and_shift_wheel": true,
-          "snap_scrolling": true,
-          "dot_navigation": true,
-          "keyboard_focusable_dots": true
+          "horizontal_trackpad_and_shift_wheel": false,
+          "snap_scrolling": false,
+          "dot_navigation": false,
+          "keyboard_focusable_dots": false,
+          "native_down_page_scroll_to_end": true
         }
       }
     },
