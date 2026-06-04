@@ -939,3 +939,4 @@
 - Preserved the green brand connector, year pills, circular nodes, and real milestone images while changing layout to a left-side vertical path on mobile and alternating center-line columns on wider screens.
 - Removed horizontal drag/touch/wheel carousel handlers, Previous/Next controls, pagination dots, and the old `.about-timeline-scroller` CSS because vertical native page scrolling is now the only timeline interaction.
 - Follow-up scroll fix: timeline containers now use horizontal-only overflow guarding plus explicit vertical pan behavior so users do not need to tap/focus the timeline area before continuing down the page.
+- Static-scroll follow-up: removed `overflow-x-hidden` and touch-action overrides from the About page wrapper and timeline section so no nested scroll container can form; the timeline is now plain static page content with body/document scrolling only.

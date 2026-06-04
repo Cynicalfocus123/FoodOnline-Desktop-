@@ -142,7 +142,9 @@
           "keyboard_focusable_dots": false,
           "native_down_page_scroll_to_end": true,
           "requires_tap_or_focus_before_scroll": false,
-          "touch_action": "pan-y"
+          "touch_action": "browser_default",
+          "nested_timeline_scroll_container": false,
+          "timeline_overflow_clipping": false
         }
       }
     },

@@ -701,6 +701,7 @@
 - Mobile uses a single left-side vertical path with content flowing downward; wider screens alternate text and image columns around the center line.
 - Horizontal drag, touch-swipe, wheel interception, Previous/Next buttons, and pagination dots are removed because native vertical page scrolling is now the intended interaction.
 - Follow-up scroll fix: the timeline section now only guards horizontal overflow and explicitly uses vertical pan behavior, so users do not need to tap/focus the timeline before scrolling down through it.
+- Static-scroll follow-up: the About page wrapper and timeline section must not use `overflow-x-hidden`, `overflow-hidden`, sticky positioning, touch-action overrides, or any nested scroll container. Body/document scrolling should carry users normally up and down through the complete timeline.
 
 ## Guardrails
 
