@@ -720,6 +720,7 @@
 - Leadership card typography uses semibold names and normal-weight role text so it matches the sample more closely and does not appear too bold.
 - Leadership card image behavior: images sit in a same-height lower portrait frame with `object-contain object-bottom` so portraits align evenly without cropping across desktop, tablet, Android, iOS, and narrow browser widths.
 - Follow-up image sizing: Lucas and Ahmet are slightly scaled up inside the same portrait frame, while the newer Anna/Janet white-background images replace the earlier gray-background female portraits and use object-cover positioning to keep the card image areas visually consistent.
+- Gray-backdrop fix: Anna, Janet, and Ahmet leadership assets have their connected light gray studio backdrop whitened so the portraits sit on the white card background; Ahmet uses a top-weighted object-cover crop to avoid lower source artifacts.
 
 ## Guardrails
 

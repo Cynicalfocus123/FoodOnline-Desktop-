@@ -133,7 +133,7 @@
         "content": "all eight cards include supplied headshot, name, and role",
         "card_style": "white cards with rounded corners, light border, and subtle shadow similar to the sample leadership card boxes",
         "typography": "names use semibold weight and roles use normal weight so text is not overly bold",
-        "image_alignment": "all filled cards use the same fixed portrait frame height; Lucas and Ahmet are slightly scaled up, and the newer Anna/Janet white-background portraits fill the frame with object-cover"
+        "image_alignment": "all filled cards use the same fixed portrait frame height; Lucas is slightly scaled up, Anna/Janet/Ahmet backdrops are whitened at the asset level, and Ahmet uses a top-weighted object-cover crop to hide lower source artifacts"
       },
       "timeline": {
         "placement": "below the two pre-timeline story images",

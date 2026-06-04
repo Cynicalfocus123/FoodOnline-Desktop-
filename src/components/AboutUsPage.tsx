@@ -89,7 +89,7 @@ const leadershipCards = [
     role: "Chief Customer & Experience Officer / CXO",
     image: `${basePath}images/about/leadership/ahmet-yilmaz.png`,
     imageAlt: "Ahmet Yılmaz",
-    imageClassName: "object-contain object-bottom scale-[1.08]",
+    imageClassName: "object-cover object-[50%_12%]",
   },
 ];
 

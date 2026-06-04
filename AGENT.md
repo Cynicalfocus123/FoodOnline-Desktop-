@@ -977,3 +977,4 @@
 - Follow-up content update: filled cards 6-7 with Anna Goldstein (Chief Marketing Officer / CMO) and Janet Weiler (Chief Commercial Officer / CCO).
 - Follow-up styling update: softened names to semibold, roles to normal weight, and set every filled card to use the same fixed-height lower portrait frame with `object-contain object-bottom` so images align evenly.
 - Latest content update: filled card 8 with Ahmet Yılmaz (Chief Customer & Experience Officer / CXO), replaced Anna and Janet with the newer white-background images, and scaled Lucas/Ahmet slightly larger within the same fixed portrait frame.
+- Gray-backdrop fix: whitened the connected light gray studio backdrop in Anna, Janet, and Ahmet public image assets, then changed Ahmet to a top-weighted object-cover crop so lower source artifacts do not show in the leadership card.
