@@ -363,7 +363,7 @@ export function AboutUsPage() {
             <div className="absolute right-0 top-0 h-[190px] w-[190px] rounded-full bg-[#ffd6bd] sm:h-[250px] sm:w-[250px] lg:h-[320px] lg:w-[320px]" />
             <img
               alt="Shopping cart full of groceries"
-              className="absolute right-[-14px] top-3 z-10 h-[178px] w-[206px] max-w-none object-contain drop-shadow-[0_18px_26px_rgba(34,38,30,0.16)] sm:right-[-18px] sm:top-2 sm:h-[244px] sm:w-[282px] lg:right-[-30px] lg:top-3 lg:h-[322px] lg:w-[372px]"
+              className="absolute right-[-28px] top-[-14px] z-10 h-[178px] w-[206px] max-w-none object-contain drop-shadow-[0_18px_26px_rgba(34,38,30,0.16)] sm:right-[-34px] sm:top-[-18px] sm:h-[244px] sm:w-[282px] lg:right-[-54px] lg:top-[-26px] lg:h-[322px] lg:w-[372px]"
               decoding="async"
               draggable={false}
               loading="lazy"
@@ -373,7 +373,7 @@ export function AboutUsPage() {
             <div className="absolute bottom-0 left-0 h-[250px] w-[250px] rounded-full bg-[#d7ecc5] sm:h-[360px] sm:w-[360px] lg:h-[480px] lg:w-[480px]" />
             <img
               alt="Plate of spicy rice cakes"
-              className="absolute bottom-[74px] left-[-12px] z-10 h-[138px] w-[250px] max-w-none -rotate-[7deg] object-contain drop-shadow-[0_18px_24px_rgba(91,29,11,0.16)] sm:bottom-[108px] sm:left-[-18px] sm:h-[194px] sm:w-[350px] lg:bottom-[142px] lg:left-[-26px] lg:h-[252px] lg:w-[454px]"
+              className="absolute bottom-[58px] left-[-34px] z-10 h-[164px] w-[296px] max-w-none -rotate-[7deg] object-contain drop-shadow-[0_18px_24px_rgba(91,29,11,0.16)] sm:bottom-[82px] sm:left-[-52px] sm:h-[232px] sm:w-[418px] lg:bottom-[108px] lg:left-[-78px] lg:h-[308px] lg:w-[555px]"
               decoding="async"
               draggable={false}
               loading="lazy"
@@ -396,7 +396,7 @@ export function AboutUsPage() {
 
             <img
               alt="FoodOnlines delivery truck"
-              className="absolute bottom-[58px] left-1/2 z-10 w-[min(108vw,760px)] max-w-none -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(22,31,20,0.16)] sm:bottom-[44px] sm:w-[min(92vw,860px)] lg:bottom-[34px] lg:w-[900px]"
+              className="absolute bottom-[-112px] left-1/2 z-10 w-[min(96vw,820px)] max-w-full -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(22,31,20,0.16)] sm:bottom-[-176px] sm:w-[min(96vw,1040px)] lg:bottom-[-230px] lg:w-[1120px]"
               decoding="async"
               draggable={false}
               loading="lazy"
