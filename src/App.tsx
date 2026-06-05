@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AccountPage } from "./components/AccountPage";
 import { AboutUsPage } from "./components/AboutUsPage";
+import { BecomePartnerPage } from "./components/BecomePartnerPage";
 import { BecomeVendorPage } from "./components/BecomeVendorPage";
 import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
@@ -77,6 +78,7 @@ export default function App() {
       {siteView === "account" ? <AccountPage /> : null}
       {siteView === "aboutUs" ? <AboutUsPage /> : null}
       {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
+      {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
       {siteView === "drivers" ? <DriverLandingPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}

@@ -1356,7 +1356,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Affiliate Program",
       { label: "Become Our Drivers", href: "/company/drivers" },
       "Farm Careers",
-      "Our Suppliers",
+      { label: "Become a Partner", href: "/become-partner" },
       "Accessibility",
       "Promotions",
     ],

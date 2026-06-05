@@ -30,6 +30,7 @@ export type SiteView =
   | "account"
   | "aboutUs"
   | "becomeVendor"
+  | "becomePartner"
   | "drivers";
 export type SignupStep = "role" | "form" | "complete";
 
@@ -57,6 +58,8 @@ function readAuthReturnRoute(
       return "about-us";
     case "becomeVendor":
       return "become-vendor";
+    case "becomePartner":
+      return "become-partner";
     case "drivers":
       return "company/drivers";
     default:
@@ -147,6 +150,18 @@ function isBecomeVendorRoute(hash: string) {
   return /\/become-vendor\/?$/i.test(window.location.pathname);
 }
 
+function isBecomePartnerRoute(hash: string) {
+  if (/^#become-partner(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/become-partner\/?$/i.test(window.location.pathname);
+}
+
 function readAccountSectionFromHash(hash: string): AccountSection | null {
   const match = hash.match(/^#account(?:\/([^?#/]+))?/i);
 
@@ -196,9 +211,11 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#login") ||
     window.location.hash.startsWith("#about-us") ||
     window.location.hash.startsWith("#become-vendor") ||
+    window.location.hash.startsWith("#become-partner") ||
     window.location.hash.startsWith("#company/drivers") ||
     /\/about-us\/?$/i.test(window.location.pathname) ||
     /\/become-vendor\/?$/i.test(window.location.pathname) ||
+    /\/become-partner\/?$/i.test(window.location.pathname) ||
     /\/company\/drivers\/?$/i.test(window.location.pathname)
   ) {
     window.history.replaceState(null, "", `${import.meta.env.BASE_URL}#home`);
@@ -233,6 +250,7 @@ type HomeState = {
   openCheckout: () => void;
   openAboutUs: () => void;
   openBecomeVendor: () => void;
+  openBecomePartner: () => void;
   openDrivers: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
@@ -412,6 +430,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openBecomePartner: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}become-partner`);
+      }
+
+      return {
+        siteView: "becomePartner",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openDrivers: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -528,6 +560,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isBecomePartnerRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "becomePartner",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isDriversRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -604,6 +646,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "account" ||
         state.siteView === "aboutUs" ||
         state.siteView === "becomeVendor" ||
+        state.siteView === "becomePartner" ||
         state.siteView === "drivers"
       ) {
         return {
