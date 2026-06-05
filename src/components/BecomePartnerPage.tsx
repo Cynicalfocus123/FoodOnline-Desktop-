@@ -91,7 +91,7 @@ function PartnerHeroSection() {
       <img
         alt=""
         aria-hidden="true"
-        className="partner-hero-leaf pointer-events-none absolute right-[8%] top-[7%] z-20 hidden w-[clamp(130px,15vw,230px)] object-contain md:block"
+        className="partner-hero-leaf pointer-events-none absolute right-[5%] top-[10%] z-20 hidden w-[clamp(182px,21vw,322px)] object-contain md:block lg:right-[3.5%] lg:top-[8%]"
         draggable={false}
         src={partnerImagePath("partner-leaves.png")}
       />
@@ -101,14 +101,14 @@ function PartnerHeroSection() {
 
 function PartnerCardsSection() {
   return (
-    <section className="relative mx-auto min-h-[860px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.7vw,3.6rem)] py-[clamp(3.2rem,6vw,4.8rem)] lg:aspect-[1650/880] lg:min-h-0">
+    <section className="relative mx-auto min-h-[980px] w-full max-w-[1650px] overflow-visible px-[clamp(1.25rem,3.7vw,3.6rem)] pb-[clamp(6rem,10vw,8.5rem)] pt-[clamp(3.2rem,6vw,4.8rem)] lg:min-h-[980px]">
       <h2 className="relative z-30 mx-auto max-w-[1040px] text-center text-[clamp(2.55rem,4.2vw,4.4rem)] font-bold leading-[1.18] tracking-normal text-black lg:ml-auto lg:mr-[5.2%]">
         Partner with the World&apos;s Largest
         <br />
         Online Supermarket
       </h2>
 
-      <div className="relative z-10 mt-[clamp(2.2rem,5vw,4rem)] grid gap-6 md:grid-cols-3 lg:absolute lg:inset-x-[9.2%] lg:bottom-[4%] lg:top-[32%] lg:mt-0 lg:gap-[5.3vw]">
+      <div className="relative z-10 mt-[clamp(2.2rem,5vw,4rem)] grid gap-6 md:grid-cols-3 lg:absolute lg:inset-x-[9.2%] lg:bottom-[11%] lg:top-[32%] lg:mt-0 lg:gap-[5.3vw]">
         {partnerCards.map((card) => (
           <article
             className={`rounded-[20px] bg-white px-[clamp(1.5rem,2vw,1.65rem)] py-[clamp(1.55rem,2.4vw,2.15rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] ${card.className}`}
@@ -116,7 +116,7 @@ function PartnerCardsSection() {
           >
             <img
               alt={card.iconAlt}
-              className="partner-card-icon ml-auto h-[clamp(6.4rem,10vw,9.5rem)] w-[clamp(6.4rem,10vw,9.5rem)] object-contain"
+              className="partner-card-icon ml-auto h-[clamp(11.5rem,18vw,17rem)] w-[clamp(11.5rem,18vw,17rem)] object-contain"
               loading="lazy"
               src={card.icon}
             />
