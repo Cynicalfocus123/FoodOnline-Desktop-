@@ -67,7 +67,7 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(2.2rem,5vw,3.2rem)] grid gap-4 md:grid-cols-[1fr_0.36fr] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end">
+      <div className="relative z-0 mt-[clamp(2.2rem,5vw,3.2rem)] grid gap-4 md:grid-cols-[1fr_0.58fr] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end">
         <img
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image h-[clamp(250px,34vw,456px)] w-full rounded-[12px] object-cover object-center shadow-[0_20px_60px_rgba(80,34,48,0.12)]"
@@ -91,7 +91,7 @@ function PartnerHeroSection() {
       <img
         alt=""
         aria-hidden="true"
-        className="partner-hero-leaf pointer-events-none absolute right-[2.4%] top-[4.4%] z-20 hidden w-[clamp(130px,15vw,230px)] object-contain md:block"
+        className="partner-hero-leaf pointer-events-none absolute right-[8%] top-[7%] z-20 hidden w-[clamp(130px,15vw,230px)] object-contain md:block"
         draggable={false}
         src={partnerImagePath("partner-leaves.png")}
       />
@@ -101,14 +101,14 @@ function PartnerHeroSection() {
 
 function PartnerCardsSection() {
   return (
-    <section className="relative mx-auto min-h-[820px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.7vw,3.6rem)] py-[clamp(3.2rem,6vw,4.8rem)] lg:aspect-[1650/880] lg:min-h-0">
-      <h2 className="mx-auto max-w-[940px] text-center text-[clamp(2.55rem,4.2vw,4.4rem)] font-bold leading-[1.18] tracking-normal text-black lg:ml-auto lg:mr-[5.2%]">
+    <section className="relative mx-auto min-h-[860px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.7vw,3.6rem)] py-[clamp(3.2rem,6vw,4.8rem)] lg:aspect-[1650/880] lg:min-h-0">
+      <h2 className="relative z-30 mx-auto max-w-[1040px] text-center text-[clamp(2.55rem,4.2vw,4.4rem)] font-bold leading-[1.18] tracking-normal text-black lg:ml-auto lg:mr-[5.2%]">
         Partner with the World&apos;s Largest
         <br />
         Online Supermarket
       </h2>
 
-      <div className="mt-[clamp(2.2rem,5vw,4rem)] grid gap-6 md:grid-cols-3 lg:absolute lg:inset-x-[9.2%] lg:bottom-[4%] lg:top-[20%] lg:mt-0 lg:gap-[5.3vw]">
+      <div className="relative z-10 mt-[clamp(2.2rem,5vw,4rem)] grid gap-6 md:grid-cols-3 lg:absolute lg:inset-x-[9.2%] lg:bottom-[4%] lg:top-[32%] lg:mt-0 lg:gap-[5.3vw]">
         {partnerCards.map((card) => (
           <article
             className={`rounded-[20px] bg-white px-[clamp(1.5rem,2vw,1.65rem)] py-[clamp(1.55rem,2.4vw,2.15rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] ${card.className}`}
@@ -116,7 +116,7 @@ function PartnerCardsSection() {
           >
             <img
               alt={card.iconAlt}
-              className="partner-card-icon ml-auto h-[clamp(4.5rem,7vw,6rem)] w-[clamp(4.5rem,7vw,6rem)] object-contain"
+              className="partner-card-icon ml-auto h-[clamp(6.4rem,10vw,9.5rem)] w-[clamp(6.4rem,10vw,9.5rem)] object-contain"
               loading="lazy"
               src={card.icon}
             />
