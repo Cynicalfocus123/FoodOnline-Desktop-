@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
@@ -64,6 +64,81 @@ const steps = [
     body: "Upload your Certificate of Insurance and any required resale certificates to ensure compliance with applicable regulatory requirements.",
     className: "bg-[#d8e9c4]",
     illustration: <CertificateIllustration />,
+  },
+];
+
+const vendorFaqItems = [
+  {
+    question: "When Can I Expect Approval?",
+    answer: (
+      <p>
+        Most sellers complete onboarding within 5-7 business days. Providing detailed, accurate information and timely responses to verification
+        requests helps ensure a smooth and efficient review process.
+      </p>
+    ),
+  },
+  {
+    question: "How Can I Succeed on FoodOnlines.com Global program?",
+    answer: (
+      <>
+        <p>Building a successful business on a new marketplace starts with the right strategy. To maximize your growth and sales, focus on these key areas:</p>
+        <ul className="mt-4 list-disc space-y-2 pl-5 sm:pl-6">
+          <li>
+            <span className="font-semibold text-[#263449]">Product Selection</span> - Offer a comprehensive product assortment that meets customer demand.
+          </li>
+          <li>
+            <span className="font-semibold text-[#263449]">High-Quality Content</span> - Create compelling product listings with clear descriptions and
+            professional images.
+          </li>
+          <li>
+            <span className="font-semibold text-[#263449]">Competitive Pricing</span> - Price your products strategically to attract and retain customers.
+          </li>
+          <li>
+            <span className="font-semibold text-[#263449]">Fast Fulfillment</span> - Provide reliable, fast shipping to enhance the customer experience.
+          </li>
+          <li>
+            <span className="font-semibold text-[#263449]">Marketing & Visibility</span> - Increase exposure through promotional tools and targeted marketing
+            solutions.
+          </li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    question: "How Does Fulfillment and Storage Work?",
+    answer: (
+      <div className="space-y-5">
+        <div>
+          <p className="font-semibold text-[#263449]">Fulfillment Services</p>
+          <p className="mt-2">
+            We take care of order fulfillment from start to finish. Once an order is placed, our fulfillment partners pick, pack, ship, and manage customer
+            service and returns, allowing you to focus on growing your business.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-[#263449]">Inventory Storage</p>
+          <p className="mt-2">
+            Products enrolled in the fulfillment program are stored in our partner warehouses. Storage costs are calculated based on inventory volume and
+            storage duration.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    question: "Does FoodOnlines.com Support Factory Drop shipping?",
+    answer: (
+      <div className="space-y-4">
+        <p>
+          Yes. FoodOnlines.com may allow approved sellers to dropship products directly from factories to customers, provided the factory is located in a
+          country where FoodOnlines.com maintains an operational presence or management office.
+        </p>
+        <p>
+          All drop shipping arrangements must comply with our strict operational, quality control, shipping, and customer service requirements to ensure a
+          consistent customer experience.
+        </p>
+      </div>
+    ),
   },
 ];
 
@@ -238,6 +313,64 @@ function SectionShell({ children, className = "" }: { children: ReactNode; class
   return <section className={`relative mx-auto w-full max-w-[1640px] px-5 sm:px-10 lg:px-16 ${className}`}>{children}</section>;
 }
 
+function VendorFaqAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <SectionShell className="py-[clamp(2.75rem,6vw,6rem)]">
+      <div className="mx-auto w-full max-w-[1720px]">
+        <h2 className="max-w-full text-[clamp(2.45rem,7vw,5.9rem)] font-normal leading-[0.98] tracking-normal text-[#111]">Have any questions?</h2>
+        <div className="mt-[clamp(1.75rem,4vw,4rem)] w-full border-y border-[#8aa17f]/40">
+          {vendorFaqItems.map((item, index) => {
+            const isOpen = openIndex === index;
+            const panelId = `vendor-faq-panel-${index}`;
+            const buttonId = `vendor-faq-button-${index}`;
+
+            return (
+              <article className="w-full border-b border-[#8aa17f]/35 last:border-b-0" key={item.question}>
+                <h3 className="m-0">
+                  <button
+                    aria-controls={panelId}
+                    aria-expanded={isOpen}
+                    className="flex min-h-[58px] w-full min-w-0 items-center justify-between gap-[clamp(0.75rem,2vw,2rem)] py-[clamp(1rem,2.4vw,2.1rem)] text-left text-[clamp(1.08rem,2.1vw,2.05rem)] font-semibold leading-tight text-black outline-none transition focus-visible:ring-4 focus-visible:ring-[#ff6b1a]/30 sm:min-h-[64px]"
+                    id={buttonId}
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    type="button"
+                  >
+                    <span className="min-w-0 flex-1 pr-1 [overflow-wrap:anywhere]">{item.question}</span>
+                    <span
+                      aria-hidden="true"
+                      className={`grid h-11 w-11 shrink-0 place-items-center rounded-full text-black transition-transform duration-200 sm:h-12 sm:w-12 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </span>
+                  </button>
+                </h3>
+                <div
+                  aria-labelledby={buttonId}
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                  id={panelId}
+                  role="region"
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <div className="max-w-[min(100%,72rem)] pb-[clamp(1.35rem,3vw,2.8rem)] pr-[clamp(0rem,5vw,5.5rem)] text-[clamp(1rem,1.45vw,1.45rem)] font-normal leading-[1.45] text-[#435571] [overflow-wrap:anywhere]">
+                      {item.answer}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
 export function BecomeVendorPage() {
   const openSignup = useHomeStore((state) => state.openSignup);
   const openLogin = useHomeStore((state) => state.openLogin);
@@ -375,6 +508,8 @@ export function BecomeVendorPage() {
           ))}
         </div>
       </SectionShell>
+
+      <VendorFaqAccordion />
 
       <SectionShell className="grid items-center gap-8 py-14 sm:py-16 lg:grid-cols-[1fr_auto] lg:py-20">
         <div>
