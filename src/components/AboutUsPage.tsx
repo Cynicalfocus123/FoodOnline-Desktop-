@@ -1,12 +1,54 @@
 import { useEffect, useRef, useState } from "react";
 
 const basePath = import.meta.env.BASE_URL;
+const aboutCircleAssetPath = (fileName: string) => `${basePath}images/about/circle-assets/${fileName}`;
 
 const flavorCircles = [
-  "bg-[#b7dce8]",
-  "bg-[#d7ecc5]",
-  "bg-[#ffd779]",
-  "bg-[#ffd0df]",
+  {
+    colorClass: "bg-[#b7dce8]",
+    image: aboutCircleAssetPath("flavor-burger.png"),
+    imageAlt: "Burger",
+    imageClassName: "w-[104%] max-w-none translate-y-[4%] sm:w-[108%] lg:w-[112%]",
+  },
+  {
+    colorClass: "bg-[#d7ecc5]",
+    image: aboutCircleAssetPath("flavor-ice-cream.png"),
+    imageAlt: "Ice cream sundae",
+    imageClassName: "h-[106%] max-h-none translate-y-[-3%] sm:h-[110%] lg:h-[112%]",
+  },
+  {
+    colorClass: "bg-[#ffd779]",
+    image: aboutCircleAssetPath("flavor-fruit-drinks.png"),
+    imageAlt: "Fruit drinks",
+    imageClassName: "w-[108%] max-w-none translate-y-[6%] sm:w-[112%] lg:w-[116%]",
+  },
+  {
+    colorClass: "bg-[#ffd0df]",
+    image: aboutCircleAssetPath("flavor-chips.png"),
+    imageAlt: "Potato chips",
+    imageClassName: "w-[104%] max-w-none translate-y-[4%] sm:w-[108%] lg:w-[114%]",
+  },
+];
+
+const deliveryDishes = [
+  {
+    image: aboutCircleAssetPath("delivery-bulgogi.png"),
+    imageAlt: "Korean barbecue dish",
+    position: "left-0 top-12 sm:left-5 lg:left-3",
+    imageClassName: "w-full max-w-none -rotate-[8deg]",
+  },
+  {
+    image: aboutCircleAssetPath("delivery-ramen.png"),
+    imageAlt: "Ramen bowl",
+    position: "right-0 top-20 sm:right-3 lg:right-8",
+    imageClassName: "w-full max-w-none rotate-[7deg]",
+  },
+  {
+    image: aboutCircleAssetPath("delivery-salad.png"),
+    imageAlt: "Papaya salad plate",
+    position: "bottom-24 left-2 sm:bottom-20 sm:left-10 lg:bottom-24 lg:left-24",
+    imageClassName: "w-full max-w-none rotate-[10deg]",
+  },
 ];
 
 const leadershipCards = [
@@ -217,16 +259,28 @@ export function AboutUsPage() {
             <div className="flex justify-start">
               <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
                 <span className="absolute bottom-0 left-0 h-[120px] w-[120px] rounded-full bg-[#b6d532] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
-                {/* TODO: Replace with grocery bag image asset. */}
-                <div className="about-grocery-bag-placeholder absolute bottom-4 left-8 h-[92px] w-[98px] sm:h-[122px] sm:w-[132px] lg:h-[164px] lg:w-[176px]" />
+                <img
+                  alt="Dragon fruit"
+                  className="absolute bottom-[-4px] left-[-14px] z-10 h-[118px] w-[146px] max-w-none object-contain drop-shadow-[0_14px_20px_rgba(97,27,52,0.16)] sm:bottom-[-8px] sm:left-[-18px] sm:h-[158px] sm:w-[196px] lg:bottom-[-14px] lg:left-[-24px] lg:h-[218px] lg:w-[270px]"
+                  decoding="async"
+                  draggable={false}
+                  loading="lazy"
+                  src={aboutCircleAssetPath("accessible-dragon-fruit.png")}
+                />
               </div>
             </div>
 
             <div className="flex justify-end">
               <div className="relative h-[128px] w-[170px] sm:h-[168px] sm:w-[230px] lg:h-[230px] lg:w-[300px]">
                 <span className="absolute bottom-0 right-0 h-[120px] w-[120px] rounded-full bg-[#ff6b1a] sm:h-[160px] sm:w-[160px] lg:h-[220px] lg:w-[220px]" />
-                {/* TODO: Replace with fruit image asset. */}
-                <div className="about-fruit-placeholder absolute bottom-2 right-8 h-[98px] w-[112px] rounded-full sm:h-[130px] sm:w-[146px] lg:h-[176px] lg:w-[198px]" />
+                <img
+                  alt="Grocery bag filled with vegetables"
+                  className="absolute bottom-[-4px] right-[-8px] z-10 h-[124px] w-[146px] max-w-none rotate-[-3deg] object-contain drop-shadow-[0_14px_22px_rgba(93,57,17,0.2)] sm:bottom-[-8px] sm:right-[-12px] sm:h-[168px] sm:w-[198px] lg:bottom-[-14px] lg:right-[-18px] lg:h-[232px] lg:w-[272px]"
+                  decoding="async"
+                  draggable={false}
+                  loading="lazy"
+                  src={aboutCircleAssetPath("accessible-grocery-bag.png")}
+                />
               </div>
             </div>
           </div>
@@ -247,14 +301,20 @@ export function AboutUsPage() {
           </p>
 
           <div className="mt-12 grid grid-cols-1 justify-items-center gap-8 min-[430px]:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-            {flavorCircles.map((colorClass, index) => (
+            {flavorCircles.map((flavor, index) => (
               <div
-                aria-label={`Future flavor image ${index + 1}`}
-                className={`about-flavor-circle-placeholder flex aspect-square w-[min(76vw,330px)] items-center justify-center rounded-full ${colorClass}`}
-                key={colorClass}
+                aria-label={`Flavor image ${index + 1}`}
+                className={`relative flex aspect-square w-[min(76vw,330px)] items-center justify-center overflow-visible rounded-full ${flavor.colorClass}`}
+                key={flavor.image}
               >
-                {/* TODO: Replace each circle's inner placeholder with a food image asset. */}
-                <div className="h-[38%] w-[48%]" />
+                <img
+                  alt={flavor.imageAlt}
+                  className={`object-contain drop-shadow-[0_18px_24px_rgba(30,24,16,0.14)] ${flavor.imageClassName}`}
+                  decoding="async"
+                  draggable={false}
+                  loading="lazy"
+                  src={flavor.image}
+                />
               </div>
             ))}
           </div>
@@ -301,12 +361,24 @@ export function AboutUsPage() {
 
           <div className="relative mx-auto h-[430px] w-full max-w-[560px] sm:h-[560px] lg:h-[680px]">
             <div className="absolute right-0 top-0 h-[190px] w-[190px] rounded-full bg-[#ffd6bd] sm:h-[250px] sm:w-[250px] lg:h-[320px] lg:w-[320px]" />
-            {/* TODO: Replace with shopping cart image asset. */}
-            <div className="about-cart-placeholder absolute right-4 top-8 h-[132px] w-[170px] sm:h-[178px] sm:w-[230px] lg:h-[230px] lg:w-[300px]" />
+            <img
+              alt="Shopping cart full of groceries"
+              className="absolute right-[-14px] top-3 z-10 h-[178px] w-[206px] max-w-none object-contain drop-shadow-[0_18px_26px_rgba(34,38,30,0.16)] sm:right-[-18px] sm:top-2 sm:h-[244px] sm:w-[282px] lg:right-[-30px] lg:top-3 lg:h-[322px] lg:w-[372px]"
+              decoding="async"
+              draggable={false}
+              loading="lazy"
+              src={aboutCircleAssetPath("mission-shopping-cart.png")}
+            />
 
             <div className="absolute bottom-0 left-0 h-[250px] w-[250px] rounded-full bg-[#d7ecc5] sm:h-[360px] sm:w-[360px] lg:h-[480px] lg:w-[480px]" />
-            {/* TODO: Replace with food plate image asset. */}
-            <div className="about-plate-placeholder absolute bottom-10 left-8 h-[146px] w-[210px] rounded-full sm:h-[206px] sm:w-[300px] lg:h-[266px] lg:w-[390px]" />
+            <img
+              alt="Plate of spicy rice cakes"
+              className="absolute bottom-[74px] left-[-12px] z-10 h-[138px] w-[250px] max-w-none -rotate-[7deg] object-contain drop-shadow-[0_18px_24px_rgba(91,29,11,0.16)] sm:bottom-[108px] sm:left-[-18px] sm:h-[194px] sm:w-[350px] lg:bottom-[142px] lg:left-[-26px] lg:h-[252px] lg:w-[454px]"
+              decoding="async"
+              draggable={false}
+              loading="lazy"
+              src={aboutCircleAssetPath("mission-tteokbokki.png")}
+            />
           </div>
         </div>
       </section>
@@ -322,21 +394,29 @@ export function AboutUsPage() {
           <div className="relative mx-auto mt-10 min-h-[520px] max-w-[1160px] sm:min-h-[630px] lg:min-h-[700px]">
             <div className="absolute left-1/2 top-[22%] h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-[#d7ecc5] sm:h-[420px] sm:w-[420px] lg:h-[560px] lg:w-[560px]" />
 
-            {/* TODO: Replace with delivery truck image asset. */}
-            <div className="about-truck-placeholder absolute bottom-0 left-1/2 z-10 h-[190px] w-[min(92vw,760px)] -translate-x-1/2 sm:h-[250px] lg:h-[300px]" />
+            <img
+              alt="FoodOnlines delivery truck"
+              className="absolute bottom-[58px] left-1/2 z-10 w-[min(108vw,760px)] max-w-none -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(22,31,20,0.16)] sm:bottom-[44px] sm:w-[min(92vw,860px)] lg:bottom-[34px] lg:w-[900px]"
+              decoding="async"
+              draggable={false}
+              loading="lazy"
+              src={aboutCircleAssetPath("delivery-truck.png")}
+            />
 
-            {[
-              "left-0 top-12",
-              "bottom-28 left-4 sm:bottom-20",
-              "right-0 top-16",
-              "bottom-28 right-4 sm:bottom-24",
-            ].map((position, index) => (
+            {deliveryDishes.map((dish, index) => (
               <div
-                aria-label={`Future surrounding dish image ${index + 1}`}
-                className={`about-dish-placeholder absolute ${position} z-20 hidden h-[104px] w-[142px] rounded-full min-[430px]:block sm:h-[130px] sm:w-[184px] lg:h-[150px] lg:w-[220px]`}
-                key={position}
+                aria-label={`Surrounding dish image ${index + 1}`}
+                className={`absolute ${dish.position} z-20 hidden h-[104px] w-[142px] min-[430px]:block sm:h-[130px] sm:w-[184px] lg:h-[150px] lg:w-[220px]`}
+                key={dish.image}
               >
-                {/* TODO: Replace with surrounding food dish image asset. */}
+                <img
+                  alt={dish.imageAlt}
+                  className={`object-contain drop-shadow-[0_14px_22px_rgba(53,31,16,0.15)] ${dish.imageClassName}`}
+                  decoding="async"
+                  draggable={false}
+                  loading="lazy"
+                  src={dish.image}
+                />
               </div>
             ))}
           </div>

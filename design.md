@@ -751,6 +751,8 @@
 - The standalone FoodOnlines logo marks that previously sat above the `ASIAN GROCERIES...` intro and `OUR MISSION...` sections are removed; the page should rely on the persistent site header/footer branding instead.
 - Janet Weiler's displayed card image should use a transparent-background PNG cutout generated from the supplied `.jfif` so the portrait blends into the white leadership card; keep the source `.jfif` available in public assets for reference.
 - Desktop hero heading copy should read as one continuous phrase, `CONNECTING PEOPLE AROUND THE WORLD WITH THE FOODS THEY LOVE MOST`, without a forced line break between clauses; the support paragraph belongs directly below the headline on desktop.
+- Circle art follow-up: the accessible/affordable intro now places dragon fruit on the left green circle and a grocery bag on the right orange circle, each as transparent cutouts that protrude slightly past the circle edge. The authentic-flavors row uses burger, ice cream, fruit drinks, and chips cutouts left-to-right across the four colored circles. The mission visual places a grocery cart over the peach circle and a spicy rice-cake plate over the large green circle. The fulfillment visual places the FoodOnlines truck over the large green circle with three transparent dish cutouts around it.
+- The About Us circle assets live in `public/images/about/circle-assets/` as cropped transparent PNGs. Images should stay `object-contain`, lazy-loaded, non-stretching, and sized with responsive Tailwind classes so desktop, Chrome, Safari, Android, iPhone, mobile, and desktop-mobile browser widths keep the cutouts overstepping the circles without creating horizontal page overflow.
 
 ### Become Vendor Page Launch (2026-06-04)
 
