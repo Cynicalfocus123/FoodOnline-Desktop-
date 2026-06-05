@@ -227,16 +227,14 @@ export function AboutUsPage() {
             </p>
           </div>
 
-          <div className="mt-8 aspect-[2.9/1] min-h-[210px] w-full overflow-hidden rounded-[18px] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]">
-            <img
-              alt="Friends sharing Asian dishes around a table"
-              className="h-full w-full object-cover object-center"
-              decoding="async"
-              draggable={false}
-              fetchPriority="high"
-              src={`${basePath}images/about/about-food-table.png`}
-            />
-          </div>
+          <img
+            alt="Friends sharing Asian dishes around a table"
+            className="mt-8 block w-full rounded-[18px] object-cover object-center lg:mt-9"
+            decoding="async"
+            draggable={false}
+            fetchPriority="high"
+            src={`${basePath}images/about/about-food-table.png`}
+          />
         </div>
       </section>
 
@@ -401,7 +399,7 @@ export function AboutUsPage() {
 
             <img
               alt="FoodOnlines delivery truck"
-              className="absolute bottom-[-112px] left-1/2 z-10 w-[min(96vw,820px)] max-w-full -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(22,31,20,0.16)] sm:bottom-[-176px] sm:w-[min(96vw,1040px)] lg:bottom-[-230px] lg:w-[1120px]"
+              className="absolute bottom-[16px] left-1/2 z-10 w-[min(96vw,820px)] max-w-full -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(22,31,20,0.16)] sm:bottom-[-118px] sm:w-[min(96vw,1040px)] lg:bottom-[-230px] lg:w-[1120px]"
               decoding="async"
               draggable={false}
               loading="lazy"
@@ -416,7 +414,7 @@ export function AboutUsPage() {
               >
                 <img
                   alt={dish.imageAlt}
-                  className={`object-contain drop-shadow-[0_14px_22px_rgba(53,31,16,0.15)] ${dish.imageClassName}`}
+                  className={`object-contain ${dish.imageClassName}`}
                   decoding="async"
                   draggable={false}
                   loading="lazy"
