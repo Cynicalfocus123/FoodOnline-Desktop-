@@ -8,25 +8,25 @@ const flavorCircles = [
     colorClass: "bg-[#b7dce8]",
     image: aboutCircleAssetPath("flavor-burger.png"),
     imageAlt: "Burger",
-    imageClassName: "w-[104%] max-w-none translate-y-[4%] sm:w-[108%] lg:w-[112%]",
+    imageClassName: "w-[96%] max-w-none translate-y-[4%] sm:w-[104%] lg:w-[112%]",
   },
   {
     colorClass: "bg-[#d7ecc5]",
     image: aboutCircleAssetPath("flavor-ice-cream.png"),
     imageAlt: "Ice cream sundae",
-    imageClassName: "h-[106%] max-h-none translate-y-[-3%] sm:h-[110%] lg:h-[112%]",
+    imageClassName: "h-[96%] max-h-none translate-y-[-3%] sm:h-[106%] lg:h-[112%]",
   },
   {
     colorClass: "bg-[#ffd779]",
     image: aboutCircleAssetPath("flavor-fruit-drinks.png"),
     imageAlt: "Fruit drinks",
-    imageClassName: "w-[108%] max-w-none translate-y-[6%] sm:w-[112%] lg:w-[116%]",
+    imageClassName: "w-[98%] max-w-none translate-y-[6%] sm:w-[108%] lg:w-[116%]",
   },
   {
     colorClass: "bg-[#ffd0df]",
     image: aboutCircleAssetPath("flavor-chips.png"),
     imageAlt: "Potato chips",
-    imageClassName: "w-[104%] max-w-none translate-y-[4%] sm:w-[108%] lg:w-[114%]",
+    imageClassName: "w-[98%] max-w-none translate-y-[4%] sm:w-[106%] lg:w-[114%]",
   },
 ];
 
@@ -227,11 +227,16 @@ export function AboutUsPage() {
             </p>
           </div>
 
-          {/* TODO: Replace this placeholder with the food-table image asset when it is ready. */}
-          <div
-            aria-label="Future food table image"
-            className="about-hero-image-placeholder mt-8 aspect-[2.9/1] min-h-[210px] w-full overflow-hidden rounded-[18px] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]"
-          />
+          <div className="mt-8 aspect-[2.9/1] min-h-[210px] w-full overflow-hidden rounded-[18px] bg-[linear-gradient(135deg,#f5efe4,#ede8df)] sm:min-h-[280px] lg:mt-9 lg:min-h-[420px]">
+            <img
+              alt="Friends sharing Asian dishes around a table"
+              className="h-full w-full object-cover object-center"
+              decoding="async"
+              draggable={false}
+              fetchPriority="high"
+              src={`${basePath}images/about/about-food-table.png`}
+            />
+          </div>
         </div>
       </section>
 
@@ -304,7 +309,7 @@ export function AboutUsPage() {
             {flavorCircles.map((flavor, index) => (
               <div
                 aria-label={`Flavor image ${index + 1}`}
-                className={`relative flex aspect-square w-[min(76vw,330px)] items-center justify-center overflow-visible rounded-full ${flavor.colorClass}`}
+                className={`relative flex aspect-square w-[min(72vw,260px)] items-center justify-center overflow-visible rounded-full min-[430px]:w-[min(42vw,220px)] sm:w-[min(40vw,285px)] lg:w-[min(20vw,330px)] ${flavor.colorClass}`}
                 key={flavor.image}
               >
                 <img
