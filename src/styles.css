@@ -151,28 +151,79 @@ video {
   filter: drop-shadow(0 18px 38px rgba(0, 0, 0, 0.12));
 }
 
+.sponsor-stat {
+  display: flex;
+  min-width: 0;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.35rem);
+  padding: clamp(1.6rem, 3.2vw, 2.5rem) clamp(0.75rem, 2vw, 2rem);
+}
+
+.sponsor-stat__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.sponsor-stat__value {
+  max-width: 330px;
+  overflow-wrap: anywhere;
+  font-size: clamp(1.8rem, 3.8vw, 3rem);
+  font-weight: 900;
+  line-height: 1.14;
+  text-transform: uppercase;
+  color: #000000;
+}
+
+.sponsor-stat__label {
+  margin-top: clamp(0.85rem, 1.6vw, 1.1rem);
+  max-width: 310px;
+  font-size: clamp(0.98rem, 1.25vw, 1.08rem);
+  font-weight: 500;
+  line-height: 1.25;
+  text-transform: none;
+  color: #000000;
+}
+
 .search-results-visual {
   position: relative;
   display: grid;
-  min-height: clamp(520px, 45vw, 720px);
+  min-height: clamp(540px, 45vw, 740px);
   place-items: center;
+  overflow: hidden;
 }
 
 .search-results-phone {
   position: absolute;
-  right: 8%;
-  top: 0;
+  right: 3%;
+  top: clamp(0rem, 2vw, 1.5rem);
   z-index: 1;
-  width: clamp(280px, 28vw, 520px);
+  width: clamp(320px, 28vw, 540px);
   max-width: 100%;
 }
 
-.search-results-banner {
+.search-results-card-group {
   position: relative;
   z-index: 2;
-  width: clamp(420px, 42vw, 720px);
+  display: grid;
+  width: clamp(470px, 43vw, 760px);
   max-width: 100%;
-  margin-top: 140px;
+  margin-top: clamp(8rem, 10vw, 11rem);
+  place-items: center;
+  transform: translateX(clamp(-1.5rem, -2vw, -0.5rem));
+}
+
+.search-results-card {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.search-results-card--primary {
+  transform: translateY(0);
 }
 
 .sponsor-visual--floating .sponsor-visual__img {
@@ -291,7 +342,7 @@ video {
 
   .search-results-visual {
     display: grid;
-    min-height: auto;
+    min-height: clamp(420px, 62vw, 620px);
     margin-top: clamp(32px, 6vw, 56px);
     overflow: hidden;
     place-items: center;
@@ -305,10 +356,11 @@ video {
     margin: 0 auto;
   }
 
-  .search-results-banner {
+  .search-results-card-group {
     position: relative;
     width: min(88vw, 620px);
     margin: -60px auto 0;
+    transform: none;
   }
 
   .sponsor-visual--floating .sponsor-visual__img {
@@ -362,8 +414,26 @@ video {
 }
 
 @media (max-width: 560px) {
+  .sponsor-stat {
+    justify-content: flex-start;
+    padding-inline: 0.5rem;
+  }
+
   .sponsor-visual {
     min-height: clamp(360px, 96vw, 500px);
+  }
+
+  .search-results-visual {
+    min-height: clamp(350px, 98vw, 470px);
+  }
+
+  .search-results-phone {
+    width: min(72vw, 340px);
+  }
+
+  .search-results-card-group {
+    width: min(92vw, 430px);
+    margin-top: -42px;
   }
 
   .sponsor-visual--pair {

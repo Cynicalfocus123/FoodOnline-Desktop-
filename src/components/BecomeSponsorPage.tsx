@@ -163,12 +163,28 @@ function Sparkle() {
   );
 }
 
+function SearchResultsVisual({ alt }: { alt: string }) {
+  return (
+    <div className="sponsor-visual search-results-visual">
+      <img alt={alt} className="sponsor-visual__img search-results-phone" loading="lazy" src={sponsorImagePath("over-30-million-downloads.png")} />
+      <div className="search-results-card-group">
+        <img
+          alt="Daring ready meal sponsored search result product banner"
+          className="sponsor-visual__img search-results-card search-results-card--primary"
+          loading="lazy"
+          src={sponsorImagePath("search-results-advertising-phone.png")}
+        />
+      </div>
+    </div>
+  );
+}
+
 function ReachStatsSection() {
   const stats = [
-    { value: "30\nMILLION+", label: "Trusted by customers around the world" },
+    { value: "30 MILLION+", label: "Trusted by customers around the world" },
     { value: "ZERO", label: "Only pay low commission on what you sell" },
-    { value: "20 MILLION+\nMONTHLY\nVISITS", label: "" },
-    { value: "90 %", label: "YOY growth" },
+    { value: "20 MILLION+", label: "MONTHLY VISITS" },
+    { value: "90%", label: "YOY growth" },
   ];
 
   return (
@@ -186,16 +202,11 @@ function ReachStatsSection() {
         <Eyebrow className="border-b border-[#ff6b1a] pb-3 text-center normal-case">Advertise on the World&apos;s #1 Grocery App</Eyebrow>
         <div className="grid border-b border-[#ff6b1a] sm:grid-cols-2">
           {stats.map((stat, index) => (
-            <div
-              className={`flex min-w-0 justify-center gap-4 px-2 py-[clamp(1.6rem,3.2vw,2.5rem)] sm:justify-start sm:px-5 lg:px-8 ${
-                index < 2 ? "border-b border-[#ff6b1a]" : ""
-              }`}
-              key={stat.value}
-            >
+            <div className={`sponsor-stat ${index < 2 ? "border-b border-[#ff6b1a]" : ""}`} key={stat.value}>
               <Sparkle />
-              <div className="min-w-0">
-                <p className="whitespace-pre-line break-words text-[clamp(1.8rem,3.8vw,3rem)] font-black uppercase leading-[1.14] text-black">{stat.value}</p>
-                {stat.label ? <p className="mt-4 max-w-[310px] text-[clamp(0.98rem,1.25vw,1.08rem)] font-medium leading-snug text-black">{stat.label}</p> : null}
+              <div className="sponsor-stat__copy">
+                <p className="sponsor-stat__value">{stat.value}</p>
+                <p className="sponsor-stat__label">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -298,18 +309,22 @@ function AdProductSection({
           ) : null}
         </div>
 
-        <div className={`sponsor-visual ${section.visualClassName}`}>
-          {section.images.map((image, index) => (
-            <img
-              alt={index === 0 ? section.alt : ""}
-              aria-hidden={index === 0 ? undefined : "true"}
-              className={`sponsor-visual__img ${isSearchSection ? (index === 0 ? "search-results-phone" : "search-results-banner") : ""}`}
-              key={image}
-              loading="lazy"
-              src={sponsorImagePath(image)}
-            />
-          ))}
-        </div>
+        {isSearchSection ? (
+          <SearchResultsVisual alt={section.alt} />
+        ) : (
+          <div className={`sponsor-visual ${section.visualClassName}`}>
+            {section.images.map((image, index) => (
+              <img
+                alt={index === 0 ? section.alt : ""}
+                aria-hidden={index === 0 ? undefined : "true"}
+                className="sponsor-visual__img"
+                key={image}
+                loading="lazy"
+                src={sponsorImagePath(image)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

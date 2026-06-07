@@ -1185,3 +1185,13 @@
 - Search Results Advertising now assigns explicit `search-results-phone` and `search-results-banner` classes to the layered visual assets. Desktop keeps the phone behind/top-right and the Daring horizontal banner centered in front; the `max-width: 1024px` breakpoint stacks the entire visual block below the copy so it cannot overlap the heading or paragraph.
 - Cropped excess transparent canvas from the Search Results category-phone and Daring banner PNGs while preserving alpha, allowing the banner card to render as a large horizontal product ad instead of a small subject inside a square canvas.
 - Tablet, mobile-desktop, and phone layouts now force sponsor ad sections into copy-first single-column flow. Floating, search-layered, and product-detail visuals reset to normal relative positioning below the text, while Product Detail keeps a large below-copy phone pair with bottom translation clipped inside the orange section.
+
+## Become a Sponsor Search Composition and Stats Alignment Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Search Results Advertising now renders through a dedicated `SearchResultsVisual` component instead of the generic sponsor image loop. The visual has one parent wrapper, a lower-z-index phone image, and a foreground `search-results-card-group` containing the Daring sponsored product card so the phone/card treatment behaves as one composed hero visual on desktop, tablet, mobile-desktop, and mobile.
+- The Expand Your Reach metrics now use a shared `sponsor-stat` structure with separate `sponsor-stat__value` and `sponsor-stat__label` elements. `20 MILLION+` now treats `MONTHLY VISITS` as supporting copy, and `90%` treats `YOY growth` as its supporting label, matching the hierarchy used by `30 MILLION+` and `ZERO`.
