@@ -97,17 +97,17 @@ function PartnerHeroSection() {
           loading="eager"
           src={partnerImagePath("partner-food-table.png")}
         />
-        <div className="relative pt-[clamp(5.2rem,21vw,8rem)] md:pt-[clamp(5rem,10vw,7rem)]">
+        <div className="relative pt-[clamp(2.6rem,10vw,4rem)] md:pt-[clamp(2.8rem,5.4vw,4.2rem)]">
           <img
             alt=""
             aria-hidden="true"
-            className="partner-hero-leaf pointer-events-none absolute left-0 top-[clamp(1.4rem,5vw,2.2rem)] z-20 w-[clamp(3.5rem,14vw,5.5rem)] object-contain md:left-[2%] md:top-[clamp(1.3rem,2.8vw,2rem)] md:w-[clamp(3.4rem,5vw,5rem)]"
+            className="partner-hero-leaf pointer-events-none absolute left-0 top-[clamp(0.65rem,2.8vw,1.15rem)] z-20 w-[clamp(3.5rem,14vw,5.5rem)] object-contain md:left-[2%] md:top-[clamp(0.65rem,1.5vw,1.1rem)] md:w-[clamp(3.4rem,5vw,5rem)]"
             draggable={false}
             src={partnerImagePath("partner-leaves.png")}
           />
           <img
             alt="Fruit plate"
-            className="partner-hero-fruit-circle pointer-events-none absolute right-[-2%] top-0 z-20 w-[clamp(6.6rem,31vw,10rem)] rounded-full object-contain drop-shadow-[0_20px_38px_rgba(80,34,48,0.14)] md:right-[-4%] md:w-[clamp(8rem,13vw,12.5rem)]"
+            className="partner-hero-fruit-circle pointer-events-none absolute right-[-2%] top-[clamp(0.15rem,1.2vw,0.5rem)] z-20 w-[clamp(6.6rem,31vw,10rem)] rounded-full object-contain drop-shadow-[0_20px_38px_rgba(80,34,48,0.14)] md:right-[-4%] md:top-[clamp(0.1rem,0.8vw,0.45rem)] md:w-[clamp(8rem,13vw,12.5rem)]"
             draggable={false}
             src={partnerImagePath("partner-fruit-plate.png")}
           />
