@@ -1226,3 +1226,12 @@
   - `design.md`
 - Restored the Search Results Advertising desktop visual to the prior correct composition: the category-phone mockup remains the back anchor and the Daring sponsored product banner is the foreground card layered over the lower-middle phone area.
 - Tablet, mobile-desktop, and phone breakpoints now reuse that same desktop composition logic by keeping the phone absolutely centered behind the foreground `search-results-card-group`, avoiding the earlier mobile flow where the card could sit below or separate from the phone.
+
+## Become a Sponsor Weekly Deals Card Scale Fix (2026-06-08)
+
+- Files changed:
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Enlarged the two Weekly Deals foreground promo boxes and moved them closer over the phone body so the section reads as one premium layered mockup: large phone behind, upper-left/mid-left card in front, and lower-right/mid-right card in front.
+- Tablet, mobile-desktop, and phone breakpoints preserve the same phone-behind/card-front composition with larger responsive card sizing instead of shrinking the boxes into tiny separated stickers.

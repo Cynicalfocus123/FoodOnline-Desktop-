@@ -232,7 +232,9 @@ video {
 }
 
 .sponsor-visual--weekly {
-  min-height: clamp(500px, 48vw, 740px);
+  min-height: clamp(520px, 48vw, 760px);
+  max-width: 720px;
+  margin-inline: auto;
   padding: clamp(1rem, 2vw, 1.8rem);
 }
 
@@ -261,21 +263,21 @@ video {
 
 .sponsor-weekly-card {
   position: absolute;
-  width: clamp(230px, 19vw, 360px);
-  max-width: 46%;
+  width: clamp(300px, 24vw, 460px);
+  max-width: 62%;
   height: auto;
   object-fit: contain;
 }
 
 .sponsor-weekly-card--one {
-  left: clamp(0rem, 2vw, 1.5rem);
-  top: 31%;
+  left: clamp(-0.5rem, 1vw, 0.75rem);
+  top: 26%;
   transform: rotate(-3deg);
 }
 
 .sponsor-weekly-card--two {
-  right: clamp(0rem, 3vw, 2rem);
-  top: 48%;
+  right: clamp(-0.25rem, 1.5vw, 1rem);
+  top: 50%;
   transform: rotate(3deg);
 }
 
@@ -412,7 +414,7 @@ video {
   }
 
   .sponsor-visual--weekly-layered {
-    min-height: clamp(480px, 82vw, 660px);
+    min-height: clamp(500px, 82vw, 680px);
   }
 
   .sponsor-weekly-phone {
@@ -432,18 +434,18 @@ video {
   }
 
   .sponsor-weekly-card {
-    width: min(33vw, 230px);
-    max-width: 36%;
+    width: min(46vw, 330px);
+    max-width: 52%;
   }
 
   .sponsor-weekly-card--one {
-    left: 11%;
-    top: 39%;
+    left: 5%;
+    top: 33%;
   }
 
   .sponsor-weekly-card--two {
-    right: 11%;
-    top: 53%;
+    right: 5%;
+    top: 51%;
   }
 
   .sponsor-section--product-detail {
@@ -501,7 +503,7 @@ video {
   }
 
   .sponsor-visual--weekly-layered {
-    min-height: clamp(390px, 114vw, 540px);
+    min-height: clamp(420px, 116vw, 560px);
   }
 
   .sponsor-weekly-phone {
@@ -509,18 +511,18 @@ video {
   }
 
   .sponsor-weekly-card {
-    width: min(36vw, 165px);
-    max-width: 37%;
+    width: min(48vw, 220px);
+    max-width: 50%;
   }
 
   .sponsor-weekly-card--one {
-    left: 4%;
-    top: 39%;
+    left: 0;
+    top: 35%;
   }
 
   .sponsor-weekly-card--two {
-    right: 4%;
-    top: 53%;
+    right: 0;
+    top: 52%;
   }
 
   .sponsor-visual--pair .sponsor-visual__img {
