@@ -1143,3 +1143,14 @@
 - Enlarged the Featured on the Homepage visual baseline and applied the same larger scale system to sponsor visuals across all formats.
 - Increased `.sponsor-visual`, `.sponsor-visual--phone`, `.sponsor-visual--floating`, `.sponsor-visual--pair`, `.sponsor-visual--weekly`, and `.sponsor-visual--detail` sizing so Featured on the Homepage, Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Weekly Deals, and Product Detail Pages read much larger while preserving `object-fit: contain`, no stretching, and horizontal overflow guards.
 - Product Detail Pages continues to keep both phone images leaning the same direction at the larger size.
+
+## Become a Sponsor Search Results Layering Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Search Results Advertising now renders the category-phone screen from `over-30-million-downloads.png` as the back layer and the Daring ready-meal card from `search-results-advertising-phone.png` as the front layer, grouped as one right-side visual unit with relative positioning, z-index layering, PNG transparency, contained image fitting, and no intentional horizontal overflow.
+- Deals/Bestsellers/New Arrivals and Category Pages keep only two phone images per section and use larger right-side side-by-side phone wrappers so the visuals feel closer to the Featured on the Homepage scale while keeping the left text layout unchanged.
+- Product Detail Pages now uses a clipped orange hero treatment: the hero remains `position: relative` with `overflow: hidden`, the two phone images are absolutely positioned on the right at the bottom with oversized responsive `clamp()` sizing, and their lower tails are intentionally cropped inside the orange section without bleeding into the following white/footer area.
