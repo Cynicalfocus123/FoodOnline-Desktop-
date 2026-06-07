@@ -1105,3 +1105,19 @@
   - `design.json`
 - Removed the empty `Join industry leaders` column from the Expand Your Reach stats section.
 - Centered the remaining `Advertise on the World's #1 Grocery App` stats block in a single max-width panel with centered heading text, responsive two-column stat cells on tablet/desktop, stacked-safe spacing on narrow mobile, break-safe stat text, and no intentional horizontal overflow across desktop, desktop-mobile, tablet, iOS Safari, and Android Chrome widths.
+
+## Become a Sponsor Image Scaling and Section Asset Fix (2026-06-07)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `public/images/become-sponsor/`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Updated sponsor page image mapping to use the newer source assets from `D:/Foodonline desktop version/pages/sponsor page`: `20.SPONSORED PRODUCTS (1).png`, `20.SPONSORED PRODUCTS (2).png`, `8.Search Results Advertising (2).png`, `8.Over 30 Million Downloads.png`, `9.Deals, Bestsellers & New Arrivals (1).png`, `9.Deals, Bestsellers & New Arrivals (2).png`, `10.Category Pages (2).png`, `10.Category Pages (3).png`, `11.Featured on the Homepage (2).png`, `12.Product Detail Pages (1).png`, and `12.Product Detail Pages (2).png`.
+- `image(357).png` was checked in the sponsor page source folder and was not present; it was not needed because the extra Homepage Brand Takeover section was removed and Featured on the Homepage now uses `11.Featured on the Homepage (2).png`.
+- Removed the extra `Homepage Brand Takeover` section completely. Product Detail Pages now appears directly after Featured on the Homepage.
+- Fixed Weekly Deals paragraph wrapping to one natural sentence: `Increase exposure, attract more customers, and accelerate sales with featured weekly promotions amplified through our marketing channels.`
+- Added sponsor-specific CSS image wrappers in `src/styles.css`: `.sponsor-visual`, `.sponsor-visual__img`, `.sponsor-visual--phone`, `.sponsor-visual--floating`, `.sponsor-visual--pair`, `.sponsor-visual--weekly`, and `.sponsor-visual--detail`.
+- The sponsor visual wrappers use centered `object-fit: contain`, max-width guarded image sizing, responsive pair layouts, and controlled transforms so transparent PNG phone/product subjects fill their placeholder areas without distortion, tiny-image presentation, important cropping, or horizontal overflow across desktop Chrome/Safari, tablet, Android Chrome, and iPhone Safari.

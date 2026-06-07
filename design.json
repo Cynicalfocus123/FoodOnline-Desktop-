@@ -103,7 +103,6 @@
         "deals_bestsellers_new_arrivals",
         "category_pages",
         "featured_on_the_homepage",
-        "homepage_brand_takeover",
         "product_detail_pages"
       ],
       "image_base_path": "/images/become-sponsor/",
@@ -111,21 +110,38 @@
       "images": {
         "hero_intro_reference": "/images/become-sponsor/sponsor-with-us.png",
         "expand_reach_reference": "/images/become-sponsor/expand-your-reach.png",
-        "sponsored_products_reference": "/images/become-sponsor/sponsored-products.png",
         "final_cta_reference": "/images/become-sponsor/advertise-grocery-app.png",
-        "search_results_advertising": "/images/become-sponsor/search-results-advertising.png",
-        "deals_bestsellers_new_arrivals": "/images/become-sponsor/deals-bestsellers-new-arrivals.png",
-        "category_pages": "/images/become-sponsor/category-pages.png",
-        "featured_homepage": "/images/become-sponsor/featured-homepage.png",
-        "homepage_brand_takeover": "/images/become-sponsor/homepage-brand-takeover.png",
-        "product_detail_pages": "/images/become-sponsor/product-detail-pages.png"
+        "sponsored_products_weekly": [
+          "/images/become-sponsor/sponsored-products-weekly-1.png",
+          "/images/become-sponsor/sponsored-products-weekly-2.png"
+        ],
+        "search_results_advertising": "/images/become-sponsor/search-results-advertising-phone.png",
+        "over_30_million_downloads_checked": "/images/become-sponsor/over-30-million-downloads.png",
+        "deals_bestsellers_new_arrivals": [
+          "/images/become-sponsor/deals-bestsellers-new-arrivals-1.png",
+          "/images/become-sponsor/deals-bestsellers-new-arrivals-2.png"
+        ],
+        "category_pages": [
+          "/images/become-sponsor/category-pages-1.png",
+          "/images/become-sponsor/category-pages-2.png"
+        ],
+        "featured_homepage": "/images/become-sponsor/featured-homepage-visual.png",
+        "product_detail_pages": [
+          "/images/become-sponsor/product-detail-pages-1.png",
+          "/images/become-sponsor/product-detail-pages-2.png"
+        ]
       },
       "asset_filename_fallbacks": {
         "requested_featured_homepage": "11.Featured on the Homepage (1).png",
         "used_featured_homepage": "11.Featured on the Homepage.png",
         "requested_product_detail_pages": "12.Product Detail Pages (3).png",
-        "used_product_detail_pages": "12.Product Detail Pages.png"
+        "used_product_detail_pages": "12.Product Detail Pages.png",
+        "latest_optional_homepage_takeover_checked": "image(357).png",
+        "latest_optional_homepage_takeover_present": false
       },
+      "removed_sections": [
+        "homepage_brand_takeover"
+      ],
       "button_behavior": {
         "get_started": "mailto:info@foodonlines.com",
         "contact_us": "mailto:info@foodonlines.com",
@@ -134,8 +150,7 @@
           "search_results_advertising",
           "deals_bestsellers_new_arrivals",
           "category_pages",
-          "featured_on_the_homepage",
-          "homepage_brand_takeover"
+          "featured_on_the_homepage"
         ],
         "product_detail_pages_get_started_visible": true
       },
@@ -145,6 +160,18 @@
         "stats_panel_alignment": "centered single max-width panel",
         "stats_heading": "Advertise on the World's #1 Grocery App is centered with the orange divider",
         "stat_cells": "responsive two-column layout on tablet/desktop with mobile-safe spacing and break-safe large stat text"
+      },
+      "image_scaling_follow_up": {
+        "css_classes": [
+          ".sponsor-visual",
+          ".sponsor-visual__img",
+          ".sponsor-visual--phone",
+          ".sponsor-visual--floating",
+          ".sponsor-visual--pair",
+          ".sponsor-visual--weekly",
+          ".sponsor-visual--detail"
+        ],
+        "behavior": "centered object-fit contain images with max-width guards, responsive paired mockups, controlled transforms for transparent PNG canvases, and no intended horizontal overflow"
       },
       "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
     },

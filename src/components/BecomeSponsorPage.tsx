@@ -13,10 +13,10 @@ const adSections = [
     title: "Search Results Advertising",
     body:
       "Increase visibility by appearing at the top of search results. Target relevant keywords and secure premium placement to connect with shoppers actively looking for products like yours.",
-    image: "search-results-advertising.png",
+    images: ["search-results-advertising-phone.png"],
     alt: "FoodOnlines search results advertising placement mockup",
     background: "bg-[#afc6a8]",
-    imagePosition: "object-[82%_center]",
+    visualClassName: "sponsor-visual--phone",
     showButton: false,
   },
   {
@@ -24,10 +24,10 @@ const adSections = [
     title: "Deals, Bestsellers & New Arrivals",
     body:
       "Showcase your products in high-traffic destinations where shoppers actively explore trending products, top sellers, and the best deals.",
-    image: "deals-bestsellers-new-arrivals.png",
+    images: ["deals-bestsellers-new-arrivals-1.png", "deals-bestsellers-new-arrivals-2.png"],
     alt: "FoodOnlines sponsored product listings for deals bestsellers and new arrivals",
     background: "bg-[#ffe399]",
-    imagePosition: "object-[82%_center]",
+    visualClassName: "sponsor-visual--pair",
     showButton: false,
   },
   {
@@ -35,10 +35,10 @@ const adSections = [
     title: "Category Pages",
     body:
       "Increase product visibility by featuring your products within relevant category pages, where shoppers actively browse, compare, and discover new favorites.",
-    image: "category-pages.png",
+    images: ["category-pages-1.png", "category-pages-2.png"],
     alt: "FoodOnlines sponsored product placements on category pages",
     background: "bg-[#bfeefa]",
-    imagePosition: "object-[82%_center]",
+    visualClassName: "sponsor-visual--pair",
     showButton: false,
   },
   {
@@ -46,22 +46,10 @@ const adSections = [
     title: "Featured on the Homepage",
     body:
       "Put your brand front and center with high-impact homepage placements designed to increase awareness, engagement, and sales.",
-    image: "featured-homepage.png",
+    images: ["featured-homepage-visual.png"],
     alt: "FoodOnlines featured homepage advertising placement",
     background: "bg-[#f7c2d4]",
-    imagePosition: "object-[82%_center]",
-    showButton: false,
-  },
-  {
-    eyebrow: "SPONSORED PRODUCTS",
-    title: "Homepage Brand Takeover",
-    body:
-      "Own premium homepage visibility with high-impact placements designed to introduce your brand to shoppers the moment they start browsing.",
-    image: "homepage-brand-takeover.png",
-    alt: "FoodOnlines homepage brand takeover product placement mockup",
-    background: "bg-[#f7c2d4]",
-    imagePosition: "object-center",
-    squareVisual: true,
+    visualClassName: "sponsor-visual--floating",
     showButton: false,
   },
   {
@@ -69,10 +57,10 @@ const adSections = [
     title: "Product Detail Pages",
     body:
       "Engage shoppers at a critical point in their buying journey by showcasing your products alongside items they are actively considering.",
-    image: "product-detail-pages.png",
+    images: ["product-detail-pages-1.png", "product-detail-pages-2.png"],
     alt: "FoodOnlines product detail page advertising placement",
     background: "bg-[#fac38d]",
-    imagePosition: "object-[82%_center]",
+    visualClassName: "sponsor-visual--pair sponsor-visual--detail",
     showButton: true,
   },
 ];
@@ -228,20 +216,22 @@ function SponsoredOverviewSection() {
             <br />
             That Drive Results
           </h3>
-          <p className="mt-4 max-w-[880px] text-[clamp(1.35rem,2.4vw,2.7rem)] font-medium leading-[1.15] text-black">
-            Increase exposure, attract more customers, and
-            <br className="hidden xl:block" />
-            accelerate sales with featured weekly promotions
-            <br className="hidden xl:block" />
-            amplified through our marketing channels.
+          <p className="mt-4 max-w-[820px] text-[clamp(1.15rem,1.8vw,1.65rem)] font-medium leading-[1.28] text-black">
+            Increase exposure, attract more customers, and accelerate sales with featured weekly promotions amplified through our marketing channels.
           </p>
         </div>
-        <div className="relative min-h-[330px] overflow-hidden lg:min-h-full">
+        <div className="sponsor-visual sponsor-visual--weekly">
           <img
-            alt="FoodOnlines sponsored products weekly deals promotion mockup"
-            className="absolute inset-0 h-full w-full scale-[1.55] object-cover object-[84%_center]"
+            alt="FoodOnlines sponsored products weekly deals promotion bowl and sale tag"
+            className="sponsor-visual__img"
             loading="lazy"
-            src={sponsorImagePath("sponsored-products.png")}
+            src={sponsorImagePath("sponsored-products-weekly-1.png")}
+          />
+          <img
+            alt="FoodOnlines sponsored products weekly deals fruit promotion"
+            className="sponsor-visual__img"
+            loading="lazy"
+            src={sponsorImagePath("sponsored-products-weekly-2.png")}
           />
         </div>
       </div>
@@ -305,13 +295,17 @@ function AdProductSection({
           ) : null}
         </div>
 
-        <div className={`relative z-10 overflow-hidden ${section.squareVisual ? "mx-auto aspect-square max-w-[420px] rounded-[28px]" : "min-h-[300px] rounded-[28px] lg:min-h-[410px]"}`}>
-          <img
-            alt={section.alt}
-            className={`h-full w-full ${section.squareVisual ? "object-contain" : `scale-[1.7] object-cover ${section.imagePosition}`} drop-shadow-[0_18px_38px_rgba(0,0,0,0.12)]`}
-            loading="lazy"
-            src={sponsorImagePath(section.image)}
-          />
+        <div className={`sponsor-visual ${section.visualClassName}`}>
+          {section.images.map((image, index) => (
+            <img
+              alt={index === 0 ? section.alt : ""}
+              aria-hidden={index === 0 ? undefined : "true"}
+              className="sponsor-visual__img"
+              key={image}
+              loading="lazy"
+              src={sponsorImagePath(image)}
+            />
+          ))}
         </div>
       </div>
     </section>
