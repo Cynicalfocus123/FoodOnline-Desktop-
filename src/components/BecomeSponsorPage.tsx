@@ -16,7 +16,7 @@ const adSections = [
     images: ["over-30-million-downloads.png", "search-results-advertising-phone.png"],
     alt: "FoodOnlines search results advertising placement mockup",
     background: "bg-[#afc6a8]",
-    visualClassName: "sponsor-visual--search-layered",
+    visualClassName: "search-results-visual sponsor-visual--search-layered",
     showButton: false,
   },
   {
@@ -280,6 +280,7 @@ function AdProductSection({
   section: (typeof adSections)[number];
 }) {
   const isDetailSection = section.visualClassName.includes("sponsor-visual--detail");
+  const isSearchSection = section.visualClassName.includes("search-results-visual");
 
   return (
     <section className={`${section.background} relative overflow-hidden`}>
@@ -302,7 +303,7 @@ function AdProductSection({
             <img
               alt={index === 0 ? section.alt : ""}
               aria-hidden={index === 0 ? undefined : "true"}
-              className="sponsor-visual__img"
+              className={`sponsor-visual__img ${isSearchSection ? (index === 0 ? "search-results-phone" : "search-results-banner") : ""}`}
               key={image}
               loading="lazy"
               src={sponsorImagePath(image)}

@@ -1172,3 +1172,16 @@
 - Cropped excess transparent canvas from the Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Product Detail Pages PNG mockups while preserving alpha transparency, so responsive CSS widths now scale the visible phone/banner subjects instead of empty 1000px canvases.
 - Reworked ad product sections around a consistent `.sponsor-section` layout with `42% / 58%` desktop columns, `.sponsor-copy` above decorative layers, and a right-side flex `.sponsor-visual` area aligned center/end so Category Pages, Deals/Bestsellers/New Arrivals, and Featured on the Homepage read as large vertically centered right-column visuals.
 - Product Detail Pages keeps the orange section clipped with `overflow: hidden`; its two phone mockups are absolutely positioned on the right with `bottom: -120px`, larger `clamp()` sizing, and mobile/tablet overrides that keep the phone pair large without allowing bleed into the next white/footer section.
+
+## Become a Sponsor Responsive Visual Stack Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `public/images/become-sponsor/over-30-million-downloads.png`
+  - `public/images/become-sponsor/search-results-advertising-phone.png`
+  - `AGENT.md`
+  - `design.md`
+- Search Results Advertising now assigns explicit `search-results-phone` and `search-results-banner` classes to the layered visual assets. Desktop keeps the phone behind/top-right and the Daring horizontal banner centered in front; the `max-width: 1024px` breakpoint stacks the entire visual block below the copy so it cannot overlap the heading or paragraph.
+- Cropped excess transparent canvas from the Search Results category-phone and Daring banner PNGs while preserving alpha, allowing the banner card to render as a large horizontal product ad instead of a small subject inside a square canvas.
+- Tablet, mobile-desktop, and phone layouts now force sponsor ad sections into copy-first single-column flow. Floating, search-layered, and product-detail visuals reset to normal relative positioning below the text, while Product Detail keeps a large below-copy phone pair with bottom translation clipped inside the orange section.
