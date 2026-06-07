@@ -1132,3 +1132,14 @@
 - Increased paired sponsor visuals to medium size for Deals/Bestsellers/New Arrivals, Category Pages, and Product Detail Pages by widening `.sponsor-visual--pair`, increasing its responsive min-height, and scaling each transparent PNG subject larger.
 - Updated Product Detail Pages so both phone mockups lean the same direction while staying medium-sized and contained in the section.
 - Increased the single Search Results Advertising phone/product visual through `.sponsor-visual--phone` so the Daring ready-meal image reads as medium-sized instead of tiny.
+
+## Become a Sponsor Large Visual Sizing Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Enlarged the Featured on the Homepage visual baseline and applied the same larger scale system to sponsor visuals across all formats.
+- Increased `.sponsor-visual`, `.sponsor-visual--phone`, `.sponsor-visual--floating`, `.sponsor-visual--pair`, `.sponsor-visual--weekly`, and `.sponsor-visual--detail` sizing so Featured on the Homepage, Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Weekly Deals, and Product Detail Pages read much larger while preserving `object-fit: contain`, no stretching, and horizontal overflow guards.
+- Product Detail Pages continues to keep both phone images leaning the same direction at the larger size.

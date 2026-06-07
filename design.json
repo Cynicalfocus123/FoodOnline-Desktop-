@@ -182,6 +182,19 @@
         ],
         "behavior": "paired and single sponsor mockup images render at medium size instead of tiny; Product Detail Pages phone mockups lean the same direction while staying contained"
       },
+      "large_visual_sizing_follow_up": {
+        "date": "2026-06-08",
+        "baseline": "featured_on_the_homepage",
+        "sections": [
+          "featured_on_the_homepage",
+          "search_results_advertising",
+          "deals_bestsellers_new_arrivals",
+          "category_pages",
+          "sponsored_products_weekly",
+          "product_detail_pages"
+        ],
+        "behavior": "all sponsor visuals use a much larger shared scale based on Featured on the Homepage while preserving contain fitting, no distortion, no important cropping, and no horizontal overflow"
+      },
       "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
     },
     "about_us_page": {
