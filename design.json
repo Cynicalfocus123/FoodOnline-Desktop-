@@ -129,8 +129,17 @@
       "button_behavior": {
         "get_started": "mailto:info@foodonlines.com",
         "contact_us": "mailto:info@foodonlines.com",
-        "ads_login": "#ads-login"
+        "ads_login": "#ads-login",
+        "hidden_get_started_sections": [
+          "search_results_advertising",
+          "deals_bestsellers_new_arrivals",
+          "category_pages",
+          "featured_on_the_homepage",
+          "homepage_brand_takeover"
+        ],
+        "product_detail_pages_get_started_visible": true
       },
+      "typography_follow_up": "primary bold sponsor headings were reduced by roughly 40% on desktop and desktop-mobile breakpoints after launch",
       "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
     },
     "about_us_page": {

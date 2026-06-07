@@ -1084,3 +1084,14 @@
 - Footer update: the Corporate footer item formerly labeled `Promotions` is now `Become a Sponsor` and opens `/become-a-sponsor` through the same SPA navigation pattern as the vendor, partner, and driver links.
 - Responsive behavior: desktop uses wide banner-like sections and two-column product layouts; tablet/mobile stack text and visuals with max-width guarded images, no intentional horizontal overflow, real tap targets, and lazy loading for below-the-fold image assets.
 - Checks on 2026-06-07: initial PowerShell `npm run build` was blocked by Windows script policy, so `cmd /c npm run build` was used. The first build attempt hit Vite `ENOTEMPTY` while clearing generated `dist/assets`; after verifying and clearing only `D:/Foodonline desktop version/dist/assets`, `cmd /c npm run build` passed. No separate `lint` or `typecheck` scripts are defined in `package.json`; `npm run build` includes `tsc -b`.
+
+## Become a Sponsor Button and Heading Follow-Up (2026-06-07)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the `Get Started` button from the Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Homepage Brand Takeover sections.
+- Kept the Product Detail Pages `Get Started` button because that section was not included in the removal list.
+- Reduced the primary bold sponsor page heading scale by roughly 40% for desktop and desktop-mobile sizing, including the top hero headline, `EXPAND YOUR REACH`, `SPONSORED PRODUCTS`, Weekly Deals, final CTA headline, and sponsored ad-section titles.

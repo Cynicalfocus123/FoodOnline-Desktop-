@@ -17,6 +17,7 @@ const adSections = [
     alt: "FoodOnlines search results advertising placement mockup",
     background: "bg-[#afc6a8]",
     imagePosition: "object-[82%_center]",
+    showButton: false,
   },
   {
     eyebrow: "SPONSORED PRODUCTS",
@@ -27,6 +28,7 @@ const adSections = [
     alt: "FoodOnlines sponsored product listings for deals bestsellers and new arrivals",
     background: "bg-[#ffe399]",
     imagePosition: "object-[82%_center]",
+    showButton: false,
   },
   {
     eyebrow: "SPONSORED PRODUCTS",
@@ -37,6 +39,7 @@ const adSections = [
     alt: "FoodOnlines sponsored product placements on category pages",
     background: "bg-[#bfeefa]",
     imagePosition: "object-[82%_center]",
+    showButton: false,
   },
   {
     eyebrow: "SPONSORED PRODUCTS",
@@ -47,6 +50,7 @@ const adSections = [
     alt: "FoodOnlines featured homepage advertising placement",
     background: "bg-[#f7c2d4]",
     imagePosition: "object-[82%_center]",
+    showButton: false,
   },
   {
     eyebrow: "SPONSORED PRODUCTS",
@@ -58,6 +62,7 @@ const adSections = [
     background: "bg-[#f7c2d4]",
     imagePosition: "object-center",
     squareVisual: true,
+    showButton: false,
   },
   {
     eyebrow: "SPONSORED PRODUCTS",
@@ -68,6 +73,7 @@ const adSections = [
     alt: "FoodOnlines product detail page advertising placement",
     background: "bg-[#fac38d]",
     imagePosition: "object-[82%_center]",
+    showButton: true,
   },
 ];
 
@@ -120,7 +126,7 @@ function Eyebrow({ children, className = "" }: { children: string; className?: s
 function HeroIntroSection() {
   return (
     <section className="mx-auto w-full max-w-[1650px] px-[clamp(1.2rem,6vw,6.4rem)] pb-[clamp(4.5rem,8vw,7rem)] pt-[clamp(5rem,9vw,9.8rem)]">
-      <h1 className="mx-auto max-w-[1160px] text-center text-[clamp(2.8rem,6vw,5.35rem)] font-black leading-[1.2] text-black">
+      <h1 className="mx-auto max-w-[900px] text-center text-[clamp(1.7rem,3.6vw,3.2rem)] font-black leading-[1.2] text-black">
         Expand Your Reach to Millions of
         <br className="hidden md:block" />
         Qualified Consumers Worldwide
@@ -180,7 +186,7 @@ function ReachStatsSection() {
   return (
     <section className="mx-auto w-full max-w-[1650px] px-[clamp(1.5rem,5.8vw,6rem)] py-[clamp(4.2rem,7vw,5.8rem)]">
       <div className="text-center">
-        <h2 className="text-[clamp(3.1rem,5.8vw,5.1rem)] font-black uppercase leading-none text-black">EXPAND YOUR REACH</h2>
+        <h2 className="text-[clamp(1.85rem,3.5vw,3.05rem)] font-black uppercase leading-none text-black">EXPAND YOUR REACH</h2>
         <p className="mx-auto mt-4 max-w-[850px] text-[clamp(1.05rem,1.7vw,1.85rem)] font-bold leading-[1.15] text-black">
           Maximize your brand&apos;s impact with data-driven advertising solutions
           <br className="hidden md:block" />
@@ -216,10 +222,10 @@ function ReachStatsSection() {
 function SponsoredOverviewSection() {
   return (
     <section className="mx-auto w-full max-w-[1650px] px-[clamp(1.5rem,5.4vw,5.5rem)] py-[clamp(4rem,6.5vw,5.8rem)]">
-      <h2 className="text-[clamp(3rem,6vw,5.1rem)] font-black uppercase leading-none text-black">SPONSORED PRODUCTS</h2>
+      <h2 className="text-[clamp(1.8rem,3.6vw,3.05rem)] font-black uppercase leading-none text-black">SPONSORED PRODUCTS</h2>
       <div className="mt-8 grid overflow-hidden rounded-[42px] bg-[#a9d3df] shadow-[0_24px_64px_rgba(0,0,0,0.08)] lg:grid-cols-[1.25fr_0.75fr]">
         <div className="px-[clamp(2rem,4.2vw,4.3rem)] py-[clamp(3rem,5.8vw,6.5rem)]">
-          <h3 className="text-[clamp(3rem,5vw,5.05rem)] font-black leading-[1.25] text-black">
+          <h3 className="text-[clamp(1.8rem,3vw,3.05rem)] font-black leading-[1.25] text-black">
             Weekly Deals
             <br />
             That Drive Results
@@ -249,7 +255,7 @@ function FinalCtaSection() {
   return (
     <section className="mx-auto w-full max-w-[1650px] px-[clamp(1.5rem,5vw,5rem)] py-[clamp(4.5rem,7vw,7.2rem)] text-center">
       <Eyebrow className="normal-case">Advertise on the World&apos;s #1 Grocery App</Eyebrow>
-      <h2 className="mx-auto mt-6 max-w-[900px] text-[clamp(2.55rem,4.5vw,3.5rem)] font-black uppercase leading-[1.18] text-black">
+      <h2 className="mx-auto mt-6 max-w-[620px] text-[clamp(1.55rem,2.7vw,2.1rem)] font-black uppercase leading-[1.18] text-black">
         REACH MILLION OF HIGH-INTEND
         <br className="hidden md:block" />
         ASIAN CONSUMERS
@@ -292,11 +298,13 @@ function AdProductSection({
       <div className="relative mx-auto grid min-h-[500px] w-full max-w-[1650px] gap-8 px-[clamp(1.5rem,7.8vw,8.2rem)] py-[clamp(4rem,6vw,6.4rem)] lg:grid-cols-[minmax(0,1fr)_minmax(440px,0.72fr)] lg:items-center">
         <div className="relative z-10">
           <Eyebrow>{section.eyebrow}</Eyebrow>
-          <h2 className="mt-3 max-w-[850px] text-[clamp(2.4rem,4.2vw,3.35rem)] font-black leading-[1.08] text-black">{section.title}</h2>
+          <h2 className="mt-3 max-w-[650px] text-[clamp(1.45rem,2.5vw,2rem)] font-black leading-[1.08] text-black">{section.title}</h2>
           <p className="mt-5 max-w-[920px] text-[clamp(1.2rem,2vw,1.9rem)] font-medium leading-[1.16] text-black">{section.body}</p>
-          <SponsorButton className="mt-9 border-[7px] border-black px-8 py-1 text-[clamp(1.4rem,2.4vw,2.35rem)] font-medium shadow-none sm:min-h-[86px] sm:px-12" action="mailto" showArrow>
-            Get Started
-          </SponsorButton>
+          {section.showButton ? (
+            <SponsorButton className="mt-9 border-[7px] border-black px-8 py-1 text-[clamp(1.4rem,2.4vw,2.35rem)] font-medium shadow-none sm:min-h-[86px] sm:px-12" action="mailto" showArrow>
+              Get Started
+            </SponsorButton>
+          ) : null}
         </div>
 
         <div className={`relative z-10 overflow-hidden ${section.squareVisual ? "mx-auto aspect-square max-w-[420px] rounded-[28px]" : "min-h-[300px] rounded-[28px] lg:min-h-[410px]"}`}>

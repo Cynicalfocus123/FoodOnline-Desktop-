@@ -795,6 +795,8 @@
 - Image mapping follows the supplied sponsor folder. Because `11.Featured on the Homepage (1).png` and `12.Product Detail Pages (3).png` were absent, the page uses the closest available matching files: `11.Featured on the Homepage.png` for Featured on the Homepage, `11.Featured on the Homepage (2).png` for Homepage Brand Takeover, and `12.Product Detail Pages.png` for Product Detail Pages.
 - Responsive behavior: desktop sections aim for the supplied 1650px banner proportions with generous padding and two-column visual layouts. Tablet stacks when columns become cramped. Mobile keeps text first, then image, with `max-width: 100%`, automatic image height, lazy loading below the top content, large tap targets, and no intentional horizontal scrolling.
 - Footer design update: Corporate footer text formerly labeled `Promotions` is now `Become a Sponsor`, linked to `/become-a-sponsor`, and opened through the same SPA route handler pattern as Become a Vendor, Become a Partner, and Become Our Drivers.
+- Follow-up on 2026-06-07: Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Homepage Brand Takeover no longer show a `Get Started` button. Product Detail Pages keeps its `Get Started` button.
+- Follow-up typography direction: primary bold sponsor headings are reduced by roughly 40% on desktop and desktop-mobile breakpoints, including the top hero headline, stats/overview headings, final CTA headline, and sponsored product section titles.
 
 ## Guardrails
 
