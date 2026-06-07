@@ -1216,3 +1216,13 @@
   - `design.md`
 - Search Results Advertising now uses the category-phone mockup as the back layer and the two small food/product promo cards as absolute foreground overlays inside `search-results-card-group`, so the mobile-desktop and tablet layouts keep the cards on top of the phone instead of stacking them below it.
 - Weekly Deals keeps the phone and two promo cards inside one relative wrapper with an absolute phone layer and an absolute foreground card group across desktop, tablet, mobile-desktop, and phone breakpoints. The section no longer uses relative flow margins for the cards, preventing them from separating from or dropping below the phone.
+
+## Become a Sponsor Search Results Desktop Revert (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Restored the Search Results Advertising desktop visual to the prior correct composition: the category-phone mockup remains the back anchor and the Daring sponsored product banner is the foreground card layered over the lower-middle phone area.
+- Tablet, mobile-desktop, and phone breakpoints now reuse that same desktop composition logic by keeping the phone absolutely centered behind the foreground `search-results-card-group`, avoiding the earlier mobile flow where the card could sit below or separate from the phone.
