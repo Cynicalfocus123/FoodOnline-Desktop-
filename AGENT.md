@@ -1195,3 +1195,14 @@
   - `design.md`
 - Search Results Advertising now renders through a dedicated `SearchResultsVisual` component instead of the generic sponsor image loop. The visual has one parent wrapper, a lower-z-index phone image, and a foreground `search-results-card-group` containing the Daring sponsored product card so the phone/card treatment behaves as one composed hero visual on desktop, tablet, mobile-desktop, and mobile.
 - The Expand Your Reach metrics now use a shared `sponsor-stat` structure with separate `sponsor-stat__value` and `sponsor-stat__label` elements. `20 MILLION+` now treats `MONTHLY VISITS` as supporting copy, and `90%` treats `YOY growth` as its supporting label, matching the hierarchy used by `30 MILLION+` and `ZERO`.
+
+## Become a Sponsor Weekly Deals Phone Backdrop Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `public/images/become-sponsor/sponsored-products-phone-bg.png`
+  - `AGENT.md`
+  - `design.md`
+- Added the supplied `20.SPONSORED PRODUCTS (3).png` phone image as `sponsored-products-phone-bg.png`, cropped to transparent bounds while preserving alpha so it can scale behind the first Sponsored Products / Weekly Deals visual.
+- Rebuilt the Weekly Deals right-side image treatment as a layered composition: the phone is an absolute back layer and the two food deal boxes live together inside `sponsor-weekly-card-group` as one foreground group, keeping them visually connected instead of separate floating cards across desktop, tablet, mobile-desktop, and mobile.

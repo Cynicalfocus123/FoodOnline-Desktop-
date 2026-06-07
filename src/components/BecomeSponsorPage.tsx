@@ -231,19 +231,28 @@ function SponsoredOverviewSection() {
             Increase exposure, attract more customers, and accelerate sales with featured weekly promotions amplified through our marketing channels.
           </p>
         </div>
-        <div className="sponsor-visual sponsor-visual--weekly">
+        <div className="sponsor-visual sponsor-visual--weekly sponsor-visual--weekly-layered">
           <img
-            alt="FoodOnlines sponsored products weekly deals promotion bowl and sale tag"
-            className="sponsor-visual__img"
+            alt=""
+            aria-hidden="true"
+            className="sponsor-visual__img sponsor-weekly-phone"
             loading="lazy"
-            src={sponsorImagePath("sponsored-products-weekly-1.png")}
+            src={sponsorImagePath("sponsored-products-phone-bg.png")}
           />
-          <img
-            alt="FoodOnlines sponsored products weekly deals fruit promotion"
-            className="sponsor-visual__img"
-            loading="lazy"
-            src={sponsorImagePath("sponsored-products-weekly-2.png")}
-          />
+          <div className="sponsor-weekly-card-group">
+            <img
+              alt="FoodOnlines sponsored products weekly deals promotion bowl and sale tag"
+              className="sponsor-visual__img sponsor-weekly-card sponsor-weekly-card--one"
+              loading="lazy"
+              src={sponsorImagePath("sponsored-products-weekly-1.png")}
+            />
+            <img
+              alt="FoodOnlines sponsored products weekly deals fruit promotion"
+              className="sponsor-visual__img sponsor-weekly-card sponsor-weekly-card--two"
+              loading="lazy"
+              src={sponsorImagePath("sponsored-products-weekly-2.png")}
+            />
+          </div>
         </div>
       </div>
     </section>

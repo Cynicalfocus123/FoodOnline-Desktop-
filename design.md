@@ -814,6 +814,7 @@
 - Product Detail mobile follow-up: tablet/mobile layouts keep Product Detail text and button first, add spacing, then show the large phone pair below. The phones remain relative to the visual block on those breakpoints, with only downward translation for clipped tails inside the orange section and no image placement behind the text.
 - Search composition follow-up on 2026-06-08: Search Results Advertising should use a dedicated `SearchResultsVisual` component with a single composed parent wrapper. The phone remains the back layer, and the Daring product card lives inside a foreground `search-results-card-group`, so the foreground card treatment never separates from the visual composition or overlaps the text area.
 - Stats alignment follow-up on 2026-06-08: all four Expand Your Reach metrics use the same `sponsor-stat` layout, with a large `sponsor-stat__value` and a consistent supporting `sponsor-stat__label`. `20 MILLION+` / `MONTHLY VISITS` and `90%` / `YOY growth` should align with the `30 MILLION+` and `ZERO` hierarchy rather than using embedded line breaks inside the value text.
+- Weekly Deals phone-backdrop follow-up on 2026-06-08: the first Sponsored Products / Weekly Deals visual uses the supplied `20.SPONSORED PRODUCTS (3).png` as a cropped transparent phone back layer (`sponsored-products-phone-bg.png`). The two food deal boxes sit together in `sponsor-weekly-card-group` as a connected foreground composition over the phone, preserving large responsive scaling without separating into floating cards.
 
 ## Guardrails
 
