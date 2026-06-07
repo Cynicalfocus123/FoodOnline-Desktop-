@@ -173,6 +173,15 @@
         ],
         "behavior": "centered object-fit contain images with max-width guards, responsive paired mockups, controlled transforms for transparent PNG canvases, and no intended horizontal overflow"
       },
+      "medium_visual_sizing_follow_up": {
+        "sections": [
+          "search_results_advertising",
+          "deals_bestsellers_new_arrivals",
+          "category_pages",
+          "product_detail_pages"
+        ],
+        "behavior": "paired and single sponsor mockup images render at medium size instead of tiny; Product Detail Pages phone mockups lean the same direction while staying contained"
+      },
       "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
     },
     "about_us_page": {

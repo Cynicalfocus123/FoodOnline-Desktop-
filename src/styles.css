@@ -134,7 +134,7 @@ video {
 
 .sponsor-visual--phone .sponsor-visual__img,
 .sponsor-visual--floating .sponsor-visual__img {
-  width: min(100%, clamp(320px, 34vw, 560px));
+  width: min(112%, clamp(420px, 42vw, 700px));
 }
 
 .sponsor-visual--weekly {
@@ -158,28 +158,28 @@ video {
 
 .sponsor-visual--pair {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.35rem, 1vw, 1rem);
-  min-height: clamp(320px, 34vw, 460px);
+  gap: clamp(0.25rem, 0.8vw, 0.8rem);
+  min-height: clamp(360px, 38vw, 540px);
 }
 
 .sponsor-visual--pair .sponsor-visual__img {
-  width: min(100%, clamp(210px, 22vw, 360px));
+  width: min(112%, clamp(280px, 30vw, 500px));
 }
 
 .sponsor-visual--pair .sponsor-visual__img:first-child {
-  transform: translate(8%, 4%) scale(1.12);
+  transform: translate(7%, 3%) scale(1.18);
 }
 
 .sponsor-visual--pair .sponsor-visual__img:last-child {
-  transform: translate(-6%, -6%) scale(1.08);
+  transform: translate(-7%, -5%) scale(1.14);
 }
 
 .sponsor-visual--detail .sponsor-visual__img:first-child {
-  transform: translate(10%, 3%) rotate(-5deg) scale(1.08);
+  transform: translate(8%, 3%) rotate(-5deg) scale(1.16);
 }
 
 .sponsor-visual--detail .sponsor-visual__img:last-child {
-  transform: translate(-9%, -4%) rotate(5deg) scale(1.08);
+  transform: translate(-8%, -4%) rotate(-5deg) scale(1.16);
 }
 
 @media (max-width: 767px) {
@@ -191,7 +191,7 @@ video {
 
   .sponsor-visual--phone .sponsor-visual__img,
   .sponsor-visual--floating .sponsor-visual__img {
-    width: min(100%, 420px);
+    width: min(112%, 520px);
   }
 
   .sponsor-visual--weekly,
@@ -202,7 +202,7 @@ video {
 
   .sponsor-visual--weekly .sponsor-visual__img,
   .sponsor-visual--pair .sponsor-visual__img {
-    width: min(100%, 240px);
+    width: min(118%, 300px);
   }
 
   .sponsor-visual--weekly .sponsor-visual__img:first-child,

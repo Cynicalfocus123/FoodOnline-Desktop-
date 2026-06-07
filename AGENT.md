@@ -1121,3 +1121,14 @@
 - Fixed Weekly Deals paragraph wrapping to one natural sentence: `Increase exposure, attract more customers, and accelerate sales with featured weekly promotions amplified through our marketing channels.`
 - Added sponsor-specific CSS image wrappers in `src/styles.css`: `.sponsor-visual`, `.sponsor-visual__img`, `.sponsor-visual--phone`, `.sponsor-visual--floating`, `.sponsor-visual--pair`, `.sponsor-visual--weekly`, and `.sponsor-visual--detail`.
 - The sponsor visual wrappers use centered `object-fit: contain`, max-width guarded image sizing, responsive pair layouts, and controlled transforms so transparent PNG phone/product subjects fill their placeholder areas without distortion, tiny-image presentation, important cropping, or horizontal overflow across desktop Chrome/Safari, tablet, Android Chrome, and iPhone Safari.
+
+## Become a Sponsor Medium Visual Sizing Follow-Up (2026-06-07)
+
+- Files changed:
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Increased paired sponsor visuals to medium size for Deals/Bestsellers/New Arrivals, Category Pages, and Product Detail Pages by widening `.sponsor-visual--pair`, increasing its responsive min-height, and scaling each transparent PNG subject larger.
+- Updated Product Detail Pages so both phone mockups lean the same direction while staying medium-sized and contained in the section.
+- Increased the single Search Results Advertising phone/product visual through `.sponsor-visual--phone` so the Daring ready-meal image reads as medium-sized instead of tiny.
