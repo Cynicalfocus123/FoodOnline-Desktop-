@@ -57,43 +57,26 @@ const partnerCards: Array<{
 ];
 
 function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
-  const className = "partner-card-icon h-[clamp(13rem,48vw,19rem)] w-[clamp(13rem,48vw,19rem)] text-black md:h-[clamp(11rem,17vw,18rem)] md:w-[clamp(11rem,17vw,18rem)]";
-
-  if (type === "globe") {
-    return (
-      <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" viewBox="0 0 120 120">
-        <circle cx="55" cy="55" r="31" />
-        <path d="M24 55h62M55 24c10 10 15 21 15 31S65 76 55 86M55 24C45 34 40 45 40 55s5 21 15 31" />
-        <path d="M34 33c13 7 28 7 42 0M34 77c13-7 28-7 42 0" />
-        <path d="M82 25h16v16M98 25 76 47M82 95c-16 9-37 7-51-7" />
-      </svg>
-    );
-  }
-
-  if (type === "megaphone") {
-    return (
-      <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 120 120">
-        <path d="M31 65 74 39v50L31 75Z" />
-        <path d="M31 65H19c-5 0-9 4-9 9s4 9 9 9h12M42 82l8 18c2 5 9 4 10-1l2-13" />
-        <path d="M83 52c7 2 12 8 12 14s-5 12-12 14" />
-        <path d="M98 29 103 39l11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2ZM89 12l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2ZM106 68l4 8 9 2-7 7 2 9-8-4-8 4 2-9-7-7 9-2Z" />
-      </svg>
-    );
-  }
+  const iconFileName = {
+    globe: "partner-icon-globe.png",
+    megaphone: "partner-icon-megaphone.png",
+    growth: "partner-icon-growth.png",
+  }[type];
 
   return (
-    <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.9" viewBox="0 0 120 120">
-      <path d="M16 94h88" />
-      <path d="M23 82h11V62H23zM45 82h11V52H45zM67 82h11V41H67zM89 82h11V27H89z" />
-      <path d="M20 45c20 0 35-8 46-20 11-12 20-14 32-14" />
-      <path d="m86 8 13 3-3 13" />
-    </svg>
+    <img
+      alt=""
+      aria-hidden="true"
+      className="partner-card-icon h-[clamp(2.7rem,12vw,3.8rem)] w-[clamp(2.7rem,12vw,3.8rem)] object-contain md:h-[clamp(2.6rem,3.4vw,3.6rem)] md:w-[clamp(2.6rem,3.4vw,3.6rem)]"
+      loading="lazy"
+      src={partnerImagePath(iconFileName)}
+    />
   );
 }
 
 function PartnerHeroSection() {
   return (
-    <section className="relative mx-auto min-h-[860px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[900px] md:min-h-[760px] lg:aspect-[1650/920] lg:min-h-0">
+    <section className="relative mx-auto min-h-[940px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[980px] md:min-h-[840px] lg:aspect-[1650/980] lg:min-h-0">
       <div className="relative z-10 max-w-[900px]">
         <h1 className="text-[clamp(3rem,5vw,5.1rem)] font-bold leading-[1.2] tracking-normal text-black">
           Expand Your Reach
@@ -107,34 +90,35 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] pt-[clamp(8rem,25vw,12rem)] md:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] md:pt-[clamp(5rem,13vw,8rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end lg:pt-0">
+      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] md:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end">
         <img
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image block h-[clamp(320px,72vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
           loading="eager"
           src={partnerImagePath("partner-food-table.png")}
         />
-        <img
-          alt="Partners stacking hands together"
-          className="partner-hero-team-image block h-[clamp(340px,78vw,560px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
-          loading="eager"
-          src={partnerImagePath("partner-team.png")}
-        />
+        <div className="relative pt-[clamp(5.2rem,21vw,8rem)] md:pt-[clamp(5rem,10vw,7rem)]">
+          <img
+            alt=""
+            aria-hidden="true"
+            className="partner-hero-leaf pointer-events-none absolute left-0 top-[clamp(1.4rem,5vw,2.2rem)] z-20 w-[clamp(3.5rem,14vw,5.5rem)] object-contain md:left-[2%] md:top-[clamp(1.3rem,2.8vw,2rem)] md:w-[clamp(3.4rem,5vw,5rem)]"
+            draggable={false}
+            src={partnerImagePath("partner-leaves.png")}
+          />
+          <img
+            alt="Fruit plate"
+            className="partner-hero-fruit-circle pointer-events-none absolute right-[-2%] top-0 z-20 w-[clamp(6.6rem,31vw,10rem)] rounded-full object-contain drop-shadow-[0_20px_38px_rgba(80,34,48,0.14)] md:right-[-4%] md:w-[clamp(8rem,13vw,12.5rem)]"
+            draggable={false}
+            src={partnerImagePath("partner-fruit-plate.png")}
+          />
+          <img
+            alt="Partners stacking hands together"
+            className="partner-hero-team-image block h-[clamp(476px,109vw,720px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(546px,50vw,784px)]"
+            loading="eager"
+            src={partnerImagePath("partner-team.png")}
+          />
+        </div>
       </div>
-
-      <img
-        alt="Fruit plate"
-        className="partner-hero-fruit-circle pointer-events-none absolute right-[18%] top-[23rem] z-20 w-[clamp(180px,48vw,330px)] rounded-full object-contain drop-shadow-[0_24px_48px_rgba(80,34,48,0.16)] sm:top-[22rem] md:right-[13%] md:top-[12rem] md:w-[clamp(240px,28vw,390px)] lg:right-[15%] lg:top-[2.3rem] lg:w-[clamp(280px,28vw,430px)]"
-        draggable={false}
-        src={partnerImagePath("partner-fruit-plate.png")}
-      />
-      <img
-        alt=""
-        aria-hidden="true"
-        className="partner-hero-leaf pointer-events-none absolute right-[4%] top-[18.5rem] z-20 w-[clamp(110px,31vw,210px)] object-contain sm:top-[18rem] md:right-[3%] md:top-[8.5rem] md:w-[clamp(150px,18vw,250px)] lg:right-[3.5%] lg:top-[7%] lg:w-[clamp(182px,19vw,292px)]"
-        draggable={false}
-        src={partnerImagePath("partner-leaves.png")}
-      />
     </section>
   );
 }
@@ -154,7 +138,7 @@ function PartnerCardsSection() {
             className={`flex min-h-[620px] flex-col rounded-[20px] bg-white px-[clamp(1.35rem,2vw,1.75rem)] py-[clamp(1.55rem,2.4vw,2.25rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] md:min-h-[760px] lg:min-h-[700px] ${card.className}`}
             key={card.icon}
           >
-            <div className="flex min-h-[clamp(14rem,52vw,20rem)] items-center justify-center md:min-h-[clamp(12rem,18vw,18rem)]">
+            <div className="flex min-h-[clamp(4.2rem,16vw,5.6rem)] items-center justify-center md:min-h-[clamp(4rem,5.4vw,5.4rem)]">
               <PartnerCardIcon type={card.icon} />
             </div>
             <h3 className="mt-[clamp(0.55rem,1.3vw,1.25rem)] text-[clamp(1.38rem,1.9vw,1.85rem)] font-bold leading-[1.18] text-black">{card.title}</h3>
