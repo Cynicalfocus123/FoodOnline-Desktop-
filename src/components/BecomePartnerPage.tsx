@@ -67,7 +67,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
     <img
       alt=""
       aria-hidden="true"
-      className="partner-card-icon h-[clamp(11rem,42vw,15rem)] w-[clamp(11rem,42vw,15rem)] object-contain md:h-[clamp(12rem,15vw,16rem)] md:w-[clamp(12rem,15vw,16rem)]"
+      className="partner-card-icon h-[clamp(7rem,24vw,9rem)] w-[clamp(7rem,24vw,9rem)] object-contain md:h-[clamp(9rem,12vw,12rem)] md:w-[clamp(9rem,12vw,12rem)]"
       loading="lazy"
       src={partnerImagePath(iconFileName)}
     />
@@ -90,7 +90,7 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(1.7rem,4vw,3rem)] grid grid-cols-[minmax(0,1.08fr)_minmax(0,0.42fr)] items-end gap-[clamp(0.25rem,0.8vw,0.65rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[4.2%] lg:mt-0 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:gap-[clamp(1.15rem,2.6vw,2.4rem)]">
+      <div className="relative z-0 mt-[clamp(1.7rem,4vw,3rem)] grid grid-cols-[minmax(0,1.02fr)_minmax(0,0.62fr)] items-end gap-[clamp(0.25rem,0.8vw,0.65rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[4.2%] lg:mt-0 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:gap-[clamp(1.15rem,2.6vw,2.4rem)]">
         <img
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image block h-[clamp(145px,34vw,340px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(390px,36vw,560px)]"
@@ -100,7 +100,7 @@ function PartnerHeroSection() {
         <div className="relative">
           <img
             alt="Partners stacking hands together"
-            className="partner-hero-team-image block h-[clamp(190px,43vw,420px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(546px,50vw,784px)]"
+            className="partner-hero-team-image block h-[clamp(250px,54vw,520px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(546px,50vw,784px)]"
             loading="eager"
             src={partnerImagePath("partner-team.png")}
           />
@@ -112,7 +112,7 @@ function PartnerHeroSection() {
 
 function PartnerCardsSection() {
   return (
-    <section className="relative mx-auto min-h-[820px] w-full max-w-[1650px] overflow-visible px-[clamp(1.25rem,3.7vw,3.6rem)] pb-[clamp(4.8rem,8vw,7rem)] pt-[clamp(1.5rem,3.2vw,3.2rem)] lg:min-h-[920px]">
+    <section className="relative mx-auto w-full max-w-[1650px] overflow-visible px-[clamp(1.25rem,3.7vw,3.6rem)] pb-[clamp(4.8rem,8vw,7rem)] pt-[clamp(1.5rem,3.2vw,3.2rem)] lg:min-h-[920px]">
       <h2 className="relative z-30 mx-auto max-w-[1040px] text-center text-[clamp(2.55rem,4.2vw,4.4rem)] font-bold leading-[1.18] tracking-normal text-black lg:ml-auto lg:mr-[5.2%]">
         Partner with the World&apos;s Largest
         <br />
@@ -122,14 +122,14 @@ function PartnerCardsSection() {
       <div className="relative z-10 mt-[clamp(2.2rem,5vw,4rem)] grid gap-6 md:grid-cols-3 lg:absolute lg:inset-x-[7%] lg:bottom-[10%] lg:top-[30%] lg:mt-0 lg:gap-[3.6vw]">
         {partnerCards.map((card) => (
           <article
-            className={`flex min-h-[620px] flex-col rounded-[20px] bg-white px-[clamp(1.35rem,2vw,1.75rem)] py-[clamp(1.55rem,2.4vw,2.25rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] md:min-h-[760px] lg:min-h-[700px] ${card.className}`}
+            className={`flex flex-col rounded-[20px] bg-white px-[clamp(1.35rem,2vw,1.75rem)] py-[clamp(1.35rem,2.4vw,2.25rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] md:min-h-[560px] lg:min-h-[700px] ${card.className}`}
             key={card.icon}
           >
-            <div className="flex min-h-[clamp(12.5rem,46vw,16.5rem)] items-center justify-center md:min-h-[clamp(13.5rem,17vw,17.5rem)]">
+            <div className="flex min-h-[clamp(8rem,28vw,10rem)] items-center justify-center md:min-h-[clamp(10rem,14vw,13rem)]">
               <PartnerCardIcon type={card.icon} />
             </div>
-            <h3 className="mt-[clamp(0.55rem,1.3vw,1.25rem)] text-[clamp(1.38rem,1.9vw,1.85rem)] font-bold leading-[1.18] text-black">{card.title}</h3>
-            <p className="mt-[clamp(1rem,1.8vw,1.55rem)] text-[clamp(1rem,1.44vw,1.45rem)] font-normal leading-[1.16] text-black">{card.body}</p>
+            <h3 className="mt-[clamp(0.35rem,1vw,1rem)] text-[clamp(1.38rem,1.9vw,1.85rem)] font-bold leading-[1.18] text-black">{card.title}</h3>
+            <p className="mt-[clamp(0.85rem,1.5vw,1.35rem)] text-[clamp(1rem,1.44vw,1.45rem)] font-normal leading-[1.16] text-black">{card.body}</p>
           </article>
         ))}
       </div>
