@@ -140,6 +140,12 @@
         "product_detail_pages_get_started_visible": true
       },
       "typography_follow_up": "primary bold sponsor headings were reduced by roughly 40% on desktop and desktop-mobile breakpoints after launch",
+      "stats_layout_follow_up": {
+        "join_industry_leaders_removed": true,
+        "stats_panel_alignment": "centered single max-width panel",
+        "stats_heading": "Advertise on the World's #1 Grocery App is centered with the orange divider",
+        "stat_cells": "responsive two-column layout on tablet/desktop with mobile-safe spacing and break-safe large stat text"
+      },
       "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
     },
     "about_us_page": {

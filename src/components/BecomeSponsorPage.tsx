@@ -194,25 +194,23 @@ function ReachStatsSection() {
         </p>
       </div>
 
-      <div className="mt-[clamp(4rem,7vw,5.9rem)] grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-        <div>
-          <Eyebrow className="border-b border-[#ff6b1a] pb-3 normal-case">Advertise on the World&apos;s #1 Grocery App</Eyebrow>
-          <div className="grid border-b border-[#ff6b1a] sm:grid-cols-2">
-            {stats.map((stat, index) => (
-              <div className={`flex gap-5 py-9 ${index < 2 ? "border-b border-[#ff6b1a]" : ""}`} key={stat.value}>
-                <Sparkle />
-                <div>
-                  <p className="whitespace-pre-line text-[clamp(2.25rem,4vw,3.1rem)] font-black uppercase leading-[1.14] text-black">{stat.value}</p>
-                  {stat.label ? <p className="mt-4 max-w-[310px] text-[clamp(0.98rem,1.25vw,1.08rem)] font-medium leading-snug text-black">{stat.label}</p> : null}
-                </div>
+      <div className="mx-auto mt-[clamp(3rem,6vw,5.4rem)] w-full max-w-[960px]">
+        <Eyebrow className="border-b border-[#ff6b1a] pb-3 text-center normal-case">Advertise on the World&apos;s #1 Grocery App</Eyebrow>
+        <div className="grid border-b border-[#ff6b1a] sm:grid-cols-2">
+          {stats.map((stat, index) => (
+            <div
+              className={`flex min-w-0 justify-center gap-4 px-2 py-[clamp(1.6rem,3.2vw,2.5rem)] sm:justify-start sm:px-5 lg:px-8 ${
+                index < 2 ? "border-b border-[#ff6b1a]" : ""
+              }`}
+              key={stat.value}
+            >
+              <Sparkle />
+              <div className="min-w-0">
+                <p className="whitespace-pre-line break-words text-[clamp(1.8rem,3.8vw,3rem)] font-black uppercase leading-[1.14] text-black">{stat.value}</p>
+                {stat.label ? <p className="mt-4 max-w-[310px] text-[clamp(0.98rem,1.25vw,1.08rem)] font-medium leading-snug text-black">{stat.label}</p> : null}
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <Eyebrow className="border-b border-[#ff6b1a] pb-3 normal-case">Join industry leaders</Eyebrow>
-          <div className="min-h-[360px] border-b border-[#ff6b1a]" aria-label="Partner logo placement area" />
+            </div>
+          ))}
         </div>
       </div>
     </section>

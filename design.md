@@ -797,6 +797,7 @@
 - Footer design update: Corporate footer text formerly labeled `Promotions` is now `Become a Sponsor`, linked to `/become-a-sponsor`, and opened through the same SPA route handler pattern as Become a Vendor, Become a Partner, and Become Our Drivers.
 - Follow-up on 2026-06-07: Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Homepage Brand Takeover no longer show a `Get Started` button. Product Detail Pages keeps its `Get Started` button.
 - Follow-up typography direction: primary bold sponsor headings are reduced by roughly 40% on desktop and desktop-mobile breakpoints, including the top hero headline, stats/overview headings, final CTA headline, and sponsored product section titles.
+- Follow-up stats layout direction: the empty `Join industry leaders` area is removed from the Expand Your Reach section. The `Advertise on the World's #1 Grocery App` stats group is centered in one max-width panel with centered heading text, responsive two-column stat cells on wider screens, stacked-safe mobile spacing, and break-safe large stat copy so desktop, desktop-mobile, tablet, iOS Safari, and Android Chrome do not clip or horizontally scroll.
 
 ## Guardrails
 

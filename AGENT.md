@@ -1095,3 +1095,13 @@
 - Removed the `Get Started` button from the Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Homepage Brand Takeover sections.
 - Kept the Product Detail Pages `Get Started` button because that section was not included in the removal list.
 - Reduced the primary bold sponsor page heading scale by roughly 40% for desktop and desktop-mobile sizing, including the top hero headline, `EXPAND YOUR REACH`, `SPONSORED PRODUCTS`, Weekly Deals, final CTA headline, and sponsored ad-section titles.
+
+## Become a Sponsor Stats Centering Follow-Up (2026-06-07)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Removed the empty `Join industry leaders` column from the Expand Your Reach stats section.
+- Centered the remaining `Advertise on the World's #1 Grocery App` stats block in a single max-width panel with centered heading text, responsive two-column stat cells on tablet/desktop, stacked-safe spacing on narrow mobile, break-safe stat text, and no intentional horizontal overflow across desktop, desktop-mobile, tablet, iOS Safari, and Android Chrome widths.
