@@ -67,7 +67,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
     <img
       alt=""
       aria-hidden="true"
-      className="partner-card-icon h-[clamp(5.4rem,21vw,7.2rem)] w-[clamp(5.4rem,21vw,7.2rem)] object-contain md:h-[clamp(5.8rem,8vw,7.8rem)] md:w-[clamp(5.8rem,8vw,7.8rem)]"
+      className="partner-card-icon h-[clamp(11rem,42vw,15rem)] w-[clamp(11rem,42vw,15rem)] object-contain md:h-[clamp(12rem,15vw,16rem)] md:w-[clamp(12rem,15vw,16rem)]"
       loading="lazy"
       src={partnerImagePath(iconFileName)}
     />
@@ -76,7 +76,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
 
 function PartnerHeroSection() {
   return (
-    <section className="relative mx-auto min-h-[620px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(1.8rem,3vw,3rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[660px] md:min-h-[800px] lg:aspect-[1650/960] lg:min-h-0">
+    <section className="relative mx-auto min-h-[520px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(1.8rem,3vw,3rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[560px] md:min-h-[680px] lg:aspect-[1650/1060] lg:min-h-0">
       <div className="relative z-10 max-w-[900px]">
         <h1 className="text-[clamp(3rem,5vw,5.1rem)] font-bold leading-[1.2] tracking-normal text-black">
           Expand Your Reach
@@ -90,17 +90,17 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(1.7rem,4vw,3rem)] grid grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)] items-end gap-[clamp(0.35rem,1.1vw,0.9rem)] md:gap-[clamp(1.15rem,2.6vw,2.4rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[4.2%] lg:mt-0">
+      <div className="relative z-0 mt-[clamp(1.7rem,4vw,3rem)] grid grid-cols-[minmax(0,1.08fr)_minmax(0,0.42fr)] items-end gap-[clamp(0.25rem,0.8vw,0.65rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[4.2%] lg:mt-0 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:gap-[clamp(1.15rem,2.6vw,2.4rem)]">
         <img
           alt="A large food table prepared for a shared meal"
-          className="partner-hero-food-image block h-[clamp(190px,48vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
+          className="partner-hero-food-image block h-[clamp(145px,34vw,340px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(390px,36vw,560px)]"
           loading="eager"
           src={partnerImagePath("partner-food-table.png")}
         />
         <div className="relative">
           <img
             alt="Partners stacking hands together"
-            className="partner-hero-team-image block h-[clamp(240px,62vw,720px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(546px,50vw,784px)]"
+            className="partner-hero-team-image block h-[clamp(190px,43vw,420px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(546px,50vw,784px)]"
             loading="eager"
             src={partnerImagePath("partner-team.png")}
           />
@@ -125,7 +125,7 @@ function PartnerCardsSection() {
             className={`flex min-h-[620px] flex-col rounded-[20px] bg-white px-[clamp(1.35rem,2vw,1.75rem)] py-[clamp(1.55rem,2.4vw,2.25rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] md:min-h-[760px] lg:min-h-[700px] ${card.className}`}
             key={card.icon}
           >
-            <div className="flex min-h-[clamp(8rem,30vw,10.5rem)] items-center justify-center md:min-h-[clamp(7.4rem,11vw,10.8rem)]">
+            <div className="flex min-h-[clamp(12.5rem,46vw,16.5rem)] items-center justify-center md:min-h-[clamp(13.5rem,17vw,17.5rem)]">
               <PartnerCardIcon type={card.icon} />
             </div>
             <h3 className="mt-[clamp(0.55rem,1.3vw,1.25rem)] text-[clamp(1.38rem,1.9vw,1.85rem)] font-bold leading-[1.18] text-black">{card.title}</h3>
