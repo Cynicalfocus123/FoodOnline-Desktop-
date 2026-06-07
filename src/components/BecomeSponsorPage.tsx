@@ -169,10 +169,16 @@ function SearchResultsVisual({ alt }: { alt: string }) {
       <img alt={alt} className="sponsor-visual__img search-results-phone" loading="lazy" src={sponsorImagePath("over-30-million-downloads.png")} />
       <div className="search-results-card-group">
         <img
-          alt="Daring ready meal sponsored search result product banner"
-          className="sponsor-visual__img search-results-card search-results-card--primary"
+          alt="FoodOnlines sponsored search result promotion bowl and sale tag"
+          className="sponsor-visual__img search-results-card search-results-card--one"
           loading="lazy"
-          src={sponsorImagePath("search-results-advertising-phone.png")}
+          src={sponsorImagePath("sponsored-products-weekly-1.png")}
+        />
+        <img
+          alt="FoodOnlines sponsored search result fruit promotion"
+          className="sponsor-visual__img search-results-card search-results-card--two"
+          loading="lazy"
+          src={sponsorImagePath("sponsored-products-weekly-2.png")}
         />
       </div>
     </div>

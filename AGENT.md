@@ -1206,3 +1206,13 @@
   - `design.md`
 - Added the supplied `20.SPONSORED PRODUCTS (3).png` phone image as `sponsored-products-phone-bg.png`, cropped to transparent bounds while preserving alpha so it can scale behind the first Sponsored Products / Weekly Deals visual.
 - Rebuilt the Weekly Deals right-side image treatment as a layered composition: the phone is an absolute back layer and the two food deal boxes live together inside `sponsor-weekly-card-group` as one foreground group, keeping them visually connected instead of separate floating cards across desktop, tablet, mobile-desktop, and mobile.
+
+## Become a Sponsor Responsive Overlay Composition Fix (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Search Results Advertising now uses the category-phone mockup as the back layer and the two small food/product promo cards as absolute foreground overlays inside `search-results-card-group`, so the mobile-desktop and tablet layouts keep the cards on top of the phone instead of stacking them below it.
+- Weekly Deals keeps the phone and two promo cards inside one relative wrapper with an absolute phone layer and an absolute foreground card group across desktop, tablet, mobile-desktop, and phone breakpoints. The section no longer uses relative flow margins for the cards, preventing them from separating from or dropping below the phone.
