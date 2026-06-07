@@ -49,6 +49,7 @@ export function Footer() {
   const openAboutUs = useHomeStore((state) => state.openAboutUs);
   const openBecomeVendor = useHomeStore((state) => state.openBecomeVendor);
   const openBecomePartner = useHomeStore((state) => state.openBecomePartner);
+  const openBecomeSponsor = useHomeStore((state) => state.openBecomeSponsor);
   const openDrivers = useHomeStore((state) => state.openDrivers);
 
   return (
@@ -88,6 +89,7 @@ export function Footer() {
                   const isAboutUsLink = href === "/about-us";
                   const isBecomeVendorLink = href === "/become-vendor";
                   const isBecomePartnerLink = href === "/become-partner";
+                  const isBecomeSponsorLink = href === "/become-a-sponsor";
                   const isDriverLink = href === "/company/drivers";
 
                   return (
@@ -110,6 +112,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openBecomePartner();
+                            }
+                          : isBecomeSponsorLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openBecomeSponsor();
                             }
                           : isDriverLink
                           ? (event) => {

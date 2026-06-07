@@ -1358,7 +1358,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Farm Careers",
       { label: "Become a Partner", href: "/become-partner" },
       "Accessibility",
-      "Promotions",
+      { label: "Become a Sponsor", href: "/become-a-sponsor" },
     ],
   },
 ];

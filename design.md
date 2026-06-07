@@ -785,6 +785,17 @@
 - Vendor signup buttons open the existing public signup/register flow, and the login button opens the existing public login flow. The footer `Become a Vendor` link opens the rebuilt page.
 - Responsive behavior uses code-native layout, readable `clamp()` type, stacked mobile cards, and resized decorative assets with no intended horizontal overflow across desktop, tablet, mobile, iOS Safari, Android Chrome, Safari, and Chrome.
 
+### Become a Sponsor Page Launch (2026-06-07)
+
+- Added the FoodOnlines `Become a Sponsor` advertising page at `/become-a-sponsor`, with `#become-a-sponsor` fallback support and the shared public header/footer.
+- The page uses a Montserrat-first font stack, strong black advertising typography, wide letter-spaced labels, large pill CTAs, soft cream/white/light-green page background, FoodOnlines green/orange hero cards, thin orange stat dividers, light blue rounded sponsored-product panel, and colored product-ad bands.
+- Section order is: hero intro cards, Expand Your Reach stats, Sponsored Products weekly deals overview, final Advertise on the World's #1 Grocery App CTA box, Search Results Advertising, Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, Homepage Brand Takeover, and Product Detail Pages.
+- All visible page copy is hardcoded as real React/HTML text, and the CTAs are real clickable buttons rather than image-only controls. `Get Started` and `CONTACT US` use `mailto:info@foodonlines.com`; `ADS LOGIN` uses `#ads-login`.
+- Sponsor imagery lives in `public/images/become-sponsor/`, copied from `D:/Foodonline desktop version/pages/sponsor page`. The page uses `sponsor-with-us.png`, `expand-your-reach.png`, `sponsored-products.png`, `advertise-grocery-app.png`, `search-results-advertising.png`, `deals-bestsellers-new-arrivals.png`, `category-pages.png`, `featured-homepage.png`, `homepage-brand-takeover.png`, and `product-detail-pages.png`.
+- Image mapping follows the supplied sponsor folder. Because `11.Featured on the Homepage (1).png` and `12.Product Detail Pages (3).png` were absent, the page uses the closest available matching files: `11.Featured on the Homepage.png` for Featured on the Homepage, `11.Featured on the Homepage (2).png` for Homepage Brand Takeover, and `12.Product Detail Pages.png` for Product Detail Pages.
+- Responsive behavior: desktop sections aim for the supplied 1650px banner proportions with generous padding and two-column visual layouts. Tablet stacks when columns become cramped. Mobile keeps text first, then image, with `max-width: 100%`, automatic image height, lazy loading below the top content, large tap targets, and no intentional horizontal scrolling.
+- Footer design update: Corporate footer text formerly labeled `Promotions` is now `Become a Sponsor`, linked to `/become-a-sponsor`, and opened through the same SPA route handler pattern as Become a Vendor, Become a Partner, and Become Our Drivers.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

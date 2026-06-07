@@ -1063,3 +1063,24 @@
 - Page metadata now sets `Become a Vendor | FoodOnlines`, and the page background uses the matching light green `#c4dfb8` so the rebuilt sections read as one continuous landing page.
 - Vendor CTA buttons are real accessible buttons. Hero `GET STARTED` and final `Sign up` call the existing `openSignup` flow, and final `Log in` calls the existing `openLogin` flow.
 - Updated the shared footer `Become a Vendor` item to point to `/become-vendor` and open the new page through the existing SPA navigation pattern.
+
+## Become a Sponsor Page Launch (2026-06-07)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `src/components/Footer.tsx`
+  - `src/data/home.ts`
+  - `public/images/become-sponsor/`
+  - `AGENT.md`
+  - `design.md`
+  - `design.json`
+- Added the hardcoded FoodOnlines `Become a Sponsor` advertising landing page at `/become-a-sponsor`, with `#become-a-sponsor` fallback support through the existing Zustand route store.
+- The page keeps the shared FoodOnlines public header/footer and renders hardcoded real HTML text for the hero cards, reach stats, sponsored product overview, CTA box, search results advertising, deals/bestsellers/new arrivals, category pages, featured homepage, homepage brand takeover, and product detail page sections.
+- CTA controls are real clickable buttons. `Get Started` and `CONTACT US` route to `mailto:info@foodonlines.com`; `ADS LOGIN` routes to `#ads-login`.
+- Sponsor images were copied from `D:/Foodonline desktop version/pages/sponsor page` into `public/images/become-sponsor/` and used as section visuals: `18.Sponsor with us.png`, `19.EXPAND YOUR REACH.png`, `20.SPONSORED PRODUCTS.png`, `21.Advertise on the World's #1 Grocery App.png`, `8.Search Results Advertising.png`, `9.Deals, Bestsellers & New Arrivals.png`, `10.Category Pages.png`, `11.Featured on the Homepage.png`, `11.Featured on the Homepage (2).png`, and `12.Product Detail Pages.png`.
+- Filename fallback note: the requested exact files `11.Featured on the Homepage (1).png` and `12.Product Detail Pages (3).png` were not present, so the page uses the closest available matching sponsor assets, `11.Featured on the Homepage.png` and `12.Product Detail Pages.png`. The extra Homepage Brand Takeover section uses `11.Featured on the Homepage (2).png`.
+- Footer update: the Corporate footer item formerly labeled `Promotions` is now `Become a Sponsor` and opens `/become-a-sponsor` through the same SPA navigation pattern as the vendor, partner, and driver links.
+- Responsive behavior: desktop uses wide banner-like sections and two-column product layouts; tablet/mobile stack text and visuals with max-width guarded images, no intentional horizontal overflow, real tap targets, and lazy loading for below-the-fold image assets.
+- Checks on 2026-06-07: initial PowerShell `npm run build` was blocked by Windows script policy, so `cmd /c npm run build` was used. The first build attempt hit Vite `ENOTEMPTY` while clearing generated `dist/assets`; after verifying and clearing only `D:/Foodonline desktop version/dist/assets`, `cmd /c npm run build` passed. No separate `lint` or `typecheck` scripts are defined in `package.json`; `npm run build` includes `tsc -b`.

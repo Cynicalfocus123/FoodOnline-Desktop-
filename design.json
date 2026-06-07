@@ -75,9 +75,64 @@
       "title": "Drive with FoodOnlines",
       "seo_title": "Drive with FoodOnlines | Grocery Delivery Driver Jobs",
       "seo_description": "Join FoodOnlines as a flexible or full-time grocery delivery driver. Choose routes, earn with grocery deliveries, and help bring global food to customers."
+    },
+    "become_a_sponsor": {
+      "path": "/become-a-sponsor",
+      "hash_fallback": "#become-a-sponsor",
+      "view": "becomeSponsor",
+      "title": "Become a Sponsor",
+      "seo_title": "Become a Sponsor | FoodOnlines",
+      "seo_description": "Advertise with FoodOnlines through sponsored products, homepage placements, search results advertising, category pages, and product detail page placements.",
+      "uses_existing_site_header_footer": true
     }
   },
   "components": {
+    "become_sponsor_page": {
+      "file": "src/components/BecomeSponsorPage.tsx",
+      "route": "/become-a-sponsor",
+      "github_pages_hash_fallback": "/FoodOnline-Desktop-/#become-a-sponsor",
+      "uses_existing_site_header_footer": true,
+      "background": "soft cream to white to light green gradient",
+      "font": "Montserrat-first with existing sans fallbacks",
+      "sections": [
+        "hero_intro_cards",
+        "expand_your_reach_stats",
+        "sponsored_products_weekly_deals",
+        "final_advertise_cta",
+        "search_results_advertising",
+        "deals_bestsellers_new_arrivals",
+        "category_pages",
+        "featured_on_the_homepage",
+        "homepage_brand_takeover",
+        "product_detail_pages"
+      ],
+      "image_base_path": "/images/become-sponsor/",
+      "source_folder": "D:/Foodonline desktop version/pages/sponsor page",
+      "images": {
+        "hero_intro_reference": "/images/become-sponsor/sponsor-with-us.png",
+        "expand_reach_reference": "/images/become-sponsor/expand-your-reach.png",
+        "sponsored_products_reference": "/images/become-sponsor/sponsored-products.png",
+        "final_cta_reference": "/images/become-sponsor/advertise-grocery-app.png",
+        "search_results_advertising": "/images/become-sponsor/search-results-advertising.png",
+        "deals_bestsellers_new_arrivals": "/images/become-sponsor/deals-bestsellers-new-arrivals.png",
+        "category_pages": "/images/become-sponsor/category-pages.png",
+        "featured_homepage": "/images/become-sponsor/featured-homepage.png",
+        "homepage_brand_takeover": "/images/become-sponsor/homepage-brand-takeover.png",
+        "product_detail_pages": "/images/become-sponsor/product-detail-pages.png"
+      },
+      "asset_filename_fallbacks": {
+        "requested_featured_homepage": "11.Featured on the Homepage (1).png",
+        "used_featured_homepage": "11.Featured on the Homepage.png",
+        "requested_product_detail_pages": "12.Product Detail Pages (3).png",
+        "used_product_detail_pages": "12.Product Detail Pages.png"
+      },
+      "button_behavior": {
+        "get_started": "mailto:info@foodonlines.com",
+        "contact_us": "mailto:info@foodonlines.com",
+        "ads_login": "#ads-login"
+      },
+      "responsive_behavior": "desktop uses wide banner-like sections and two-column product layouts; tablet stacks where cramped; mobile stacks text before image with max-width guarded images, large tap targets, no horizontal overflow, and lazy-loaded below-the-fold images"
+    },
     "about_us_page": {
       "file": "src/components/AboutUsPage.tsx",
       "route": "/about-us",
@@ -252,6 +307,12 @@
         "new_label": "Become Our Drivers",
         "href": "/company/drivers",
         "opens_driver_landing_route": true
+      },
+      "updated_sponsor_link": {
+        "old_label": "Promotions",
+        "new_label": "Become a Sponsor",
+        "href": "/become-a-sponsor",
+        "opens_become_sponsor_route": true
       }
     },
     "shortcut_row": {
