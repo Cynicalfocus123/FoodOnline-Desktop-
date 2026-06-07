@@ -93,7 +93,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
 
 function PartnerHeroSection() {
   return (
-    <section className="relative mx-auto min-h-[1260px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[1380px] md:min-h-[1160px] lg:aspect-[1650/1180] lg:min-h-0">
+    <section className="relative mx-auto min-h-[860px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[900px] md:min-h-[760px] lg:aspect-[1650/920] lg:min-h-0">
       <div className="relative z-10 max-w-[900px]">
         <h1 className="text-[clamp(3rem,5vw,5.1rem)] font-bold leading-[1.2] tracking-normal text-black">
           Expand Your Reach
@@ -107,7 +107,7 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] md:grid-cols-[minmax(0,0.72fr)_minmax(360px,1.28fr)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5%] lg:mt-0 lg:items-end">
+      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] pt-[clamp(8rem,25vw,12rem)] md:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] md:pt-[clamp(5rem,13vw,8rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end lg:pt-0">
         <img
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image block h-[clamp(320px,72vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
@@ -116,7 +116,7 @@ function PartnerHeroSection() {
         />
         <img
           alt="Partners stacking hands together"
-          className="partner-hero-team-image block h-[clamp(760px,215vw,980px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(780px,72vw,1120px)]"
+          className="partner-hero-team-image block h-[clamp(340px,78vw,560px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
           loading="eager"
           src={partnerImagePath("partner-team.png")}
         />
@@ -124,14 +124,14 @@ function PartnerHeroSection() {
 
       <img
         alt="Fruit plate"
-        className="partner-hero-fruit-circle pointer-events-none absolute right-[15%] top-[18rem] z-20 hidden w-[clamp(280px,31vw,470px)] rounded-full object-contain drop-shadow-[0_24px_48px_rgba(80,34,48,0.16)] md:block lg:top-[3rem]"
+        className="partner-hero-fruit-circle pointer-events-none absolute right-[18%] top-[23rem] z-20 w-[clamp(180px,48vw,330px)] rounded-full object-contain drop-shadow-[0_24px_48px_rgba(80,34,48,0.16)] sm:top-[22rem] md:right-[13%] md:top-[12rem] md:w-[clamp(240px,28vw,390px)] lg:right-[15%] lg:top-[2.3rem] lg:w-[clamp(280px,28vw,430px)]"
         draggable={false}
         src={partnerImagePath("partner-fruit-plate.png")}
       />
       <img
         alt=""
         aria-hidden="true"
-        className="partner-hero-leaf pointer-events-none absolute right-[5%] top-[10%] z-20 hidden w-[clamp(182px,21vw,322px)] object-contain md:block lg:right-[3.5%] lg:top-[8%]"
+        className="partner-hero-leaf pointer-events-none absolute right-[4%] top-[18.5rem] z-20 w-[clamp(110px,31vw,210px)] object-contain sm:top-[18rem] md:right-[3%] md:top-[8.5rem] md:w-[clamp(150px,18vw,250px)] lg:right-[3.5%] lg:top-[7%] lg:w-[clamp(182px,19vw,292px)]"
         draggable={false}
         src={partnerImagePath("partner-leaves.png")}
       />
