@@ -67,7 +67,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
     <img
       alt=""
       aria-hidden="true"
-      className="partner-card-icon h-[clamp(2.7rem,12vw,3.8rem)] w-[clamp(2.7rem,12vw,3.8rem)] object-contain md:h-[clamp(2.6rem,3.4vw,3.6rem)] md:w-[clamp(2.6rem,3.4vw,3.6rem)]"
+      className="partner-card-icon h-[clamp(6.8rem,26vw,9.4rem)] w-[clamp(6.8rem,26vw,9.4rem)] object-contain md:h-[clamp(6.4rem,9.6vw,9.6rem)] md:w-[clamp(6.4rem,9.6vw,9.6rem)]"
       loading="lazy"
       src={partnerImagePath(iconFileName)}
     />
@@ -76,7 +76,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
 
 function PartnerHeroSection() {
   return (
-    <section className="relative mx-auto min-h-[940px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[980px] md:min-h-[840px] lg:aspect-[1650/980] lg:min-h-0">
+    <section className="relative mx-auto min-h-[650px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(1.8rem,3vw,3rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[690px] md:min-h-[760px] lg:aspect-[1650/860] lg:min-h-0">
       <div className="relative z-10 max-w-[900px]">
         <h1 className="text-[clamp(3rem,5vw,5.1rem)] font-bold leading-[1.2] tracking-normal text-black">
           Expand Your Reach
@@ -90,14 +90,14 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] md:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0 lg:items-end">
+      <div className="relative z-0 mt-[clamp(1.7rem,4vw,3rem)] grid grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)] items-end gap-[clamp(0.7rem,2.2vw,2.4rem)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5.2%] lg:mt-0">
         <img
           alt="A large food table prepared for a shared meal"
-          className="partner-hero-food-image block h-[clamp(320px,72vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
+          className="partner-hero-food-image block h-[clamp(190px,48vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
           loading="eager"
           src={partnerImagePath("partner-food-table.png")}
         />
-        <div className="relative pt-[clamp(2.6rem,10vw,4rem)] md:pt-[clamp(2.8rem,5.4vw,4.2rem)]">
+        <div className="relative pt-[clamp(2.3rem,8vw,4rem)] md:pt-[clamp(2.8rem,5.4vw,4.2rem)]">
           <img
             alt=""
             aria-hidden="true"
@@ -113,7 +113,7 @@ function PartnerHeroSection() {
           />
           <img
             alt="Partners stacking hands together"
-            className="partner-hero-team-image block h-[clamp(476px,109vw,720px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(546px,50vw,784px)]"
+            className="partner-hero-team-image block h-[clamp(240px,62vw,720px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(546px,50vw,784px)]"
             loading="eager"
             src={partnerImagePath("partner-team.png")}
           />
@@ -125,7 +125,7 @@ function PartnerHeroSection() {
 
 function PartnerCardsSection() {
   return (
-    <section className="relative mx-auto min-h-[980px] w-full max-w-[1650px] overflow-visible px-[clamp(1.25rem,3.7vw,3.6rem)] pb-[clamp(6rem,10vw,8.5rem)] pt-[clamp(3.2rem,6vw,4.8rem)] lg:min-h-[1040px]">
+    <section className="relative mx-auto min-h-[820px] w-full max-w-[1650px] overflow-visible px-[clamp(1.25rem,3.7vw,3.6rem)] pb-[clamp(4.8rem,8vw,7rem)] pt-[clamp(1.5rem,3.2vw,3.2rem)] lg:min-h-[920px]">
       <h2 className="relative z-30 mx-auto max-w-[1040px] text-center text-[clamp(2.55rem,4.2vw,4.4rem)] font-bold leading-[1.18] tracking-normal text-black lg:ml-auto lg:mr-[5.2%]">
         Partner with the World&apos;s Largest
         <br />
@@ -138,7 +138,7 @@ function PartnerCardsSection() {
             className={`flex min-h-[620px] flex-col rounded-[20px] bg-white px-[clamp(1.35rem,2vw,1.75rem)] py-[clamp(1.55rem,2.4vw,2.25rem)] shadow-[0_24px_60px_rgba(82,38,53,0.08)] md:min-h-[760px] lg:min-h-[700px] ${card.className}`}
             key={card.icon}
           >
-            <div className="flex min-h-[clamp(4.2rem,16vw,5.6rem)] items-center justify-center md:min-h-[clamp(4rem,5.4vw,5.4rem)]">
+            <div className="flex min-h-[clamp(8rem,30vw,10.5rem)] items-center justify-center md:min-h-[clamp(7.4rem,11vw,10.8rem)]">
               <PartnerCardIcon type={card.icon} />
             </div>
             <h3 className="mt-[clamp(0.55rem,1.3vw,1.25rem)] text-[clamp(1.38rem,1.9vw,1.85rem)] font-bold leading-[1.18] text-black">{card.title}</h3>
