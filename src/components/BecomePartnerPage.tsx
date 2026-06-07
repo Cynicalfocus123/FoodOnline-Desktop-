@@ -93,7 +93,7 @@ function PartnerCardIcon({ type }: { type: "globe" | "megaphone" | "growth" }) {
 
 function PartnerHeroSection() {
   return (
-    <section className="relative mx-auto min-h-[780px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[820px] lg:aspect-[1650/900] lg:min-h-0">
+    <section className="relative mx-auto min-h-[1260px] w-full max-w-[1650px] overflow-hidden px-[clamp(1.25rem,3.4vw,3.5rem)] pb-[clamp(3rem,5vw,4.6rem)] pt-[clamp(3.2rem,6vw,5.4rem)] sm:min-h-[1380px] md:min-h-[1160px] lg:aspect-[1650/1180] lg:min-h-0">
       <div className="relative z-10 max-w-[900px]">
         <h1 className="text-[clamp(3rem,5vw,5.1rem)] font-bold leading-[1.2] tracking-normal text-black">
           Expand Your Reach
@@ -107,7 +107,7 @@ function PartnerHeroSection() {
         </p>
       </div>
 
-      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] md:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5%] lg:mt-0 lg:items-end">
+      <div className="relative z-0 mt-[clamp(2.4rem,5vw,3.4rem)] grid gap-[clamp(1.15rem,2.6vw,2.4rem)] md:grid-cols-[minmax(0,0.72fr)_minmax(360px,1.28fr)] lg:absolute lg:inset-x-[3.4%] lg:bottom-[5%] lg:mt-0 lg:items-end">
         <img
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image block h-[clamp(320px,72vw,520px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
@@ -116,7 +116,7 @@ function PartnerHeroSection() {
         />
         <img
           alt="Partners stacking hands together"
-          className="partner-hero-team-image block h-[clamp(340px,78vw,560px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(390px,36vw,560px)]"
+          className="partner-hero-team-image block h-[clamp(760px,215vw,980px)] w-full rounded-[12px] object-cover object-center md:h-[clamp(780px,72vw,1120px)]"
           loading="eager"
           src={partnerImagePath("partner-team.png")}
         />
