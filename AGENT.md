@@ -1154,3 +1154,21 @@
 - Search Results Advertising now renders the category-phone screen from `over-30-million-downloads.png` as the back layer and the Daring ready-meal card from `search-results-advertising-phone.png` as the front layer, grouped as one right-side visual unit with relative positioning, z-index layering, PNG transparency, contained image fitting, and no intentional horizontal overflow.
 - Deals/Bestsellers/New Arrivals and Category Pages keep only two phone images per section and use larger right-side side-by-side phone wrappers so the visuals feel closer to the Featured on the Homepage scale while keeping the left text layout unchanged.
 - Product Detail Pages now uses a clipped orange hero treatment: the hero remains `position: relative` with `overflow: hidden`, the two phone images are absolutely positioned on the right at the bottom with oversized responsive `clamp()` sizing, and their lower tails are intentionally cropped inside the orange section without bleeding into the following white/footer area.
+
+## Become a Sponsor Dominant Visual Alignment Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/BecomeSponsorPage.tsx`
+  - `src/styles.css`
+  - `public/images/become-sponsor/category-pages-1.png`
+  - `public/images/become-sponsor/category-pages-2.png`
+  - `public/images/become-sponsor/deals-bestsellers-new-arrivals-1.png`
+  - `public/images/become-sponsor/deals-bestsellers-new-arrivals-2.png`
+  - `public/images/become-sponsor/featured-homepage-visual.png`
+  - `public/images/become-sponsor/product-detail-pages-1.png`
+  - `public/images/become-sponsor/product-detail-pages-2.png`
+  - `AGENT.md`
+  - `design.md`
+- Cropped excess transparent canvas from the Deals/Bestsellers/New Arrivals, Category Pages, Featured on the Homepage, and Product Detail Pages PNG mockups while preserving alpha transparency, so responsive CSS widths now scale the visible phone/banner subjects instead of empty 1000px canvases.
+- Reworked ad product sections around a consistent `.sponsor-section` layout with `42% / 58%` desktop columns, `.sponsor-copy` above decorative layers, and a right-side flex `.sponsor-visual` area aligned center/end so Category Pages, Deals/Bestsellers/New Arrivals, and Featured on the Homepage read as large vertically centered right-column visuals.
+- Product Detail Pages keeps the orange section clipped with `overflow: hidden`; its two phone mockups are absolutely positioned on the right with `bottom: -120px`, larger `clamp()` sizing, and mobile/tablet overrides that keep the phone pair large without allowing bleed into the next white/footer section.

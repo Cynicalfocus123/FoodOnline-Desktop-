@@ -282,11 +282,11 @@ function AdProductSection({
   const isDetailSection = section.visualClassName.includes("sponsor-visual--detail");
 
   return (
-    <section className={`${section.background} sponsor-ad-section ${isDetailSection ? "sponsor-ad-section--detail" : ""} relative overflow-hidden`}>
+    <section className={`${section.background} relative overflow-hidden`}>
       <div className="absolute -bottom-[22%] -left-[10%] h-[54%] w-[65%] rounded-[50%] bg-white/18" aria-hidden="true" />
       <div className="absolute -right-[7%] -top-[28%] h-[70%] w-[38%] rounded-[50%] bg-white/24" aria-hidden="true" />
-      <div className="sponsor-ad-layout relative mx-auto grid min-h-[500px] w-full max-w-[1650px] gap-8 px-[clamp(1.5rem,7.8vw,8.2rem)] py-[clamp(4rem,6vw,6.4rem)] lg:grid-cols-[minmax(0,1fr)_minmax(440px,0.72fr)] lg:items-center">
-        <div className="relative z-10">
+      <div className={`sponsor-section ${isDetailSection ? "sponsor-section--product-detail" : ""} mx-auto w-full max-w-[1650px] px-[clamp(1.5rem,7.8vw,8.2rem)] py-[clamp(4rem,6vw,6.4rem)]`}>
+        <div className="sponsor-copy">
           <Eyebrow>{section.eyebrow}</Eyebrow>
           <h2 className="mt-3 max-w-[650px] text-[clamp(1.45rem,2.5vw,2rem)] font-black leading-[1.08] text-black">{section.title}</h2>
           <p className="mt-5 max-w-[920px] text-[clamp(1.2rem,2vw,1.9rem)] font-medium leading-[1.16] text-black">{section.body}</p>
