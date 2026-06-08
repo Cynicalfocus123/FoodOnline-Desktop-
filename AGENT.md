@@ -1235,3 +1235,14 @@
   - `design.md`
 - Enlarged the two Weekly Deals foreground promo boxes and moved them closer over the phone body so the section reads as one premium layered mockup: large phone behind, upper-left/mid-left card in front, and lower-right/mid-right card in front.
 - Tablet, mobile-desktop, and phone breakpoints preserve the same phone-behind/card-front composition with larger responsive card sizing instead of shrinking the boxes into tiny separated stickers.
+
+## Become a Sponsor Weekly Deals Asset Crop and Stronger Overlay Fix (2026-06-08)
+
+- Files changed:
+  - `src/styles.css`
+  - `public/images/become-sponsor/sponsored-products-weekly-1.png`
+  - `public/images/become-sponsor/sponsored-products-weekly-2.png`
+  - `AGENT.md`
+  - `design.md`
+- Cropped excess transparent canvas from both Weekly Deals foreground card PNGs. The first card went from a 1000x1000 canvas to 332x317 visible bounds, and the second went from a 1000x1000 canvas to 273x270 visible bounds, preserving alpha transparency so CSS sizing now scales the actual card art instead of empty padding.
+- Reworked the Weekly Deals layered CSS to use the phone as a relative back anchor and the two food boxes as larger absolute foreground overlays. Desktop uses `clamp(220px, 22vw, 320px)` card sizing with the first card at upper-left/mid-left and the second at lower-right/mid-right; tablet and mobile keep larger responsive card sizing without max-width caps that shrink the cards into stickers.
