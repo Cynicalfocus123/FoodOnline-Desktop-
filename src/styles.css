@@ -557,6 +557,33 @@ video {
   }
 }
 
+/* Desktop-only reset for Affiliate Rewards text.
+   Do not affect tablet/mobile-desktop/mobile portrait. */
+@media (min-width: 1025px) {
+  .affiliate-rewards-label {
+    font-size: clamp(18px, 1.7vw, 30px);
+  }
+
+  .affiliate-reward-card p {
+    font-size: clamp(15px, 1.25vw, 22px);
+    line-height: 1.25;
+  }
+
+  .affiliate-reward-card__eyebrow {
+    font-size: clamp(15px, 1.2vw, 21px);
+    line-height: 1.25;
+  }
+
+  .affiliate-reward-card h3 {
+    font-size: clamp(28px, 3vw, 54px);
+    line-height: 1.05;
+  }
+
+  .affiliate-reward-card__extra {
+    font-size: clamp(15px, 1.25vw, 22px);
+  }
+}
+
 #home,
 #categories,
 #best-deals,

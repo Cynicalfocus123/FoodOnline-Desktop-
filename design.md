@@ -836,6 +836,7 @@
 - How It Works section on 2026-06-08: added the next affiliate section below Rewards on a warm soft cream `#fff3e8` background. It uses the hardcoded eyebrow `How does it work?`, heading `Getting started is easy`, a white top-right `Join & earn` pill, and three hardcoded steps: `Sign up`, `Share`, and `Get started`.
 - How It Works responsive direction: desktop/tablet use a balanced three-column layout with white number badges, coral step titles, black supporting text, coral/salmon illustration panels, and subtle dashed vertical dividers. Mobile portrait is intentionally different: Step 1 becomes the expanded feature block with the visual box coming down below the text plus a black `Join and earn` CTA, while Steps 2 and 3 stack underneath as compact text-left / visual-right cards.
 - Rewards typography fix on 2026-06-08: tablet and mobile-desktop rewards cards now use larger responsive labels, eyebrows, titles, and body text while keeping the section white, the cards compact, and the coral-card icons close to the right side of the copy. Mobile portrait keeps square-like cards with larger readable text and hides only Card 1's optional extra line to avoid stretching the card.
+- Rewards desktop typography reset on 2026-06-08: desktop-only `min-width: 1025px` CSS reduces the Affiliate Rewards / Referral Cards section label, card eyebrow, title, body, and extra text sizes so desktop copy fits inside the cards again. Tablet, mobile-desktop, mobile portrait, Affiliate Hero + Stats, header, footer, and How It Works styling remain unchanged.
 
 ## Guardrails
 

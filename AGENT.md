@@ -1338,3 +1338,14 @@
 - Kept reward icons visible and pulled the coral-card tablet/mobile-desktop icon grid closer to the text by slightly tightening the right icon column and gap.
 - Card 3 rewards body copy now ends with a period: `for every successful referral who signs up.`
 - Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Rewards Desktop Typography Reset (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Added scoped class hooks for the Affiliate Rewards / Referral Cards label, card wrapper, eyebrow, and optional extra text, then added a desktop-only `@media (min-width: 1025px)` reset in `src/styles.css`.
+- Reduced only desktop reward label, eyebrow, title, body, and extra text sizing so desktop card copy no longer overflows or clips. Tablet, mobile-desktop, mobile portrait, header, footer, Affiliate Hero + Stats, and How It Works styling were left untouched.
+- Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.

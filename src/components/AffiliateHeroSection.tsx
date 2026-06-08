@@ -269,7 +269,7 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
 
   return (
     <article
-      className={`relative isolate min-h-[clamp(270px,23vw,390px)] overflow-hidden rounded-[clamp(18px,1.8vw,28px)] p-[clamp(1.35rem,2.6vw,2.65rem)] shadow-[0_18px_38px_rgba(91,42,25,0.1)] max-[860px]:min-h-[230px] max-[860px]:p-5 max-[640px]:aspect-[1.05/1] max-[640px]:min-h-0 max-[640px]:rounded-[14px] max-[640px]:p-3.5 max-[640px]:shadow-[0_12px_24px_rgba(91,42,25,0.1)] ${
+      className={`affiliate-reward-card relative isolate min-h-[clamp(270px,23vw,390px)] overflow-hidden rounded-[clamp(18px,1.8vw,28px)] p-[clamp(1.35rem,2.6vw,2.65rem)] shadow-[0_18px_38px_rgba(91,42,25,0.1)] max-[860px]:min-h-[230px] max-[860px]:p-5 max-[640px]:aspect-[1.05/1] max-[640px]:min-h-0 max-[640px]:rounded-[14px] max-[640px]:p-3.5 max-[640px]:shadow-[0_12px_24px_rgba(91,42,25,0.1)] ${
         isPastel
           ? "border-[3px] border-[#ff8c83] bg-[radial-gradient(circle_at_20%_82%,rgba(255,133,123,0.34),transparent_36%),radial-gradient(circle_at_82%_12%,rgba(126,255,222,0.48),transparent_42%),linear-gradient(145deg,#e8fff4_0%,#d9f2ff_52%,#ffd6cd_100%)] text-black"
           : "grid border-2 border-white/80 bg-[#f75b43] text-white min-[641px]:max-[1024px]:min-h-[230px] min-[641px]:max-[1024px]:grid-cols-[minmax(0,1fr)_92px] min-[641px]:max-[1024px]:items-center min-[641px]:max-[1024px]:gap-4 min-[641px]:max-[1024px]:p-6 max-[860px]:landscape:min-h-[150px] max-[860px]:landscape:grid-cols-[minmax(0,1fr)_58px] max-[860px]:landscape:gap-3.5 max-[860px]:landscape:p-[18px] max-[640px]:block"
@@ -281,7 +281,7 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
         }`}
       >
         <p
-          className={`mb-3 text-[clamp(1.125rem,1.6vw,1.5rem)] font-bold uppercase leading-[1.15] tracking-[0.06em] max-[1024px]:text-[clamp(1.125rem,2.4vw,1.375rem)] max-[860px]:mb-2 max-[640px]:text-[clamp(0.8125rem,3.8vw,0.9375rem)] max-[640px]:tracking-[0.03em] ${
+          className={`affiliate-reward-card__eyebrow mb-3 text-[clamp(1.125rem,1.6vw,1.5rem)] font-bold uppercase leading-[1.15] tracking-[0.06em] max-[1024px]:text-[clamp(1.125rem,2.4vw,1.375rem)] max-[860px]:mb-2 max-[640px]:text-[clamp(0.8125rem,3.8vw,0.9375rem)] max-[640px]:tracking-[0.03em] ${
             isPastel
               ? ""
               : "min-[641px]:max-[1024px]:mb-3 min-[641px]:max-[1024px]:font-extrabold min-[641px]:max-[1024px]:leading-[1.16] min-[641px]:max-[1024px]:tracking-[0.08em] max-[860px]:landscape:mb-1.5 max-[860px]:landscape:text-[clamp(0.78rem,1.8vw,0.95rem)]"
@@ -308,7 +308,7 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
           {card.body}
         </p>
         {card.extra ? (
-          <p className="mt-3 max-w-[22rem] text-[clamp(0.95rem,1.2vw,1.18rem)] font-medium leading-[1.25] opacity-80 max-[1024px]:text-[clamp(0.9rem,2vw,1.05rem)] max-[860px]:mt-2 max-[640px]:hidden">
+          <p className="affiliate-reward-card__extra mt-3 max-w-[22rem] text-[clamp(0.95rem,1.2vw,1.18rem)] font-medium leading-[1.25] opacity-80 max-[1024px]:text-[clamp(0.9rem,2vw,1.05rem)] max-[860px]:mt-2 max-[640px]:hidden">
             {card.extra}
           </p>
         ) : null}
@@ -343,14 +343,14 @@ function AffiliateRewardsSection() {
         </h2>
         <div className="grid grid-cols-[minmax(280px,0.95fr)_minmax(520px,1.7fr)] items-end gap-[clamp(1.5rem,4vw,3.25rem)] max-[1024px]:grid-cols-1 max-[1024px]:items-stretch max-[1024px]:gap-5 min-[641px]:max-[860px]:grid-cols-[0.9fr_2fr] min-[641px]:max-[860px]:gap-4 max-[640px]:block">
           <div>
-            <p className="mb-3.5 text-[clamp(1.75rem,2.8vw,2.5rem)] font-medium leading-[1.08] text-[#f45d4d] max-[1024px]:text-[clamp(1.75rem,4vw,2.25rem)] max-[640px]:mb-2.5 max-[640px]:text-[clamp(1.5rem,7vw,1.875rem)]">
+            <p className="affiliate-rewards-label mb-3.5 text-[clamp(1.75rem,2.8vw,2.5rem)] font-medium leading-[1.08] text-[#f45d4d] max-[1024px]:text-[clamp(1.75rem,4vw,2.25rem)] max-[640px]:mb-2.5 max-[640px]:text-[clamp(1.5rem,7vw,1.875rem)]">
               Share your link
             </p>
             <AffiliateRewardCard card={affiliateRewardCards[0]} />
           </div>
 
           <div className="max-[640px]:mt-5">
-            <p className="mb-3.5 text-[clamp(1.75rem,2.8vw,2.5rem)] font-medium leading-[1.08] text-[#f45d4d] max-[1024px]:text-[clamp(1.75rem,4vw,2.25rem)] max-[640px]:mb-2.5 max-[640px]:text-[clamp(1.5rem,7vw,1.875rem)]">
+            <p className="affiliate-rewards-label mb-3.5 text-[clamp(1.75rem,2.8vw,2.5rem)] font-medium leading-[1.08] text-[#f45d4d] max-[1024px]:text-[clamp(1.75rem,4vw,2.25rem)] max-[640px]:mb-2.5 max-[640px]:text-[clamp(1.5rem,7vw,1.875rem)]">
               Refer friends &amp; keep earning
             </p>
             <div className="grid grid-cols-2 gap-[clamp(1rem,2.4vw,2.15rem)] max-[640px]:grid-cols-1 max-[640px]:gap-2.5">
