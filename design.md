@@ -827,6 +827,7 @@
 - Hero copy is real HTML text: `Turn Your Audience Into Income`, `Earn Up to ฿75,000 Per Month`, and the Foodonlines.com affiliate paragraph. The CTA points to `#affiliate-apply` until a real application flow exists.
 - Product cards use white rounded card surfaces with soft shadows, neutral CSS placeholder packshot shapes, red discount pills, uppercase gray brand labels, black product names, gray size/unit details, bold black prices, crossed-out old prices, and green outlined plus controls.
 - Responsive behavior: desktop uses a two-column layout with text left and three tall product cards right; tablet stacks or compresses safely while keeping all three tall cards visible; mobile-landscape widths keep text and long vertical cards side by side when space allows; narrow mobile portrait converts product cards into wide horizontal rows with image left, copy middle, plus button right, safe padding, and no intended page-level horizontal overflow.
+- Footer link follow-up on 2026-06-08: the existing Corporate footer `Affiliate Program` item now links to `/affiliate` and uses the same SPA click-routing behavior as Become a Vendor, Become a Partner, Become a Sponsor, and Become Our Drivers.
 
 ## Guardrails
 

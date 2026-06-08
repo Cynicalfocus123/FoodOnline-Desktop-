@@ -1258,3 +1258,13 @@
 - Added a new affiliate page body at `/affiliate` with `#affiliate` fallback support. The page renders only a peach/orange affiliate hero section between the existing shared FoodOnlines header and footer; `src/components/Header.tsx` and `src/components/Footer.tsx` were not changed.
 - The hero uses Montserrat-first typography, real selectable text for `Turn Your Audience Into Income`, `Earn Up to ฿75,000 Per Month`, the affiliate paragraph, and a black `Join & Earn` pill CTA linking to `#affiliate-apply`.
 - Added three responsive product cards using local CSS placeholder packshot shapes instead of generated/external product images. Desktop, tablet, and mobile-landscape widths keep tall vertical cards in a row where space allows; narrow mobile switches each card to a wide horizontal row with image left, details middle, and plus button right.
+
+## Affiliate Footer Link Fix (2026-06-08)
+
+- Files changed:
+  - `src/data/home.ts`
+  - `src/components/Footer.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Connected the existing Corporate footer `Affiliate Program` item to the new affiliate page by changing it from plain footer text to `{ label: "Affiliate Program", href: "/affiliate" }`.
+- Added footer SPA click handling for `/affiliate` through `openAffiliate()`, matching the existing Vendor, Partner, Sponsor, and Drivers footer navigation pattern.
