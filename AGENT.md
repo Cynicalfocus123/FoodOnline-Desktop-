@@ -1246,3 +1246,15 @@
   - `design.md`
 - Cropped excess transparent canvas from both Weekly Deals foreground card PNGs. The first card went from a 1000x1000 canvas to 332x317 visible bounds, and the second went from a 1000x1000 canvas to 273x270 visible bounds, preserving alpha transparency so CSS sizing now scales the actual card art instead of empty padding.
 - Reworked the Weekly Deals layered CSS to use the phone as a relative back anchor and the two food boxes as larger absolute foreground overlays. Desktop uses `clamp(220px, 22vw, 320px)` card sizing with the first card at upper-left/mid-left and the second at lower-right/mid-right; tablet and mobile keep larger responsive card sizing without max-width caps that shrink the cards into stickers.
+
+## Affiliate Hero Section Launch (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `AGENT.md`
+  - `design.md`
+- Added a new affiliate page body at `/affiliate` with `#affiliate` fallback support. The page renders only a peach/orange affiliate hero section between the existing shared FoodOnlines header and footer; `src/components/Header.tsx` and `src/components/Footer.tsx` were not changed.
+- The hero uses Montserrat-first typography, real selectable text for `Turn Your Audience Into Income`, `Earn Up to ฿75,000 Per Month`, the affiliate paragraph, and a black `Join & Earn` pill CTA linking to `#affiliate-apply`.
+- Added three responsive product cards using local CSS placeholder packshot shapes instead of generated/external product images. Desktop, tablet, and mobile-landscape widths keep tall vertical cards in a row where space allows; narrow mobile switches each card to a wide horizontal row with image left, details middle, and plus button right.

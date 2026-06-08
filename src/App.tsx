@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AccountPage } from "./components/AccountPage";
 import { AboutUsPage } from "./components/AboutUsPage";
+import { AffiliateHeroSection } from "./components/AffiliateHeroSection";
 import { BecomePartnerPage } from "./components/BecomePartnerPage";
 import { BecomeSponsorPage } from "./components/BecomeSponsorPage";
 import { BecomeVendorPage } from "./components/BecomeVendorPage";
@@ -81,6 +82,7 @@ export default function App() {
       {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
       {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
       {siteView === "becomeSponsor" ? <BecomeSponsorPage /> : null}
+      {siteView === "affiliate" ? <AffiliateHeroSection /> : null}
       {siteView === "drivers" ? <DriverLandingPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}

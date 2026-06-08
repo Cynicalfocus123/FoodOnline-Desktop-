@@ -820,6 +820,14 @@
 - Weekly Deals card scale fix on 2026-06-08: the Weekly Deals visual should emphasize two larger foreground food/promo boxes over the phone body, not small sticker-like cards. The first card sits around the upper-left/middle-left of the phone area and the second sits around the lower-right/middle-right, both overlapping the phone clearly across desktop, tablet, mobile-desktop, and phone layouts.
 - Weekly Deals asset crop and stronger overlay fix on 2026-06-08: the two foreground card PNGs should stay tightly cropped to their visible transparent bounds so CSS width applies to the actual food boxes. The phone is the relative back anchor, and the card group remains absolute on top with larger desktop sizing and larger responsive tablet/mobile sizing, no max-width cap that makes the cards tiny, and no placement below the phone.
 
+### Affiliate Hero Section (2026-06-08)
+
+- Added the Affiliate Program page body at `/affiliate` and `#affiliate`, rendered between the existing shared header and footer without changing the header or footer component files.
+- The section is a full-width soft peach/orange hero (`#ffb28f`) with no extra wrapper panel behind the copy, using Montserrat-first typography, bold black headline text, normal paragraph text, and a black rounded `Join & Earn` CTA with a white circular arrow icon.
+- Hero copy is real HTML text: `Turn Your Audience Into Income`, `Earn Up to ฿75,000 Per Month`, and the Foodonlines.com affiliate paragraph. The CTA points to `#affiliate-apply` until a real application flow exists.
+- Product cards use white rounded card surfaces with soft shadows, neutral CSS placeholder packshot shapes, red discount pills, uppercase gray brand labels, black product names, gray size/unit details, bold black prices, crossed-out old prices, and green outlined plus controls.
+- Responsive behavior: desktop uses a two-column layout with text left and three tall product cards right; tablet stacks or compresses safely while keeping all three tall cards visible; mobile-landscape widths keep text and long vertical cards side by side when space allows; narrow mobile portrait converts product cards into wide horizontal rows with image left, copy middle, plus button right, safe padding, and no intended page-level horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

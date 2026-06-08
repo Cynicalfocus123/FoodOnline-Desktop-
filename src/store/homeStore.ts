@@ -32,6 +32,7 @@ export type SiteView =
   | "becomeVendor"
   | "becomePartner"
   | "becomeSponsor"
+  | "affiliate"
   | "drivers";
 export type SignupStep = "role" | "form" | "complete";
 
@@ -63,6 +64,8 @@ function readAuthReturnRoute(
       return "become-partner";
     case "becomeSponsor":
       return "become-a-sponsor";
+    case "affiliate":
+      return "affiliate";
     case "drivers":
       return "company/drivers";
     default:
@@ -177,6 +180,18 @@ function isBecomeSponsorRoute(hash: string) {
   return /\/become-a-sponsor\/?$/i.test(window.location.pathname);
 }
 
+function isAffiliateRoute(hash: string) {
+  if (/^#affiliate(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/affiliate\/?$/i.test(window.location.pathname);
+}
+
 function readAccountSectionFromHash(hash: string): AccountSection | null {
   const match = hash.match(/^#account(?:\/([^?#/]+))?/i);
 
@@ -228,11 +243,13 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#become-partner") ||
     window.location.hash.startsWith("#become-a-sponsor") ||
+    window.location.hash.startsWith("#affiliate") ||
     window.location.hash.startsWith("#company/drivers") ||
     /\/about-us\/?$/i.test(window.location.pathname) ||
     /\/become-vendor\/?$/i.test(window.location.pathname) ||
     /\/become-partner\/?$/i.test(window.location.pathname) ||
     /\/become-a-sponsor\/?$/i.test(window.location.pathname) ||
+    /\/affiliate\/?$/i.test(window.location.pathname) ||
     /\/company\/drivers\/?$/i.test(window.location.pathname)
   ) {
     window.history.replaceState(null, "", `${import.meta.env.BASE_URL}#home`);
@@ -269,6 +286,7 @@ type HomeState = {
   openBecomeVendor: () => void;
   openBecomePartner: () => void;
   openBecomeSponsor: () => void;
+  openAffiliate: () => void;
   openDrivers: () => void;
   openProduct: (productId: string) => void;
   openSearchResults: (query: string) => void;
@@ -476,6 +494,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openAffiliate: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}affiliate`);
+      }
+
+      return {
+        siteView: "affiliate",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openDrivers: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -612,6 +644,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isAffiliateRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "affiliate",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isDriversRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -690,6 +732,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "becomeVendor" ||
         state.siteView === "becomePartner" ||
         state.siteView === "becomeSponsor" ||
+        state.siteView === "affiliate" ||
         state.siteView === "drivers"
       ) {
         return {
