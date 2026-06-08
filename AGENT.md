@@ -1312,3 +1312,16 @@
   - `design.md`
 - Fixed the Affiliate Rewards / Referral Cards section Card 3 title to render the actual Thai baht currency symbol as `Receive ฿100` instead of the mojibake text `Receive à¸¿100`.
 - Header, footer, affiliate hero, and affiliate stats content were not edited.
+
+## Affiliate How It Works Section Launch (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Added the hardcoded `How does it work?` / `Getting started is easy` section directly below the Affiliate Rewards / Referral Cards section. Header, footer, Affiliate Hero + Stats, and existing Rewards section content were not edited.
+- Added local `howItWorksSteps` data, `HowItWorksVisual`, `HowItWorksStepCard`, and `AffiliateHowItWorksSection` helpers in `src/components/AffiliateHeroSection.tsx`.
+- The section uses a warm soft cream `#fff3e8` background, coral/orange labels and step titles, black heading/body copy, white rounded number badges, a white top-right `Join & earn` pill, and coral/salmon illustration panels recreated with code-native HTML/SVG shapes.
+- Desktop/tablet layouts use three columns with subtle dashed vertical separators between steps. Mobile landscape keeps the cards compressed in a row where space allows with guarded image panels and no intentional horizontal overflow.
+- Mobile portrait renders the heading first, then Step 1 as an expanded feature block with text, a large visual panel below the text, and a black `Join and earn` CTA below the visual. Steps 2 and 3 stack below as compact cards with text left and illustration panels right.
+- Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.

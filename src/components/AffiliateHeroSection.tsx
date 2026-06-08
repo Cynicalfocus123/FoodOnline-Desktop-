@@ -26,6 +26,13 @@ type AffiliateRewardCardData = {
   icon: "link" | "cart" | "user-plus";
 };
 
+type HowItWorksStep = {
+  number: string;
+  title: string;
+  body: string;
+  variant: "signup" | "share" | "earn";
+};
+
 const affiliateProducts: AffiliateProduct[] = [
   {
     discount: "14% OFF",
@@ -103,6 +110,27 @@ const affiliateRewardCards: AffiliateRewardCardData[] = [
     button: "Refer now",
     variant: "coral",
     icon: "user-plus",
+  },
+];
+
+const howItWorksSteps: HowItWorksStep[] = [
+  {
+    number: "1",
+    title: "Sign up",
+    body: "Sign up easily through our guided onboarding process.",
+    variant: "signup",
+  },
+  {
+    number: "2",
+    title: "Share",
+    body: "Inspire your audience through products & deals you found.",
+    variant: "share",
+  },
+  {
+    number: "3",
+    title: "Get started",
+    body: "Earn from qualified purchases and new referrals.",
+    variant: "earn",
   },
 ];
 
@@ -337,6 +365,151 @@ function AffiliateRewardsSection() {
   );
 }
 
+function HowItWorksVisual({ variant }: { variant: HowItWorksStep["variant"] }) {
+  if (variant === "signup") {
+    return (
+      <div className="relative h-full min-h-[210px] overflow-hidden rounded-[22px] bg-[#f46a62] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] max-[1024px]:min-h-[170px] max-[640px]:min-h-[220px] max-[640px]:rounded-[20px]">
+        <div className="absolute -right-10 -top-8 h-36 w-36 rounded-full bg-white/20" />
+        <div className="absolute bottom-5 left-5 right-10 rounded-[18px] bg-white p-4 shadow-[0_18px_34px_rgba(139,45,38,0.2)] max-[640px]:bottom-7 max-[640px]:left-6 max-[640px]:right-8">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="h-8 w-8 rounded-full bg-[#ffe7de]" />
+            <div className="grid flex-1 gap-1.5">
+              <span className="h-2.5 rounded-full bg-[#ffb4a6]" />
+              <span className="h-2.5 w-2/3 rounded-full bg-[#ffd9d0]" />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <span className="h-8 rounded-[10px] bg-[#fff2ec]" />
+            <span className="h-8 rounded-[10px] bg-[#fff2ec]" />
+            <span className="h-9 w-28 rounded-full bg-[#161616]" />
+          </div>
+        </div>
+        <div className="absolute left-8 top-8 rounded-[16px] bg-white/90 px-5 py-3 shadow-[0_14px_28px_rgba(139,45,38,0.16)]">
+          <span className="block h-3 w-16 rounded-full bg-[#ff8b7b]" />
+          <span className="mt-2 block h-2 w-24 rounded-full bg-[#ffd3ca]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "share") {
+    return (
+      <div className="relative h-full min-h-[210px] overflow-hidden rounded-[22px] bg-[#f46a62] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] max-[1024px]:min-h-[170px] max-[640px]:min-h-[122px] max-[640px]:rounded-[18px]">
+        <div className="absolute inset-x-6 top-8 h-14 rounded-full bg-white/25" />
+        <div className="absolute left-1/2 top-10 grid h-20 w-20 -translate-x-1/2 place-items-center rounded-full bg-white text-[#f46a62] shadow-[0_16px_30px_rgba(139,45,38,0.18)] max-[640px]:top-5 max-[640px]:h-14 max-[640px]:w-14">
+          <svg aria-hidden="true" className="h-9 w-9 max-[640px]:h-7 max-[640px]:w-7" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24">
+            <path d="M8 12h8" />
+            <path d="M13 7l5 5-5 5" />
+            <path d="M6 18a5 5 0 0 1 0-10" />
+          </svg>
+        </div>
+        <div className="absolute bottom-8 left-7 flex -space-x-3 max-[640px]:bottom-5 max-[640px]:left-5">
+          <span className="h-12 w-12 rounded-full border-4 border-[#f46a62] bg-[#ffe4d8]" />
+          <span className="h-12 w-12 rounded-full border-4 border-[#f46a62] bg-[#d7f3ea]" />
+          <span className="h-12 w-12 rounded-full border-4 border-[#f46a62] bg-[#fff4a6]" />
+        </div>
+        <div className="absolute bottom-7 right-6 grid gap-2 max-[640px]:bottom-5 max-[640px]:right-4">
+          <span className="h-3 w-20 rounded-full bg-white/75" />
+          <span className="h-3 w-14 rounded-full bg-white/45" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-full min-h-[210px] overflow-hidden rounded-[22px] bg-[#f46a62] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] max-[1024px]:min-h-[170px] max-[640px]:min-h-[122px] max-[640px]:rounded-[18px]">
+      <div className="absolute left-1/2 top-9 grid h-24 w-24 -translate-x-1/2 place-items-center rounded-full bg-white text-[#f46a62] shadow-[0_16px_30px_rgba(139,45,38,0.18)] max-[640px]:top-5 max-[640px]:h-16 max-[640px]:w-16">
+        <svg aria-hidden="true" className="h-14 w-14 max-[640px]:h-10 max-[640px]:w-10" fill="none" viewBox="0 0 64 64">
+          <path d="M20 23c2-8 8-13 12-13s10 5 12 13" stroke="currentColor" strokeLinecap="round" strokeWidth="5" />
+          <path d="M18 22h28l5 33H13l5-33Z" fill="currentColor" opacity="0.18" stroke="currentColor" strokeLinejoin="round" strokeWidth="4" />
+          <path d="M32 31v14M25 38h14" stroke="currentColor" strokeLinecap="round" strokeWidth="5" />
+        </svg>
+      </div>
+      <div className="absolute bottom-7 left-7 rounded-[16px] bg-white/92 px-5 py-3 shadow-[0_14px_26px_rgba(139,45,38,0.16)] max-[640px]:bottom-5 max-[640px]:left-5 max-[640px]:px-4">
+        <span className="block text-xl font-black leading-none text-[#f46a62] max-[640px]:text-base">+ ฿100</span>
+        <span className="mt-1 block h-2 w-20 rounded-full bg-[#ffd1c7]" />
+      </div>
+      <div className="absolute bottom-8 right-8 h-16 w-16 rounded-full bg-white/20 max-[640px]:bottom-5 max-[640px]:right-5 max-[640px]:h-10 max-[640px]:w-10" />
+    </div>
+  );
+}
+
+function HowItWorksStepCard({ step, index }: { step: HowItWorksStep; index: number }) {
+  const isPrimary = index === 0;
+
+  return (
+    <article
+      className={`relative min-w-0 ${
+        index > 0 ? "min-[641px]:before:absolute min-[641px]:before:-left-[clamp(0.75rem,2vw,1.75rem)] min-[641px]:before:top-3 min-[641px]:before:h-[calc(100%-0.75rem)] min-[641px]:before:border-l min-[641px]:before:border-dashed min-[641px]:before:border-[#e8b9aa]" : ""
+      } max-[640px]:rounded-[22px] max-[640px]:bg-[#fff6ef] max-[640px]:p-4 max-[640px]:shadow-[0_14px_30px_rgba(133,78,54,0.08)] ${
+        isPrimary ? "max-[640px]:p-5" : "max-[640px]:grid max-[640px]:grid-cols-[minmax(0,1fr)_126px] max-[640px]:items-center max-[640px]:gap-3"
+      }`}
+    >
+      <div className={isPrimary ? "" : "max-[640px]:min-w-0"}>
+        <div className="mb-4 flex items-center gap-3 max-[1024px]:mb-3 max-[640px]:mb-2.5">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[1.05rem] font-black text-[#ef5f4f] shadow-[0_10px_22px_rgba(133,78,54,0.12)] max-[1024px]:h-9 max-[1024px]:w-9 max-[640px]:h-8 max-[640px]:w-8 max-[640px]:text-sm">
+            {step.number}
+          </span>
+          <h3 className="text-[clamp(1.55rem,2.1vw,2.2rem)] font-black leading-none tracking-normal text-[#ef5f4f] max-[1024px]:text-[1.45rem] max-[640px]:text-[1.2rem]">
+            {step.title}
+          </h3>
+        </div>
+        <p className={`max-w-[20rem] text-[clamp(0.95rem,1.05vw,1.15rem)] font-medium leading-[1.35] text-[#1f1714] max-[1024px]:text-[0.85rem] max-[640px]:text-[0.83rem] ${isPrimary ? "max-[640px]:max-w-none max-[640px]:text-[1rem]" : ""}`}>
+          {step.body}
+        </p>
+      </div>
+
+      <div className={`${isPrimary ? "mt-7 max-[640px]:mt-5" : "mt-7 max-[640px]:mt-0"} max-[640px]:min-w-0`}>
+        <HowItWorksVisual variant={step.variant} />
+      </div>
+
+      {isPrimary ? (
+        <a
+          className="mt-5 hidden min-h-12 items-center justify-center rounded-full bg-black px-6 text-sm font-black text-white no-underline shadow-[0_14px_28px_rgba(0,0,0,0.16)] max-[640px]:inline-flex"
+          href="#affiliate-apply"
+        >
+          Join and earn
+        </a>
+      ) : null}
+    </article>
+  );
+}
+
+function AffiliateHowItWorksSection() {
+  return (
+    <section aria-labelledby="affiliate-how-it-works-title" className="overflow-hidden bg-[#fff3e8] text-black">
+      <div className="mx-auto w-full max-w-[1440px] px-[clamp(1.15rem,5vw,4.5rem)] py-[clamp(3rem,6vw,5.75rem)] max-[640px]:px-4 max-[640px]:py-8">
+        <div className="mb-[clamp(2rem,4vw,3.5rem)] flex items-start justify-between gap-6 max-[640px]:mb-5 max-[640px]:block">
+          <div>
+            <p className="mb-3 text-[clamp(1rem,1.4vw,1.35rem)] font-semibold leading-tight text-[#ef5f4f] max-[640px]:mb-2 max-[640px]:text-[0.95rem]">
+              How does it work?
+            </p>
+            <h2 id="affiliate-how-it-works-title" className="max-w-[720px] text-[clamp(2.8rem,5.1vw,5.8rem)] font-black leading-[0.98] tracking-normal text-black max-[1024px]:text-[clamp(2.3rem,5vw,4rem)] max-[640px]:text-[clamp(2.15rem,10vw,3.35rem)]">
+              Getting started is easy
+            </h2>
+          </div>
+          <a
+            className="inline-flex min-h-14 shrink-0 items-center gap-3 rounded-full bg-white px-7 text-[clamp(0.95rem,1.1vw,1.15rem)] font-black text-[#ef5f4f] no-underline shadow-[0_14px_30px_rgba(133,78,54,0.1)] transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ef5f4f]/20 max-[640px]:hidden"
+            href="#affiliate-apply"
+          >
+            <span>Join &amp; earn</span>
+            <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
+              <path d="M5 12h13" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-3 gap-[clamp(1.5rem,4vw,3.5rem)] max-[1024px]:gap-6 max-[640px]:grid-cols-1 max-[640px]:gap-3.5">
+          {howItWorksSteps.map((step, index) => (
+            <HowItWorksStepCard index={index} key={step.number} step={step} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function AffiliateHeroSection() {
   useEffect(() => {
     document.title = "Affiliate Program | FoodOnlines";
@@ -395,6 +568,7 @@ export function AffiliateHeroSection() {
         <AffiliateStatsRow />
       </section>
       <AffiliateRewardsSection />
+      <AffiliateHowItWorksSection />
     </div>
   );
 }
