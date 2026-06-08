@@ -1268,3 +1268,13 @@
   - `design.md`
 - Connected the existing Corporate footer `Affiliate Program` item to the new affiliate page by changing it from plain footer text to `{ label: "Affiliate Program", href: "/affiliate" }`.
 - Added footer SPA click handling for `/affiliate` through `openAffiliate()`, matching the existing Vendor, Partner, Sponsor, and Drivers footer navigation pattern.
+
+## Affiliate Hero Stats Section Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Added the compact four-item affiliate stats row directly below the affiliate hero content, inside the same `#ffb28f` peach/orange section with no separate darker banner or extra full-width panel.
+- Desktop, tablet, and mobile-landscape layouts keep the stats in a compact four-column row with thin vertical white dividers. Mobile portrait stacks the stats into compact rows with the number on the left, description on the right, and thin horizontal dividers.
+- Kept the existing neutral CSS placeholder packshot logic for product images and corrected the affiliate headline to use the real `฿75,000` Baht symbol. Header and footer component files were not edited in this follow-up.

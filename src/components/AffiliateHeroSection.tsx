@@ -11,6 +11,11 @@ type AffiliateProduct = {
   placeholder: "carton" | "can" | "loaf";
 };
 
+type AffiliateStat = {
+  number: string;
+  lines: string[];
+};
+
 const affiliateProducts: AffiliateProduct[] = [
   {
     discount: "14% OFF",
@@ -41,6 +46,25 @@ const affiliateProducts: AffiliateProduct[] = [
     price: "$6.58",
     oldPrice: "$7.63",
     placeholder: "loaf",
+  },
+];
+
+const affiliateStats: AffiliateStat[] = [
+  {
+    number: "No.1",
+    lines: ["World Largest", "online Supermarket"],
+  },
+  {
+    number: "100k+",
+    lines: ["Bringing the World's", "Authentic and Fresh", "Groceries to You"],
+  },
+  {
+    number: "50M",
+    lines: ["Guaranteed Low", "Prices on Every Order"],
+  },
+  {
+    number: "#1",
+    lines: ["World grocery app", "on IOS & Android"],
   },
 ];
 
@@ -117,6 +141,32 @@ function AffiliateProductCard({ product }: { product: AffiliateProduct }) {
   );
 }
 
+function AffiliateStatsRow() {
+  return (
+    <div aria-label="FoodOnlines affiliate highlights" className="mt-[clamp(2rem,4.2vw,4.8rem)] grid grid-cols-4 max-[640px]:mt-7 max-[640px]:grid-cols-1">
+      {affiliateStats.map((stat, index) => (
+        <div
+          className={`flex min-h-[88px] flex-col justify-center gap-2 px-[clamp(0.8rem,2vw,2.4rem)] py-[clamp(0.65rem,1.4vw,1.35rem)] ${
+            index === 0 ? "" : "border-l border-white/70"
+          } max-[1024px]:min-h-[74px] max-[1024px]:px-3 max-[1024px]:py-2 max-[640px]:grid max-[640px]:min-h-[62px] max-[640px]:grid-cols-[86px_minmax(0,1fr)] max-[640px]:items-center max-[640px]:gap-3 max-[640px]:border-l-0 max-[640px]:border-t max-[640px]:border-white/70 max-[640px]:px-0 max-[640px]:py-3 ${
+            index === 0 ? "max-[640px]:border-t-0" : ""
+          }`}
+          key={stat.number}
+        >
+          <strong className="text-[clamp(1.7rem,3.15vw,3.35rem)] font-black leading-none tracking-normal text-black max-[1024px]:text-[clamp(1.3rem,3vw,2rem)] max-[640px]:text-[1.75rem]">
+            {stat.number}
+          </strong>
+          <span className="grid gap-0.5 text-[clamp(0.72rem,0.95vw,1rem)] font-normal leading-[1.22] text-black max-[1024px]:text-[0.62rem] max-[640px]:text-[0.78rem]">
+            {stat.lines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function AffiliateHeroSection() {
   useEffect(() => {
     document.title = "Affiliate Program | FoodOnlines";
@@ -138,7 +188,8 @@ export function AffiliateHeroSection() {
       className="overflow-hidden bg-[#ffb28f] pt-[116px] text-black sm:pt-[128px] lg:pt-[138px]"
       style={{ fontFamily: 'Montserrat, Poppins, Inter, ui-sans-serif, system-ui, sans-serif' }}
     >
-      <section className="mx-auto grid min-h-[640px] w-full max-w-[1650px] grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] items-center gap-[clamp(2rem,4vw,5rem)] px-[clamp(1.25rem,4.8vw,5.2rem)] py-[clamp(2.5rem,5.8vw,6.4rem)] max-[1024px]:grid-cols-1 max-[1024px]:gap-8 max-[1024px]:py-[clamp(2rem,4vw,3.6rem)] min-[700px]:max-[920px]:grid-cols-[minmax(0,0.68fr)_minmax(0,1.32fr)] min-[700px]:max-[920px]:gap-5 min-[700px]:max-[920px]:px-8 max-[640px]:min-h-0 max-[640px]:px-4 max-[640px]:py-7">
+      <section className="mx-auto w-full max-w-[1650px] px-[clamp(1.25rem,4.8vw,5.2rem)] py-[clamp(2.5rem,5.8vw,6.4rem)] max-[1024px]:py-[clamp(2rem,4vw,3.6rem)] min-[700px]:max-[920px]:px-8 max-[640px]:px-4 max-[640px]:py-7">
+        <div className="grid min-h-[560px] grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] items-center gap-[clamp(2rem,4vw,5rem)] max-[1024px]:min-h-0 max-[1024px]:grid-cols-1 max-[1024px]:gap-8 min-[700px]:max-[920px]:grid-cols-[minmax(0,0.68fr)_minmax(0,1.32fr)] min-[700px]:max-[920px]:gap-5">
         <div className="min-w-0 max-[640px]:text-left">
           <p className="mb-4 text-[clamp(1rem,1.55vw,1.75rem)] font-medium leading-tight tracking-[0.08em] text-black max-[640px]:mb-2 max-[640px]:text-[0.82rem] max-[640px]:tracking-[0.04em]">
             Turn Your Audience Into Income
@@ -165,11 +216,13 @@ export function AffiliateHeroSection() {
           </a>
         </div>
 
-        <div className="grid min-w-0 grid-cols-3 items-stretch gap-[clamp(1rem,2vw,2rem)] max-[1024px]:gap-5 min-[700px]:max-[920px]:gap-3 max-[640px]:grid-cols-1 max-[640px]:gap-2.5">
-          {affiliateProducts.map((product) => (
-            <AffiliateProductCard key={product.name} product={product} />
-          ))}
+          <div className="grid min-w-0 grid-cols-3 items-stretch gap-[clamp(1rem,2vw,2rem)] max-[1024px]:gap-5 min-[700px]:max-[920px]:gap-3 max-[640px]:grid-cols-1 max-[640px]:gap-2.5">
+            {affiliateProducts.map((product) => (
+              <AffiliateProductCard key={product.name} product={product} />
+            ))}
+          </div>
         </div>
+        <AffiliateStatsRow />
       </section>
     </div>
   );

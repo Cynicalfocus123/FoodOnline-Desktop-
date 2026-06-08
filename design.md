@@ -828,6 +828,7 @@
 - Product cards use white rounded card surfaces with soft shadows, neutral CSS placeholder packshot shapes, red discount pills, uppercase gray brand labels, black product names, gray size/unit details, bold black prices, crossed-out old prices, and green outlined plus controls.
 - Responsive behavior: desktop uses a two-column layout with text left and three tall product cards right; tablet stacks or compresses safely while keeping all three tall cards visible; mobile-landscape widths keep text and long vertical cards side by side when space allows; narrow mobile portrait converts product cards into wide horizontal rows with image left, copy middle, plus button right, safe padding, and no intended page-level horizontal overflow.
 - Footer link follow-up on 2026-06-08: the existing Corporate footer `Affiliate Program` item now links to `/affiliate` and uses the same SPA click-routing behavior as Become a Vendor, Become a Partner, Become a Sponsor, and Become Our Drivers.
+- Compact stats follow-up on 2026-06-08: the affiliate hero now includes four compact stat items under the product-card hero content on the same peach/orange background, with no darker stats banner. Desktop/tablet/mobile-landscape use a four-column row with thin vertical dividers, while mobile portrait stacks stats into short horizontal rows with number left, description right, and thin horizontal dividers. The headline uses the real `฿75,000` symbol, and product imagery remains neutral placeholder shapes ready for future packshots.
 
 ## Guardrails
 
