@@ -1349,3 +1349,14 @@
 - Added scoped class hooks for the Affiliate Rewards / Referral Cards label, card wrapper, eyebrow, and optional extra text, then added a desktop-only `@media (min-width: 1025px)` reset in `src/styles.css`.
 - Reduced only desktop reward label, eyebrow, title, body, and extra text sizing so desktop card copy no longer overflows or clips. Tablet, mobile-desktop, mobile portrait, header, footer, Affiliate Hero + Stats, and How It Works styling were left untouched.
 - Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Rewards Desktop Icon Placement Fix (2026-06-09)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Added scoped reward card variant, content, icon, and button class hooks, then extended the existing desktop-only `@media (min-width: 1025px)` rewards rule.
+- Desktop reward icons are now slightly smaller, pinned farther into the bottom-right corner, non-interactive, and kept behind the text/button layer. Desktop content gets a reserved right-side safe area so the decorative SVG icons no longer overlap copy or CTAs. Header, footer, Affiliate Hero + Stats, tablet/mobile-desktop text sizing, and mobile portrait layout were not changed.
+- Checks on 2026-06-09: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.

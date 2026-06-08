@@ -582,6 +582,35 @@ video {
   .affiliate-reward-card__extra {
     font-size: clamp(15px, 1.25vw, 22px);
   }
+
+  .affiliate-reward-card__icon {
+    width: clamp(58px, 6vw, 105px);
+    height: clamp(58px, 6vw, 105px);
+    right: clamp(22px, 2.4vw, 36px);
+    bottom: clamp(18px, 2.4vw, 34px);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .affiliate-reward-card__content {
+    position: relative;
+    z-index: 1;
+    max-width: calc(100% - 120px);
+  }
+
+  .affiliate-reward-card__button {
+    position: relative;
+    z-index: 2;
+  }
+
+  .affiliate-reward-card--coral .affiliate-reward-card__content {
+    max-width: calc(100% - 130px);
+  }
+
+  .affiliate-reward-card--pastel .affiliate-reward-card__content {
+    max-width: calc(100% - 120px);
+  }
 }
 
 #home,
