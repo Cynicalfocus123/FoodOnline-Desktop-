@@ -98,7 +98,7 @@ const affiliateRewardCards: AffiliateRewardCardData[] = [
   },
   {
     eyebrow: "REFER FRIENDS & EARN MORE",
-    title: "Receive à¸¿100",
+    title: "Receive ฿100",
     body: "for every successful referral who signs up",
     button: "Refer now",
     variant: "coral",

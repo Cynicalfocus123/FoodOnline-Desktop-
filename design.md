@@ -832,6 +832,7 @@
 
 - Rewards/referral cards follow-up on 2026-06-08: the affiliate page now transitions from the peach/orange hero + stats area into a separate clean white `#ffffff` rewards section. Desktop shows three cards in one row composition with `Share your link` over the pastel gradient card and `Refer friends & keep earning` over the two coral/red-orange cards. Tablet and mobile-landscape keep the row compressed where possible, while mobile portrait stacks compact square-like cards with hidden buttons, lower-right white SVG icons, guarded text sizes, subtle shadows, and no intended horizontal overflow.
 - Rewards card responsive fix on 2026-06-08: desktop remains mostly unchanged, while tablet/mobile-desktop widths make the two coral cards shorter and more banner-like with larger readable text, corrected `#f75b43` card color, compact buttons, and large white icons positioned close to the right side of the copy. Mobile landscape keeps the same compact banner behavior, and mobile portrait remains stacked with compact square-like cards, hidden buttons, lower-right icons, and the rewards section background staying white `#ffffff`.
+- Rewards card copy fix on 2026-06-08: Card 3 in the white Affiliate Rewards section now displays the actual Thai baht symbol as `Receive ฿100`, not mojibake/question-mark text.
 
 ## Guardrails
 

@@ -1299,7 +1299,16 @@
   - `design.md`
 - Fixed only the Affiliate Rewards / Referral Cards section. Header, footer, routing, and the Affiliate Hero + Stats section above were not edited.
 - Card 2 and Card 3 now share the corrected coral/red-orange `#f75b43` background with white text and a light border.
-- Card 3 text was reset to `Receive à¸¿100` with body copy `for every successful referral who signs up`, avoiding the corrupted `Ã Â¸Â¿100` display.
+- Card 3 text was reset to `Receive ฿100` with body copy `for every successful referral who signs up`, avoiding the corrupted `Ã Â¸Â¿100` display.
 - Tablet and mobile-desktop widths now treat coral cards as shorter banner-like cards with larger text, compact black pill buttons, and right-side white icons close to the copy instead of bottom-heavy tall panels.
 - Mobile landscape keeps the coral cards compact with hidden buttons and right-side icons. Mobile portrait keeps stacked compact square-like cards with hidden buttons and lower-right icons.
 - Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Rewards Baht Symbol Fix (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Fixed the Affiliate Rewards / Referral Cards section Card 3 title to render the actual Thai baht currency symbol as `Receive ฿100` instead of the mojibake text `Receive à¸¿100`.
+- Header, footer, affiliate hero, and affiliate stats content were not edited.
