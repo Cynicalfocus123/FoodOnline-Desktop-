@@ -1290,3 +1290,16 @@
 - Added local `affiliateRewardCards` data, `AffiliateRewardCard`, `AffiliateRewardIcon`, and `AffiliateRewardsSection` helpers in `src/components/AffiliateHeroSection.tsx`.
 - Desktop uses one row composition: the first pastel gradient card under `Share your link`, and the two coral/red-orange cards grouped under `Refer friends & keep earning`. Tablet and mobile-landscape keep compressed row layouts where space allows.
 - Mobile portrait stacks the three rewards cards as compact square-like cards with hidden card buttons, visible lower-right white SVG icons, guarded text sizing, no intentional horizontal overflow, and subtle card shadows suited to the white section background.
+
+## Affiliate Rewards Card Responsiveness Fix (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Fixed only the Affiliate Rewards / Referral Cards section. Header, footer, routing, and the Affiliate Hero + Stats section above were not edited.
+- Card 2 and Card 3 now share the corrected coral/red-orange `#f75b43` background with white text and a light border.
+- Card 3 text was reset to `Receive à¸¿100` with body copy `for every successful referral who signs up`, avoiding the corrupted `Ã Â¸Â¿100` display.
+- Tablet and mobile-desktop widths now treat coral cards as shorter banner-like cards with larger text, compact black pill buttons, and right-side white icons close to the copy instead of bottom-heavy tall panels.
+- Mobile landscape keeps the coral cards compact with hidden buttons and right-side icons. Mobile portrait keeps stacked compact square-like cards with hidden buttons and lower-right icons.
+- Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.

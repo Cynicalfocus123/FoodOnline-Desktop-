@@ -89,7 +89,7 @@ const affiliateRewardCards: AffiliateRewardCardData[] = [
     icon: "link",
   },
   {
-    eyebrow: "Earn 5% Commission on Every Referral Purchase",
+    eyebrow: "EARN 5% COMMISSION ON EVERY REFERRAL PURCHASE",
     title: "Receive ongoing commissions",
     body: "whenever your referred customers make a purchase.",
     button: "Earn 5%",
@@ -97,7 +97,7 @@ const affiliateRewardCards: AffiliateRewardCardData[] = [
     icon: "cart",
   },
   {
-    eyebrow: "Refer Friends & Earn More",
+    eyebrow: "REFER FRIENDS & EARN MORE",
     title: "Receive à¸¿100",
     body: "for every successful referral who signs up",
     button: "Refer now",
@@ -241,20 +241,42 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
 
   return (
     <article
-      className={`relative isolate min-h-[clamp(270px,23vw,390px)] overflow-hidden rounded-[clamp(18px,1.8vw,28px)] p-[clamp(1.35rem,2.6vw,2.65rem)] shadow-[0_18px_38px_rgba(91,42,25,0.1)] max-[860px]:min-h-[230px] max-[860px]:p-5 max-[640px]:aspect-[1.12/1] max-[640px]:min-h-0 max-[640px]:rounded-[14px] max-[640px]:p-4 max-[640px]:shadow-[0_12px_24px_rgba(91,42,25,0.1)] ${
+      className={`relative isolate min-h-[clamp(270px,23vw,390px)] overflow-hidden rounded-[clamp(18px,1.8vw,28px)] p-[clamp(1.35rem,2.6vw,2.65rem)] shadow-[0_18px_38px_rgba(91,42,25,0.1)] max-[860px]:min-h-[230px] max-[860px]:p-5 max-[640px]:aspect-[1.18/1] max-[640px]:min-h-0 max-[640px]:rounded-[14px] max-[640px]:p-4 max-[640px]:shadow-[0_12px_24px_rgba(91,42,25,0.1)] ${
         isPastel
           ? "border-[3px] border-[#ff8c83] bg-[radial-gradient(circle_at_20%_82%,rgba(255,133,123,0.34),transparent_36%),radial-gradient(circle_at_82%_12%,rgba(126,255,222,0.48),transparent_42%),linear-gradient(145deg,#e8fff4_0%,#d9f2ff_52%,#ffd6cd_100%)] text-black"
-          : "border-2 border-white/75 bg-[#f75b43] text-white"
+          : "grid border-2 border-white/80 bg-[#f75b43] text-white min-[641px]:max-[1024px]:min-h-[230px] min-[641px]:max-[1024px]:grid-cols-[minmax(0,1fr)_96px] min-[641px]:max-[1024px]:items-center min-[641px]:max-[1024px]:gap-5 min-[641px]:max-[1024px]:p-7 max-[860px]:landscape:min-h-[150px] max-[860px]:landscape:grid-cols-[minmax(0,1fr)_58px] max-[860px]:landscape:gap-3.5 max-[860px]:landscape:p-[18px] max-[640px]:block"
       }`}
     >
-      <div className="relative z-10 max-w-[30rem] pr-[clamp(2.5rem,5vw,5rem)] max-[640px]:pr-14">
-        <p className="mb-3 text-[clamp(0.8rem,1.05vw,1.08rem)] font-semibold uppercase leading-[1.22] tracking-[0.06em] max-[860px]:mb-2 max-[640px]:text-[0.64rem] max-[640px]:tracking-[0.03em]">
+      <div
+        className={`relative z-10 max-w-[30rem] pr-[clamp(2.5rem,5vw,5rem)] max-[640px]:pr-14 ${
+          isPastel ? "" : "min-[641px]:max-[1024px]:max-w-none min-[641px]:max-[1024px]:pr-0"
+        }`}
+      >
+        <p
+          className={`mb-3 text-[clamp(0.8rem,1.05vw,1.08rem)] font-semibold uppercase leading-[1.22] tracking-[0.06em] max-[860px]:mb-2 max-[640px]:text-[0.64rem] max-[640px]:tracking-[0.03em] ${
+            isPastel
+              ? ""
+              : "min-[641px]:max-[1024px]:mb-3.5 min-[641px]:max-[1024px]:text-[clamp(0.95rem,1.8vw,1.35rem)] min-[641px]:max-[1024px]:font-extrabold min-[641px]:max-[1024px]:leading-[1.18] min-[641px]:max-[1024px]:tracking-[0.08em] max-[860px]:landscape:mb-1.5 max-[860px]:landscape:text-[0.62rem]"
+          }`}
+        >
           {card.eyebrow}
         </p>
-        <h2 className="text-[clamp(1.7rem,2.65vw,3.35rem)] font-black leading-[1.04] tracking-normal max-[860px]:text-[1.45rem] max-[640px]:max-w-[15rem] max-[640px]:text-[1.23rem]">
+        <h3
+          className={`text-[clamp(1.7rem,2.65vw,3.35rem)] font-black leading-[1.04] tracking-normal max-[860px]:text-[1.45rem] max-[640px]:max-w-[15rem] max-[640px]:text-[1.23rem] ${
+            isPastel
+              ? ""
+              : "min-[641px]:max-[1024px]:max-w-[22rem] min-[641px]:max-[1024px]:text-[clamp(2rem,4vw,2.75rem)] min-[641px]:max-[1024px]:leading-[0.98] max-[860px]:landscape:text-[1.2rem] max-[860px]:landscape:leading-[1.05]"
+          }`}
+        >
           {card.title}
-        </h2>
-        <p className="mt-4 max-w-[25rem] text-[clamp(0.88rem,1.15vw,1.2rem)] font-medium leading-[1.28] max-[860px]:mt-3 max-[860px]:text-[0.82rem] max-[640px]:mt-2 max-[640px]:max-w-[13.5rem] max-[640px]:text-[0.7rem]">
+        </h3>
+        <p
+          className={`mt-4 max-w-[25rem] text-[clamp(0.88rem,1.15vw,1.2rem)] font-medium leading-[1.28] max-[860px]:mt-3 max-[860px]:text-[0.82rem] max-[640px]:mt-2 max-[640px]:max-w-[13.5rem] max-[640px]:text-[0.7rem] ${
+            isPastel
+              ? ""
+              : "min-[641px]:max-[1024px]:mt-4 min-[641px]:max-[1024px]:max-w-[21rem] min-[641px]:max-[1024px]:text-[clamp(1rem,2vw,1.25rem)] min-[641px]:max-[1024px]:leading-[1.25] max-[860px]:landscape:mt-2 max-[860px]:landscape:text-[0.7rem] max-[860px]:landscape:leading-[1.2]"
+          }`}
+        >
           {card.body}
         </p>
         {card.extra ? (
@@ -263,7 +285,7 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
           </p>
         ) : null}
         <a
-          className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-full bg-black px-6 text-[clamp(0.86rem,1vw,1.05rem)] font-black text-white no-underline shadow-[0_12px_26px_rgba(0,0,0,0.16)] transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-black/25 max-[860px]:mt-4 max-[860px]:min-h-10 max-[860px]:px-5 max-[860px]:text-[0.82rem] max-[640px]:hidden"
+          className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-full bg-black px-6 text-[clamp(0.86rem,1vw,1.05rem)] font-black text-white no-underline shadow-[0_12px_26px_rgba(0,0,0,0.16)] transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-black/25 max-[860px]:mt-4 max-[860px]:min-h-10 max-[860px]:px-5 max-[860px]:text-[0.82rem] max-[860px]:landscape:hidden max-[640px]:hidden min-[641px]:max-[1024px]:mt-5 min-[641px]:max-[1024px]:min-h-11 min-[641px]:max-[1024px]:px-5 min-[641px]:max-[1024px]:text-base"
           href="#affiliate-apply"
         >
           <span>{card.button}</span>
@@ -271,7 +293,13 @@ function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
         </a>
       </div>
 
-      <div className="absolute bottom-[clamp(1rem,2.4vw,2.6rem)] right-[clamp(1rem,2.6vw,2.8rem)] z-0 h-[clamp(4.3rem,7.5vw,8.4rem)] w-[clamp(4.3rem,7.5vw,8.4rem)] text-white/95 max-[860px]:h-16 max-[860px]:w-16 max-[640px]:bottom-3 max-[640px]:right-3 max-[640px]:h-14 max-[640px]:w-14">
+      <div
+        className={`absolute bottom-[clamp(1rem,2.4vw,2.6rem)] right-[clamp(1rem,2.6vw,2.8rem)] z-0 h-[clamp(4.3rem,7.5vw,8.4rem)] w-[clamp(4.3rem,7.5vw,8.4rem)] text-white/95 max-[860px]:h-16 max-[860px]:w-16 max-[640px]:bottom-3 max-[640px]:right-3 max-[640px]:h-14 max-[640px]:w-14 ${
+          isPastel
+            ? ""
+            : "min-[641px]:max-[1024px]:static min-[641px]:max-[1024px]:h-24 min-[641px]:max-[1024px]:w-24 min-[641px]:max-[1024px]:self-center min-[641px]:max-[1024px]:justify-self-end max-[860px]:landscape:static max-[860px]:landscape:h-14 max-[860px]:landscape:w-14 max-[860px]:landscape:self-center max-[860px]:landscape:justify-self-end max-[640px]:absolute max-[640px]:h-14 max-[640px]:w-14"
+        }`}
+      >
         <AffiliateRewardIcon type={card.icon} />
       </div>
     </article>
