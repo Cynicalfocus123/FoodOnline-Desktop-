@@ -1278,3 +1278,15 @@
 - Added the compact four-item affiliate stats row directly below the affiliate hero content, inside the same `#ffb28f` peach/orange section with no separate darker banner or extra full-width panel.
 - Desktop, tablet, and mobile-landscape layouts keep the stats in a compact four-column row with thin vertical white dividers. Mobile portrait stacks the stats into compact rows with the number on the left, description on the right, and thin horizontal dividers.
 - Kept the existing neutral CSS placeholder packshot logic for product images and corrected the affiliate headline to use the real `฿75,000` Baht symbol. Header and footer component files were not edited in this follow-up.
+
+## Affiliate Rewards Cards Section Follow-Up (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Added the hardcoded Affiliate Rewards / Referral Cards section directly under the current affiliate hero + stats area. Header, footer, affiliate routing, and the existing hero/stat content were not edited.
+- The new rewards section starts on a clean white `#ffffff` background with top breathing room after the peach/orange hero. The peach/orange background remains limited to the hero + stats area, and there is no dark orange banner behind the new cards.
+- Added local `affiliateRewardCards` data, `AffiliateRewardCard`, `AffiliateRewardIcon`, and `AffiliateRewardsSection` helpers in `src/components/AffiliateHeroSection.tsx`.
+- Desktop uses one row composition: the first pastel gradient card under `Share your link`, and the two coral/red-orange cards grouped under `Refer friends & keep earning`. Tablet and mobile-landscape keep compressed row layouts where space allows.
+- Mobile portrait stacks the three rewards cards as compact square-like cards with hidden card buttons, visible lower-right white SVG icons, guarded text sizing, no intentional horizontal overflow, and subtle card shadows suited to the white section background.

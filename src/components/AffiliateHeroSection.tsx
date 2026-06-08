@@ -16,6 +16,16 @@ type AffiliateStat = {
   lines: string[];
 };
 
+type AffiliateRewardCardData = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  extra?: string;
+  button: string;
+  variant: "pastel" | "coral";
+  icon: "link" | "cart" | "user-plus";
+};
+
 const affiliateProducts: AffiliateProduct[] = [
   {
     discount: "14% OFF",
@@ -65,6 +75,34 @@ const affiliateStats: AffiliateStat[] = [
   {
     number: "#1",
     lines: ["World grocery app", "on IOS & Android"],
+  },
+];
+
+const affiliateRewardCards: AffiliateRewardCardData[] = [
+  {
+    eyebrow: "Share Your Affiliate Link",
+    title: "Earn up to 4% commission",
+    body: "on qualifying purchases made through your referral link.",
+    extra: "Share your qualified affiliate link within a 48 hour window.",
+    button: "Start earning",
+    variant: "pastel",
+    icon: "link",
+  },
+  {
+    eyebrow: "Earn 5% Commission on Every Referral Purchase",
+    title: "Receive ongoing commissions",
+    body: "whenever your referred customers make a purchase.",
+    button: "Earn 5%",
+    variant: "coral",
+    icon: "cart",
+  },
+  {
+    eyebrow: "Refer Friends & Earn More",
+    title: "Receive à¸¿100",
+    body: "for every successful referral who signs up",
+    button: "Refer now",
+    variant: "coral",
+    icon: "user-plus",
   },
 ];
 
@@ -167,6 +205,110 @@ function AffiliateStatsRow() {
   );
 }
 
+function AffiliateRewardIcon({ type }: { type: AffiliateRewardCardData["icon"] }) {
+  if (type === "link") {
+    return (
+      <svg aria-hidden="true" fill="none" viewBox="0 0 64 64">
+        <path d="M24.5 39.5 19 45a10.6 10.6 0 0 1-15-15l9.5-9.5a10.6 10.6 0 0 1 15 0" stroke="currentColor" strokeLinecap="round" strokeWidth="7" />
+        <path d="M39.5 24.5 45 19a10.6 10.6 0 0 1 15 15l-9.5 9.5a10.6 10.6 0 0 1-15 0" stroke="currentColor" strokeLinecap="round" strokeWidth="7" />
+        <path d="M24 40 40 24" stroke="currentColor" strokeLinecap="round" strokeWidth="7" />
+      </svg>
+    );
+  }
+
+  if (type === "cart") {
+    return (
+      <svg aria-hidden="true" fill="none" viewBox="0 0 64 64">
+        <path d="M10 14h8l6 30h28l5-21H24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="6" />
+        <circle cx="29" cy="52" fill="currentColor" r="4" />
+        <circle cx="49" cy="52" fill="currentColor" r="4" />
+        <path d="M31 30v8M42 30v8" stroke="currentColor" strokeLinecap="round" strokeWidth="5" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 64 64">
+      <circle cx="25" cy="22" fill="currentColor" r="10" />
+      <path d="M8 55c2.8-13 10.3-20 17-20s14.2 7 17 20" fill="currentColor" />
+      <path d="M49 23v18M40 32h18" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="6" />
+    </svg>
+  );
+}
+
+function AffiliateRewardCard({ card }: { card: AffiliateRewardCardData }) {
+  const isPastel = card.variant === "pastel";
+
+  return (
+    <article
+      className={`relative isolate min-h-[clamp(270px,23vw,390px)] overflow-hidden rounded-[clamp(18px,1.8vw,28px)] p-[clamp(1.35rem,2.6vw,2.65rem)] shadow-[0_18px_38px_rgba(91,42,25,0.1)] max-[860px]:min-h-[230px] max-[860px]:p-5 max-[640px]:aspect-[1.12/1] max-[640px]:min-h-0 max-[640px]:rounded-[14px] max-[640px]:p-4 max-[640px]:shadow-[0_12px_24px_rgba(91,42,25,0.1)] ${
+        isPastel
+          ? "border-[3px] border-[#ff8c83] bg-[radial-gradient(circle_at_20%_82%,rgba(255,133,123,0.34),transparent_36%),radial-gradient(circle_at_82%_12%,rgba(126,255,222,0.48),transparent_42%),linear-gradient(145deg,#e8fff4_0%,#d9f2ff_52%,#ffd6cd_100%)] text-black"
+          : "border-2 border-white/75 bg-[#f75b43] text-white"
+      }`}
+    >
+      <div className="relative z-10 max-w-[30rem] pr-[clamp(2.5rem,5vw,5rem)] max-[640px]:pr-14">
+        <p className="mb-3 text-[clamp(0.8rem,1.05vw,1.08rem)] font-semibold uppercase leading-[1.22] tracking-[0.06em] max-[860px]:mb-2 max-[640px]:text-[0.64rem] max-[640px]:tracking-[0.03em]">
+          {card.eyebrow}
+        </p>
+        <h2 className="text-[clamp(1.7rem,2.65vw,3.35rem)] font-black leading-[1.04] tracking-normal max-[860px]:text-[1.45rem] max-[640px]:max-w-[15rem] max-[640px]:text-[1.23rem]">
+          {card.title}
+        </h2>
+        <p className="mt-4 max-w-[25rem] text-[clamp(0.88rem,1.15vw,1.2rem)] font-medium leading-[1.28] max-[860px]:mt-3 max-[860px]:text-[0.82rem] max-[640px]:mt-2 max-[640px]:max-w-[13.5rem] max-[640px]:text-[0.7rem]">
+          {card.body}
+        </p>
+        {card.extra ? (
+          <p className="mt-3 max-w-[22rem] text-[clamp(0.78rem,0.95vw,1rem)] font-medium leading-[1.25] opacity-80 max-[860px]:text-[0.76rem] max-[640px]:mt-2 max-[640px]:max-w-[13rem] max-[640px]:text-[0.64rem]">
+            {card.extra}
+          </p>
+        ) : null}
+        <a
+          className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-full bg-black px-6 text-[clamp(0.86rem,1vw,1.05rem)] font-black text-white no-underline shadow-[0_12px_26px_rgba(0,0,0,0.16)] transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-black/25 max-[860px]:mt-4 max-[860px]:min-h-10 max-[860px]:px-5 max-[860px]:text-[0.82rem] max-[640px]:hidden"
+          href="#affiliate-apply"
+        >
+          <span>{card.button}</span>
+          <span aria-hidden="true">›</span>
+        </a>
+      </div>
+
+      <div className="absolute bottom-[clamp(1rem,2.4vw,2.6rem)] right-[clamp(1rem,2.6vw,2.8rem)] z-0 h-[clamp(4.3rem,7.5vw,8.4rem)] w-[clamp(4.3rem,7.5vw,8.4rem)] text-white/95 max-[860px]:h-16 max-[860px]:w-16 max-[640px]:bottom-3 max-[640px]:right-3 max-[640px]:h-14 max-[640px]:w-14">
+        <AffiliateRewardIcon type={card.icon} />
+      </div>
+    </article>
+  );
+}
+
+function AffiliateRewardsSection() {
+  return (
+    <section aria-labelledby="affiliate-rewards-title" className="bg-white text-black">
+      <div className="mx-auto w-full max-w-[1440px] px-[clamp(1.15rem,5vw,4.5rem)] pb-[clamp(3rem,6vw,5.5rem)] pt-[clamp(2.8rem,5.4vw,4.8rem)] max-[640px]:px-4 max-[640px]:pb-10 max-[640px]:pt-8">
+        <h2 className="sr-only" id="affiliate-rewards-title">
+          Affiliate Rewards and Referral Cards
+        </h2>
+        <div className="grid grid-cols-[minmax(280px,0.95fr)_minmax(520px,1.7fr)] items-end gap-[clamp(1.5rem,4vw,3.25rem)] max-[1024px]:grid-cols-1 max-[1024px]:items-stretch max-[1024px]:gap-5 min-[641px]:max-[860px]:grid-cols-[0.9fr_2fr] min-[641px]:max-[860px]:gap-4 max-[640px]:block">
+          <div>
+            <p className="mb-3.5 text-[clamp(1.1rem,1.7vw,1.88rem)] font-medium leading-[1.1] text-[#f45d4d] max-[640px]:mb-2.5 max-[640px]:text-lg">
+              Share your link
+            </p>
+            <AffiliateRewardCard card={affiliateRewardCards[0]} />
+          </div>
+
+          <div className="max-[640px]:mt-5">
+            <p className="mb-3.5 text-[clamp(1.1rem,1.7vw,1.88rem)] font-medium leading-[1.1] text-[#f45d4d] max-[640px]:mb-2.5 max-[640px]:text-lg">
+              Refer friends &amp; keep earning
+            </p>
+            <div className="grid grid-cols-2 gap-[clamp(1rem,2.4vw,2.15rem)] max-[640px]:grid-cols-1 max-[640px]:gap-2.5">
+              {affiliateRewardCards.slice(1).map((card) => (
+                <AffiliateRewardCard card={card} key={card.eyebrow} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function AffiliateHeroSection() {
   useEffect(() => {
     document.title = "Affiliate Program | FoodOnlines";
@@ -224,6 +366,7 @@ export function AffiliateHeroSection() {
         </div>
         <AffiliateStatsRow />
       </section>
+      <AffiliateRewardsSection />
     </div>
   );
 }

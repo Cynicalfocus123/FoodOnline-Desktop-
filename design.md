@@ -830,6 +830,8 @@
 - Footer link follow-up on 2026-06-08: the existing Corporate footer `Affiliate Program` item now links to `/affiliate` and uses the same SPA click-routing behavior as Become a Vendor, Become a Partner, Become a Sponsor, and Become Our Drivers.
 - Compact stats follow-up on 2026-06-08: the affiliate hero now includes four compact stat items under the product-card hero content on the same peach/orange background, with no darker stats banner. Desktop/tablet/mobile-landscape use a four-column row with thin vertical dividers, while mobile portrait stacks stats into short horizontal rows with number left, description right, and thin horizontal dividers. The headline uses the real `฿75,000` symbol, and product imagery remains neutral placeholder shapes ready for future packshots.
 
+- Rewards/referral cards follow-up on 2026-06-08: the affiliate page now transitions from the peach/orange hero + stats area into a separate clean white `#ffffff` rewards section. Desktop shows three cards in one row composition with `Share your link` over the pastel gradient card and `Refer friends & keep earning` over the two coral/red-orange cards. Tablet and mobile-landscape keep the row compressed where possible, while mobile portrait stacks compact square-like cards with hidden buttons, lower-right white SVG icons, guarded text sizes, subtle shadows, and no intended horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
