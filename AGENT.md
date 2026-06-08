@@ -1325,3 +1325,16 @@
 - Desktop/tablet layouts use three columns with subtle dashed vertical separators between steps. Mobile landscape keeps the cards compressed in a row where space allows with guarded image panels and no intentional horizontal overflow.
 - Mobile portrait renders the heading first, then Step 1 as an expanded feature block with text, a large visual panel below the text, and a black `Join and earn` CTA below the visual. Steps 2 and 3 stack below as compact cards with text left and illustration panels right.
 - Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Rewards Typography Fix (2026-06-08)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Updated only the Affiliate Rewards / Referral Cards section typography. Header, footer, Affiliate Hero + Stats, and the How It Works section were not edited.
+- Increased rewards group labels, card eyebrow text, titles, body copy, and optional supporting copy with responsive `clamp()` sizing so tablet and mobile-desktop views are much easier to read.
+- Mobile portrait keeps compact square-like cards while using larger readable text; the optional Card 1 extra line is hidden on portrait to preserve card height.
+- Kept reward icons visible and pulled the coral-card tablet/mobile-desktop icon grid closer to the text by slightly tightening the right icon column and gap.
+- Card 3 rewards body copy now ends with a period: `for every successful referral who signs up.`
+- Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
