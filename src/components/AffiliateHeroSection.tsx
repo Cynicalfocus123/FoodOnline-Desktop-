@@ -35,6 +35,8 @@ type HowItWorksStep = {
   imageAlt: string;
 };
 
+const affiliateImagePath = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
 const affiliateProducts: AffiliateProduct[] = [
   {
     discount: "14% OFF",
@@ -121,7 +123,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Create Your Account",
     body: "Sign up in just a few steps with our easy-to-follow onboarding experience.",
     variant: "signup",
-    image: "/images/affiliate/how-it-works/create-account.png",
+    image: affiliateImagePath("images/affiliate/how-it-works/create-account.png"),
     imageAlt: "FoodOnlines affiliate account signup form preview",
   },
   {
@@ -129,7 +131,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Share",
     body: "Recommend great products and exclusive deals that your audience will appreciate.",
     variant: "share",
-    image: "/images/affiliate/how-it-works/share.png",
+    image: affiliateImagePath("images/affiliate/how-it-works/share.png"),
     imageAlt: "Affiliate sharing network with social icons",
   },
   {
@@ -137,7 +139,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Get Started",
     body: "Earn commissions from qualified purchases and successful referrals.",
     variant: "earn",
-    image: "/images/affiliate/how-it-works/get-started.png",
+    image: affiliateImagePath("images/affiliate/how-it-works/get-started.png"),
     imageAlt: "Affiliate earnings money bag illustration",
   },
 ];

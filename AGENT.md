@@ -1376,3 +1376,14 @@
 - Responsive behavior: desktop keeps the three-column step layout and dashed dividers; tablet and mobile-desktop keep the same layout while reducing visual height; mobile portrait keeps Step 1 as the larger stacked block with the image below text and the black `Join and earn` CTA below the image, while Steps 2 and 3 remain compact text-left/image-right cards with a controlled 42% image column.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
 - Feature commit hash: `6f26a4a`.
+
+## Affiliate How It Works Broken Image Fix (2026-06-11)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Fixed the broken How It Works step images by resolving their `src` values through `import.meta.env.BASE_URL`, matching the repo's existing Vite asset pattern for production paths such as `/FoodOnline-Desktop-/`.
+- Confirmed the deployed public image files are byte-for-byte copies of the requested source assets in `D:/Foodonline desktop version/pages/affillate page`: `create you acc.png`, `share.png`, and `Earn 5% Commission on Every Referral Purchase (4).png`.
+- Header, footer, Affiliate Hero + Stats, and Affiliate Rewards / Referral Cards were not edited.
+- Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check -- AGENT.md design.md src\\components\\AffiliateHeroSection.tsx`.
