@@ -1387,3 +1387,18 @@
 - Confirmed the deployed public image files are byte-for-byte copies of the requested source assets in `D:/Foodonline desktop version/pages/affillate page`: `create you acc.png`, `share.png`, and `Earn 5% Commission on Every Referral Purchase (4).png`.
 - Header, footer, Affiliate Hero + Stats, and Affiliate Rewards / Referral Cards were not edited.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check -- AGENT.md design.md src\\components\\AffiliateHeroSection.tsx`.
+
+## Affiliate Three-Step Image Card Layout Fix (2026-06-11)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `public/images/affiliate/how-it-works/create-account-visual.png`
+  - `public/images/affiliate/how-it-works/share-visual.png`
+  - `public/images/affiliate/how-it-works/get-started-visual.png`
+  - `AGENT.md`
+  - `design.md`
+- Updated only the Affiliate How It Works / Getting Started Is Easy three-step image/card section. Header, footer, Affiliate Hero + Stats, and Affiliate Rewards / Referral Cards were not edited.
+- Added visual-only crops sourced from `D:/Foodonline desktop version/pages/affillate page` so the image cards no longer duplicate the external step number, heading, or paragraph inside the card artwork.
+- Normalized all three image boxes to the same shared visual-card structure, dimensions, border radius, border, gradient background, padding, shadow, and responsive sizing. Box 2 and Box 3 now match Box 1 instead of using the old compact mobile/right-side sizing.
+- Removed the mobile-only white outer article panels behind the cards so the image card itself is the main visible box. The external number/title/body remain outside the image card for each step.
+- Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.

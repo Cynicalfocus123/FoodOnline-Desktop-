@@ -123,7 +123,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Create Your Account",
     body: "Sign up in just a few steps with our easy-to-follow onboarding experience.",
     variant: "signup",
-    image: affiliateImagePath("images/affiliate/how-it-works/create-account.png"),
+    image: affiliateImagePath("images/affiliate/how-it-works/create-account-visual.png"),
     imageAlt: "FoodOnlines affiliate account signup form preview",
   },
   {
@@ -131,7 +131,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Share",
     body: "Recommend great products and exclusive deals that your audience will appreciate.",
     variant: "share",
-    image: affiliateImagePath("images/affiliate/how-it-works/share.png"),
+    image: affiliateImagePath("images/affiliate/how-it-works/share-visual.png"),
     imageAlt: "Affiliate sharing network with social icons",
   },
   {
@@ -139,7 +139,7 @@ const howItWorksSteps: HowItWorksStep[] = [
     title: "Get Started",
     body: "Earn commissions from qualified purchases and successful referrals.",
     variant: "earn",
-    image: affiliateImagePath("images/affiliate/how-it-works/get-started.png"),
+    image: affiliateImagePath("images/affiliate/how-it-works/get-started-visual.png"),
     imageAlt: "Affiliate earnings money bag illustration",
   },
 ];
@@ -378,11 +378,11 @@ function AffiliateRewardsSection() {
 function HowItWorksVisual({ step }: { step: HowItWorksStep }) {
   return (
     <div
-      className={`affiliate-how-it-works__visual affiliate-how-it-works__visual--${step.variant} flex min-h-[clamp(220px,24vw,360px)] w-full items-center justify-center overflow-hidden rounded-[clamp(18px,2vw,28px)] max-[1024px]:min-h-[clamp(170px,22vw,260px)] max-[640px]:min-h-[132px]`}
+      className={`affiliate-how-it-works__visual affiliate-how-it-works__visual--${step.variant} flex aspect-[5/6] min-h-[clamp(320px,33vw,520px)] w-full items-center justify-center overflow-hidden rounded-[clamp(20px,2.2vw,34px)] border-[6px] border-[#ff6ba7] bg-gradient-to-b from-[#fff0b8] to-[#ffc69f] p-[clamp(1rem,2vw,1.8rem)] shadow-[0_24px_48px_rgba(116,64,41,0.14)] max-[1024px]:min-h-[clamp(270px,36vw,430px)] max-[640px]:aspect-[5/5.8] max-[640px]:min-h-[300px] max-[640px]:rounded-[24px] max-[640px]:border-[5px] max-[640px]:p-4`}
     >
       <img
         alt={step.imageAlt}
-        className="affiliate-how-it-works__image block h-full max-h-full w-full max-w-[360px] object-contain object-center max-[1024px]:max-w-[290px] max-[640px]:max-w-full"
+        className="affiliate-how-it-works__image block h-full max-h-full w-full object-contain object-center"
         loading="lazy"
         src={step.image}
       />
@@ -397,11 +397,9 @@ function HowItWorksStepCard({ step, index }: { step: HowItWorksStep; index: numb
     <article
       className={`relative min-w-0 ${
         index > 0 ? "min-[641px]:before:absolute min-[641px]:before:-left-[clamp(0.75rem,2vw,1.75rem)] min-[641px]:before:top-3 min-[641px]:before:h-[calc(100%-0.75rem)] min-[641px]:before:border-l min-[641px]:before:border-dashed min-[641px]:before:border-[#e8b9aa]" : ""
-      } max-[640px]:rounded-[22px] max-[640px]:bg-[#fff6ef] max-[640px]:p-4 max-[640px]:shadow-[0_14px_30px_rgba(133,78,54,0.08)] ${
-        isPrimary ? "max-[640px]:p-5" : "max-[640px]:grid max-[640px]:grid-cols-[minmax(0,1fr)_42%] max-[640px]:items-center max-[640px]:gap-3"
       }`}
     >
-      <div className={isPrimary ? "" : "max-[640px]:min-w-0"}>
+      <div>
         <div className="mb-4 flex items-center gap-3 max-[1024px]:mb-3 max-[640px]:mb-2.5">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[1.05rem] font-black text-[#ef5f4f] shadow-[0_10px_22px_rgba(133,78,54,0.12)] max-[1024px]:h-9 max-[1024px]:w-9 max-[640px]:h-8 max-[640px]:w-8 max-[640px]:text-sm">
             {step.number}
@@ -415,7 +413,7 @@ function HowItWorksStepCard({ step, index }: { step: HowItWorksStep; index: numb
         </p>
       </div>
 
-      <div className={`${isPrimary ? "mt-7 max-[640px]:mt-5" : "mt-7 max-[640px]:mt-0"} max-[640px]:min-w-0`}>
+      <div className="mt-7 max-[640px]:mt-5">
         <HowItWorksVisual step={step} />
       </div>
 
