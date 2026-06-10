@@ -1375,3 +1375,4 @@
 - Replaced the old code-native illustration panels with the three supplied PNG assets under `public/images/affiliate/how-it-works/`. Each image is lazy-loaded with useful alt text, centered, max-width guarded, and rendered with `object-fit: contain` so the uploaded card artwork scales without stretching.
 - Responsive behavior: desktop keeps the three-column step layout and dashed dividers; tablet and mobile-desktop keep the same layout while reducing visual height; mobile portrait keeps Step 1 as the larger stacked block with the image below text and the black `Join and earn` CTA below the image, while Steps 2 and 3 remain compact text-left/image-right cards with a controlled 42% image column.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+- Feature commit hash: `6f26a4a`.
