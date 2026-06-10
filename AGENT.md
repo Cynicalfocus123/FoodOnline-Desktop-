@@ -1360,3 +1360,18 @@
 - Added scoped reward card variant, content, icon, and button class hooks, then extended the existing desktop-only `@media (min-width: 1025px)` rewards rule.
 - Desktop reward icons are now slightly smaller, pinned farther into the bottom-right corner, non-interactive, and kept behind the text/button layer. Desktop content gets a reserved right-side safe area so the decorative SVG icons no longer overlap copy or CTAs. Header, footer, Affiliate Hero + Stats, tablet/mobile-desktop text sizing, and mobile portrait layout were not changed.
 - Checks on 2026-06-09: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate How It Works Image Update (2026-06-11)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `public/images/affiliate/how-it-works/create-account.png`
+  - `public/images/affiliate/how-it-works/share.png`
+  - `public/images/affiliate/how-it-works/get-started.png`
+  - `AGENT.md`
+  - `design.md`
+- Updated only the Affiliate How It Works / Getting Started Is Easy section. Header, footer, Affiliate Hero + Stats, and Affiliate Rewards / Referral Cards were not edited.
+- Step copy now uses the requested titles and bodies: `Create Your Account`, `Share`, and `Get Started`.
+- Replaced the old code-native illustration panels with the three supplied PNG assets under `public/images/affiliate/how-it-works/`. Each image is lazy-loaded with useful alt text, centered, max-width guarded, and rendered with `object-fit: contain` so the uploaded card artwork scales without stretching.
+- Responsive behavior: desktop keeps the three-column step layout and dashed dividers; tablet and mobile-desktop keep the same layout while reducing visual height; mobile portrait keeps Step 1 as the larger stacked block with the image below text and the black `Join and earn` CTA below the image, while Steps 2 and 3 remain compact text-left/image-right cards with a controlled 42% image column.
+- Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
