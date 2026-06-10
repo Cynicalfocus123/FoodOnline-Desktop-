@@ -1413,6 +1413,7 @@
   - `design.md`
 - Updated only the three current How It Works image assets. No card/container CSS, layout, spacing, sizing, border radius, typography, header, footer, Affiliate Hero + Stats, or Affiliate Rewards / Referral Cards code was changed.
 - Removed the baked peach/brown background from the current visual PNGs so the existing card background shows through naturally. Step 1 now uses a rounded alpha mask around the signup preview, while Step 2 and Step 3 use transparent background-connected pixels around the social/share and money-bag visuals.
+- Card 2 `share-visual.png` preserves the supplied `3Share.png`, `Share (3).png`, and `Share (2).png` Facebook, Instagram, and LINE assets together with the share-network visual; only the old embedded card background was removed.
 - Verified the assets have alpha transparency and composited them on a bright test background to confirm the old rectangular fill is removed from the image files.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
 
