@@ -1402,3 +1402,16 @@
 - Normalized all three image boxes to the same shared visual-card structure, dimensions, border radius, border, gradient background, padding, shadow, and responsive sizing. Box 2 and Box 3 now match Box 1 instead of using the old compact mobile/right-side sizing.
 - Removed the mobile-only white outer article panels behind the cards so the image card itself is the main visible box. The external number/title/body remain outside the image card for each step.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Three-Step Image Transparency Fix (2026-06-11)
+
+- Files changed:
+  - `public/images/affiliate/how-it-works/create-account-visual.png`
+  - `public/images/affiliate/how-it-works/share-visual.png`
+  - `public/images/affiliate/how-it-works/get-started-visual.png`
+  - `AGENT.md`
+  - `design.md`
+- Updated only the three current How It Works image assets. No card/container CSS, layout, spacing, sizing, border radius, typography, header, footer, Affiliate Hero + Stats, or Affiliate Rewards / Referral Cards code was changed.
+- Removed the baked peach/brown background from the current visual PNGs so the existing card background shows through naturally. Step 1 now uses a rounded alpha mask around the signup preview, while Step 2 and Step 3 use transparent background-connected pixels around the social/share and money-bag visuals.
+- Verified the assets have alpha transparency and composited them on a bright test background to confirm the old rectangular fill is removed from the image files.
+- Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
