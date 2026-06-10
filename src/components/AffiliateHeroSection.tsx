@@ -619,6 +619,36 @@ function AffiliateFaqSection() {
   );
 }
 
+function AffiliateSignupBannerSection() {
+  return (
+    <section className="affiliate-signup-banner-section" aria-labelledby="affiliate-signup-banner-title">
+      <div
+        className="affiliate-signup-banner"
+        style={{ backgroundImage: `url("${affiliateImagePath("images/affiliate/affiliate-signup-banner.png")}")` }}
+      >
+        <div className="affiliate-signup-banner__content">
+          <div className="affiliate-signup-banner__copy">
+            <h2 id="affiliate-signup-banner-title">
+              Join our
+              <span>affiliate program</span>
+            </h2>
+            <p>Contact us at info@foodonlines.com</p>
+          </div>
+          <a className="affiliate-signup-banner__button" href="#affiliate-apply">
+            <span>Sign up</span>
+            <span className="affiliate-signup-banner__button-icon" aria-hidden="true">
+              <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M5 12h13" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function AffiliateHeroSection() {
   useEffect(() => {
     document.title = "Affiliate Program | FoodOnlines";
@@ -680,6 +710,7 @@ export function AffiliateHeroSection() {
       <AffiliateDashboardSection />
       <AffiliateHowItWorksSection />
       <AffiliateFaqSection />
+      <AffiliateSignupBannerSection />
     </div>
   );
 }

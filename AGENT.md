@@ -1441,3 +1441,16 @@
 - Added local `affiliateFaqs` data plus `AffiliateFaqAccordion` with all five requested questions and answers. The product-assortment answer renders the requested three points as a real list.
 - Accordion behavior: all items are closed by default, clicking the native button opens/closes an item, only one item is open at a time, `aria-expanded` / `aria-controls` / region labels are wired, and Enter/Space work through native button semantics.
 - Design behavior: the section uses a pale blush `#ffe7ea` background, Montserrat-first scoped typography, desktop two-column heading/list layout, subtle divider lines, rotating plus icon state, animated expand/collapse, full-width tablet/mobile stacking, and touch-friendly mobile row heights with no intended horizontal overflow.
+
+## Affiliate Signup CTA Banner (2026-06-11)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `src/styles.css`
+  - `public/images/affiliate/affiliate-signup-banner.png`
+  - `AGENT.md`
+  - `design.md`
+- Added `AffiliateSignupBannerSection` directly under the Affiliate FAQ accordion. Header, footer, Affiliate Hero + Stats, Rewards, Dashboard, How It Works, and FAQ behavior/content were not changed.
+- Copied the uploaded woman-with-box banner image from `D:/Temp/codex-clipboard-0236cdf5-3bd1-4d3d-9665-81cfd58a388f.png` to `public/images/affiliate/affiliate-signup-banner.png`. The first uploaded image was used only as the text/button layout reference.
+- The banner uses a full-width cover background image with a semi-transparent warm orange overlay, large white Montserrat headline text `Join our` / `affiliate program`, supporting text `Contact us at info@foodonlines.com`, and a large black pill `Sign up` CTA linking to `#affiliate-apply`.
+- Responsive behavior: desktop uses a long banner with copy left and button right while keeping the woman visible on the right; tablet/mobile-desktop scale down spacing/type/button; mobile portrait stacks copy and button over the image with `background-position` biased toward the woman's face and no intended horizontal overflow.

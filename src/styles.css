@@ -1110,6 +1110,236 @@ video {
   }
 }
 
+.affiliate-signup-banner-section {
+  overflow-x: clip;
+  background: #fff7f1;
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+}
+
+.affiliate-signup-banner {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(300px, 28vw, 430px);
+  overflow: hidden;
+  background-position: center 45%;
+  background-size: cover;
+  color: #ffffff;
+}
+
+.affiliate-signup-banner::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(176, 77, 19, 0.74) 0%, rgba(236, 125, 48, 0.62) 42%, rgba(204, 91, 27, 0.7) 100%),
+    rgba(236, 112, 37, 0.34);
+  content: "";
+}
+
+.affiliate-signup-banner__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  width: min(100%, 1440px);
+  min-height: inherit;
+  margin: 0 auto;
+  padding: clamp(42px, 6vw, 86px) clamp(18px, 5vw, 72px);
+}
+
+.affiliate-signup-banner__copy {
+  min-width: 0;
+}
+
+.affiliate-signup-banner__copy h2 {
+  max-width: 920px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(54px, 7vw, 112px);
+  font-weight: 900;
+  line-height: 1.04;
+  letter-spacing: 0;
+  text-shadow: 0 8px 24px rgba(80, 30, 8, 0.18);
+}
+
+.affiliate-signup-banner__copy h2 span {
+  display: block;
+}
+
+.affiliate-signup-banner__copy p {
+  margin: clamp(10px, 1.2vw, 16px) 0 0;
+  color: #ffffff;
+  font-size: clamp(17px, 1.45vw, 24px);
+  font-weight: 600;
+  line-height: 1.35;
+  text-shadow: 0 4px 18px rgba(80, 30, 8, 0.18);
+}
+
+.affiliate-signup-banner__button {
+  display: inline-flex;
+  min-height: clamp(70px, 7vw, 112px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 2.4vw, 34px);
+  border-radius: 999px;
+  background: #050505;
+  color: #ffffff;
+  padding: 0 clamp(28px, 4vw, 62px);
+  font-size: clamp(28px, 3.2vw, 48px);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.affiliate-signup-banner__button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.28);
+}
+
+.affiliate-signup-banner__button:focus {
+  outline: none;
+}
+
+.affiliate-signup-banner__button:focus-visible {
+  box-shadow:
+    0 22px 44px rgba(0, 0, 0, 0.28),
+    0 0 0 4px rgba(255, 255, 255, 0.72);
+}
+
+.affiliate-signup-banner__button-icon {
+  display: grid;
+  width: clamp(48px, 5vw, 72px);
+  height: clamp(48px, 5vw, 72px);
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #050505;
+}
+
+.affiliate-signup-banner__button-icon svg {
+  width: 58%;
+  height: 58%;
+}
+
+@media (max-width: 1024px) {
+  .affiliate-signup-banner {
+    min-height: clamp(280px, 38vw, 360px);
+    background-position: 58% center;
+  }
+
+  .affiliate-signup-banner__content {
+    gap: 28px;
+    padding: 44px 32px;
+  }
+
+  .affiliate-signup-banner__copy h2 {
+    font-size: clamp(44px, 7vw, 72px);
+  }
+
+  .affiliate-signup-banner__copy p {
+    font-size: clamp(15px, 2vw, 19px);
+  }
+
+  .affiliate-signup-banner__button {
+    min-height: 66px;
+    gap: 18px;
+    padding: 0 28px;
+    font-size: clamp(22px, 3vw, 32px);
+  }
+
+  .affiliate-signup-banner__button-icon {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 860px) and (orientation: landscape) {
+  .affiliate-signup-banner {
+    min-height: 240px;
+    background-position: 60% 42%;
+  }
+
+  .affiliate-signup-banner__content {
+    gap: 20px;
+    padding: 32px 36px;
+  }
+
+  .affiliate-signup-banner__copy h2 {
+    font-size: 42px;
+    line-height: 1.02;
+  }
+
+  .affiliate-signup-banner__copy p {
+    font-size: 15px;
+  }
+
+  .affiliate-signup-banner__button {
+    min-height: 54px;
+    gap: 14px;
+    padding: 0 22px;
+    font-size: 22px;
+  }
+
+  .affiliate-signup-banner__button-icon {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 640px) {
+  .affiliate-signup-banner {
+    min-height: 430px;
+    background-position: 63% center;
+  }
+
+  .affiliate-signup-banner::before {
+    background:
+      linear-gradient(180deg, rgba(168, 69, 14, 0.78) 0%, rgba(230, 118, 42, 0.66) 48%, rgba(169, 70, 19, 0.74) 100%),
+      rgba(236, 112, 37, 0.4);
+  }
+
+  .affiliate-signup-banner__content {
+    display: flex;
+    min-height: inherit;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    padding: 42px 16px;
+  }
+
+  .affiliate-signup-banner__copy h2 {
+    max-width: 360px;
+    font-size: clamp(42px, 13vw, 58px);
+    line-height: 1.05;
+  }
+
+  .affiliate-signup-banner__copy p {
+    max-width: 310px;
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .affiliate-signup-banner__button {
+    min-height: 58px;
+    gap: 16px;
+    padding: 0 20px 0 28px;
+    font-size: 22px;
+  }
+
+  .affiliate-signup-banner__button-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 #home,
 #categories,
 #best-deals,
