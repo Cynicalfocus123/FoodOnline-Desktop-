@@ -873,6 +873,243 @@ video {
   }
 }
 
+.affiliate-faq-section {
+  overflow-x: clip;
+  background: #ffe7ea;
+  color: #050505;
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+}
+
+.affiliate-faq-inner {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(32px, 6vw, 92px);
+  width: min(100%, 1440px);
+  margin: 0 auto;
+  padding: clamp(52px, 7vw, 104px) clamp(18px, 5vw, 72px);
+}
+
+.affiliate-faq-heading h2 {
+  max-width: 460px;
+  margin: 0;
+  color: #050505;
+  font-size: clamp(38px, 4.8vw, 78px);
+  font-weight: 900;
+  line-height: 1.03;
+  letter-spacing: 0;
+}
+
+.affiliate-faq-list {
+  width: 100%;
+  border-top: 1px solid rgba(71, 35, 35, 0.18);
+}
+
+.affiliate-faq-item {
+  border-bottom: 1px solid rgba(71, 35, 35, 0.18);
+}
+
+.affiliate-faq-question {
+  margin: 0;
+}
+
+.affiliate-faq-button {
+  display: flex;
+  min-height: clamp(76px, 6.5vw, 104px);
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 0;
+  background: transparent;
+  color: #120f0d;
+  cursor: pointer;
+  font: inherit;
+  padding: clamp(18px, 2.2vw, 28px) 0;
+  text-align: left;
+}
+
+.affiliate-faq-button span:first-child {
+  min-width: 0;
+  font-size: clamp(20px, 2vw, 32px);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.affiliate-faq-button:focus {
+  outline: none;
+}
+
+.affiliate-faq-button:focus-visible {
+  outline: 3px solid rgba(5, 5, 5, 0.32);
+  outline-offset: 6px;
+}
+
+.affiliate-faq-icon {
+  display: grid;
+  width: clamp(34px, 3.2vw, 46px);
+  height: clamp(34px, 3.2vw, 46px);
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  color: #050505;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 220ms ease;
+}
+
+.affiliate-faq-icon svg {
+  width: 58%;
+  height: 58%;
+  transition: transform 220ms ease;
+}
+
+.affiliate-faq-button[aria-expanded="true"] .affiliate-faq-icon {
+  background: #050505;
+  color: #ffffff;
+  transform: rotate(45deg);
+}
+
+.affiliate-faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 240ms ease,
+    opacity 200ms ease;
+}
+
+.affiliate-faq-panel.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.affiliate-faq-answer {
+  min-height: 0;
+  overflow: hidden;
+  color: #221a17;
+  font-size: clamp(15px, 1.05vw, 18px);
+  font-weight: 400;
+  line-height: 1.62;
+}
+
+.affiliate-faq-answer p {
+  max-width: 760px;
+  margin: 0 0 16px;
+}
+
+.affiliate-faq-answer p:last-child {
+  margin-bottom: clamp(20px, 2.4vw, 34px);
+}
+
+.affiliate-faq-answer ul {
+  max-width: 760px;
+  margin: 2px 0 clamp(20px, 2.4vw, 34px);
+  padding-left: 1.2rem;
+}
+
+.affiliate-faq-answer li {
+  margin: 8px 0;
+  padding-left: 0.2rem;
+}
+
+@media (max-width: 1024px) {
+  .affiliate-faq-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 50px 32px 58px;
+  }
+
+  .affiliate-faq-heading h2 {
+    max-width: 620px;
+    font-size: clamp(34px, 6vw, 56px);
+  }
+
+  .affiliate-faq-button {
+    min-height: 74px;
+  }
+
+  .affiliate-faq-button span:first-child {
+    font-size: clamp(19px, 2.8vw, 26px);
+  }
+}
+
+@media (max-width: 860px) and (orientation: landscape) {
+  .affiliate-faq-inner {
+    gap: 22px;
+    padding: 36px;
+  }
+
+  .affiliate-faq-heading h2 {
+    font-size: 34px;
+  }
+
+  .affiliate-faq-button {
+    min-height: 62px;
+    gap: 18px;
+    padding: 14px 0;
+  }
+
+  .affiliate-faq-button span:first-child {
+    font-size: 19px;
+  }
+
+  .affiliate-faq-answer {
+    font-size: 14px;
+    line-height: 1.52;
+  }
+}
+
+@media (max-width: 640px) {
+  .affiliate-faq-inner {
+    gap: 20px;
+    padding: 38px 16px 46px;
+  }
+
+  .affiliate-faq-heading h2 {
+    font-size: clamp(30px, 10vw, 42px);
+    line-height: 1.05;
+  }
+
+  .affiliate-faq-button {
+    min-height: 64px;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .affiliate-faq-button span:first-child {
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .affiliate-faq-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .affiliate-faq-answer {
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .affiliate-faq-answer p {
+    margin-bottom: 12px;
+  }
+
+  .affiliate-faq-answer p:last-child,
+  .affiliate-faq-answer ul {
+    margin-bottom: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .affiliate-faq-icon,
+  .affiliate-faq-icon svg,
+  .affiliate-faq-panel {
+    transition: none;
+  }
+}
+
 #home,
 #categories,
 #best-deals,

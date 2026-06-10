@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type AffiliateProduct = {
   discount: string;
@@ -33,6 +33,12 @@ type HowItWorksStep = {
   variant: "signup" | "share" | "earn";
   image: string;
   imageAlt: string;
+};
+
+type AffiliateFaq = {
+  question: string;
+  paragraphs: string[];
+  bullets?: string[];
 };
 
 const affiliateImagePath = (path: string) => `${import.meta.env.BASE_URL}${path}`;
@@ -141,6 +147,44 @@ const howItWorksSteps: HowItWorksStep[] = [
     variant: "earn",
     image: affiliateImagePath("images/affiliate/how-it-works/get-started-visual.png"),
     imageAlt: "Affiliate earnings money bag illustration",
+  },
+];
+
+const affiliateFaqs: AffiliateFaq[] = [
+  {
+    question: "How do I become an affiliate?",
+    paragraphs: [
+      "Simply submit your application through our affiliate signup page. Our team reviews applications on a regular basis, and once approved, you'll be invited to review and accept the affiliate program terms and conditions before getting started.",
+    ],
+  },
+  {
+    question: "Am I eligible to become a Foodonlines.com affiliate?",
+    paragraphs: [
+      "Yes. Foodonlines.com welcomes applications from a wide range of partners, including content creators, bloggers, website owners, influencers, community leaders, and other promotional channels.",
+      "To help expedite the review process, we encourage you to provide links to any blogs, websites, social media profiles, or online communities that you manage or actively contribute to as part of your application.",
+    ],
+  },
+  {
+    question: "How do I track sales?",
+    paragraphs: [
+      "Sales are tracked automatically through your unique affiliate link. When a shopper clicks your affiliate link, their first qualifying purchase made within the 48-hour tracking window will be attributed to your account and counted toward your commission earnings.",
+    ],
+  },
+  {
+    question: "What does an ideal product assortment look like?",
+    paragraphs: ["We look for products that align with customer demand and marketplace standards, including:"],
+    bullets: [
+      "Best-selling and high-demand products",
+      "Premium brands and products that complement our existing marketplace categories",
+      "Products that comply with Foodonlines.com's marketplace policies, including all guidelines related to prohibited and restricted items",
+    ],
+  },
+  {
+    question: "How can I earn bonuses and commissions from referred users?",
+    paragraphs: [
+      "You can invite new users using any of your affiliate links. Once a referred user completes their first two deliveries, you will earn a referral bonus.",
+      "In addition, you'll receive commissions on all eligible purchases made by that user during their first six months as a customer\u2014even if they return and purchase without using your affiliate link again.",
+    ],
   },
 ];
 
@@ -505,6 +549,76 @@ function AffiliateHowItWorksSection() {
   );
 }
 
+function AffiliateFaqAccordion() {
+  const [openQuestion, setOpenQuestion] = useState<string | null>(null);
+
+  return (
+    <div className="affiliate-faq-list">
+      {affiliateFaqs.map((faq, index) => {
+        const isOpen = openQuestion === faq.question;
+        const panelId = `affiliate-faq-panel-${index}`;
+        const buttonId = `affiliate-faq-button-${index}`;
+
+        return (
+          <article className="affiliate-faq-item" key={faq.question}>
+            <h3 className="affiliate-faq-question">
+              <button
+                aria-controls={panelId}
+                aria-expanded={isOpen}
+                className="affiliate-faq-button"
+                id={buttonId}
+                onClick={() => setOpenQuestion(isOpen ? null : faq.question)}
+                type="button"
+              >
+                <span>{faq.question}</span>
+                <span className="affiliate-faq-icon" aria-hidden="true">
+                  <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.3" viewBox="0 0 24 24">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                  </svg>
+                </span>
+              </button>
+            </h3>
+            <div
+              aria-hidden={!isOpen}
+              aria-labelledby={buttonId}
+              className={`affiliate-faq-panel ${isOpen ? "is-open" : ""}`}
+              id={panelId}
+              role="region"
+            >
+              <div className="affiliate-faq-answer">
+                {faq.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {faq.bullets ? (
+                  <ul>
+                    {faq.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function AffiliateFaqSection() {
+  return (
+    <section className="affiliate-faq-section" aria-labelledby="affiliate-faq-title">
+      <div className="affiliate-faq-inner">
+        <div className="affiliate-faq-heading">
+          <h2 id="affiliate-faq-title">Have any questions?</h2>
+        </div>
+        <AffiliateFaqAccordion />
+      </div>
+    </section>
+  );
+}
+
 export function AffiliateHeroSection() {
   useEffect(() => {
     document.title = "Affiliate Program | FoodOnlines";
@@ -565,6 +679,7 @@ export function AffiliateHeroSection() {
       <AffiliateRewardsSection />
       <AffiliateDashboardSection />
       <AffiliateHowItWorksSection />
+      <AffiliateFaqSection />
     </div>
   );
 }
