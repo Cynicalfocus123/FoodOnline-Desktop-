@@ -375,6 +375,47 @@ function AffiliateRewardsSection() {
   );
 }
 
+function AffiliateDashboardSection() {
+  return (
+    <section className="affiliate-dashboard-section" aria-labelledby="affiliate-dashboard-title">
+      <div className="affiliate-dashboard-inner">
+        <div className="affiliate-dashboard-heading">
+          <h2>Start Earning Today</h2>
+          <p>Monitor and manage your earnings with ease through our streamlined tracking tools.</p>
+        </div>
+
+        <div className="affiliate-dashboard-card">
+          <div className="affiliate-dashboard-copy">
+            <h3 id="affiliate-dashboard-title">
+              Easy-to-use
+              <span>Dashboards</span>
+            </h3>
+            <p>Track your clicks, referrals, and commissions all in one place with real-time updates.</p>
+            <a className="affiliate-dashboard-button" href="#affiliate-apply">
+              <span>Get Started</span>
+              <span className="affiliate-dashboard-button-icon" aria-hidden="true">
+                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
+                  <path d="M5 12h13" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </span>
+            </a>
+          </div>
+
+          <div className="affiliate-dashboard-imageWrap">
+            <img
+              alt="Affiliate dashboard analytics illustration"
+              className="affiliate-dashboard-image"
+              loading="lazy"
+              src={affiliateImagePath("images/affiliate/affiliate-dashboard.png")}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorksVisual({ step }: { step: HowItWorksStep }) {
   return (
     <div
@@ -522,6 +563,7 @@ export function AffiliateHeroSection() {
         <AffiliateStatsRow />
       </section>
       <AffiliateRewardsSection />
+      <AffiliateDashboardSection />
       <AffiliateHowItWorksSection />
     </div>
   );

@@ -1415,3 +1415,16 @@
 - Removed the baked peach/brown background from the current visual PNGs so the existing card background shows through naturally. Step 1 now uses a rounded alpha mask around the signup preview, while Step 2 and Step 3 use transparent background-connected pixels around the social/share and money-bag visuals.
 - Verified the assets have alpha transparency and composited them on a bright test background to confirm the old rectangular fill is removed from the image files.
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
+## Affiliate Dashboard / Start Earning Today Section (2026-06-11)
+
+- Files changed:
+  - `src/components/AffiliateHeroSection.tsx`
+  - `src/styles.css`
+  - `public/images/affiliate/affiliate-dashboard.png`
+  - `AGENT.md`
+  - `design.md`
+- Added `AffiliateDashboardSection` directly below `AffiliateRewardsSection` and above the existing How It Works section. Header, footer, Affiliate Hero + Stats, and Affiliate Rewards / Referral Cards markup were not changed.
+- Copied the supplied dashboard source image from `D:/Foodonline desktop version/pages/affillate page/23.Start Earning Today.png` to `public/images/affiliate/affiliate-dashboard.png` and render it with the existing `affiliateImagePath(...)` Vite base-path helper.
+- The section uses a soft peach/orange `#ffb28f` background, Montserrat-first scoped typography, a wide white rounded dashboard card, black compact pill `Get Started` CTA with a white circular SVG arrow icon, and the requested alt text `Affiliate dashboard analytics illustration`.
+- Responsive behavior: desktop/tablet keep a two-column white card with copy left and dashboard image right where space allows; mobile landscape keeps the card compact; mobile portrait stacks the uploaded dashboard image above centered copy and CTA with no intended horizontal overflow.
