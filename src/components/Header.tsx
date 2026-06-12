@@ -226,6 +226,7 @@ export function Header() {
   const openLogin = useHomeStore((state) => state.openLogin);
   const openAccount = useHomeStore((state) => state.openAccount);
   const openCart = useHomeStore((state) => state.openCart);
+  const openWholesaler = useHomeStore((state) => state.openWholesaler);
   const openSearchResults = useHomeStore((state) => state.openSearchResults);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
@@ -258,6 +259,10 @@ export function Header() {
 
     if (siteView === "product" || siteView === "category" || siteView === "search") {
       return "Products";
+    }
+
+    if (siteView === "wholesaler") {
+      return "Wholesale Products";
     }
 
     return null;
@@ -419,6 +424,11 @@ export function Header() {
     if (itemLabel === "Home" && siteView !== "home") {
       event.preventDefault();
       backToHome();
+    }
+
+    if (itemLabel === "Wholesale Products") {
+      event.preventDefault();
+      openWholesaler();
     }
 
     setIsMobileMenuOpen(false);

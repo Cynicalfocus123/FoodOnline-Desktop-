@@ -20,6 +20,7 @@ import { ProductDetailPage } from "./components/ProductDetailPage";
 import { PromoExperience } from "./components/PromoExperience";
 import { SearchResultsPage } from "./components/SearchResultsPage";
 import { SignupFlow } from "./components/SignupFlow";
+import { WholesalerPage } from "./components/WholesalerPage";
 import { useHomeStore } from "./store/homeStore";
 import { usePublicAuthStore } from "./store/publicAuthStore";
 
@@ -84,6 +85,7 @@ export default function App() {
       {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
       {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
       {siteView === "becomeSponsor" ? <BecomeSponsorPage /> : null}
+      {siteView === "wholesaler" ? <WholesalerPage /> : null}
       {siteView === "affiliate" ? <AffiliateHeroSection /> : null}
       {siteView === "drivers" ? <DriverLandingPage /> : null}
       <Footer />

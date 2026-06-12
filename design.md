@@ -883,6 +883,16 @@
 - Adjusted only the left hero image layer so the food artwork visually touches the bottom edge of the orange panel. The image asset remains unchanged, but it now renders inside a no-padding, line-height-zero, overflow-hidden art wrapper with a small downward translate to clip the PNG's transparent bottom pixels.
 - Desktop and mobile keep the same text, background color, layout, and right-side content while removing the floating beige/orange strip below the visible food.
 
+### Wholesaler Page Savings Section Responsive Card (2026-06-12)
+
+- Added the public Wholesaler page at `/wholesaler` with `#wholesaler` fallback routing. The existing header `Wholesale Products` item now opens the page without changing header layout, footer layout, hero copy, or the third brands artwork.
+- Wholesaler assets from `pages/wholesaler` are copied to `public/images/wholesaler/` for browser-safe URLs. The first hero and third `Source products from leading brands` areas use the supplied artwork as-is so their approved visual direction is not redesigned.
+- The second `More Savings, More Convenience` section is code-native and responsive. Desktop keeps a lavender full-width composition with centered black heading text, three benefit points, and a transparent product collage at the bottom.
+- Tablet and mobile portrait use the approved single centered white rounded card on the soft lavender page background. The card contains a large centered `Save 10%` / `on every order` heading, centered subtitle `Flexible delivery and free unloading`, thin lavender-gray dividers, three stacked benefit rows, and the transparent product collage anchored along the card bottom.
+- All savings-section text is near-black and Montserrat-scoped. Headings, eyebrow, and emphasized text use Montserrat 800/900; body, subtitle, and benefit text use Montserrat 400. Purple text is not used in the savings section.
+- Benefit rows use pale orange rounded icon boxes. No standalone discount/delivery/package icon files were present in `pages/wholesaler`, so scoped inline SVG fallback icons are used only for those three row icons; product images still come from the supplied Wholesaler asset folder.
+- The bottom collage uses the supplied transparent curry box, Bibigo bag, canned chicken, sauce tub, and green wave assets, with no colored image box behind the products and no intentional horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

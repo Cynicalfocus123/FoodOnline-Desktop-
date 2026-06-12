@@ -1440,6 +1440,25 @@
 - Adjusted only the left Contact Us hero image area to remove the visible orange gap below the food art. Header, footer, right-side cards, text content, routing, page structure, background color, and image asset were not changed.
 - The source PNG has transparent pixels below the visible food, so the image now sits inside a no-padding, `line-height: 0`, overflow-hidden art layer and is shifted down slightly. This clips the transparent bottom edge so the visible food meets the panel bottom on desktop, tablet, and mobile while staying flush toward the left edge.
 
+## Wholesaler Page Savings Section Responsive Card (2026-06-12)
+
+- Files changed:
+  - `src/components/WholesalerPage.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `src/components/Header.tsx`
+  - `src/data/home.ts`
+  - `src/styles.css`
+  - `public/images/wholesaler/`
+  - `AGENT.md`
+  - `design.md`
+- Added the new public Wholesaler page route at `/wholesaler` with `#wholesaler` fallback, and connected the existing header `Wholesale Products` navigation item to that route through the shared Zustand routing pattern.
+- The supplied Wholesaler section artwork from `pages/wholesaler` was copied into `public/images/wholesaler/` for browser-safe asset URLs. The first hero and third brands sections render the supplied artwork without redesigning those sections.
+- Rebuilt only the second `More Savings, More Convenience` / savings offer section as code-native responsive HTML/CSS. Desktop keeps the existing lavender, centered heading, three-column benefit, and bottom-product composition, while tablet/mobile switch to one centered white rounded card on the lavender background.
+- Mobile/tablet savings card copy is hardcoded as requested: `Save 10% on every order`, `Flexible delivery and free unloading`, and three stacked benefit rows including the `฿3,000` threshold text.
+- The entire savings section uses Montserrat with black text. Headings/labels use 800/900 weights, body and benefit copy use normal 400 weight, dividers stay light lavender/gray, and icon containers use pale orange.
+- No separate savings/delivery/package icon files existed in `pages/wholesaler`; the section therefore uses scoped inline SVG fallback icons only for those three row icons. The bottom product collage uses the supplied transparent product cutouts from the Wholesaler asset folder and keeps them anchored inside the card bottom with no colored box behind them.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

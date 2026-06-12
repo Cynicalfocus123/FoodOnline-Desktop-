@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -112,6 +114,389 @@ video {
 .home-section-auto {
   content-visibility: auto;
   contain-intrinsic-size: 420px;
+}
+
+.wholesaler-art-section {
+  position: relative;
+  overflow: hidden;
+  background: #f8eaff;
+}
+
+.wholesaler-art-section > img {
+  height: auto;
+}
+
+.wholesaler-hero-cta {
+  position: absolute;
+  left: 9.3%;
+  bottom: 20.5%;
+  z-index: 2;
+  display: inline-flex;
+  min-height: clamp(40px, 4.9vw, 82px);
+  align-items: center;
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  border: 0;
+  border-radius: 999px;
+  background: #000000;
+  color: #ffffff;
+  padding: 0 clamp(1.1rem, 3vw, 3.6rem);
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+  font-size: clamp(0.95rem, 1.75vw, 2rem);
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.wholesaler-hero-cta span:last-child {
+  display: grid;
+  width: clamp(28px, 3.2vw, 52px);
+  height: clamp(28px, 3.2vw, 52px);
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #000000;
+  font-size: clamp(1.15rem, 2vw, 2.4rem);
+  line-height: 1;
+}
+
+.wholesaler-savings-section,
+.wholesaler-savings-section * {
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+}
+
+.wholesaler-savings-section {
+  overflow: hidden;
+  background: #f8eaff;
+  color: #050505;
+}
+
+.wholesaler-savings-section h2,
+.wholesaler-savings-section p,
+.wholesaler-savings-section span {
+  color: #050505;
+}
+
+.wholesaler-savings-card {
+  position: relative;
+  max-width: 1650px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: clamp(4.8rem, 6vw, 6rem) clamp(2rem, 6vw, 7.5rem) 0;
+  background: #f8eaff;
+}
+
+.wholesaler-savings-eyebrow {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.35rem, 1.85vw, 2rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: 0.08em;
+}
+
+.wholesaler-savings-desktop-heading {
+  margin: clamp(1.35rem, 2vw, 1.8rem) auto 0;
+  max-width: 760px;
+  text-align: center;
+}
+
+.wholesaler-savings-desktop-heading h2 {
+  margin: 0;
+  font-size: clamp(2.65rem, 4vw, 3.7rem);
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.wholesaler-savings-desktop-heading p {
+  margin: clamp(1.5rem, 2.2vw, 2rem) auto 0;
+  max-width: 650px;
+  font-size: clamp(1.2rem, 1.7vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.22;
+}
+
+.wholesaler-savings-mobile-heading {
+  display: none;
+}
+
+.wholesaler-savings-benefits {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: clamp(4.6rem, 5vw, 5.3rem) auto 0;
+  max-width: 1280px;
+}
+
+.wholesaler-savings-benefit {
+  display: grid;
+  min-height: 95px;
+  place-items: start center;
+  padding: 0 clamp(1.5rem, 3.2vw, 3.6rem);
+  text-align: center;
+}
+
+.wholesaler-savings-benefit + .wholesaler-savings-benefit {
+  border-left: 2px solid rgba(5, 5, 5, 0.72);
+}
+
+.wholesaler-savings-benefit-icon {
+  display: none;
+}
+
+.wholesaler-savings-benefit-text {
+  margin: 0;
+  max-width: 380px;
+  font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.wholesaler-savings-products {
+  position: relative;
+  z-index: 1;
+  min-height: clamp(250px, 27vw, 430px);
+  margin: clamp(2rem, 4vw, 3.4rem) calc(clamp(2rem, 6vw, 7.5rem) * -1) 0;
+  overflow: hidden;
+}
+
+.wholesaler-savings-product {
+  position: absolute;
+  bottom: 0;
+  z-index: 2;
+  display: block;
+  max-width: none;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 18px rgba(10, 10, 10, 0.12));
+}
+
+.wholesaler-savings-product--chicken {
+  left: 5%;
+  width: clamp(180px, 19vw, 315px);
+}
+
+.wholesaler-savings-product--curry {
+  left: 21%;
+  width: clamp(190px, 20vw, 340px);
+}
+
+.wholesaler-savings-product--bibigo {
+  left: 38%;
+  bottom: -2%;
+  width: clamp(260px, 28vw, 465px);
+}
+
+.wholesaler-savings-product--sauce {
+  right: 7%;
+  width: clamp(260px, 33vw, 545px);
+}
+
+.wholesaler-savings-wave {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 4;
+  display: block;
+  width: 100%;
+  max-width: none;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .wholesaler-hero-cta {
+    left: 9.5%;
+    bottom: 20.8%;
+  }
+
+  .wholesaler-savings-section {
+    padding: clamp(28px, 5vw, 56px) clamp(14px, 4vw, 32px);
+  }
+
+  .wholesaler-savings-card {
+    width: min(100%, 720px);
+    margin: 0 auto;
+    border-radius: clamp(24px, 5vw, 42px);
+    background: #ffffff;
+    padding: clamp(32px, 6vw, 58px) clamp(22px, 5vw, 48px) 0;
+    box-shadow: 0 18px 45px rgba(70, 35, 90, 0.1);
+  }
+
+  .wholesaler-savings-eyebrow,
+  .wholesaler-savings-desktop-heading {
+    display: none;
+  }
+
+  .wholesaler-savings-mobile-heading {
+    display: block;
+    text-align: center;
+  }
+
+  .wholesaler-savings-mobile-heading h2 {
+    margin: 0;
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .wholesaler-savings-mobile-heading p {
+    margin: 18px 0 34px;
+    font-size: clamp(18px, 3vw, 30px);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .wholesaler-savings-benefits {
+    display: block;
+    margin: 0;
+    max-width: none;
+    border-top: 1px solid rgba(120, 83, 190, 0.22);
+  }
+
+  .wholesaler-savings-benefit {
+    display: grid;
+    grid-template-columns: clamp(54px, 8vw, 78px) minmax(0, 1fr);
+    min-height: 0;
+    align-items: center;
+    gap: clamp(18px, 4vw, 32px);
+    padding: clamp(22px, 4vw, 34px) 0;
+    border-bottom: 1px solid rgba(120, 83, 190, 0.22);
+    text-align: left;
+  }
+
+  .wholesaler-savings-benefit + .wholesaler-savings-benefit {
+    border-left: 0;
+  }
+
+  .wholesaler-savings-benefit-icon {
+    display: grid;
+    width: clamp(50px, 8vw, 72px);
+    height: clamp(50px, 8vw, 72px);
+    place-items: center;
+    border-radius: 16px;
+    background: #fff1e6;
+    color: #f47a1f;
+  }
+
+  .wholesaler-savings-benefit-icon svg {
+    width: 58%;
+    height: 58%;
+  }
+
+  .wholesaler-savings-benefit-text {
+    max-width: none;
+    font-size: clamp(16px, 2.5vw, 24px);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .wholesaler-savings-products {
+    margin: clamp(28px, 5vw, 52px) calc(clamp(22px, 5vw, 48px) * -1) 0;
+    min-height: clamp(170px, 28vw, 280px);
+  }
+
+  .wholesaler-savings-product--chicken {
+    left: 3%;
+    width: clamp(132px, 23vw, 205px);
+  }
+
+  .wholesaler-savings-product--curry {
+    left: 21%;
+    width: clamp(140px, 24vw, 215px);
+  }
+
+  .wholesaler-savings-product--bibigo {
+    left: 43%;
+    bottom: -3%;
+    width: clamp(180px, 34vw, 280px);
+  }
+
+  .wholesaler-savings-product--sauce {
+    right: -2%;
+    width: clamp(178px, 36vw, 300px);
+  }
+}
+
+@media (max-width: 640px) {
+  .wholesaler-page {
+    padding-top: 116px;
+  }
+
+  .wholesaler-hero-cta {
+    min-height: 34px;
+    padding: 0 1rem;
+    font-size: 0.75rem;
+  }
+
+  .wholesaler-hero-cta span:last-child {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+
+  .wholesaler-savings-section {
+    padding: 22px 12px;
+  }
+
+  .wholesaler-savings-card {
+    border-radius: 24px;
+    padding: 34px 22px 0;
+  }
+
+  .wholesaler-savings-mobile-heading h2 {
+    font-size: clamp(40px, 12vw, 58px);
+  }
+
+  .wholesaler-savings-mobile-heading p {
+    margin-bottom: 26px;
+    font-size: clamp(17px, 4.8vw, 22px);
+  }
+
+  .wholesaler-savings-benefit {
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 16px;
+    padding: 22px 0;
+  }
+
+  .wholesaler-savings-benefit-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+
+  .wholesaler-savings-benefit-text {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .wholesaler-savings-products {
+    min-height: 172px;
+    margin-right: -22px;
+    margin-left: -22px;
+  }
+
+  .wholesaler-savings-product--chicken {
+    left: -5%;
+    width: 125px;
+  }
+
+  .wholesaler-savings-product--curry {
+    left: 16%;
+    width: 132px;
+  }
+
+  .wholesaler-savings-product--bibigo {
+    left: 38%;
+    width: 178px;
+  }
+
+  .wholesaler-savings-product--sauce {
+    right: -20%;
+    width: 215px;
+  }
 }
 
 .sponsor-section {

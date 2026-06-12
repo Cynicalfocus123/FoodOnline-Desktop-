@@ -957,7 +957,7 @@ export const navItems: NavItem[] = [
   { label: "Coupon", href: "#best-deals" },
   { label: "Products", href: "#best-deals", hasChevron: true },
   { label: "Healthy Product", href: "#organic-healthy-living" },
-  { label: "Wholesale Products", href: "#best-deals", accent: "leaf" },
+  { label: "Wholesale Products", href: "/wholesaler", accent: "leaf" },
   { label: "Deal-of-the-week", href: "#best-deals" },
 ];
 

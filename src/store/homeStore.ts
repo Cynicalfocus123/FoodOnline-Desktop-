@@ -33,6 +33,7 @@ export type SiteView =
   | "becomeVendor"
   | "becomePartner"
   | "becomeSponsor"
+  | "wholesaler"
   | "affiliate"
   | "drivers";
 export type SignupStep = "role" | "form" | "complete";
@@ -67,6 +68,8 @@ function readAuthReturnRoute(
       return "become-partner";
     case "becomeSponsor":
       return "become-a-sponsor";
+    case "wholesaler":
+      return "wholesaler";
     case "affiliate":
       return "affiliate";
     case "drivers":
@@ -195,6 +198,18 @@ function isBecomeSponsorRoute(hash: string) {
   return /\/become-a-sponsor\/?$/i.test(window.location.pathname);
 }
 
+function isWholesalerRoute(hash: string) {
+  if (/^#wholesaler(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/wholesaler\/?$/i.test(window.location.pathname);
+}
+
 function isAffiliateRoute(hash: string) {
   if (/^#affiliate(?:[/?#].*)?$/i.test(hash)) {
     return true;
@@ -259,6 +274,7 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#become-partner") ||
     window.location.hash.startsWith("#become-a-sponsor") ||
+    window.location.hash.startsWith("#wholesaler") ||
     window.location.hash.startsWith("#affiliate") ||
     window.location.hash.startsWith("#company/drivers") ||
     /\/about-us\/?$/i.test(window.location.pathname) ||
@@ -266,6 +282,7 @@ function writeRouteHash(route: string | null) {
     /\/become-vendor\/?$/i.test(window.location.pathname) ||
     /\/become-partner\/?$/i.test(window.location.pathname) ||
     /\/become-a-sponsor\/?$/i.test(window.location.pathname) ||
+    /\/wholesaler\/?$/i.test(window.location.pathname) ||
     /\/affiliate\/?$/i.test(window.location.pathname) ||
     /\/company\/drivers\/?$/i.test(window.location.pathname)
   ) {
@@ -304,6 +321,7 @@ type HomeState = {
   openBecomeVendor: () => void;
   openBecomePartner: () => void;
   openBecomeSponsor: () => void;
+  openWholesaler: () => void;
   openAffiliate: () => void;
   openDrivers: () => void;
   openProduct: (productId: string) => void;
@@ -526,6 +544,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openWholesaler: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}wholesaler`);
+      }
+
+      return {
+        siteView: "wholesaler",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openAffiliate: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -680,6 +712,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         return {
           authReturnRoute: state.authReturnRoute,
           siteView: "becomeSponsor",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
+      if (isWholesalerRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "wholesaler",
           accountSection: "overview",
           selectedProductId: null,
           selectedCategorySlug: null,
