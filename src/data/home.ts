@@ -1330,7 +1330,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Apply Credit",
       "Privacy Policy",
       { label: "Return Policy", href: "/return-policy" },
-      "Terms & Conditions",
+      { label: "Terms & Conditions", href: "/terms-and-conditions" },
       { label: "About Us", href: "/about-us" },
       { label: "Contact Us", href: "/contact-us" },
       "Complaint",

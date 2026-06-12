@@ -36,7 +36,8 @@ export type SiteView =
   | "wholesaler"
   | "affiliate"
   | "drivers"
-  | "returnPolicy";
+  | "returnPolicy"
+  | "termsOfUse";
 export type SignupStep = "role" | "form" | "complete";
 
 function readAuthReturnRoute(
@@ -77,6 +78,8 @@ function readAuthReturnRoute(
       return "company/drivers";
     case "returnPolicy":
       return "return-policy";
+    case "termsOfUse":
+      return "terms-and-conditions";
     default:
       return null;
   }
@@ -175,6 +178,18 @@ function isReturnPolicyRoute(hash: string) {
   }
 
   return /\/return-policy\/?$/i.test(window.location.pathname);
+}
+
+function isTermsOfUseRoute(hash: string) {
+  if (/^#terms-and-conditions(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/terms-and-conditions\/?$/i.test(window.location.pathname);
 }
 
 function isBecomeVendorRoute(hash: string) {
@@ -287,6 +302,7 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#about-us") ||
     window.location.hash.startsWith("#contact-us") ||
     window.location.hash.startsWith("#return-policy") ||
+    window.location.hash.startsWith("#terms-and-conditions") ||
     window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#become-partner") ||
     window.location.hash.startsWith("#become-a-sponsor") ||
@@ -296,6 +312,7 @@ function writeRouteHash(route: string | null) {
     /\/about-us\/?$/i.test(window.location.pathname) ||
     /\/contact-us\/?$/i.test(window.location.pathname) ||
     /\/return-policy\/?$/i.test(window.location.pathname) ||
+    /\/terms-and-conditions\/?$/i.test(window.location.pathname) ||
     /\/become-vendor\/?$/i.test(window.location.pathname) ||
     /\/become-partner\/?$/i.test(window.location.pathname) ||
     /\/become-a-sponsor\/?$/i.test(window.location.pathname) ||
@@ -336,6 +353,7 @@ type HomeState = {
   openAboutUs: () => void;
   openContactUs: () => void;
   openReturnPolicy: () => void;
+  openTermsOfUse: () => void;
   openBecomeVendor: () => void;
   openBecomePartner: () => void;
   openBecomeSponsor: () => void;
@@ -528,6 +546,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       return {
         siteView: "returnPolicy",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
+  openTermsOfUse: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}terms-and-conditions`);
+      }
+
+      return {
+        siteView: "termsOfUse",
         selectedProductId: null,
         selectedCategorySlug: null,
         accountSection: "overview",
@@ -730,6 +762,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isTermsOfUseRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "termsOfUse",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isBecomeVendorRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -857,6 +899,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "aboutUs" ||
         state.siteView === "contactUs" ||
         state.siteView === "returnPolicy" ||
+        state.siteView === "termsOfUse" ||
         state.siteView === "becomeVendor" ||
         state.siteView === "becomePartner" ||
         state.siteView === "becomeSponsor" ||

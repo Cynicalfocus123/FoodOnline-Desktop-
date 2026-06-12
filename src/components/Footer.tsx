@@ -55,6 +55,7 @@ export function Footer() {
   const openWholesaler = useHomeStore((state) => state.openWholesaler);
   const openContactUs = useHomeStore((state) => state.openContactUs);
   const openReturnPolicy = useHomeStore((state) => state.openReturnPolicy);
+  const openTermsOfUse = useHomeStore((state) => state.openTermsOfUse);
 
   return (
     <footer id="company" className="border-t border-neutral-200 bg-white px-4 py-14 sm:px-6 sm:py-16">
@@ -99,6 +100,7 @@ export function Footer() {
                   const isDriverLink = href === "/company/drivers";
                   const isWholesalerLink = href === "/wholesaler";
                   const isReturnPolicyLink = href === "/return-policy";
+                  const isTermsOfUseLink = href === "/terms-and-conditions";
 
                   return (
                     <a
@@ -150,6 +152,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openReturnPolicy();
+                            }
+                          : isTermsOfUseLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openTermsOfUse();
                             }
                           : undefined
                       }
