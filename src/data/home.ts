@@ -1329,6 +1329,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Become Our Distributor",
       "Apply Credit",
       "Privacy Policy",
+      { label: "Return Policy", href: "/return-policy" },
       "Terms & Conditions",
       { label: "About Us", href: "/about-us" },
       { label: "Contact Us", href: "/contact-us" },

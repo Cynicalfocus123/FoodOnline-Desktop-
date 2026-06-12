@@ -1495,6 +1495,12 @@
 - Added a five-item hardcoded FAQ accordion directly below the `Source products from leading brands` section in `src/components/WholesalerPage.tsx`.
 - All items start closed and use accessible button controls with `aria-expanded`, `aria-controls`, labelled answer regions, keyboard-native toggling, and rotating SVG chevrons.
 - FAQ styling in `src/styles.css` uses Montserrat, black text, thin row dividers, touch-safe responsive sizing, and the same `#fbf4ff` background as the adjacent brands section. No header, footer, product-card, or image-asset changes were made.
+
+## Footer Return Policy Page (2026-06-12)
+
+- Added a responsive public Return Policy page at `/return-policy`, wired through the shared Zustand SPA route handling and rendered by `src/components/ReturnPolicyPage.tsx`.
+- The Company footer column now places `Return Policy` directly below `Privacy Policy`. Clicking it opens the full supplied policy content with Foodonlines.com branding, contact details, general return rules, RMA instructions, disclaimers, and six special-category policies.
+- Replaced Yami/Yami.com branding and email references in the supplied source text with Foodonlines.com and `info@foodonlines.com`. Updated files: `src/App.tsx`, `src/components/Footer.tsx`, `src/components/ReturnPolicyPage.tsx`, `src/data/home.ts`, `src/store/homeStore.ts`, `src/styles.css`, `AGENT.md`, and `design.md`.
 - The product cutouts now sit behind the green wave again, and the wave is the foreground decorative base. Product bottom offsets and wave heights were tuned so the wave touches and slightly covers the bottom of the packages without burying them or leaving an empty gap.
 
 ## Affiliate How It Works Broken Image Fix (2026-06-11)

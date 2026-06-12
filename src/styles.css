@@ -116,6 +116,46 @@ video {
   contain-intrinsic-size: 420px;
 }
 
+.policy-section {
+  padding-top: clamp(2rem, 4vw, 3rem);
+}
+
+.policy-section + .policy-section {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid #e5e5e5;
+}
+
+.policy-section h2 {
+  margin: 0;
+  color: #0a0a0a;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.policy-section h3 {
+  margin: 0;
+  color: #0a0a0a;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.policy-section p {
+  margin: 1rem 0 0;
+  color: #404040;
+  font-size: clamp(0.94rem, 1.5vw, 1rem);
+  line-height: 1.75;
+}
+
+.policy-section a {
+  color: #047857;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .wholesaler-art-section {
   position: relative;
   overflow: hidden;

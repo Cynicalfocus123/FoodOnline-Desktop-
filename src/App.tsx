@@ -18,6 +18,7 @@ import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
 import { ProductDetailPage } from "./components/ProductDetailPage";
 import { PromoExperience } from "./components/PromoExperience";
+import { ReturnPolicyPage } from "./components/ReturnPolicyPage";
 import { SearchResultsPage } from "./components/SearchResultsPage";
 import { SignupFlow } from "./components/SignupFlow";
 import { WholesalerPage } from "./components/WholesalerPage";
@@ -88,6 +89,7 @@ export default function App() {
       {siteView === "wholesaler" ? <WholesalerPage /> : null}
       {siteView === "affiliate" ? <AffiliateHeroSection /> : null}
       {siteView === "drivers" ? <DriverLandingPage /> : null}
+      {siteView === "returnPolicy" ? <ReturnPolicyPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>
