@@ -144,7 +144,7 @@ function BulletList({ items }: { items: string[] }) {
 export function ReturnPolicyPage() {
   return (
     <div className="bg-[#fffdf8] px-4 pb-20 pt-[150px] sm:px-6 sm:pt-[166px] lg:pt-[176px]">
-      <article className="mx-auto max-w-5xl rounded-[28px] border border-neutral-200 bg-white px-5 py-9 shadow-sm sm:px-10 sm:py-12 lg:px-14">
+      <article className="mx-auto max-w-5xl py-9 sm:py-12">
         <header className="border-b border-neutral-200 pb-8">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-600">Foodonlines.com</p>
           <h1 className="mt-3 text-4xl font-black tracking-[-0.04em] text-neutral-950 sm:text-5xl">Return Policy</h1>
@@ -187,7 +187,7 @@ export function ReturnPolicyPage() {
           <h2>Special category policies</h2>
           <div className="mt-6 space-y-8">
             {categoryPolicies.map((policy) => (
-              <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 sm:p-7" key={policy.title}>
+              <section className="border-t border-neutral-200 pt-7 first:border-t-0 first:pt-0" key={policy.title}>
                 <h3>{policy.title}</h3>
                 <p><strong>Category:</strong> {policy.category}</p>
                 <p><strong>Return Period:</strong> {policy.period}</p>

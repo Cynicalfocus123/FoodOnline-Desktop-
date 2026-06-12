@@ -1501,6 +1501,7 @@
 - Added a responsive public Return Policy page at `/return-policy`, wired through the shared Zustand SPA route handling and rendered by `src/components/ReturnPolicyPage.tsx`.
 - The Company footer column now places `Return Policy` directly below `Privacy Policy`. Clicking it opens the full supplied policy content with Foodonlines.com branding, contact details, general return rules, RMA instructions, disclaimers, and six special-category policies.
 - Replaced Yami/Yami.com branding and email references in the supplied source text with Foodonlines.com and `info@foodonlines.com`. Updated files: `src/App.tsx`, `src/components/Footer.tsx`, `src/components/ReturnPolicyPage.tsx`, `src/data/home.ts`, `src/store/homeStore.ts`, `src/styles.css`, `AGENT.md`, and `design.md`.
+- Return Policy surface follow-up: removed the white rounded document card, border, shadow, and boxed category backgrounds. Policy content now sits directly on the page's warm neutral background while preserving the centered reading width, section dividers, and responsive spacing.
 - The product cutouts now sit behind the green wave again, and the wave is the foreground decorative base. Product bottom offsets and wave heights were tuned so the wave touches and slightly covers the bottom of the packages without burying them or leaving an empty gap.
 
 ## Affiliate How It Works Broken Image Fix (2026-06-11)

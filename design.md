@@ -919,7 +919,7 @@
 ### Footer Return Policy Page (2026-06-12)
 
 - Added `Return Policy` directly beneath `Privacy Policy` in the footer Company column. The link opens a dedicated responsive `/return-policy` page while preserving the existing header and footer layout.
-- The policy uses a warm neutral page background, centered white reading surface, strong black headings, readable neutral body text, subtle dividers, and bordered special-category panels for a long-form legal document that remains legible on mobile and desktop.
+- The policy uses a warm neutral page background with the text placed directly on that background. There is no white document card, shadow, rounded wrapper, or boxed category panel; strong black headings, readable neutral body text, subtle dividers, and a centered reading width keep the long-form document legible on mobile and desktop.
 - The supplied return-policy content is presented with Foodonlines.com branding throughout, including updated Foodonlines.com customer-service references and contact links. No Yami/Yami.com branding remains on the page.
 - The wave is now the foreground decorative base in front of the transparent product cutouts. Products are lowered toward the wave so they visually touch it, while the wave covers only a subtle lower portion of the packages rather than leaving them floating or hiding too much of them.
 - Desktop, tablet, and mobile each keep separate offsets/wave heights so the collage stays balanced with no intentional horizontal overflow.
