@@ -1331,7 +1331,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "My Wishlist",
       "Track My Order",
       "Help Ticket",
-      "Shipping Details",
+      { label: "FAQ", href: "/faq" },
       "Recipe",
     ],
   },

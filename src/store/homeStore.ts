@@ -38,7 +38,8 @@ export type SiteView =
   | "drivers"
   | "returnPolicy"
   | "termsOfUse"
-  | "privacyPolicy";
+  | "privacyPolicy"
+  | "faq";
 export type SignupStep = "role" | "form" | "complete";
 
 function readAuthReturnRoute(
@@ -83,6 +84,8 @@ function readAuthReturnRoute(
       return "terms-and-conditions";
     case "privacyPolicy":
       return "privacy-policy";
+    case "faq":
+      return "faq";
     default:
       return null;
   }
@@ -205,6 +208,18 @@ function isPrivacyPolicyRoute(hash: string) {
   }
 
   return /\/privacy-policy\/?$/i.test(window.location.pathname);
+}
+
+function isFaqRoute(hash: string) {
+  if (/^#faq(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/faq\/?$/i.test(window.location.pathname);
 }
 
 function isBecomeVendorRoute(hash: string) {
@@ -372,6 +387,7 @@ type HomeState = {
   openReturnPolicy: () => void;
   openTermsOfUse: () => void;
   openPrivacyPolicy: () => void;
+  openFaq: () => void;
   openBecomeVendor: () => void;
   openBecomePartner: () => void;
   openBecomeSponsor: () => void;
@@ -598,6 +614,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openFaq: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}faq`);
+      }
+
+      return {
+        siteView: "faq",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openBecomeVendor: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -814,6 +844,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isFaqRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "faq",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isBecomeVendorRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -943,6 +983,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "returnPolicy" ||
         state.siteView === "termsOfUse" ||
         state.siteView === "privacyPolicy" ||
+        state.siteView === "faq" ||
         state.siteView === "becomeVendor" ||
         state.siteView === "becomePartner" ||
         state.siteView === "becomeSponsor" ||

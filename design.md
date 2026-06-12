@@ -950,3 +950,9 @@
 - Keep homepage usable as first screen, not a marketing-only landing page.
 - Preserve public/admin separation: public stays on `index.html` / `src/main.tsx`, admin stays on `admin.html` / `src/admin-main.tsx`, and no admin entry buttons return to the public site.
 - Avoid new dependencies unless feature need is clear.
+## Footer FAQ Page (2026-06-12)
+
+- The `/faq` page follows the site's existing warm-neutral public-page background and wide responsive content rhythm beneath the fixed shared header.
+- A single horizontal pill rail leads the page: active category uses solid brand blue with white type, inactive categories use light gray with near-black type, and mobile keeps the rail swipe-scrollable without a visible scrollbar.
+- FAQ questions and answers render directly on the page background. Rows are separated only by thin neutral rules; questions use medium-bold near-black text, answers use regular near-black text, and right-aligned SVG chevrons rotate when expanded.
+- Desktop uses the full wide content area with generous side padding. Tablet and mobile preserve readable wrapping, touch-safe row heights, aligned chevrons, comfortable answer spacing, and no intended horizontal overflow.

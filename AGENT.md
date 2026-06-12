@@ -1,5 +1,13 @@
 # Agent Notes
 
+## Footer FAQ Page (2026-06-12)
+
+- Added a responsive public FAQ page at `/faq`, connected through the shared Zustand route/history pattern and the existing public header/footer shell.
+- Replaced the Account footer item `Shipping Details` with the working `FAQ` link without changing unrelated footer content or layout.
+- FAQ content is hardcoded across Registration, Ordering, Payment, Shipping, Product, Browsing Experience, and Tax categories. Category pills scroll horizontally on narrow screens, only one answer opens at a time, category changes close the open answer, and accessible buttons expose expanded state.
+- The FAQ list sits directly on the normal warm page background with transparent rows, thin dividers, black text, blue active pills, light-gray inactive pills, and rotating SVG chevrons. No card, panel, border container, or shadow is used behind the FAQ content.
+- All supplied references use Foodonlines branding; the FAQ page contains no Yami or Yamibuy wording.
+
 - Repo was empty when cloned from `https://github.com/Cynicalfocus123/FoodOnline-Desktop-.git`; scaffolded first React desktop site in place.
 - Use caveman full responses unless user says normal mode.
 - Keep command output capped. Prefer small `Select-Object -First ...` / `Out-String -Width ...` on PowerShell.

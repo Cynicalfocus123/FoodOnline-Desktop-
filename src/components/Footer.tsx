@@ -32,6 +32,7 @@ export function Footer() {
   const openReturnPolicy = useHomeStore((state) => state.openReturnPolicy);
   const openTermsOfUse = useHomeStore((state) => state.openTermsOfUse);
   const openPrivacyPolicy = useHomeStore((state) => state.openPrivacyPolicy);
+  const openFaq = useHomeStore((state) => state.openFaq);
 
   return (
     <footer id="company" className="border-t border-neutral-200 bg-white px-4 py-14 sm:px-6 sm:py-16">
@@ -78,6 +79,7 @@ export function Footer() {
                   const isReturnPolicyLink = href === "/return-policy";
                   const isTermsOfUseLink = href === "/terms-and-conditions";
                   const isPrivacyPolicyLink = href === "/privacy-policy";
+                  const isFaqLink = href === "/faq";
 
                   return (
                     <a
@@ -139,6 +141,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openTermsOfUse();
+                            }
+                          : isFaqLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openFaq();
                             }
                           : undefined
                       }

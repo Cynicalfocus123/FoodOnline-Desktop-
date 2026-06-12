@@ -12,6 +12,7 @@ import { CheckoutPage } from "./components/CheckoutPage";
 import { ContactUsPage } from "./components/ContactUsPage";
 import { DealsGrid } from "./components/DealsGrid";
 import { DriverLandingPage } from "./components/DriverLandingPage";
+import { FaqPage } from "./components/FaqPage";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
@@ -94,6 +95,7 @@ export default function App() {
       {siteView === "returnPolicy" ? <ReturnPolicyPage /> : null}
       {siteView === "termsOfUse" ? <TermsOfUsePage /> : null}
       {siteView === "privacyPolicy" ? <PrivacyPolicyPage /> : null}
+      {siteView === "faq" ? <FaqPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>
