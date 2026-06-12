@@ -18,28 +18,27 @@ type ContactCard = {
   link: string;
   icon: ContactIconName;
   tone: ContactTone;
-  learnHref?: string;
 };
 
 const contactImagePath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 
 const getInTouchCards: ContactCard[] = [
   { title: "Press & media", link: "pr@foodonlines.com", icon: "megaphone", tone: "blue" },
-  { title: "Returns & refunds", link: "Go to your account", icon: "refresh", tone: "blue", learnHref: "#account/settings" },
+  { title: "Returns & refunds", link: "Go to your account", icon: "refresh", tone: "blue" },
   { title: "Email support", link: "sale@foodonlines.com", icon: "mail", tone: "blue" },
 ];
 
 const partnerCards: ContactCard[] = [
-  { title: "Partnerships", link: "partnerships@foodonlines.com", icon: "handshake", tone: "pink", learnHref: "#become-partner" },
-  { title: "Vendors", link: "vendors@foodonlines.com", icon: "box", tone: "pink", learnHref: "#become-vendor" },
-  { title: "Advertising", link: "ads@foodonlines.com", icon: "target", tone: "pink", learnHref: "#become-a-sponsor" },
-  { title: "Affiliates", link: "affiliate@foodonlines.com", icon: "money", tone: "pink", learnHref: "#affiliate" },
-  { title: "Sponsors", link: "sponsors@foodonlines.com", icon: "starPeople", tone: "pink", learnHref: "#become-a-sponsor" },
+  { title: "Partnerships", link: "partnerships@foodonlines.com", icon: "handshake", tone: "pink" },
+  { title: "Vendors", link: "vendors@foodonlines.com", icon: "box", tone: "pink" },
+  { title: "Advertising", link: "ads@foodonlines.com", icon: "target", tone: "pink" },
+  { title: "Affiliates", link: "affiliate@foodonlines.com", icon: "money", tone: "pink" },
+  { title: "Sponsors", link: "sponsors@foodonlines.com", icon: "starPeople", tone: "pink" },
 ];
 
 const hiringCards: ContactCard[] = [
-  { title: "Careers", link: "careers@foodonlines.com", icon: "people", tone: "orange", learnHref: "#careers" },
-  { title: "Drivers", link: "drivers@foodonlines.com", icon: "truck", tone: "orange", learnHref: "#company/drivers" },
+  { title: "Careers", link: "careers@foodonlines.com", icon: "people", tone: "orange" },
+  { title: "Drivers", link: "drivers@foodonlines.com", icon: "truck", tone: "orange" },
 ];
 
 const toneStyles: Record<ContactTone, { circle: string; icon: string; link: string }> = {
@@ -187,11 +186,10 @@ function ContactSection({ children, title }: { children: ReactNode; title: strin
 
 function ContactCardItem({ card }: { card: ContactCard }) {
   const tone = toneStyles[card.tone];
-  const href = isEmailLink(card.link) ? `mailto:${card.link}` : card.learnHref ?? "#account/settings";
-  const learnHref = card.learnHref ?? href;
+  const href = isEmailLink(card.link) ? `mailto:${card.link}` : "#account/settings";
 
   return (
-    <article className="grid min-h-[190px] gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_16px_45px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(15,23,42,0.08)]">
+    <article className="grid min-h-[150px] gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_16px_45px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(15,23,42,0.08)]">
       <span className={`inline-flex h-12 w-12 items-center justify-center rounded-full ${tone.circle} ${tone.icon}`}>
         <ContactIcon name={card.icon} />
       </span>
@@ -201,15 +199,6 @@ function ContactCardItem({ card }: { card: ContactCard }) {
           {card.link}
         </a>
       </div>
-      {card.learnHref ? (
-        <>
-          <span aria-hidden="true" className="mt-1 h-px w-full bg-slate-100" />
-          <a className="inline-flex min-h-9 items-center gap-2 text-sm font-black text-sky-700 hover:underline" href={learnHref}>
-            Learn more
-            <ArrowRightIcon />
-          </a>
-        </>
-      ) : null}
     </article>
   );
 }

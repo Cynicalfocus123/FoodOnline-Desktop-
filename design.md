@@ -855,9 +855,14 @@
 
 - Added a new public Contact Us page at `/contact-us` with `#contact-us` fallback routing. The existing Company footer `Contact Us` link now opens this page through the shared public route store without changing footer visual design.
 - The page uses a sample-inspired split composition: pale blue-gray left panel (`#eef3fb`) with pink `Let's talk` eyebrow, oversized near-black `Contact us` headline, help-center link with arrow, and the supplied grocery/herb art from `public/images/contact-us/contact-hero-groceries.png` anchored near the bottom.
-- Right content uses Settings-style cards: rounded white surfaces, subtle border/shadow, compact icon circles, strong title text, readable link rows, thin dividers where Learn more is present, and blue action links. Get in touch cards use light-blue icon circles; Partners cards use light-pink circles; hiring cards use light-orange circles.
-- Content sections are hardcoded as `Get in touch`, `Partners`, and `We're hiring`, with email links using `mailto:`. The support email uses the existing site/footer email `sale@foodonlines.com`. `Go to your account` routes to `#account/settings`, and Learn more links use existing or placeholder public anchors.
+- Right content uses Settings-style cards: rounded white surfaces, subtle border/shadow, compact icon circles, strong title text, readable link rows, and blue action links. Get in touch cards use light-blue icon circles; Partners cards use light-pink circles; hiring cards use light-orange circles.
+- Content sections are hardcoded as `Get in touch`, `Partners`, and `We're hiring`, with email links using `mailto:`. The support email uses the existing site/footer email `sale@foodonlines.com`. `Go to your account` routes to `#account/settings`.
 - Responsive direction: desktop uses roughly 36% left / 64% right columns with the left panel sticky below the fixed header. Tablet and mobile-desktop keep two columns only when space allows, then stack. Mobile portrait places the left visual panel above the right content and stacks cards one per row with touch-friendly spacing and no intended horizontal overflow.
+
+### Contact Us Learn More Removal (2026-06-12)
+
+- Removed the `Learn more` action rows from every Contact Us card. The card design now stops after the primary email/account link, avoiding extra divider rows and preventing Contact Us URLs from collecting unrelated hashes such as `#become-partner`.
+- Card heights are slightly more compact while keeping the same rounded white Settings-style surfaces, tone-specific icon circles, and blue email/action links.
 
 ## Guardrails
 
