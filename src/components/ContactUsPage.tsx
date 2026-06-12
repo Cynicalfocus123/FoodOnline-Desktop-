@@ -232,12 +232,14 @@ export function ContactUsPage() {
             </a>
           </div>
 
-          <img
-            alt="Fresh FoodOnlines groceries and herbs"
-            className="pointer-events-none relative z-0 mt-5 block w-[118%] max-w-none object-contain object-left-bottom drop-shadow-[0_28px_55px_rgba(15,23,42,0.14)] sm:mt-6 sm:w-[112%] lg:absolute lg:bottom-0 lg:left-0 lg:mt-0 lg:w-[115%] lg:translate-x-[-3%]"
-            loading="eager"
-            src={contactImagePath("/images/contact-us/contact-hero-groceries.png")}
-          />
+          <div className="pointer-events-none relative z-0 mt-5 w-full overflow-hidden leading-none sm:mt-6 lg:absolute lg:bottom-0 lg:left-0 lg:mt-0">
+            <img
+              alt="Fresh FoodOnlines groceries and herbs"
+              className="block w-[118%] max-w-none translate-y-[4.5%] object-contain object-left-bottom drop-shadow-[0_28px_55px_rgba(15,23,42,0.14)] sm:w-[112%] lg:w-[116%] lg:translate-x-[-2%] lg:translate-y-[4.5%]"
+              loading="eager"
+              src={contactImagePath("/images/contact-us/contact-hero-groceries.png")}
+            />
+          </div>
         </aside>
 
         <div className="px-4 py-10 sm:px-8 sm:py-12 lg:px-12 lg:py-14 xl:px-16">

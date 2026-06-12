@@ -1431,6 +1431,15 @@
 - Adjusted only the Contact Us left hero food image placement again so the art can sit flush against the orange panel edges. Header, footer, right-side cards, text content, icons, links, grid layout, page structure, and background color were not changed.
 - Moved panel padding from the whole left hero container onto the text block only. The food image now lives directly inside the edge-to-edge hero panel with no bottom/side padding around it, uses `object-position: left bottom`, and remains large with intentional edge bleed on desktop, tablet, and mobile portrait.
 
+## Contact Us Hero Image Bottom Edge Fix (2026-06-12)
+
+- Files changed:
+  - `src/components/ContactUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Adjusted only the left Contact Us hero image area to remove the visible orange gap below the food art. Header, footer, right-side cards, text content, routing, page structure, background color, and image asset were not changed.
+- The source PNG has transparent pixels below the visible food, so the image now sits inside a no-padding, `line-height: 0`, overflow-hidden art layer and is shifted down slightly. This clips the transparent bottom edge so the visible food meets the panel bottom on desktop, tablet, and mobile while staying flush toward the left edge.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

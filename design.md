@@ -878,6 +878,11 @@
 - Refined only the food image placement inside the left Contact Us hero panel so the art reaches the panel's left and bottom edges instead of sitting inside the text padding.
 - The left hero panel remains light orange `#f8e1cf`; text keeps its own top/side padding, while the image sits directly in the unpadded panel area with `object-position: left bottom`, large edge bleed, no wrapper background, and no extra bottom gap on desktop, tablet, or mobile portrait.
 
+### Contact Us Hero Image Bottom Edge Fix (2026-06-12)
+
+- Adjusted only the left hero image layer so the food artwork visually touches the bottom edge of the orange panel. The image asset remains unchanged, but it now renders inside a no-padding, line-height-zero, overflow-hidden art wrapper with a small downward translate to clip the PNG's transparent bottom pixels.
+- Desktop and mobile keep the same text, background color, layout, and right-side content while removing the floating beige/orange strip below the visible food.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
