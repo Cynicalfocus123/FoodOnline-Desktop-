@@ -264,8 +264,8 @@ video {
 
 .wholesaler-savings-product {
   position: absolute;
-  bottom: 0;
-  z-index: 2;
+  bottom: clamp(24px, 4vw, 54px);
+  z-index: 3;
   display: block;
   max-width: none;
   object-fit: contain;
@@ -284,7 +284,7 @@ video {
 
 .wholesaler-savings-product--bibigo {
   left: 38%;
-  bottom: -2%;
+  bottom: clamp(16px, 3vw, 40px);
   width: clamp(260px, 28vw, 465px);
 }
 
@@ -298,11 +298,105 @@ video {
   right: 0;
   bottom: -1px;
   left: 0;
-  z-index: 4;
+  z-index: 1;
   display: block;
   width: 100%;
+  height: clamp(54px, 8vw, 110px);
   max-width: none;
+  object-fit: fill;
   pointer-events: none;
+}
+
+.wholesaler-brands-section,
+.wholesaler-brands-section * {
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+}
+
+.wholesaler-brands-section {
+  overflow: hidden;
+  background: #fbf4ff;
+  padding: clamp(3.4rem, 6vw, 5.8rem) clamp(1rem, 3vw, 3rem) clamp(4rem, 7vw, 6.5rem);
+  color: #050505;
+}
+
+.wholesaler-brands-inner {
+  width: min(100%, 1540px);
+  margin: 0 auto;
+}
+
+.wholesaler-brands-heading {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.95rem, 3.2vw, 3rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #050505;
+}
+
+.wholesaler-brands-heading span {
+  color: #050505;
+}
+
+.wholesaler-brand-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.15rem, 2.2vw, 2.5rem);
+  margin-top: clamp(2rem, 4vw, 3.2rem);
+}
+
+.wholesaler-brand-card {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: clamp(1.35rem, 2.2vw, 2.1rem);
+  background: #ffffff;
+  padding: clamp(1.45rem, 2.3vw, 2.35rem) clamp(1rem, 1.8vw, 1.65rem) clamp(1.5rem, 2.4vw, 2.5rem);
+  box-shadow: 0 20px 45px rgba(70, 35, 90, 0.08);
+}
+
+.wholesaler-brand-card-title {
+  min-height: 3.2em;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: clamp(1.05rem, 1.6vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #050505;
+}
+
+.wholesaler-brand-card-media {
+  flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-top: clamp(1.1rem, 1.8vw, 1.75rem);
+  overflow: hidden;
+  border-radius: clamp(1rem, 1.5vw, 1.5rem);
+  background: #f4f4f4;
+}
+
+.wholesaler-brand-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.wholesaler-brand-card-text {
+  margin: clamp(1.2rem, 2vw, 2rem) auto 0;
+  max-width: 26ch;
+  text-align: center;
+  font-size: clamp(1rem, 1.45vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: #050505;
 }
 
 @media (max-width: 1024px) {
@@ -398,6 +492,10 @@ video {
     min-height: clamp(170px, 28vw, 280px);
   }
 
+  .wholesaler-savings-product {
+    bottom: clamp(16px, 4vw, 38px);
+  }
+
   .wholesaler-savings-product--chicken {
     left: 3%;
     width: clamp(132px, 23vw, 205px);
@@ -410,13 +508,21 @@ video {
 
   .wholesaler-savings-product--bibigo {
     left: 43%;
-    bottom: -3%;
+    bottom: clamp(12px, 3vw, 30px);
     width: clamp(180px, 34vw, 280px);
   }
 
   .wholesaler-savings-product--sauce {
     right: -2%;
     width: clamp(178px, 36vw, 300px);
+  }
+
+  .wholesaler-savings-wave {
+    height: clamp(42px, 8vw, 78px);
+  }
+
+  .wholesaler-brand-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -478,24 +584,72 @@ video {
     margin-left: -22px;
   }
 
+  .wholesaler-savings-product {
+    bottom: 18px;
+  }
+
   .wholesaler-savings-product--chicken {
     left: -5%;
-    width: 125px;
+    width: 118px;
   }
 
   .wholesaler-savings-product--curry {
     left: 16%;
-    width: 132px;
+    width: 126px;
   }
 
   .wholesaler-savings-product--bibigo {
     left: 38%;
-    width: 178px;
+    bottom: 13px;
+    width: 166px;
   }
 
   .wholesaler-savings-product--sauce {
     right: -20%;
-    width: 215px;
+    width: 198px;
+  }
+
+  .wholesaler-savings-wave {
+    height: clamp(38px, 10vw, 58px);
+  }
+
+  .wholesaler-brands-section {
+    padding: 2.75rem 0.85rem 3.4rem;
+  }
+
+  .wholesaler-brands-heading {
+    font-size: clamp(1.35rem, 7vw, 2rem);
+    letter-spacing: 0.05em;
+  }
+
+  .wholesaler-brand-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.7rem;
+  }
+
+  .wholesaler-brand-card {
+    border-radius: 24px;
+    padding: 1.4rem 1rem 1.55rem;
+  }
+
+  .wholesaler-brand-card-title {
+    min-height: 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+  }
+
+  .wholesaler-brand-card-media {
+    aspect-ratio: 16 / 10;
+    margin-top: 1rem;
+    border-radius: 18px;
+  }
+
+  .wholesaler-brand-card-text {
+    max-width: 30ch;
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.24;
   }
 }
 

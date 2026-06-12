@@ -898,6 +898,14 @@
 - The Corporate footer item formerly shown as `Farm Careers` is now labeled `Wholesale`.
 - The footer `Wholesale` item links to the public Wholesaler page at `/wholesaler` through the same SPA route handling used by the other Corporate landing-page links.
 
+### Wholesaler Image Layout Fix (2026-06-12)
+
+- Refined only the Wholesaler page image layout in the second savings section and third leading-brands section.
+- In the savings section, transparent product cutouts are raised higher above the bottom wave and the wave is treated as a lower decorative base. The product packaging should remain clearly visible, with only the lowest area visually grounded by the green wave, and no colored product-image boxes added.
+- In the leading-brands section, the former full-section screenshot is replaced with four responsive white cards using real text and the supplied card photos. Each card has a fixed image box, visible title, and visible paragraph copy.
+- Third-section card media uses a stable aspect ratio with contained overflow so images cannot grow too tall, cover text, or push body copy out of the card on desktop, tablet, or mobile.
+- Typography remains Montserrat-scoped with black heading/title/body text for the Wholesaler sections.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

@@ -1469,6 +1469,19 @@
 - Renamed the Corporate footer item from `Farm Careers` to `Wholesale`.
 - Converted that footer item from a plain `#company` string link into a real `/wholesaler` route link and wired Footer to call `openWholesaler()`, matching the existing shared route pattern used by Vendor, Partner, Sponsor, Affiliate, Contact Us, and Drivers links.
 
+## Wholesaler Image Layout Fix (2026-06-12)
+
+- Files changed:
+  - `src/components/WholesalerPage.tsx`
+  - `src/styles.css`
+  - `public/images/wholesaler/`
+  - `AGENT.md`
+  - `design.md`
+- Fixed only Wholesaler page image layout issues in section 2 and section 3. Header, footer, and the hero section were not edited.
+- Section 2 product collage now raises all product cutouts above the bottom wave and places the wave on a lower decorative layer, so the product packaging remains visibly above the green base instead of sinking behind it. Mobile/tablet offsets and wave heights are tightened separately to avoid awkward clipping and horizontal overflow.
+- Section 3 no longer renders one oversized full-section screenshot. It now renders four real responsive cards using the supplied Wholesaler card images copied from `pages/wholesaler` into `public/images/wholesaler/`: retail, corporate, restaurant/bakery, and food service/hospitality.
+- Section 3 card images use fixed aspect-ratio media boxes with overflow hidden and `object-fit: cover`, while titles and body text stay outside the image area so text remains visible on desktop, tablet, and mobile.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

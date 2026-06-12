@@ -46,6 +46,33 @@ const savingsProducts = [
   },
 ];
 
+const brandCards = [
+  {
+    title: "Retail & convenience",
+    image: "brands-retail.png",
+    alt: "Retail store shelves stocked with international grocery products",
+    text: "Enjoy exclusive savings on every qualifying order and maximize the value of your business purchases.",
+  },
+  {
+    title: "Corporate & workplace",
+    image: "brands-corporate.png",
+    alt: "Corporate employees enjoying workplace catering",
+    text: "Discover a wide variety of international snacks and treats to keep your team energized, engaged, and satisfied throughout the day.",
+  },
+  {
+    title: "Restaurant & bakery",
+    image: "brands-restaurant.png",
+    alt: "Fresh bakery products displayed in a bakery case",
+    text: "We supply groceries to restaurants, cafes, and bakeries, streamlining your sourcing so you can focus on serving your customers.",
+  },
+  {
+    title: "Food service & hospitality",
+    image: "brands-hospitality.png",
+    alt: "Food service staff preparing hospitality buffet service",
+    text: "Streamline your restaurant's supply chain with fresh ingredients and seasonings delivered directly to you.",
+  },
+];
+
 function SavingsIcon({ type }: { type: SavingsIconType }) {
   const commonProps = {
     className: "h-8 w-8",
@@ -146,6 +173,30 @@ function WholesalerSavingsSection() {
   );
 }
 
+function WholesalerBrandsSection() {
+  return (
+    <section className="wholesaler-brands-section" aria-labelledby="wholesaler-brands-heading">
+      <div className="wholesaler-brands-inner">
+        <h2 id="wholesaler-brands-heading" className="wholesaler-brands-heading">
+          Source products from <span>leading brands</span>
+        </h2>
+
+        <div className="wholesaler-brand-card-grid">
+          {brandCards.map((card) => (
+            <article className="wholesaler-brand-card" key={card.title}>
+              <h3 className="wholesaler-brand-card-title">{card.title}</h3>
+              <div className="wholesaler-brand-card-media">
+                <img alt={card.alt} loading="lazy" src={wholesalerImagePath(card.image)} />
+              </div>
+              <p className="wholesaler-brand-card-text">{card.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function WholesalerPage() {
   const openSignup = useHomeStore((state) => state.openSignup);
 
@@ -165,14 +216,7 @@ export function WholesalerPage() {
 
       <WholesalerSavingsSection />
 
-      <section className="wholesaler-art-section" aria-label="Source products from leading brands">
-        <img
-          alt="Source products from leading brands."
-          className="block w-full"
-          loading="lazy"
-          src={wholesalerImagePath("brands-section.png")}
-        />
-      </section>
+      <WholesalerBrandsSection />
     </div>
   );
 }
