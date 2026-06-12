@@ -264,8 +264,8 @@ video {
 
 .wholesaler-savings-product {
   position: absolute;
-  bottom: clamp(24px, 4vw, 54px);
-  z-index: 3;
+  bottom: clamp(8px, 1.5vw, 20px);
+  z-index: 2;
   display: block;
   max-width: none;
   object-fit: contain;
@@ -284,7 +284,7 @@ video {
 
 .wholesaler-savings-product--bibigo {
   left: 38%;
-  bottom: clamp(16px, 3vw, 40px);
+  bottom: clamp(2px, 1vw, 14px);
   width: clamp(260px, 28vw, 465px);
 }
 
@@ -298,10 +298,10 @@ video {
   right: 0;
   bottom: -1px;
   left: 0;
-  z-index: 1;
+  z-index: 3;
   display: block;
   width: 100%;
-  height: clamp(54px, 8vw, 110px);
+  height: clamp(70px, 9vw, 120px);
   max-width: none;
   object-fit: fill;
   pointer-events: none;
@@ -493,7 +493,7 @@ video {
   }
 
   .wholesaler-savings-product {
-    bottom: clamp(16px, 4vw, 38px);
+    bottom: clamp(8px, 2vw, 18px);
   }
 
   .wholesaler-savings-product--chicken {
@@ -508,7 +508,7 @@ video {
 
   .wholesaler-savings-product--bibigo {
     left: 43%;
-    bottom: clamp(12px, 3vw, 30px);
+    bottom: clamp(2px, 1.5vw, 12px);
     width: clamp(180px, 34vw, 280px);
   }
 
@@ -518,7 +518,7 @@ video {
   }
 
   .wholesaler-savings-wave {
-    height: clamp(42px, 8vw, 78px);
+    height: clamp(58px, 9vw, 88px);
   }
 
   .wholesaler-brand-card-grid {
@@ -585,7 +585,7 @@ video {
   }
 
   .wholesaler-savings-product {
-    bottom: 18px;
+    bottom: 7px;
   }
 
   .wholesaler-savings-product--chicken {
@@ -600,7 +600,7 @@ video {
 
   .wholesaler-savings-product--bibigo {
     left: 38%;
-    bottom: 13px;
+    bottom: 2px;
     width: 166px;
   }
 
@@ -610,7 +610,7 @@ video {
   }
 
   .wholesaler-savings-wave {
-    height: clamp(38px, 10vw, 58px);
+    height: clamp(46px, 12vw, 68px);
   }
 
   .wholesaler-brands-section {

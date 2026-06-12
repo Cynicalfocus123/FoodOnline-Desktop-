@@ -1482,6 +1482,15 @@
 - Section 3 no longer renders one oversized full-section screenshot. It now renders four real responsive cards using the supplied Wholesaler card images copied from `pages/wholesaler` into `public/images/wholesaler/`: retail, corporate, restaurant/bakery, and food service/hospitality.
 - Section 3 card images use fixed aspect-ratio media boxes with overflow hidden and `object-fit: cover`, while titles and body text stay outside the image area so text remains visible on desktop, tablet, and mobile.
 
+## Wholesaler Savings Wave Overlap Tune (2026-06-12)
+
+- Files changed:
+  - `src/styles.css`
+  - `AGENT.md`
+  - `design.md`
+- Adjusted only the second Wholesaler savings section product collage/wave layering. Header, footer, hero, third section, copy, typography, and asset usage were not changed.
+- The product cutouts now sit behind the green wave again, and the wave is the foreground decorative base. Product bottom offsets and wave heights were tuned so the wave touches and slightly covers the bottom of the packages without burying them or leaving an empty gap.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

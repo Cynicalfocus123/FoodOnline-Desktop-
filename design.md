@@ -906,6 +906,12 @@
 - Third-section card media uses a stable aspect ratio with contained overflow so images cannot grow too tall, cover text, or push body copy out of the card on desktop, tablet, or mobile.
 - Typography remains Montserrat-scoped with black heading/title/body text for the Wholesaler sections.
 
+### Wholesaler Savings Wave Overlap Tune (2026-06-12)
+
+- Tuned only the second Wholesaler savings section bottom product collage and green wave relationship.
+- The wave is now the foreground decorative base in front of the transparent product cutouts. Products are lowered toward the wave so they visually touch it, while the wave covers only a subtle lower portion of the packages rather than leaving them floating or hiding too much of them.
+- Desktop, tablet, and mobile each keep separate offsets/wave heights so the collage stays balanced with no intentional horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
