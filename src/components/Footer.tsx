@@ -52,6 +52,7 @@ export function Footer() {
   const openBecomeSponsor = useHomeStore((state) => state.openBecomeSponsor);
   const openAffiliate = useHomeStore((state) => state.openAffiliate);
   const openDrivers = useHomeStore((state) => state.openDrivers);
+  const openWholesaler = useHomeStore((state) => state.openWholesaler);
   const openContactUs = useHomeStore((state) => state.openContactUs);
 
   return (
@@ -95,6 +96,7 @@ export function Footer() {
                   const isBecomeSponsorLink = href === "/become-a-sponsor";
                   const isAffiliateLink = href === "/affiliate";
                   const isDriverLink = href === "/company/drivers";
+                  const isWholesalerLink = href === "/wholesaler";
 
                   return (
                     <a
@@ -136,6 +138,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openDrivers();
+                            }
+                          : isWholesalerLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openWholesaler();
                             }
                           : undefined
                       }

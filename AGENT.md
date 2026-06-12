@@ -1459,6 +1459,16 @@
 - The entire savings section uses Montserrat with black text. Headings/labels use 800/900 weights, body and benefit copy use normal 400 weight, dividers stay light lavender/gray, and icon containers use pale orange.
 - No separate savings/delivery/package icon files existed in `pages/wholesaler`; the section therefore uses scoped inline SVG fallback icons only for those three row icons. The bottom product collage uses the supplied transparent product cutouts from the Wholesaler asset folder and keeps them anchored inside the card bottom with no colored box behind them.
 
+## Wholesaler Footer Link Fix (2026-06-12)
+
+- Files changed:
+  - `src/data/home.ts`
+  - `src/components/Footer.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Renamed the Corporate footer item from `Farm Careers` to `Wholesale`.
+- Converted that footer item from a plain `#company` string link into a real `/wholesaler` route link and wired Footer to call `openWholesaler()`, matching the existing shared route pattern used by Vendor, Partner, Sponsor, Affiliate, Contact Us, and Drivers links.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

@@ -893,6 +893,11 @@
 - Benefit rows use pale orange rounded icon boxes. No standalone discount/delivery/package icon files were present in `pages/wholesaler`, so scoped inline SVG fallback icons are used only for those three row icons; product images still come from the supplied Wholesaler asset folder.
 - The bottom collage uses the supplied transparent curry box, Bibigo bag, canned chicken, sauce tub, and green wave assets, with no colored image box behind the products and no intentional horizontal overflow.
 
+### Wholesaler Footer Link Fix (2026-06-12)
+
+- The Corporate footer item formerly shown as `Farm Careers` is now labeled `Wholesale`.
+- The footer `Wholesale` item links to the public Wholesaler page at `/wholesaler` through the same SPA route handling used by the other Corporate landing-page links.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
