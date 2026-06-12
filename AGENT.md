@@ -1422,6 +1422,15 @@
   - `design.md`
 - Updated only the Contact Us left hero panel background color from pale blue-gray `#eef3fb` to soft light orange/peach `#f8e1cf`. Header, footer, layout, card content, card grid, icons, text colors, food image, and approved image positioning were not changed.
 
+## Contact Us Flush Hero Image Edge Fix (2026-06-12)
+
+- Files changed:
+  - `src/components/ContactUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Adjusted only the Contact Us left hero food image placement again so the art can sit flush against the orange panel edges. Header, footer, right-side cards, text content, icons, links, grid layout, page structure, and background color were not changed.
+- Moved panel padding from the whole left hero container onto the text block only. The food image now lives directly inside the edge-to-edge hero panel with no bottom/side padding around it, uses `object-position: left bottom`, and remains large with intentional edge bleed on desktop, tablet, and mobile portrait.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

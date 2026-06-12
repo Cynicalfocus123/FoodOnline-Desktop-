@@ -873,6 +873,11 @@
 
 - Updated only the Contact Us left hero panel background from pale blue-gray to soft light orange/peach `#f8e1cf`. Header, footer, layout, card content, card grid, icons, spacing, food image, and approved image positioning remain unchanged.
 
+### Contact Us Flush Hero Image Edge Fix (2026-06-12)
+
+- Refined only the food image placement inside the left Contact Us hero panel so the art reaches the panel's left and bottom edges instead of sitting inside the text padding.
+- The left hero panel remains light orange `#f8e1cf`; text keeps its own top/side padding, while the image sits directly in the unpadded panel area with `object-position: left bottom`, large edge bleed, no wrapper background, and no extra bottom gap on desktop, tablet, or mobile portrait.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.
