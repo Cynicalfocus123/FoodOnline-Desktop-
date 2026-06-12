@@ -1331,7 +1331,7 @@ export const footerColumns: FooterLinkColumn[] = [
       "Privacy Policy",
       "Terms & Conditions",
       { label: "About Us", href: "/about-us" },
-      "Contact Us",
+      { label: "Contact Us", href: "/contact-us" },
       "Complaint",
       "Careers",
       "Sitmap",

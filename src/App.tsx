@@ -9,6 +9,7 @@ import { CartPage } from "./components/CartPage";
 import { CategoryStrip } from "./components/CategoryStrip";
 import { CategoryListingPage } from "./components/CategoryListingPage";
 import { CheckoutPage } from "./components/CheckoutPage";
+import { ContactUsPage } from "./components/ContactUsPage";
 import { DealsGrid } from "./components/DealsGrid";
 import { DriverLandingPage } from "./components/DriverLandingPage";
 import { Footer } from "./components/Footer";
@@ -79,6 +80,7 @@ export default function App() {
       {siteView === "search" ? <SearchResultsPage /> : null}
       {siteView === "account" ? <AccountPage /> : null}
       {siteView === "aboutUs" ? <AboutUsPage /> : null}
+      {siteView === "contactUs" ? <ContactUsPage /> : null}
       {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
       {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
       {siteView === "becomeSponsor" ? <BecomeSponsorPage /> : null}

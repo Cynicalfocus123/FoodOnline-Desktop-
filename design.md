@@ -851,6 +851,14 @@
 - Affiliate Signup CTA banner on 2026-06-11: added a full-width long CTA banner directly below the Affiliate FAQ accordion. It uses the supplied woman-with-box photo copied to `public/images/affiliate/affiliate-signup-banner.png` as a cover background, with a warm semi-transparent orange overlay for readability.
 - Affiliate Signup CTA responsive direction: desktop keeps the sample-inspired layout with large white Montserrat headline `Join our` / `affiliate program` on the left, `Contact us at info@foodonlines.com` below it, and a large black pill `Sign up` button with a white circular arrow on the right. Tablet/mobile-desktop scale the composition down while preserving the woman on the right; mobile portrait stacks headline, contact text, and CTA over the image with background positioning biased toward the woman's face and no intended horizontal overflow.
 
+### Contact Us Page (2026-06-12)
+
+- Added a new public Contact Us page at `/contact-us` with `#contact-us` fallback routing. The existing Company footer `Contact Us` link now opens this page through the shared public route store without changing footer visual design.
+- The page uses a sample-inspired split composition: pale blue-gray left panel (`#eef3fb`) with pink `Let's talk` eyebrow, oversized near-black `Contact us` headline, help-center link with arrow, and the supplied grocery/herb art from `public/images/contact-us/contact-hero-groceries.png` anchored near the bottom.
+- Right content uses Settings-style cards: rounded white surfaces, subtle border/shadow, compact icon circles, strong title text, readable link rows, thin dividers where Learn more is present, and blue action links. Get in touch cards use light-blue icon circles; Partners cards use light-pink circles; hiring cards use light-orange circles.
+- Content sections are hardcoded as `Get in touch`, `Partners`, and `We're hiring`, with email links using `mailto:`. The support email uses the existing site/footer email `sale@foodonlines.com`. `Go to your account` routes to `#account/settings`, and Learn more links use existing or placeholder public anchors.
+- Responsive direction: desktop uses roughly 36% left / 64% right columns with the left panel sticky below the fixed header. Tablet and mobile-desktop keep two columns only when space allows, then stack. Mobile portrait places the left visual panel above the right content and stacks cards one per row with touch-friendly spacing and no intended horizontal overflow.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

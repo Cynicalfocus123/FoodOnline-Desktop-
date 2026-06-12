@@ -52,6 +52,7 @@ export function Footer() {
   const openBecomeSponsor = useHomeStore((state) => state.openBecomeSponsor);
   const openAffiliate = useHomeStore((state) => state.openAffiliate);
   const openDrivers = useHomeStore((state) => state.openDrivers);
+  const openContactUs = useHomeStore((state) => state.openContactUs);
 
   return (
     <footer id="company" className="border-t border-neutral-200 bg-white px-4 py-14 sm:px-6 sm:py-16">
@@ -88,6 +89,7 @@ export function Footer() {
                   const label = typeof link === "string" ? link : link.label;
                   const href = typeof link === "string" ? "#company" : link.href;
                   const isAboutUsLink = href === "/about-us";
+                  const isContactUsLink = href === "/contact-us";
                   const isBecomeVendorLink = href === "/become-vendor";
                   const isBecomePartnerLink = href === "/become-partner";
                   const isBecomeSponsorLink = href === "/become-a-sponsor";
@@ -104,6 +106,11 @@ export function Footer() {
                           ? (event) => {
                               event.preventDefault();
                               openAboutUs();
+                            }
+                          : isContactUsLink
+                          ? (event) => {
+                              event.preventDefault();
+                              openContactUs();
                             }
                           : isBecomeVendorLink
                           ? (event) => {

@@ -1377,6 +1377,25 @@
 - Checks on 2026-06-11: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
 - Feature commit hash: `6f26a4a`.
 
+## Contact Us Page Launch (2026-06-12)
+
+- Files changed:
+  - `src/components/ContactUsPage.tsx`
+  - `src/App.tsx`
+  - `src/store/homeStore.ts`
+  - `src/components/Footer.tsx`
+  - `src/data/home.ts`
+  - `public/images/contact-us/`
+  - `AGENT.md`
+  - `design.md`
+- Added a new public Contact Us page at `/contact-us` with `#contact-us` fallback support, rendered between the existing shared FoodOnlines header and footer without changing header styling or footer layout.
+- Connected the existing Company footer `Contact Us` item to the new page through the same Zustand route/store pattern used by About Us, Vendor, Partner, Sponsor, Affiliate, and Drivers pages. The link now works from home, product, category, cart, checkout, login/register, account, and public landing pages.
+- Copied the supplied contact page assets from `D:/Foodonline desktop version/pages/contact us` into `public/images/contact-us/`. The large grocery/fruit art is used in the left contact panel; inline SVG fallbacks provide crisp visible icons for all contact cards while the supplied icon PNGs remain in the clean public asset folder for future replacement/tuning.
+- Built the page as a desktop two-column layout with a pale blue-gray left visual panel, `Let's talk` / `Contact us` copy, help-center link, and large grocery art near the bottom. The right side uses Settings-style rounded white cards with subtle borders, icon circles, blue links, dividers, and responsive grids for Get in touch, Partners, and We're hiring sections.
+- Contact behavior: email rows use `mailto:` links, `Go to your account` links to `#account/settings`, and Learn more links use existing or placeholder public anchors such as `#become-vendor`, `#affiliate`, and `#company/drivers`.
+- Responsive behavior: desktop keeps the left panel sticky/full-height below the fixed header and right content scrolls naturally; tablet/mobile-desktop stack only when needed; mobile portrait stacks the hero panel above single-column cards with no intentional horizontal overflow.
+- Checks on 2026-06-12: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

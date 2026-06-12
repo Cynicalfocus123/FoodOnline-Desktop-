@@ -29,6 +29,7 @@ export type SiteView =
   | "search"
   | "account"
   | "aboutUs"
+  | "contactUs"
   | "becomeVendor"
   | "becomePartner"
   | "becomeSponsor"
@@ -58,6 +59,8 @@ function readAuthReturnRoute(
       return state.accountSection === "overview" ? "account" : `account/${state.accountSection}`;
     case "aboutUs":
       return "about-us";
+    case "contactUs":
+      return "contact-us";
     case "becomeVendor":
       return "become-vendor";
     case "becomePartner":
@@ -142,6 +145,18 @@ function isAboutUsRoute(hash: string) {
   }
 
   return /\/about-us\/?$/i.test(window.location.pathname);
+}
+
+function isContactUsRoute(hash: string) {
+  if (/^#contact-us(?:[/?#].*)?$/i.test(hash)) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return /\/contact-us\/?$/i.test(window.location.pathname);
 }
 
 function isBecomeVendorRoute(hash: string) {
@@ -240,12 +255,14 @@ function writeRouteHash(route: string | null) {
     window.location.hash.startsWith("#signup") ||
     window.location.hash.startsWith("#login") ||
     window.location.hash.startsWith("#about-us") ||
+    window.location.hash.startsWith("#contact-us") ||
     window.location.hash.startsWith("#become-vendor") ||
     window.location.hash.startsWith("#become-partner") ||
     window.location.hash.startsWith("#become-a-sponsor") ||
     window.location.hash.startsWith("#affiliate") ||
     window.location.hash.startsWith("#company/drivers") ||
     /\/about-us\/?$/i.test(window.location.pathname) ||
+    /\/contact-us\/?$/i.test(window.location.pathname) ||
     /\/become-vendor\/?$/i.test(window.location.pathname) ||
     /\/become-partner\/?$/i.test(window.location.pathname) ||
     /\/become-a-sponsor\/?$/i.test(window.location.pathname) ||
@@ -283,6 +300,7 @@ type HomeState = {
   openCart: () => void;
   openCheckout: () => void;
   openAboutUs: () => void;
+  openContactUs: () => void;
   openBecomeVendor: () => void;
   openBecomePartner: () => void;
   openBecomeSponsor: () => void;
@@ -452,6 +470,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  openContactUs: () =>
+    set(() => {
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `${import.meta.env.BASE_URL}contact-us`);
+      }
+
+      return {
+        siteView: "contactUs",
+        selectedProductId: null,
+        selectedCategorySlug: null,
+        accountSection: "overview",
+        submissionError: null,
+      };
+    }),
   openBecomeVendor: () =>
     set(() => {
       if (typeof window !== "undefined") {
@@ -614,6 +646,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      if (isContactUsRoute(hash)) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "contactUs",
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (isBecomeVendorRoute(hash)) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -729,6 +771,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "checkout" ||
         state.siteView === "account" ||
         state.siteView === "aboutUs" ||
+        state.siteView === "contactUs" ||
         state.siteView === "becomeVendor" ||
         state.siteView === "becomePartner" ||
         state.siteView === "becomeSponsor" ||
