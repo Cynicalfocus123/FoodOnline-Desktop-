@@ -17,6 +17,7 @@ import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
 import { LoginFlow } from "./components/LoginFlow";
 import { ProductDetailPage } from "./components/ProductDetailPage";
+import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
 import { PromoExperience } from "./components/PromoExperience";
 import { ReturnPolicyPage } from "./components/ReturnPolicyPage";
 import { TermsOfUsePage } from "./components/TermsOfUsePage";
@@ -92,6 +93,7 @@ export default function App() {
       {siteView === "drivers" ? <DriverLandingPage /> : null}
       {siteView === "returnPolicy" ? <ReturnPolicyPage /> : null}
       {siteView === "termsOfUse" ? <TermsOfUsePage /> : null}
+      {siteView === "privacyPolicy" ? <PrivacyPolicyPage /> : null}
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

@@ -927,6 +927,12 @@
 - The footer `Terms & Conditions` link now opens a dedicated responsive `/terms-and-conditions` page containing the supplied Foodonlines.com Terms of Use copy.
 - Terms text sits directly on the same warm neutral legal-page background used by Return Policy, with a centered 900-1100px reading width, bold title and section heading hierarchy, readable near-black paragraphs, and no content card or boxed background.
 - The arbitration notice is visually emphasized through bold uppercase typography only; the page does not introduce a panel, border, shadow, radius, or alternate background behind it.
+
+### Footer Privacy Policy Page (2026-06-12)
+
+- The footer `Privacy Policy` link now opens a responsive `/privacy-policy` page using the same background-only legal-document presentation as Return Policy and Terms.
+- The long supplied policy is split into clear bold section headings with readable paragraph spacing inside a centered 900-1100px wrapper. Text remains directly on the warm neutral page background with no white card, boxed sections, shadow, border, or rounded content surface.
+- Foodonlines.com branding replaces every Yami/Yamibuy reference, including software, marketplace, and user-content passive-conduit language.
 - The wave is now the foreground decorative base in front of the transparent product cutouts. Products are lowered toward the wave so they visually touch it, while the wave covers only a subtle lower portion of the packages rather than leaving them floating or hiding too much of them.
 - Desktop, tablet, and mobile each keep separate offsets/wave heights so the collage stays balanced with no intentional horizontal overflow.
 
