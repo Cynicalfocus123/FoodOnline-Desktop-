@@ -864,6 +864,11 @@
 - Removed the `Learn more` action rows from every Contact Us card. The card design now stops after the primary email/account link, avoiding extra divider rows and preventing Contact Us URLs from collecting unrelated hashes such as `#become-partner`.
 - Card heights are slightly more compact while keeping the same rounded white Settings-style surfaces, tone-specific icon circles, and blue email/action links.
 
+### Contact Us Hero Image Positioning Fix (2026-06-12)
+
+- Adjusted only the grocery/herb image inside the pale blue Contact Us hero panel. The desktop image now sits closer to the bottom-left panel edge with `object-position: left bottom`, a wider image width, and a smaller intentional left bleed so it feels anchored instead of floating.
+- Mobile and tablet keep the same text order and page structure, but the hero art starts closer below the help-center link, bleeds slightly toward the side edge, and avoids extra empty hero height before the `Get in touch` section.
+
 ## Guardrails
 
 - Keep this file as single design source of truth for both public site and backend/admin mockup.

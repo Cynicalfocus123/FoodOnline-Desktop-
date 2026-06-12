@@ -234,7 +234,7 @@ export function ContactUsPage() {
 
           <img
             alt="Fresh FoodOnlines groceries and herbs"
-            className="relative z-0 mt-8 w-full max-w-[640px] translate-x-[-8%] object-contain drop-shadow-[0_28px_55px_rgba(15,23,42,0.14)] sm:mt-10 lg:absolute lg:bottom-0 lg:left-0 lg:max-w-none lg:translate-x-[-12%]"
+            className="pointer-events-none relative z-0 mt-6 mb-0 ml-[-6%] w-[112%] max-w-none object-contain object-left-bottom drop-shadow-[0_28px_55px_rgba(15,23,42,0.14)] sm:mt-7 sm:ml-[-3%] sm:w-[108%] lg:absolute lg:bottom-0 lg:left-0 lg:mt-0 lg:ml-0 lg:w-[112%] lg:translate-x-[-3%]"
             loading="eager"
             src={contactImagePath("/images/contact-us/contact-hero-groceries.png")}
           />

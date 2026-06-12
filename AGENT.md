@@ -1405,6 +1405,15 @@
 - Removed every `Learn more` row/button from the Contact Us page cards so Contact Us stays visually focused on direct email/account links and no longer appends partner/vendor/sponsor hashes such as `#become-partner` to the `/contact-us` URL.
 - Contact card heights were tightened after removing the divider/action row. Footer Contact Us route text and footer design remain unchanged.
 
+## Contact Us Hero Image Positioning Fix (2026-06-12)
+
+- Files changed:
+  - `src/components/ContactUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Adjusted only the left Contact Us hero grocery/vegetable image positioning. Header, footer, card content, card grid, contact text, links, icons, and sections were not changed.
+- Desktop now anchors the image closer to the pale blue panel's bottom-left edge with a wider left-bottom object position and a smaller intentional left offset. Mobile/tablet now keep the image closer below the hero copy with reduced top gap, slight left bleed, no added background box, and no unnecessary extra hero height.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:
