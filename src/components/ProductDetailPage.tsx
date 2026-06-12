@@ -241,7 +241,7 @@ export function ProductDetailPage() {
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
-  const backToHome = useHomeStore((state) => state.backToHome);
+  const backToProducts = useHomeStore((state) => state.backToProducts);
   const product = getProductById(selectedProductId);
   const relatedProducts = useMemo(() => getRelatedProducts(product, 10), [product]);
   const isFavorite = favoriteProductIds.includes(product.id);
@@ -371,7 +371,7 @@ export function ProductDetailPage() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:gap-10">
         <button
           className="inline-flex w-fit items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
-          onClick={backToHome}
+          onClick={() => backToProducts(product.categorySlug)}
           type="button"
         >
           <ArrowIcon direction="left" />

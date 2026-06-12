@@ -956,3 +956,8 @@
 - A single horizontal pill rail leads the page: active category uses solid brand blue with white type, inactive categories use light gray with near-black type, and mobile keeps the rail swipe-scrollable without a visible scrollbar.
 - FAQ questions and answers render directly on the page background. Rows are separated only by thin neutral rules; questions use medium-bold near-black text, answers use regular near-black text, and right-aligned SVG chevrons rotate when expanded.
 - Desktop uses the full wide content area with generous side padding. Tablet and mobile preserve readable wrapping, touch-safe row heights, aligned chevrons, comfortable answer spacing, and no intended horizontal overflow.
+## Product Detail Back Button UX (2026-06-13)
+
+- Keep the existing `Back to products` label and visual treatment unchanged.
+- The action returns users to their original product context: the same category listing or search results query, rather than always sending them to a generic/home page.
+- Product detail pages opened directly without a stored origin fall back to the product's own category listing, providing a stable product-browsing destination on desktop, tablet, and mobile.

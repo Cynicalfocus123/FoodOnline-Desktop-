@@ -42,6 +42,24 @@ export type SiteView =
   | "faq";
 export type SignupStep = "role" | "form" | "complete";
 
+function readProductReturnRoute(
+  state: Pick<HomeState, "siteView" | "selectedCategorySlug" | "searchQuery" | "productReturnRoute">,
+) {
+  if (state.siteView === "category" && state.selectedCategorySlug) {
+    return `category/${state.selectedCategorySlug}`;
+  }
+
+  if (state.siteView === "search" && state.searchQuery) {
+    return `search/${encodeURIComponent(state.searchQuery)}`;
+  }
+
+  if (state.siteView === "product") {
+    return state.productReturnRoute;
+  }
+
+  return null;
+}
+
 function readAuthReturnRoute(
   state: Pick<HomeState, "siteView" | "selectedProductId" | "selectedCategorySlug" | "searchQuery" | "accountSection" | "authReturnRoute">,
 ) {
@@ -371,6 +389,7 @@ type HomeState = {
   searchQuery: string;
   accountSection: AccountSection;
   authReturnRoute: string | null;
+  productReturnRoute: string | null;
   formValues: SignupFormValues;
   fieldErrors: SignupFieldErrors;
   completedSubmission: ReturnType<typeof createSignupSubmission> | null;
@@ -395,6 +414,7 @@ type HomeState = {
   openAffiliate: () => void;
   openDrivers: () => void;
   openProduct: (productId: string) => void;
+  backToProducts: (fallbackCategorySlug: string) => void;
   openSearchResults: (query: string) => void;
   openAccount: (section?: AccountSection) => void;
   returnAfterAuth: () => void;
@@ -461,6 +481,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   searchQuery: "",
   accountSection: "overview",
   authReturnRoute: null,
+  productReturnRoute: null,
   ...getBlankSignupState(),
   completedSubmission: null,
   submissionError: null,
@@ -713,13 +734,49 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       };
     }),
   openProduct: (productId) =>
-    set(() => {
+    set((state) => {
       writeRouteHash(`product/${productId}`);
       return {
         siteView: "product",
         selectedProductId: productId,
+        productReturnRoute: readProductReturnRoute(state),
         accountSection: "overview",
         submissionError: null,
+      };
+    }),
+  backToProducts: (fallbackCategorySlug) =>
+    set((state) => {
+      const returnRoute = state.productReturnRoute;
+
+      if (returnRoute?.startsWith("category/")) {
+        const categorySlug = returnRoute.slice("category/".length);
+        writeRouteHash(returnRoute);
+        return {
+          siteView: "category",
+          selectedCategorySlug: categorySlug,
+          selectedProductId: null,
+        };
+      }
+
+      if (returnRoute?.startsWith("search/")) {
+        const encodedQuery = returnRoute.slice("search/".length);
+        const query = safeDecodeRouteSegment(encodedQuery);
+        writeRouteHash(returnRoute);
+        return {
+          siteView: "search",
+          searchInputValue: query,
+          searchQuery: query,
+          selectedCategorySlug: null,
+          selectedProductId: null,
+        };
+      }
+
+      const categoryRoute = `category/${fallbackCategorySlug}`;
+      writeRouteHash(categoryRoute);
+      return {
+        siteView: "category",
+        selectedCategorySlug: fallbackCategorySlug,
+        selectedProductId: null,
       };
     }),
   openSearchResults: (query) =>

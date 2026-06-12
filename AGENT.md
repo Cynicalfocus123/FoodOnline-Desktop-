@@ -1,5 +1,13 @@
 # Agent Notes
 
+## Product Detail Return Navigation (2026-06-13)
+
+- `Back to products` now restores the product-list context captured when a shared product card opens: the same category slug or the same search query.
+- Related-product navigation keeps the original listing return route instead of replacing it with another product detail route.
+- Direct product-detail URLs have no stored listing context, so the button safely falls back to the opened product's own category listing rather than the homepage or an empty route.
+- Category filter and sort controls remain component-local and are not currently represented in the URL or Zustand store, so this change preserves only the category/search state the app already models.
+- Checks on 2026-06-13: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
+
 ## Footer FAQ Page (2026-06-12)
 
 - Added a responsive public FAQ page at `/faq`, connected through the shared Zustand route/history pattern and the existing public header/footer shell.
