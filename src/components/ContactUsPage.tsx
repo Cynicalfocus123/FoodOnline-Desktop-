@@ -217,7 +217,7 @@ export function ContactUsPage() {
   return (
     <section className="bg-white pt-[116px] sm:pt-[128px] lg:pt-[138px]">
       <div className="grid min-h-[calc(100vh-138px)] lg:grid-cols-[minmax(320px,36%)_minmax(0,64%)]">
-        <aside className="relative overflow-hidden bg-[#eef3fb] px-6 py-12 sm:px-10 lg:sticky lg:top-[138px] lg:min-h-[calc(100vh-138px)] lg:px-12 lg:py-14">
+        <aside className="relative overflow-hidden bg-[#f8e1cf] px-6 py-12 sm:px-10 lg:sticky lg:top-[138px] lg:min-h-[calc(100vh-138px)] lg:px-12 lg:py-14">
           <div className="relative z-10 max-w-[460px]">
             <p className="text-base font-black uppercase tracking-[0.18em] text-rose-500">Let's talk</p>
             <h1 className="mt-4 text-[clamp(3.3rem,7vw,6.75rem)] font-black leading-[0.9] tracking-[-0.06em] text-slate-950">

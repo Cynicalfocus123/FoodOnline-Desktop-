@@ -1414,6 +1414,14 @@
 - Adjusted only the left Contact Us hero grocery/vegetable image positioning. Header, footer, card content, card grid, contact text, links, icons, and sections were not changed.
 - Desktop now anchors the image closer to the pale blue panel's bottom-left edge with a wider left-bottom object position and a smaller intentional left offset. Mobile/tablet now keep the image closer below the hero copy with reduced top gap, slight left bleed, no added background box, and no unnecessary extra hero height.
 
+## Contact Us Hero Background Color Update (2026-06-12)
+
+- Files changed:
+  - `src/components/ContactUsPage.tsx`
+  - `AGENT.md`
+  - `design.md`
+- Updated only the Contact Us left hero panel background color from pale blue-gray `#eef3fb` to soft light orange/peach `#f8e1cf`. Header, footer, layout, card content, card grid, icons, text colors, food image, and approved image positioning were not changed.
+
 ## Affiliate How It Works Broken Image Fix (2026-06-11)
 
 - Files changed:

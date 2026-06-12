@@ -854,7 +854,7 @@
 ### Contact Us Page (2026-06-12)
 
 - Added a new public Contact Us page at `/contact-us` with `#contact-us` fallback routing. The existing Company footer `Contact Us` link now opens this page through the shared public route store without changing footer visual design.
-- The page uses a sample-inspired split composition: pale blue-gray left panel (`#eef3fb`) with pink `Let's talk` eyebrow, oversized near-black `Contact us` headline, help-center link with arrow, and the supplied grocery/herb art from `public/images/contact-us/contact-hero-groceries.png` anchored near the bottom.
+- The page uses a sample-inspired split composition: light orange/peach left panel (`#f8e1cf`) with pink `Let's talk` eyebrow, oversized near-black `Contact us` headline, help-center link with arrow, and the supplied grocery/herb art from `public/images/contact-us/contact-hero-groceries.png` anchored near the bottom.
 - Right content uses Settings-style cards: rounded white surfaces, subtle border/shadow, compact icon circles, strong title text, readable link rows, and blue action links. Get in touch cards use light-blue icon circles; Partners cards use light-pink circles; hiring cards use light-orange circles.
 - Content sections are hardcoded as `Get in touch`, `Partners`, and `We're hiring`, with email links using `mailto:`. The support email uses the existing site/footer email `sale@foodonlines.com`. `Go to your account` routes to `#account/settings`.
 - Responsive direction: desktop uses roughly 36% left / 64% right columns with the left panel sticky below the fixed header. Tablet and mobile-desktop keep two columns only when space allows, then stack. Mobile portrait places the left visual panel above the right content and stacks cards one per row with touch-friendly spacing and no intended horizontal overflow.
@@ -868,6 +868,10 @@
 
 - Adjusted only the grocery/herb image inside the pale blue Contact Us hero panel. The desktop image now sits closer to the bottom-left panel edge with `object-position: left bottom`, a wider image width, and a smaller intentional left bleed so it feels anchored instead of floating.
 - Mobile and tablet keep the same text order and page structure, but the hero art starts closer below the help-center link, bleeds slightly toward the side edge, and avoids extra empty hero height before the `Get in touch` section.
+
+### Contact Us Hero Background Color Update (2026-06-12)
+
+- Updated only the Contact Us left hero panel background from pale blue-gray to soft light orange/peach `#f8e1cf`. Header, footer, layout, card content, card grid, icons, spacing, food image, and approved image positioning remain unchanged.
 
 ## Guardrails
 
