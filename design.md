@@ -909,6 +909,12 @@
 ### Wholesaler Savings Wave Overlap Tune (2026-06-12)
 
 - Tuned only the second Wholesaler savings section bottom product collage and green wave relationship.
+
+### Wholesaler FAQ Accordion (2026-06-12)
+
+- The Wholesaler page now continues directly from the `Source products from leading brands` cards into a centered five-row FAQ accordion on the same `#fbf4ff` page background, with no separate lavender panel or card wrapper.
+- Questions use bold black Montserrat text, answers use regular black Montserrat text, and subtle black dividers plus small rotating chevrons match the supplied clean accordion reference.
+- All rows are closed by default. Responsive spacing, wrap-safe question text, fixed chevron sizing, large touch targets, and constrained answer widths prevent clipping or horizontal overflow on desktop, tablet, mobile-desktop, and mobile portrait layouts.
 - The wave is now the foreground decorative base in front of the transparent product cutouts. Products are lowered toward the wave so they visually touch it, while the wave covers only a subtle lower portion of the packages rather than leaving them floating or hiding too much of them.
 - Desktop, tablet, and mobile each keep separate offsets/wave heights so the collage stays balanced with no intentional horizontal overflow.
 

@@ -399,6 +399,85 @@ video {
   color: #050505;
 }
 
+.wholesaler-faq-section,
+.wholesaler-faq-section * {
+  box-sizing: border-box;
+  font-family: Montserrat, Poppins, Inter, system-ui, sans-serif;
+}
+
+.wholesaler-faq-section {
+  width: 100%;
+  overflow: hidden;
+  background: #fbf4ff;
+  padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1rem, 5vw, 4.5rem) clamp(4rem, 7vw, 6.5rem);
+  color: #050505;
+}
+
+.wholesaler-faq-inner {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.wholesaler-faq-item {
+  border-bottom: 1px solid rgba(5, 5, 5, 0.14);
+}
+
+.wholesaler-faq-item:first-child {
+  border-top: 1px solid rgba(5, 5, 5, 0.14);
+}
+
+.wholesaler-faq-trigger {
+  display: flex;
+  width: 100%;
+  min-height: clamp(68px, 6vw, 84px);
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  border: 0;
+  background: transparent;
+  padding: 0 clamp(0.25rem, 2vw, 1.75rem);
+  color: #050505;
+  font-size: clamp(1rem, 1.25vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.wholesaler-faq-trigger:focus-visible {
+  outline: 3px solid rgba(83, 44, 126, 0.45);
+  outline-offset: -3px;
+}
+
+.wholesaler-faq-chevron {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  transition: transform 180ms ease;
+}
+
+.wholesaler-faq-trigger[aria-expanded="true"] .wholesaler-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.wholesaler-faq-panel {
+  padding: 0 clamp(0.25rem, 2vw, 1.75rem) clamp(1.4rem, 3vw, 2.15rem);
+}
+
+.wholesaler-faq-panel p {
+  max-width: 920px;
+  margin: 0;
+  color: #111111;
+  font-size: clamp(0.94rem, 1.1vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
 @media (max-width: 1024px) {
   .wholesaler-hero-cta {
     left: 9.5%;
@@ -524,6 +603,15 @@ video {
   .wholesaler-brand-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .wholesaler-faq-section {
+    padding: 42px 24px 56px;
+  }
+
+  .wholesaler-faq-trigger {
+    min-height: 68px;
+    font-size: 17px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -535,6 +623,32 @@ video {
     min-height: 34px;
     padding: 0 1rem;
     font-size: 0.75rem;
+  }
+
+  .wholesaler-faq-section {
+    padding: 34px 16px 48px;
+  }
+
+  .wholesaler-faq-trigger {
+    min-height: 64px;
+    gap: 14px;
+    padding: 0 4px;
+    font-size: 15px;
+  }
+
+  .wholesaler-faq-chevron {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+  }
+
+  .wholesaler-faq-panel {
+    padding: 0 4px 20px;
+  }
+
+  .wholesaler-faq-panel p {
+    font-size: 14px;
+    line-height: 1.55;
   }
 
   .wholesaler-hero-cta span:last-child {

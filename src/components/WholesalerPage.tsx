@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
@@ -70,6 +71,32 @@ const brandCards = [
     image: "brands-hospitality.png",
     alt: "Food service staff preparing hospitality buffet service",
     text: "Streamline your restaurant's supply chain with fresh ingredients and seasonings delivered directly to you.",
+  },
+];
+
+const wholesalerFaqs = [
+  {
+    question: "What is the difference between commercial and consumer customers?",
+    answer:
+      "Foodonlines.com for Business is designed specifically for commercial buyers who require large-volume and recurring purchases. These customers benefit from lower pricing, along with enhanced delivery and unloading services that help reduce operational costs and improve profitability.",
+  },
+  {
+    question: "Am I eligible to create a business account?",
+    answer:
+      "Foodonlines.com for Business is currently available in selected provinces across Thailand, with plans to expand to additional regions and countries in the future.",
+  },
+  {
+    question: "How do I register a commercial account, and what information is required?",
+    answer:
+      "You can register easily using your email address. During sign-up, you will be asked to provide basic company information and contact details for your business.",
+  },
+  {
+    question: "Is there a minimum purchase requirement for commercial customers?",
+    answer: "Yes. The minimum order value for each purchase is ฿3,000.",
+  },
+  {
+    question: "How is the shipping fee charged?",
+    answer: "We offer completely free delivery on all orders.",
   },
 ];
 
@@ -197,6 +224,50 @@ function WholesalerBrandsSection() {
   );
 }
 
+function WholesalerFaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section className="wholesaler-faq-section" aria-label="Wholesaler frequently asked questions">
+      <div className="wholesaler-faq-inner">
+        {wholesalerFaqs.map((item, index) => {
+          const isOpen = openIndex === index;
+          const buttonId = `wholesaler-faq-button-${index}`;
+          const panelId = `wholesaler-faq-panel-${index}`;
+
+          return (
+            <div className="wholesaler-faq-item" key={item.question}>
+              <button
+                id={buttonId}
+                className="wholesaler-faq-trigger"
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() => setOpenIndex(isOpen ? null : index)}
+              >
+                <span>{item.question}</span>
+                <svg className="wholesaler-faq-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 9.5 5 5 5-5" />
+                </svg>
+              </button>
+
+              <div
+                id={panelId}
+                className="wholesaler-faq-panel"
+                role="region"
+                aria-labelledby={buttonId}
+                hidden={!isOpen}
+              >
+                <p>{item.answer}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export function WholesalerPage() {
   const openSignup = useHomeStore((state) => state.openSignup);
 
@@ -217,6 +288,8 @@ export function WholesalerPage() {
       <WholesalerSavingsSection />
 
       <WholesalerBrandsSection />
+
+      <WholesalerFaqSection />
     </div>
   );
 }
