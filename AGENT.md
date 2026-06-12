@@ -1514,6 +1514,11 @@
 - Added a static Privacy Policy page at `/privacy-policy` and converted the existing footer `Privacy Policy` label into a working SPA route through the shared Zustand navigation pattern.
 - The supplied legal text is organized under its original section headings and displayed directly on the warm neutral page background with a centered readable width, responsive near-black typography, and no card, panel, border, radius, shadow, or white box behind the content.
 - Replaced all supplied Yami/Yamibuy branding with Foodonlines.com, including the passive-conduit sentence and the headings `FOODONLINES SOFTWARE (APP) TERMS` and `FOODONLINES MARKETPLACE`.
+
+## Footer Contact Cleanup (2026-06-12)
+
+- Removed the shared footer's Bangkok office address, Call Us phone number, and business hours across every public page.
+- The footer contact area now displays only `Email: sale@foodonlines.com`; unused location, phone, and hours icon branches and contact-item types were removed.
 - The product cutouts now sit behind the green wave again, and the wave is the foreground decorative base. Product bottom offsets and wave heights were tuned so the wave touches and slightly covers the bottom of the packages without burying them or leaving an empty gap.
 
 ## Affiliate How It Works Broken Image Fix (2026-06-11)

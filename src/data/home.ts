@@ -1289,7 +1289,7 @@ export const productCarouselSections: ProductCarouselSection[] = categoryConfigs
 export type FooterContactItem = {
   label: string;
   value: string;
-  type: "location" | "phone" | "email" | "hours";
+  type: "email";
 };
 
 export type FooterLinkColumn = {
@@ -1301,24 +1301,9 @@ export const footerDescription = "We bring Grocery to your door for less";
 
 export const footerContactItems: FooterContactItem[] = [
   {
-    label: "Bangkok office:",
-    value: "279 Watcharaphon Rd. Tha rang, Bangkhen, Bangkok, Thailand",
-    type: "location",
-  },
-  {
-    label: "Call Us:",
-    value: "(66+) 097-392-4632",
-    type: "phone",
-  },
-  {
     label: "Email:",
     value: "sale@foodonlines.com",
     type: "email",
-  },
-  {
-    label: "Hours:",
-    value: "10:00 - 18:00, Mon - Sat",
-    type: "hours",
   },
 ];
 

@@ -1,7 +1,7 @@
 import { assets, footerColumns, footerContactItems, footerDescription } from "../data/home";
 import { useHomeStore } from "../store/homeStore";
 
-function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }) {
+function FooterIcon({ type }: { type: "email" }) {
   const commonProps = {
     className: "h-5 w-5 shrink-0 text-emerald-500",
     fill: "none",
@@ -12,37 +12,12 @@ function FooterIcon({ type }: { type: "location" | "phone" | "email" | "hours" }
     viewBox: "0 0 24 24",
   };
 
-  switch (type) {
-    case "location":
-      return (
-        <svg {...commonProps}>
-          <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
-          <circle cx="12" cy="10" r="2.2" />
-        </svg>
-      );
-    case "phone":
-      return (
-        <svg {...commonProps}>
-          <path d="M6.5 4.5h3l1 4-2.1 1.7a13.2 13.2 0 0 0 5.4 5.4l1.7-2.1 4 1v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 4.5 6c0-.8.7-1.5 1.5-1.5Z" />
-        </svg>
-      );
-    case "email":
-      return (
-        <svg {...commonProps}>
-          <path d="M4 6.5h16v11H4z" />
-          <path d="m5.5 8 6.5 5 6.5-5" />
-        </svg>
-      );
-    case "hours":
-      return (
-        <svg {...commonProps}>
-          <circle cx="12" cy="12" r="8.5" />
-          <path d="M12 7.5v5l3 2" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+  return (
+    <svg {...commonProps}>
+      <path d="M4 6.5h16v11H4z" />
+      <path d="m5.5 8 6.5 5 6.5-5" />
+    </svg>
+  );
 }
 
 export function Footer() {

@@ -933,6 +933,11 @@
 - The footer `Privacy Policy` link now opens a responsive `/privacy-policy` page using the same background-only legal-document presentation as Return Policy and Terms.
 - The long supplied policy is split into clear bold section headings with readable paragraph spacing inside a centered 900-1100px wrapper. Text remains directly on the warm neutral page background with no white card, boxed sections, shadow, border, or rounded content surface.
 - Foodonlines.com branding replaces every Yami/Yamibuy reference, including software, marketplace, and user-content passive-conduit language.
+
+### Footer Contact Cleanup (2026-06-12)
+
+- The shared site footer contact block now contains only the Foodonlines sales email row.
+- Bangkok office, phone, and opening-hours rows are removed globally without changing the footer columns, logo, description, legal links, account links, or corporate links.
 - The wave is now the foreground decorative base in front of the transparent product cutouts. Products are lowered toward the wave so they visually touch it, while the wave covers only a subtle lower portion of the packages rather than leaving them floating or hiding too much of them.
 - Desktop, tablet, and mobile each keep separate offsets/wave heights so the collage stays balanced with no intentional horizontal overflow.
 
