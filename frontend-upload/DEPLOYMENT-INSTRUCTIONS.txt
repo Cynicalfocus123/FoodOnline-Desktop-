@@ -1,47 +1,26 @@
-FoodOnlines TMDHosting cPanel Upload
-====================================
+FoodOnlines Hostinger File Manager Upload
+=========================================
 
-1. Login to TMDHosting cPanel.
-2. Open File Manager.
-3. Go to the live domain folder, usually:
-   /home/USERNAME/public_html/
-   or:
-   /home/USERNAME/foodonlines.com/
-4. Upload foodonlines-tmdhosting-cpanel-upload.zip.
-5. Extract the ZIP.
-6. Confirm these files are directly inside the live folder:
+1. Open Hostinger File Manager for the FoodOnlines domain.
+2. Open the live domain root, normally public_html/.
+3. Upload the contents of this frontend-upload folder directly into the live root.
+4. Keep .htaccess beside index.html and admin.html.
+5. Replace stale hashed frontend files under assets/ with this package's files.
+6. Confirm these paths exist directly in the live root:
    index.html
    admin.html
    favicon.svg
    .htaccess
    assets/
-7. Do not leave the files inside a nested frontend-upload folder.
-8. Test the public frontend:
-   https://foodonlines.com/
-9. Test admin:
-   https://foodonlines.com/admin
-   https://foodonlines.com/admin.html
-10. Test public auth:
-   https://foodonlines.com/#login
-   https://foodonlines.com/#signup
-11. Test API:
-   https://www.api.foodonlines.com/api/v1/auth/me
-12. If the site shows a white page, check that assets/ exists beside index.html and that JS/CSS files do not return text/html.
-
-Manual login/register test
---------------------------
-- Open public site.
-- Click Login / Register.
-- Test login with a live Laravel account.
-- Test register with a new email.
-- Confirm successful register appears in admin users if backend supports it.
-- Confirm logout works.
-- Confirm refresh restores session through /auth/me.
+7. Do not upload the enclosing frontend-upload folder as a nested site directory.
+8. Verify the public homepage, product categories, product details, cart, checkout,
+   login/signup, and /admin after upload.
 
 Notes
 -----
-- This ZIP contains only the public/admin frontend package for cPanel upload.
-- The shared production API base remains https://www.api.foodonlines.com/api/v1
-- If you deploy inside /public_html/app/ instead of the root domain folder, add:
-  RewriteBase /app/
-  near the top of .htaccess after RewriteEngine On.
+- This folder is the repository's live-deployment mirror of the current dist build.
+- The shared production API base remains https://www.api.foodonlines.com/api/v1.
+- Product runtime media uses optimized WebP/AVIF files; superseded mockup PNGs
+  are intentionally absent.
+- If deploying below the domain root, add the matching RewriteBase immediately
+  after RewriteEngine On and build with the corresponding VITE_BASE_PATH.

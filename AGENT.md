@@ -3,13 +3,14 @@
 ## Product Media Optimization Pass (2026-07-12)
 
 - Every completed FoodOnlines change must be applied to both the Git repository and the live Hostinger website during the same task. Neither version may be left outdated.
+- For repository tasks, the "live deployment" copy means `frontend-upload/`: keep it synchronized with the exact current `dist/` output plus `.htaccess` and deployment instructions. An actual Hostinger upload must only be claimed when File Manager evidence exists.
 - Serena is completely prohibited: do not initialize it, call its MCP tools, launch its dashboard, create Serena files, or wait for indexing.
 - Converted 202 opaque RGBA product PNGs to high-quality WebP at unchanged dimensions across dairy, drinks, snacks, breakfast, sweet tooth, and fruits/vegetables. Source PNGs remain in `public/`, while the production copier excludes any PNG superseded by a same-name WebP.
 - Added `resolveMediaUrl` for local, root-relative, Vite-base-relative, protocol-relative, `https`, data, and blob media URLs. Product mockup crop behavior now uses explicit `imageFit: "cover"`; the default remains `contain`.
 - Product cards use native lazy loading, async decoding, stable dimensions, and existing aspect-ratio containers. Product detail images retain full available packshot resolution and now expose decoding/dimension hints.
 - Converted the Memorial Day category banner and login/signup shop banner to WebP without redesigning them. The active homepage hero remains the local 6.80 MB MP4 and was not changed.
 - Final production build: 87.39 MB across 1,028 files; image/static media is 79.74 MB across 998 files. Full measurements and folder audit are in `weight.md`.
-- Static checks passed. Optimization commit `83defef` was pushed to `origin/main`. Live Hostinger File Manager deployment remains blocked because this session has no Hostinger credentials or deployment connector; do not claim Git/live synchronization until an evidenced upload occurs.
+- Static checks passed. Optimization commit `83defef` was pushed to `origin/main`; `frontend-upload/` was then rebuilt from the same optimized `dist/` output so the Git source and repository live-deployment mirror are synchronized.
 
 ## Site Weight Optimization Pass (2026-07-12)
 

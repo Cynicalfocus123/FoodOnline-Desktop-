@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodOnlines</title>
+    <script>
+      (function () {
+        var repoBase = "/FoodOnline-Desktop-/";
+        var path = window.location.pathname;
+        var route = path.indexOf(repoBase) === 0 ? path.slice(repoBase.length) : path.replace(/^\/+/, "");
+
+        if (!route || /\.[a-z0-9]+$/i.test(route)) {
+          window.location.replace(repoBase);
+          return;
+        }
+
+        window.location.replace(repoBase + "#" + route + window.location.search + window.location.hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Loading FoodOnlines...</p>
+  </body>
+</html>
