@@ -17,8 +17,38 @@
 - All supplied references use Foodonlines branding; the FAQ page contains no Yami or Yamibuy wording.
 
 - Repo was empty when cloned from `https://github.com/Cynicalfocus123/FoodOnline-Desktop-.git`; scaffolded first React desktop site in place.
-- Use caveman full responses unless user says normal mode.
+- Start every Codex/agent task with the exact first line: `caveman mode on`. Never use `$caveman full`, `caveman full`, or `caveman mode on full` unless the user explicitly requests a different phrase.
 - Keep command output capped. Prefer small `Select-Object -First ...` / `Out-String -Width ...` on PowerShell.
+
+## Permanent Token-Saving / Command Output Rules (2026-07-12)
+
+- These are the only rules imported from the separate Mstar Holding agent file. Do not import, follow, or copy any other Mstar Holding project rule, design instruction, page architecture, deployment filename, media setting, changelog item, company content, or repository convention.
+- Default all terminal commands to capped output.
+- For long shell commands, use `COMMAND 2>&1 | head -c 4000`.
+- For PowerShell, use `COMMAND 2>&1 | Select-Object -First 120`, or write output to a temporary file and inspect only the relevant lines.
+- Do not paste massive file dumps, build logs, `package-lock.json` content, minified bundles, generated output, or full binary/media listings into chat.
+- Prefer targeted inspection with `rg`, `Select-String`, `Get-Content -TotalCount`, `Get-Content -Tail`, and small line windows.
+- Inspect only relevant portions of files first, then expand narrowly when needed.
+- Summarize findings instead of dumping logs.
+- When a command fails, show only the command and useful error lines.
+- Keep `AGENT.md` changelog entries concise.
+- Update `design.md` with design intent, media-delivery behavior, and responsive impact without repeating large implementation logs.
+- Do not launch the Serena dashboard unless explicitly required.
+- Do not repeatedly ask which Python app or interpreter to use; use the existing project configuration unless genuinely blocked.
+
+## Active Site-Weight Optimization Directive (2026-07-12)
+
+- Audit the complete FoodOnlines production build and source asset tree before changing files. The site is media-heavy: the current measured `dist` is about 323 MB while application source is under 1 MB.
+- Use FFmpeg/FFprobe to optimize every referenced local video, beginning with `public/assets/food-horizontal.mp4` and `public/assets/blue-apron-any-night.mp4`. Preserve visible quality, aspect ratio, duration, playback behavior, layout, and browser compatibility. Strip unused audio, use H.264/yuv420p plus fast-start delivery when appropriate, and keep the original whenever a tested encode is not smaller or introduces a quality/playback regression.
+- Audit all oversized raster images, especially Wholesaler artwork and all media used by footer-linked pages. Convert eligible photographic PNG/JPEG assets to optimized WebP or AVIF, create right-sized responsive variants where useful, and preserve PNG/SVG only when transparency, vector fidelity, or exact-pixel behavior requires it. Never warp, stretch, recolor, redraw, or alter approved artwork.
+- Discover footer-linked pages from the actual shared footer data/component rather than relying only on a hardcoded list. At minimum review Wholesaler, Become a Vendor, Become a Partner, Affiliate, Sponsor, Driver, About Us, Contact Us, FAQ, Privacy Policy, Terms/legal pages, and every other route currently rendered in the footer.
+- Optimize footer pages for desktop, tablet, iOS Safari, Android Chrome, desktop Safari/Chrome, and narrow desktop/mobile browser widths. Preserve copy, routes, CTA behavior, forms, auth return paths, accessibility, and the approved FoodOnlines design.
+- Apply media-delivery improvements where appropriate: explicit dimensions/aspect ratios, `loading="lazy"` and `decoding="async"` below the fold, correct LCP priority above the fold, video posters, `preload="metadata"` or `none` for noncritical videos, responsive `srcset`/`sizes`, and route/component lazy loading when it safely reduces initial JavaScript.
+- Remove from final `dist` only assets proven unreferenced by built HTML/CSS/JS/runtime data. Do not delete source originals merely because optimized delivery variants are used.
+- Measure and document before/after sizes for `public`, `dist`, videos, images, JavaScript, CSS, and the largest individual files. Add or update a repeatable weight-audit script when practical.
+- Do not run localhost, a local IP, `npm run dev`, `npm start`, Vite preview, or any long-running server. Use safe static checks only.
+- After changes, run TypeScript, build, lint/tests where available, broken-reference checks, FFprobe/decode validation for videos, and a final weight audit. Update `AGENT.md`, `design.md`, and the site-weight report before committing.
+- Commit and push the completed FoodOnlines change set to the current branch automatically. Do not import Mstar Holding deployment ZIP rules or filenames.
 - User wants commit and push after each completed change set without asking.
 - Single documentation rule: keep one source of truth only. Use `AGENT.md` for repo + backend/admin implementation notes, and `design.md` for repo + backend/admin design notes.
 - Permanent documentation rule: after every meaningful code, deployment, admin, backend, frontend, or design change, update `AGENT.md` and the design notes file before committing. Current design notes file is `design.md`; if a future `designer.md` file is added, update it too.
@@ -1315,7 +1345,7 @@
   - `design.md`
 - Fixed only the Affiliate Rewards / Referral Cards section. Header, footer, routing, and the Affiliate Hero + Stats section above were not edited.
 - Card 2 and Card 3 now share the corrected coral/red-orange `#f75b43` background with white text and a light border.
-- Card 3 text was reset to `Receive ฿100` with body copy `for every successful referral who signs up`, avoiding the corrupted `Ã Â¸Â¿100` display.
+- Card 3 text was reset to `Receive ฿100` with body copy `for every successful referral who signs up`, avoiding the corrupted `Ã Â¸Â¿100` display.
 - Tablet and mobile-desktop widths now treat coral cards as shorter banner-like cards with larger text, compact black pill buttons, and right-side white icons close to the copy instead of bottom-heavy tall panels.
 - Mobile landscape keeps the coral cards compact with hidden buttons and right-side icons. Mobile portrait keeps stacked compact square-like cards with hidden buttons and lower-right icons.
 - Checks on 2026-06-08: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, and `git diff --check`.
