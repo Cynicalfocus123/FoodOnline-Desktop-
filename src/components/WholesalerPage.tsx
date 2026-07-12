@@ -27,22 +27,22 @@ const savingsBenefits: Array<{
 const savingsProducts = [
   {
     className: "wholesaler-savings-product wholesaler-savings-product--chicken",
-    fileName: "savings-canned-chicken.png",
+    fileName: "savings-canned-chicken.webp",
     alt: "Japanese canned chicken product",
   },
   {
     className: "wholesaler-savings-product wholesaler-savings-product--curry",
-    fileName: "savings-curry-box.png",
+    fileName: "savings-curry-box.webp",
     alt: "Japanese curry product box",
   },
   {
     className: "wholesaler-savings-product wholesaler-savings-product--bibigo",
-    fileName: "savings-bibigo-bag.png",
+    fileName: "savings-bibigo-bag.webp",
     alt: "Bibigo Korean meat ball product",
   },
   {
     className: "wholesaler-savings-product wholesaler-savings-product--sauce",
-    fileName: "savings-sauce-tubs.png",
+    fileName: "savings-sauce-tubs.webp",
     alt: "Korean sauce tubs",
   },
 ];
@@ -50,25 +50,25 @@ const savingsProducts = [
 const brandCards = [
   {
     title: "Retail & convenience",
-    image: "brands-retail.png",
+    image: "brands-retail.webp",
     alt: "Retail store shelves stocked with international grocery products",
     text: "Enjoy exclusive savings on every qualifying order and maximize the value of your business purchases.",
   },
   {
     title: "Corporate & workplace",
-    image: "brands-corporate.png",
+    image: "brands-corporate.webp",
     alt: "Corporate employees enjoying workplace catering",
     text: "Discover a wide variety of international snacks and treats to keep your team energized, engaged, and satisfied throughout the day.",
   },
   {
     title: "Restaurant & bakery",
-    image: "brands-restaurant.png",
+    image: "brands-restaurant.webp",
     alt: "Fresh bakery products displayed in a bakery case",
     text: "We supply groceries to restaurants, cafes, and bakeries, streamlining your sourcing so you can focus on serving your customers.",
   },
   {
     title: "Food service & hospitality",
-    image: "brands-hospitality.png",
+    image: "brands-hospitality.webp",
     alt: "Food service staff preparing hospitality buffet service",
     text: "Streamline your restaurant's supply chain with fresh ingredients and seasonings delivered directly to you.",
   },
@@ -277,7 +277,7 @@ export function WholesalerPage() {
         <img
           alt="Get 10% off. Supercharge your business with exciting Asian products."
           className="block w-full"
-          src={wholesalerImagePath("hero-section.png")}
+          src={wholesalerImagePath("hero-section.webp")}
         />
         <button className="wholesaler-hero-cta" onClick={openSignup} type="button">
           <span>Create account</span>

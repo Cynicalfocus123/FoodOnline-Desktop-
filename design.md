@@ -22,6 +22,10 @@
 ## Implementation Notes
 
 - React + TypeScript + Vite.
+- 2026-07-12 performance direction: production builds now use an explicit public-asset manifest copy after Vite build instead of shipping the whole `public/` tree. Runtime-visible media remains visually equivalent, while unused reference/source assets stay out of `dist`.
+- 2026-07-12 media delivery direction: the homepage hero video remains the same muted looping decorative MP4 experience, but the hosted file is FFmpeg-compressed H.264/yuv420p fast-start at 1600x682 with no audio. Footer-linked page media for Wholesaler, Driver, About, Contact Us, Become Vendor, Become Partner, and Affiliate now references optimized WebP variants where raster PNG weight was excessive.
+- 2026-07-12 loading direction: non-home route components are code-split with React lazy loading. The homepage shell, hero, categories, product rows, footer, and promo behavior stay eager so the first screen does not go blank, while footer-linked pages, account, auth, legal, cart, checkout, search, category, and product-detail chunks load on demand.
+- 2026-07-12 live deployment note: current live hosting is Hostinger File Manager. GitHub Pages still has an automated workflow for `main`, but Hostinger File Manager upload requires access outside this local session.
 - Zustand stores shared signup form state for hero and splash email forms.
 - Zustand now also stores the shared public search input and submitted search query so one header search bar can be reused across home, category, product detail, cart, checkout, login, and signup.
 - Tailwind CSS owns responsive layout, colors, spacing, shadows, and buttons.

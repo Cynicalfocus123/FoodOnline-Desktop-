@@ -1,32 +1,37 @@
-import { useEffect } from "react";
-import { AccountPage } from "./components/AccountPage";
-import { AboutUsPage } from "./components/AboutUsPage";
-import { AffiliateHeroSection } from "./components/AffiliateHeroSection";
-import { BecomePartnerPage } from "./components/BecomePartnerPage";
-import { BecomeSponsorPage } from "./components/BecomeSponsorPage";
-import { BecomeVendorPage } from "./components/BecomeVendorPage";
-import { CartPage } from "./components/CartPage";
+import { lazy, Suspense, useEffect } from "react";
 import { CategoryStrip } from "./components/CategoryStrip";
-import { CategoryListingPage } from "./components/CategoryListingPage";
-import { CheckoutPage } from "./components/CheckoutPage";
-import { ContactUsPage } from "./components/ContactUsPage";
 import { DealsGrid } from "./components/DealsGrid";
-import { DriverLandingPage } from "./components/DriverLandingPage";
-import { FaqPage } from "./components/FaqPage";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
-import { LoginFlow } from "./components/LoginFlow";
-import { ProductDetailPage } from "./components/ProductDetailPage";
-import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
 import { PromoExperience } from "./components/PromoExperience";
-import { ReturnPolicyPage } from "./components/ReturnPolicyPage";
-import { TermsOfUsePage } from "./components/TermsOfUsePage";
-import { SearchResultsPage } from "./components/SearchResultsPage";
-import { SignupFlow } from "./components/SignupFlow";
-import { WholesalerPage } from "./components/WholesalerPage";
 import { useHomeStore } from "./store/homeStore";
 import { usePublicAuthStore } from "./store/publicAuthStore";
+
+const AccountPage = lazy(() => import("./components/AccountPage").then((module) => ({ default: module.AccountPage })));
+const AboutUsPage = lazy(() => import("./components/AboutUsPage").then((module) => ({ default: module.AboutUsPage })));
+const AffiliateHeroSection = lazy(() =>
+  import("./components/AffiliateHeroSection").then((module) => ({ default: module.AffiliateHeroSection })),
+);
+const BecomePartnerPage = lazy(() => import("./components/BecomePartnerPage").then((module) => ({ default: module.BecomePartnerPage })));
+const BecomeSponsorPage = lazy(() => import("./components/BecomeSponsorPage").then((module) => ({ default: module.BecomeSponsorPage })));
+const BecomeVendorPage = lazy(() => import("./components/BecomeVendorPage").then((module) => ({ default: module.BecomeVendorPage })));
+const CartPage = lazy(() => import("./components/CartPage").then((module) => ({ default: module.CartPage })));
+const CategoryListingPage = lazy(() =>
+  import("./components/CategoryListingPage").then((module) => ({ default: module.CategoryListingPage })),
+);
+const CheckoutPage = lazy(() => import("./components/CheckoutPage").then((module) => ({ default: module.CheckoutPage })));
+const ContactUsPage = lazy(() => import("./components/ContactUsPage").then((module) => ({ default: module.ContactUsPage })));
+const DriverLandingPage = lazy(() => import("./components/DriverLandingPage").then((module) => ({ default: module.DriverLandingPage })));
+const FaqPage = lazy(() => import("./components/FaqPage").then((module) => ({ default: module.FaqPage })));
+const LoginFlow = lazy(() => import("./components/LoginFlow").then((module) => ({ default: module.LoginFlow })));
+const ProductDetailPage = lazy(() => import("./components/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
+const PrivacyPolicyPage = lazy(() => import("./components/PrivacyPolicyPage").then((module) => ({ default: module.PrivacyPolicyPage })));
+const ReturnPolicyPage = lazy(() => import("./components/ReturnPolicyPage").then((module) => ({ default: module.ReturnPolicyPage })));
+const SearchResultsPage = lazy(() => import("./components/SearchResultsPage").then((module) => ({ default: module.SearchResultsPage })));
+const SignupFlow = lazy(() => import("./components/SignupFlow").then((module) => ({ default: module.SignupFlow })));
+const TermsOfUsePage = lazy(() => import("./components/TermsOfUsePage").then((module) => ({ default: module.TermsOfUsePage })));
+const WholesalerPage = lazy(() => import("./components/WholesalerPage").then((module) => ({ default: module.WholesalerPage })));
 
 export default function App() {
   const siteView = useHomeStore((state) => state.siteView);
@@ -74,28 +79,28 @@ export default function App() {
           <DealsGrid />
         </div>
       ) : null}
-      {siteView === "signup" ? (
-        <SignupFlow />
-      ) : null}
-      {siteView === "login" ? <LoginFlow /> : null}
-      {siteView === "cart" ? <CartPage /> : null}
-      {siteView === "checkout" ? <CheckoutPage /> : null}
-      {siteView === "category" ? <CategoryListingPage /> : null}
-      {siteView === "product" ? <ProductDetailPage /> : null}
-      {siteView === "search" ? <SearchResultsPage /> : null}
-      {siteView === "account" ? <AccountPage /> : null}
-      {siteView === "aboutUs" ? <AboutUsPage /> : null}
-      {siteView === "contactUs" ? <ContactUsPage /> : null}
-      {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
-      {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
-      {siteView === "becomeSponsor" ? <BecomeSponsorPage /> : null}
-      {siteView === "wholesaler" ? <WholesalerPage /> : null}
-      {siteView === "affiliate" ? <AffiliateHeroSection /> : null}
-      {siteView === "drivers" ? <DriverLandingPage /> : null}
-      {siteView === "returnPolicy" ? <ReturnPolicyPage /> : null}
-      {siteView === "termsOfUse" ? <TermsOfUsePage /> : null}
-      {siteView === "privacyPolicy" ? <PrivacyPolicyPage /> : null}
-      {siteView === "faq" ? <FaqPage /> : null}
+      <Suspense fallback={null}>
+        {siteView === "signup" ? <SignupFlow /> : null}
+        {siteView === "login" ? <LoginFlow /> : null}
+        {siteView === "cart" ? <CartPage /> : null}
+        {siteView === "checkout" ? <CheckoutPage /> : null}
+        {siteView === "category" ? <CategoryListingPage /> : null}
+        {siteView === "product" ? <ProductDetailPage /> : null}
+        {siteView === "search" ? <SearchResultsPage /> : null}
+        {siteView === "account" ? <AccountPage /> : null}
+        {siteView === "aboutUs" ? <AboutUsPage /> : null}
+        {siteView === "contactUs" ? <ContactUsPage /> : null}
+        {siteView === "becomeVendor" ? <BecomeVendorPage /> : null}
+        {siteView === "becomePartner" ? <BecomePartnerPage /> : null}
+        {siteView === "becomeSponsor" ? <BecomeSponsorPage /> : null}
+        {siteView === "wholesaler" ? <WholesalerPage /> : null}
+        {siteView === "affiliate" ? <AffiliateHeroSection /> : null}
+        {siteView === "drivers" ? <DriverLandingPage /> : null}
+        {siteView === "returnPolicy" ? <ReturnPolicyPage /> : null}
+        {siteView === "termsOfUse" ? <TermsOfUsePage /> : null}
+        {siteView === "privacyPolicy" ? <PrivacyPolicyPage /> : null}
+        {siteView === "faq" ? <FaqPage /> : null}
+      </Suspense>
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

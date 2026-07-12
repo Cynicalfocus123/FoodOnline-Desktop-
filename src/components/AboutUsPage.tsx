@@ -76,35 +76,35 @@ const leadershipCards = [
   {
     name: "Natalie",
     role: "CFO",
-    image: `${basePath}images/about/leadership/natalie.png`,
+    image: `${basePath}images/about/leadership/natalie.webp`,
     imageAlt: "Natalie",
     imageClassName: "object-contain object-bottom scale-[1.24]",
   },
   {
     name: "Lucas Huber",
     role: "COO",
-    image: `${basePath}images/about/leadership/lucas-huber.png`,
+    image: `${basePath}images/about/leadership/lucas-huber.webp`,
     imageAlt: "Lucas Huber",
     imageClassName: "object-contain object-bottom scale-[1.13]",
   },
   {
     name: "Anna Goldstein",
     role: "Chief Marketing Officer / CMO",
-    image: `${basePath}images/about/leadership/anna-goldstein.png`,
+    image: `${basePath}images/about/leadership/anna-goldstein.webp`,
     imageAlt: "Anna Goldstein",
     imageClassName: "object-cover object-[50%_20%]",
   },
   {
     name: "Janet Weiler",
     role: "Chief Commercial Officer / CCO",
-    image: `${basePath}images/about/leadership/janet-weiler.png`,
+    image: `${basePath}images/about/leadership/janet-weiler.webp`,
     imageAlt: "Janet Weiler",
     imageClassName: "object-contain object-bottom scale-[0.92]",
   },
   {
     name: "Ahmet Yılmaz",
     role: "Chief Customer & Experience Officer / CXO",
-    image: `${basePath}images/about/leadership/ahmet-yilmaz.png`,
+    image: `${basePath}images/about/leadership/ahmet-yilmaz.webp`,
     imageAlt: "Ahmet Yılmaz",
     imageClassName: "object-cover object-[50%_12%]",
   },
@@ -233,7 +233,7 @@ export function AboutUsPage() {
             decoding="async"
             draggable={false}
             fetchPriority="high"
-            src={`${basePath}images/about/about-food-table.png`}
+            src={`${basePath}images/about/about-food-table.webp`}
           />
         </div>
       </section>

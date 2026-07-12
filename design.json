@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-06-04",
+    "updated_at": "2026-07-12",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -10,6 +10,19 @@
     "desktop_agent": "D:/Foodonline desktop version/AGENT.md",
     "mobile_reference_designer": "D:/Thai app food online/App/designer.md",
     "mobile_reference_design_json": "D:/Thai app food online/App/design.json"
+  },
+  "performance": {
+    "updated_at": "2026-07-12",
+    "production_asset_strategy": "Vite publicDir disabled; scripts/copy-public-assets.mjs copies only referenced runtime public assets into dist.",
+    "hero_video": {
+      "file": "public/assets/food-horizontal.mp4",
+      "format": "H.264 MP4",
+      "dimensions": "1600x682",
+      "audio": "removed",
+      "behavior": "muted autoplay loop inline decorative hero video"
+    },
+    "media_formats": "Oversized rendered page PNGs use optimized WebP variants where appropriate; source/reference originals may remain outside production output.",
+    "route_loading": "Non-home route components are React lazy-loaded while the homepage shell remains eager."
   },
   "routes": {
     "home": {

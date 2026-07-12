@@ -19,6 +19,7 @@ function getProductionBase() {
 
 export default defineConfig(({ mode }) => ({
   base: mode === "production" ? getProductionBase() : "/",
+  publicDir: false,
   plugins: [react()],
   build: {
     rollupOptions: {

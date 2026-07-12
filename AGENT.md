@@ -1,5 +1,18 @@
 # Agent Notes
 
+## Site Weight Optimization Pass (2026-07-12)
+
+- Permanent live-sync rule: Every completed FoodOnlines website change must be applied to both the Git repository and the live deployed website during the same task. Neither version may be left outdated.
+- Corrected live-hosting context: current live hosting is Hostinger File Manager, not TMDHosting. Do not assume old TMDHosting/cPanel upload paths for new live-site work unless the user explicitly reverts hosting.
+- Production build now disables Vite's blanket `public/` copy and runs `scripts/copy-public-assets.mjs` after `vite build` so only referenced runtime assets ship into `dist`.
+- Homepage hero video `public/assets/food-horizontal.mp4` was FFmpeg-optimized in place from 36.66 MB to 6.80 MB using H.264, `yuv420p`, `+faststart`, 1600x682, 30 fps, 50.10s, and no audio because it is a muted decorative hero video.
+- Added optimized WebP variants for used Wholesaler, Driver, About, Contact Us, Become Vendor, Become Partner, and Affiliate page media, then updated route/data references to those WebP variants.
+- Kept original supplied PNG/reference assets in source where useful, but excluded unreferenced originals from production output. Examples excluded from `dist`: `blue-apron-any-night.mp4`, Wholesaler `brands-section.png`, unused transparent logo variants, Contact icon PNGs, and non-rendered About timeline/reference media.
+- Non-home route components are now loaded with `React.lazy`/`Suspense`, reducing the main public JS entry from 466.50 KB raw to 101.47 KB raw while preserving Zustand routing and public/admin separation.
+- Final measured `dist` size is 175.86 MB, down from 323.02 MB. Production local video size is 6.80 MB, down from 41.01 MB. Updated details live in `weight.md`.
+- Checks on 2026-07-12: `cmd /c npx tsc --noEmit`, `cmd /c npm run build`, static built-media reference check, FFmpeg video decode, representative FFmpeg WebP decode checks, `cmd /c git diff --check -- ...`, `cmd /c npm run lint --if-present`, and `cmd /c npm test --if-present`.
+- Live Hostinger File Manager deployment could not be completed from this session because no Hostinger credentials or deployment connector are available. The refreshed Hostinger-ready production output is `dist/`; GitHub Pages still deploys automatically from `main` but is not the Hostinger File Manager deployment.
+
 ## Product Detail Return Navigation (2026-06-13)
 
 - `Back to products` now restores the product-list context captured when a shared product card opens: the same category slug or the same search query.

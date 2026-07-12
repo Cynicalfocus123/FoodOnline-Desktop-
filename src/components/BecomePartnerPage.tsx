@@ -95,7 +95,7 @@ function PartnerHeroSection() {
           alt="A large food table prepared for a shared meal"
           className="partner-hero-food-image block h-[clamp(145px,34vw,340px)] w-full rounded-[12px] object-cover object-center lg:h-[clamp(390px,36vw,560px)]"
           loading="eager"
-          src={partnerImagePath("partner-food-table.png")}
+          src={partnerImagePath("partner-food-table.webp")}
         />
         <div className="relative">
           <img

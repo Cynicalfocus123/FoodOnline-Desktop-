@@ -1,42 +1,42 @@
 export const driverAssets = {
   hero: {
-    src: "foodonlines-driver-hero.png",
+    src: "foodonlines-driver-hero.webp",
     alt: "FoodOnlines driver loading branded delivery boxes into a van",
   },
   earnings: {
-    src: "foodonlines-driver-earnings.png",
+    src: "foodonlines-driver-earnings.webp",
     alt: "FoodOnlines driver checking a delivery phone near a customer doorway",
   },
   earningsPerson: {
-    src: "driver-earnings-person-crop.png",
+    src: "driver-earnings-person-crop.webp",
     alt: "FoodOnlines driver checking a phone near a doorway",
   },
   support: {
-    src: "foodonlines-driver-support.png",
+    src: "foodonlines-driver-support.webp",
     alt: "FoodOnlines drivers loading delivery parcels into a branded van",
   },
   community: {
-    src: "foodonlines-driver-community.png",
+    src: "foodonlines-driver-community.webp",
     alt: "FoodOnlines driver team standing together",
   },
   applyTeam: {
-    src: "driver-apply-team.png",
+    src: "driver-apply-team.webp",
     alt: "FoodOnlines drivers standing in front of a branded delivery truck",
   },
   valueLoading: {
-    src: "driver-value-loading.png",
+    src: "driver-value-loading.webp",
     alt: "FoodOnlines drivers loading delivery boxes into a truck",
   },
   valueCab: {
-    src: "driver-value-cab.png",
+    src: "driver-value-cab.webp",
     alt: "FoodOnlines driver seated in a delivery truck cab",
   },
   valueTeam: {
-    src: "driver-value-team.png",
+    src: "driver-value-team.webp",
     alt: "FoodOnlines driver team standing together in an office",
   },
   valuePair: {
-    src: "driver-value-pair.png",
+    src: "driver-value-pair.webp",
     alt: "Two FoodOnlines drivers standing near a delivery truck",
   },
   flex: {
@@ -52,19 +52,19 @@ export const driverAssets = {
     alt: "Driver handing a grocery order to a customer",
   },
   appRoute: {
-    src: "driver-program-van.png",
+    src: "driver-program-van.webp",
     alt: "FoodOnlines branded delivery van on the road",
   },
   routeSelect: {
-    src: "driver-schedule-calendar.png",
+    src: "driver-schedule-calendar.webp",
     alt: "Delivery schedule calendar with planned route stops",
   },
   doorDelivery: {
-    src: "driver-route-delivery.png",
+    src: "driver-route-delivery.webp",
     alt: "FoodOnlines driver loading delivery boxes into a van",
   },
   payout: {
-    src: "driver-payout-phone.png",
+    src: "driver-payout-phone.webp",
     alt: "Driver payout confirmation on a phone",
   },
   team: {

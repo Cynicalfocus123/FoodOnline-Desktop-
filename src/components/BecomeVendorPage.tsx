@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useHomeStore } from "../store/homeStore";
 
 const basePath = import.meta.env.BASE_URL;
-const vendorFoodGlobeImage = `${basePath}images/become-vendor/vendor-food-globe-transparent.png`;
+const vendorFoodGlobeImage = `${basePath}images/become-vendor/vendor-food-globe-transparent.webp`;
 const vendorHeroTomatoImage = `${basePath}images/become-vendor/vendor-hero-tomato.svg`;
 const vendorHeroVegetableImage = `${basePath}images/become-vendor/vendor-hero-vegetable.svg`;
 

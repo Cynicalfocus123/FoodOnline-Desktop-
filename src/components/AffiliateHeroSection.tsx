@@ -624,7 +624,7 @@ function AffiliateSignupBannerSection() {
     <section className="affiliate-signup-banner-section" aria-labelledby="affiliate-signup-banner-title">
       <div
         className="affiliate-signup-banner"
-        style={{ backgroundImage: `url("${affiliateImagePath("images/affiliate/affiliate-signup-banner.png")}")` }}
+        style={{ backgroundImage: `url("${affiliateImagePath("images/affiliate/affiliate-signup-banner.webp")}")` }}
       >
         <div className="affiliate-signup-banner__content">
           <div className="affiliate-signup-banner__copy">
