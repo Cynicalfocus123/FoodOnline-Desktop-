@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = process.cwd();
@@ -106,8 +106,29 @@ function copyPublicPath(relativePath) {
   cpSync(from, to, { recursive: true });
 }
 
+function copyRuntimeDirectory(relativePath) {
+  const from = join(publicRoot, relativePath);
+  const to = join(distRoot, relativePath);
+
+  if (!existsSync(from)) {
+    throw new Error(`Missing public asset directory: ${relativePath}`);
+  }
+
+  mkdirSync(to, { recursive: true });
+  for (const entry of readdirSync(from)) {
+    const source = join(from, entry);
+    const target = join(to, entry);
+    const optimizedWebpExists = entry.toLowerCase().endsWith(".png") && existsSync(join(from, `${entry.slice(0, -4)}.webp`));
+    if (statSync(source).isDirectory()) {
+      copyRuntimeDirectory(join(relativePath, entry));
+    } else if (!optimizedWebpExists) {
+      cpSync(source, target);
+    }
+  }
+}
+
 for (const directory of directories) {
-  copyPublicPath(directory);
+  copyRuntimeDirectory(directory);
 }
 
 for (const file of files) {

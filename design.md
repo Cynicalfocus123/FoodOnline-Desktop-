@@ -965,3 +965,11 @@
 - Keep the existing `Back to products` label and visual treatment unchanged.
 - The action returns users to their original product context: the same category listing or search results query, rather than always sending them to a generic/home page.
 - Product detail pages opened directly without a stored origin fall back to the product's own category listing, providing a stable product-browsing destination on desktop, tablet, and mobile.
+# Product Media Delivery (2026-07-12)
+
+- Product packaging keeps the approved card and detail layouts, crops, proportions, whitespace, colors, and responsive behavior. Mockup catalog entries explicitly use `imageFit: "cover"`; other product imagery defaults to `contain`.
+- PNG packshots were replaced in runtime delivery by same-dimension, high-quality WebP files. No product image was AI-modified, resized, retouched, recolored, or background-removed.
+- Product cards keep stable square/4:3 media containers and use browser-native lazy loading plus async decoding. Detail media retains the original available dimensions for label readability and enlargement quality.
+- Shared media URL resolution accepts current local assets and future absolute CDN URLs without prefixing external URLs with Vite's base path.
+- Memorial Day and login/signup banner artwork now ships as WebP with its existing copy, aspect ratio, crop, and layout unchanged.
+- The active homepage hero remains the approved local MP4 experience. No visual design, route, cart, favorites, search, checkout, auth, or admin behavior changed in this pass.

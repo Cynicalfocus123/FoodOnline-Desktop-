@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
-import signupBannerImage from "../../site video and content/shop  and order banner.png";
+import signupBannerImage from "../../site video and content/shop  and order banner.webp";
 import { SignupFormValues, getSignupRoleMeta, signupFieldLimits } from "../lib/registerSchema";
 import { signupRoleOptions, useHomeStore } from "../store/homeStore";
 import { PublicSessionUser, usePublicAuthStore } from "../store/publicAuthStore";

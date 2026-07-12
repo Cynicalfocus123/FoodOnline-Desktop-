@@ -1,98 +1,83 @@
 # FoodOnlines Site Weight
 
-Generated on 2026-07-12 from the current workspace after the production-weight optimization pass.
+Generated on 2026-07-12 after the product-media production optimization pass. Measurements use binary MB (`1 MB = 1,048,576 bytes`).
 
-## Measurement Scope
-
-- Read source notes: `AGENT.md`, `design.md`, `design.json`.
-- Read site-weight baseline: prior `weight.md`.
-- Read deployment notes and corrected live-hosting context: live hosting is now Hostinger File Manager, not TMDHosting.
-- Ran a fresh production build with `npm run build`.
-- Did not run localhost, local IP previews, Vite preview, or any long-running server.
-
-## Before And After
+## Production Result
 
 | Area | Before | After | Saved |
 | --- | ---: | ---: | ---: |
-| `public` source assets | 319.87 MB | 290.17 MB | 29.70 MB |
-| `dist` production build | 323.02 MB | 175.86 MB | 147.16 MB |
-| Production local video | 41.01 MB | 6.80 MB | 34.21 MB |
-| Production image/static media | about 278 MB | 168.22 MB | about 110 MB |
-| Main public JS entry | 466.50 KB | 101.47 KB | 365.03 KB |
+| `dist` total | 175.86 MB | 87.39 MB | 88.47 MB (50.3%) |
+| Production image/static media | 168.22 MB | 79.74 MB | 88.48 MB (52.6%) |
+| Product mockup folders | 157.05 MB | 71.97 MB | 85.08 MB (54.2%) |
+| Production local video | 6.80 MB | 6.80 MB | 0 MB |
+| Main public JavaScript entry | 101.47 KB | 101.74 KB | -0.27 KB |
 
-Production build reduction: about 45.6%.
+Final `dist`: 91,630,414 bytes across 1,028 files. The under-120-MB target and under-100-MB stretch target were both reached without resizing product images.
 
-## Current Production Build Weight
+## Product Folder Audit
 
-| Area | Files | Size |
-| --- | ---: | ---: |
-| `dist` total | 1,028 | 175.86 MB |
-| `dist` video | 1 | 6.80 MB |
-| `dist` images/media | 998 | 168.22 MB |
-| `dist` JS chunks | 25 | 0.67 MB |
-| `dist` CSS | 1 | 170.43 KB |
+All catalog-generated mockup folders were audited from `src/data/home.ts`, listing overrides, product cards, product detail galleries, search, cart, favorites, related products, and checkout use. Runtime counts reflect the distinct local files copied to production; dairy uses 49 local overrides and generated gallery fallbacks for remaining listing slots.
 
-Largest current production files:
+| Folder | Runtime files | Before | After |
+| --- | ---: | ---: | ---: |
+| dairy-bread-mockups | 49 | 31.08 MB | 3.66 MB |
+| drinks-beverage-mockups | 60 | 25.35 MB | 4.24 MB |
+| snacks-munchies-mockups | 60 | 20.23 MB | 2.27 MB |
+| breakfast-instant-food-mockups | 60 | 13.06 MB | 3.09 MB |
+| sweet-tooth-mockups | 60 | 11.39 MB | 3.10 MB |
+| atta-rice-dal-mockups | 60 | 6.95 MB | 6.95 MB |
+| frozen-mockups | 60 | 6.60 MB | 6.60 MB |
+| chicken-meat-fish-mockups | 60 | 6.38 MB | 6.38 MB |
+| vegan-foods-mockups | 60 | 5.96 MB | 5.96 MB |
+| organic-healthy-living-mockups | 60 | 5.68 MB | 5.68 MB |
+| bakery-biscuits-mockups | 60 | 5.56 MB | 5.56 MB |
+| fruits-vegetables-mockups | 60 | 5.26 MB | 4.95 MB |
+| masala-oil-more-mockups | 60 | 4.61 MB | 4.61 MB |
+| sauces-spreads-mockups | 60 | 4.48 MB | 4.48 MB |
+| tea-coffee-milk-drinks-mockups | 60 | 4.46 MB | 4.46 MB |
+
+## Conversion Summary
+
+- PNG product sources converted: 202.
+- Product WebPs created: 202.
+- Additional banner WebPs created: 2.
+- AVIFs created: 0; existing compact AVIF catalog files were intentionally retained.
+- Responsive variants created: 0. Existing product sources are only 263-870 px and already match card/detail needs; extra variants would add deployment complexity with limited savings.
+- Product PNG sources removed from production: 202. Originals remain in `public/` for preservation.
+- Other superseded PNGs removed from production: Memorial Day banner and the bundled login/signup banner.
+- Exact duplicate files removed: 0. Thirteen existing AVIF duplicate pairs were retained because they occupy intentional category/product slots; remapping cross-category catalog identity was outside this low-risk delivery pass.
+
+## Media Behavior
+
+- `resolveMediaUrl` supports local paths, Vite relative deployment bases, full HTTP(S), protocol-relative, data, and blob URLs.
+- Product mockups use explicit `imageFit: "cover"`, preserving the former path-derived crop. Other product imagery defaults to `contain`.
+- Product cards use stable aspect-ratio containers, `loading="lazy"`, `decoding="async"`, and explicit dimensions. Detail images keep available source quality and add stable dimensions/async decoding.
+- No unnecessary 480/800/1200 copies were generated because the existing source dimensions are already below 900 px.
+
+## Remaining Largest Files
 
 | File | Size |
 | --- | ---: |
 | `dist/assets/food-horizontal.mp4` | 6.80 MB |
-| `dist/assets/shop  and order banner-CFkICX1r.png` | 2.32 MB |
-| `dist/assets/home-banners/memorial-day-sale-banner.png` | 1.68 MB |
-| `dist/assets/dairy-bread-mockups/dairy-bread-20.png` | 1.44 MB |
-| `dist/assets/drinks-beverage-mockups/drinks-beverage-45.png` | 1.36 MB |
+| `dist/assets/food-online-long-text-cutout.png` | 0.85 MB |
+| `dist/assets/vegan-foods-mockups/vegan-foods-47.avif` | 0.50 MB |
+| bundled login/signup shop banner WebP | 0.38 MB |
+| `dist/assets/drinks-beverage-mockups/drinks-beverage-17.avif` | 0.36 MB |
 
-## Optimized Assets
-
-- `public/assets/food-horizontal.mp4`: 36.66 MB to 6.80 MB.
-  - Re-encoded with FFmpeg as H.264 MP4, `yuv420p`, `+faststart`, no audio, 1600x682, 30 fps, 50.10s.
-- `public/images/about/leadership/jakapun-viwatkurkul.webp`: 2.55 MB to 27 KB.
-- Added optimized WebP variants for used Wholesaler, Driver, About, Contact Us, Become Vendor, Become Partner, and Affiliate media.
-- Updated route components/data to reference optimized WebP files.
-- Kept original supplied PNG/reference files in source where they may still be useful, but excluded unreferenced originals from production output.
-
-## Production Assets Excluded
-
-The build now uses `publicDir: false` plus `scripts/copy-public-assets.mjs` to copy only referenced runtime assets into `dist`.
-
-Excluded examples:
-
-- `public/assets/blue-apron-any-night.mp4`
-- `public/assets/food-online-long-text-transparent.png`
-- `public/assets/logo-transparent.png`
-- `public/assets/app-install-icon.png`
-- `public/images/wholesaler/brands-section.png`
-- `public/images/wholesaler/savings-desktop-reference.png`
-- Contact icon PNGs that are not rendered by the current Contact Us page
-- About timeline/reference artwork not rendered by the current About Us route
-
-## JavaScript And Loading
-
-- Non-home routes are now lazy-loaded with `React.lazy` and `Suspense`.
-- Homepage stays eager for header, hero, category strip, product rows, footer, and promo behavior.
-- Vite now emits page chunks for checkout, account, footer-linked pages, legal pages, search, product, cart, category, login, and signup.
-- Main public JS entry dropped from 466.50 KB raw to 101.47 KB raw.
+The local hero MP4 is actively rendered by `HeroSlider` and was intentionally unchanged at 6.80 MB. Existing AVIF product images were retained where re-encoding offered no justified quality/risk tradeoff. The 0.85 MB transparent logo cutout remains because it is the approved header branding asset and branding changes are prohibited.
 
 ## Validation
 
-- `cmd /c npx tsc --noEmit`: passed.
-- `cmd /c npm run build`: passed.
-- Static built-reference check: 35 local media references, 0 missing.
-- FFmpeg video decode check for optimized hero MP4: passed.
-- FFmpeg image decode checks for representative optimized WebPs: passed.
-- `cmd /c git diff --check -- ...`: passed; only CRLF normalization warnings were printed.
-- `cmd /c npm run lint --if-present`: no lint script configured.
-- `cmd /c npm test --if-present`: no test script configured.
+- `npx tsc --noEmit`: passed.
+- `npm run build`: passed; 84 modules transformed and selective public copying completed.
+- New WebP decode validation: 202/202 product files passed FFmpeg decoding.
+- Representative alpha checks: all six PNG-bearing folders were fully opaque (`alpha min/max 255`), despite RGBA storage.
+- Production mockup PNG check: 0 superseded PNG files remain in `dist`.
+- Production catalog files: 889 distinct local mockup files present across all 15 folders.
+- Localhost, local IP, Vite preview, and development servers were not used.
 
-## Live Deployment
+## Deployment
 
-- Current corrected hosting target: Hostinger File Manager.
-- This session has no Hostinger/File Manager credentials or deploy connector, so live upload could not be completed directly.
-- The Hostinger-ready production output is the refreshed `dist/` folder from the pushed source build.
-- GitHub Pages deployment remains automated by `.github/workflows/deploy-pages.yml` on push to `main`, but that is not the Hostinger File Manager deployment.
-
-## Remaining Weight Targets
-
-- Product mockup folders are now the dominant production weight.
-- Largest remaining candidates are PNG product pack images in `dairy-bread-mockups`, `drinks-beverage-mockups`, and `snacks-munchies-mockups`.
-- A future pass should optimize product pack images carefully because they are generated through category data and used across homepage rails, category grids, product detail, cart, search, and favorites.
+- Git result: recorded after commit/push below in the final task handoff.
+- Hostinger result: blocked. This session has no Hostinger File Manager credentials or deployment connector, so no live upload can be evidenced.
+- Git/live synchronization: not confirmed. A generated `dist` folder is deployment-ready but is not equivalent to a live Hostinger upload.

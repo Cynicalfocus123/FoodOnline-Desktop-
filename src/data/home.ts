@@ -1,4 +1,6 @@
-const localAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+import { resolveMediaUrl } from "../lib/media";
+
+const localAsset = resolveMediaUrl;
 
 const PRODUCT_SIZES = [
   "500 g",
@@ -59,34 +61,34 @@ const ORGANIC_HEALTHY_LIVING_CATEGORY_NAME = "Organic & Healthy Living";
 const FROZEN_CATEGORY_NAME = "Frozen";
 const dairyBreadMockupAssetPaths = [
   ...Array.from({ length: 5 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 1).padStart(2, "0")}.avif`)),
-  ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.png`)),
+  ...Array.from({ length: 41 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 6).padStart(2, "0")}.webp`)),
   ...Array.from({ length: 3 }, (_, index) => localAsset(`assets/dairy-bread-mockups/dairy-bread-${String(index + 47).padStart(2, "0")}.avif`)),
 ];
 const fruitVegetableMockupAssetPaths = [
   ...Array.from({ length: 60 }, (_, index) => {
     const fileIndex = index + 1;
-    const extension = fileIndex === 53 ? "jpg" : fileIndex === 60 ? "png" : "avif";
+    const extension = fileIndex === 53 ? "jpg" : fileIndex === 60 ? "webp" : "avif";
     return localAsset(`assets/fruits-vegetables-mockups/fruits-vegetables-${String(fileIndex).padStart(2, "0")}.${extension}`);
   }),
 ];
 const drinksBeverageMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
-  const extension = fileIndex >= 25 && fileIndex <= 56 ? "png" : "avif";
+  const extension = fileIndex >= 25 && fileIndex <= 56 ? "webp" : "avif";
   return localAsset(`assets/drinks-beverage-mockups/drinks-beverage-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
 const snacksMunchiesMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
-  localAsset(`assets/snacks-munchies-mockups/snacks-munchies-${String(index + 1).padStart(2, "0")}.png`),
+  localAsset(`assets/snacks-munchies-mockups/snacks-munchies-${String(index + 1).padStart(2, "0")}.webp`),
 );
 const breakfastInstantFoodMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
-  const extension = fileIndex >= 8 && fileIndex <= 41 ? "png" : "avif";
+  const extension = fileIndex >= 8 && fileIndex <= 41 ? "webp" : "avif";
   return localAsset(
     `assets/breakfast-instant-food-mockups/breakfast-instant-food-${String(fileIndex).padStart(2, "0")}.${extension}`,
   );
 });
 const sweetToothMockupAssetPaths = Array.from({ length: 60 }, (_, index) => {
   const fileIndex = index + 1;
-  const extension = fileIndex <= 26 ? "avif" : "png";
+  const extension = fileIndex <= 26 ? "avif" : "webp";
   return localAsset(`assets/sweet-tooth-mockups/sweet-tooth-${String(fileIndex).padStart(2, "0")}.${extension}`);
 });
 const bakeryBiscuitsMockupAssetPaths = Array.from({ length: 60 }, (_, index) =>
@@ -534,6 +536,7 @@ export type ProductItem = {
   deliveryTime: string;
   image: string;
   imageUrls: string[];
+  imageFit?: "contain" | "cover";
   unitPrice: string;
   soldCount: number;
   categoryId: string;
@@ -940,7 +943,7 @@ export const assets = {
   heroVideo: localAsset("assets/food-horizontal.mp4"),
   heroPoster: localAsset("assets/food-hero-poster.svg"),
   splashVideo: localAsset("assets/food-horizontal.mp4"),
-  homeCategoryPromoBanner: localAsset("assets/home-banners/memorial-day-sale-banner.png"),
+  homeCategoryPromoBanner: localAsset("assets/home-banners/memorial-day-sale-banner.webp"),
   favicon: localAsset("favicon.svg"),
 };
 
@@ -1087,6 +1090,7 @@ export const categoryListingCatalogBySlug = new Map(
             ...product,
             image: overrideImage,
             imageUrls: [overrideImage, ...product.imageUrls.slice(1)],
+            imageFit: "cover" as const,
           };
         })
       : listingProducts;

@@ -30,7 +30,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
   const isFavorite = favoriteProductIds.includes(product.id);
   const isGrid = layout === "grid";
-  const usesExpandedCategoryImage = product.image.includes("/assets/") && product.image.includes("-mockups/");
+  const imageFit = product.imageFit ?? "contain";
 
   function handleOpen() {
     openProduct(product.id);
@@ -81,12 +81,15 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
           <img
             alt={product.name}
             className={`h-full w-full ${
-              usesExpandedCategoryImage
+              imageFit === "cover"
                 ? "object-cover object-center scale-[1.08] transform-gpu"
                 : "object-contain"
             }`}
             loading="lazy"
+            decoding="async"
+            height={600}
             src={product.image}
+            width={600}
           />
         </div>
         {isGrid ? (

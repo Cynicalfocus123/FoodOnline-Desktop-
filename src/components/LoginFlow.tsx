@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import signupBannerImage from "../../site video and content/shop  and order banner.png";
+import signupBannerImage from "../../site video and content/shop  and order banner.webp";
 import { normalizeUserEmail, sanitizeUserPasswordInput, validateUserEmail, validateUserLoginPassword } from "../lib/security";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";

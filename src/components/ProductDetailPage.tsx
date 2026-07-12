@@ -392,8 +392,11 @@ export function ProductDetailPage() {
                       <img
                         alt={`${product.name} image ${index + 1}`}
                         className="h-full max-h-[620px] w-full object-contain"
+                        decoding="async"
                         draggable={false}
+                        height={900}
                         src={image}
+                        width={900}
                       />
                     </div>
                   </div>
@@ -433,9 +436,12 @@ export function ProductDetailPage() {
                       <img
                         alt={`${product.name} thumbnail ${index + 1}`}
                         className="h-24 w-24 object-cover"
+                        decoding="async"
                         draggable={false}
+                        height={96}
                         loading="lazy"
                         src={image}
+                        width={96}
                       />
                     </button>
                   ))}
