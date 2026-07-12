@@ -1,4 +1,4 @@
-import { IconName } from "../data/home";
+import type { IconName } from "../types/catalog";
 
 type MockIconProps = {
   name: IconName;

@@ -1,5 +1,17 @@
 # Agent Notes
 
+## Frontend Catalog Architecture Preparation (2026-07-12)
+
+- Added shared catalog contracts in `src/types/catalog.ts`, including products, categories, images/image fit, variants, reviews, filters, query/pagination, and stable display fields.
+- Added a synchronous `CatalogRepository` boundary with `localCatalogRepository` as the active adapter. It delegates to the unchanged local generation, category aliases, 60-item listings, search scoring, related-product selection, and ID lookup in `src/data/home.ts`.
+- Homepage rows, categories, category listing, search, product detail, related products, cart, favorites-facing cards, and checkout now consume catalog operations/types through `src/services/catalog` rather than importing catalog arrays/helpers directly from `home.ts`.
+- Added an inactive `ApiProductDto` mapper that normalizes string/numeric IDs and prices, nullable old prices, stock state, variants, primary/gallery media, image fit, and local/CDN URLs through the existing `resolveMediaUrl`. It performs no network requests.
+- Cart and favorites already persist stable IDs/quantities (`cartQuantities` and `favoriteProductIds`), so no storage migration or behavior change was needed.
+- Chose a synchronous repository for this preparation phase to preserve instant local rendering and avoid fake loading states. A future Laravel adapter can implement the same boundary before consumers are migrated to asynchronous states.
+- Navigation, footer, language, hero, shortcuts, promotions, and all local catalog generation remain in `home.ts`; this pass avoids a risky unrelated data split.
+- Production remains 87.39 MB (91,631,477 bytes, 1,028 files). `frontend-upload/` matches every `dist/` file by SHA-256 with only `.htaccess` and deployment instructions as extras.
+
+
 ## Product Media Optimization Pass (2026-07-12)
 
 - Every completed FoodOnlines change must be applied to both the Git repository and the live Hostinger website during the same task. Neither version may be left outdated.

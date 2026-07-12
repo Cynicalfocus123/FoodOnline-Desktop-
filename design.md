@@ -973,3 +973,10 @@
 - Shared media URL resolution accepts current local assets and future absolute CDN URLs without prefixing external URLs with Vite's base path.
 - Memorial Day and login/signup banner artwork now ships as WebP with its existing copy, aspect ratio, crop, and layout unchanged.
 - The active homepage hero remains the approved local MP4 experience. No visual design, route, cart, favorites, search, checkout, auth, or admin behavior changed in this pass.
+# Catalog Architecture Preparation (2026-07-12)
+
+- The storefront keeps its approved visual design and synchronous behavior while product access now flows through a catalog repository boundary backed by the existing local data.
+- Shared product/category/media types preserve every current display field, explicit image fit, product IDs, pricing, variants, details, and responsive image behavior.
+- Local asset and future CDN/API image URLs are normalized at the data-adapter boundary with the existing `resolveMediaUrl`; rendered URLs are not resolved a second time in components.
+- Homepage rows, category grids, search, product detail, related items, cart, favorites, and checkout retain their current ordering, counts, matching, routing, and interaction contracts.
+- The prepared API DTO mapper is inactive. No Laravel catalog request, Cloudflare R2 integration, loading UI, layout change, or backend migration was introduced.

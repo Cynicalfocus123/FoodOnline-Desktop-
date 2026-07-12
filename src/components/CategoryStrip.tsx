@@ -1,7 +1,9 @@
-import { assets, categories, promoBanner } from "../data/home";
+import { assets, promoBanner } from "../data/home";
+import { getCategories } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 
 export function CategoryStrip() {
+  const categories = getCategories();
   const openCategory = useHomeStore((state) => state.openCategory);
 
   return (

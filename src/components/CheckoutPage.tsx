@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
-import { formatPrice, getProductById, type ProductItem } from "../data/home";
+import { formatPrice, getProductById, type ProductItem } from "../services/catalog";
 import { apiRequest } from "../lib/apiClient";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";

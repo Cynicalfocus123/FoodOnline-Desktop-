@@ -1,5 +1,5 @@
 import { KeyboardEvent, MouseEvent } from "react";
-import { ProductItem, formatPrice } from "../data/home";
+import { formatPrice, type ProductItem } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { CartQuantityControl } from "./CartQuantityControl";
 

@@ -10,7 +10,7 @@ import {
   getAvailableProductTypes,
   getCategoryBySlug,
   getCategoryListingProducts,
-} from "../data/home";
+} from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
 

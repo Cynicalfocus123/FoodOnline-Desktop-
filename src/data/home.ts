@@ -1,4 +1,34 @@
 import { resolveMediaUrl } from "../lib/media";
+import type {
+  Category as CategoryTile,
+  CategoryFilterBrand,
+  DeliveryTypeOption,
+  IconName,
+  MadeInOption,
+  NutritionFacts,
+  Product as ProductItem,
+  ProductCarouselSection,
+  ProductReview,
+  ProductTypeOption,
+  ProductVariant,
+  RatingBreakdown,
+  RecipeSuggestion,
+} from "../types/catalog";
+
+export type {
+  CategoryFilterBrand,
+  DeliveryTypeOption,
+  IconName,
+  MadeInOption,
+  NutritionFacts,
+  ProductCarouselSection,
+  ProductReview,
+  ProductTypeOption,
+  ProductVariant,
+  RatingBreakdown,
+  RecipeSuggestion,
+};
+export type { Category as CategoryTile, Product as ProductItem } from "../types/catalog";
 
 const localAsset = resolveMediaUrl;
 
@@ -462,34 +492,6 @@ function createProductImage(productName: string, brand: string, palette: Palette
   `);
 }
 
-export type IconName =
-  | "categories"
-  | "snack"
-  | "grocery"
-  | "beverage"
-  | "beauty"
-  | "personal-care"
-  | "home"
-  | "electronics"
-  | "baby"
-  | "health"
-  | "paan"
-  | "dairy"
-  | "fruit"
-  | "breakfast"
-  | "sweet"
-  | "bakery"
-  | "tea"
-  | "grain"
-  | "spice"
-  | "sauce"
-  | "meat"
-  | "organic"
-  | "pharma"
-  | "cleaning"
-  | "office"
-  | "pet";
-
 export type LanguageOption = {
   code: string;
   label: string;
@@ -504,15 +506,6 @@ export type ShortcutItem = {
   href: string;
 };
 
-export type CategoryTile = {
-  name: string;
-  icon: IconName;
-  image: string;
-  sectionId: string;
-  categorySlug: string;
-  href: string;
-};
-
 export type PromoBannerData = {
   title: string;
   saleText: string;
@@ -523,104 +516,6 @@ export type PromoBannerData = {
     image: string;
   }>;
 };
-
-export type ProductItem = {
-  id: string;
-  brand: string;
-  name: string;
-  categorySlug: string;
-  size: string;
-  price: number;
-  oldPrice?: number;
-  discountPercent?: number;
-  deliveryTime: string;
-  image: string;
-  imageUrls: string[];
-  imageFit?: "contain" | "cover";
-  unitPrice: string;
-  soldCount: number;
-  categoryId: string;
-  categoryName: string;
-  deliveryType: (typeof DELIVERY_TYPES)[number];
-  productType: (typeof PRODUCT_TYPES)[number];
-  madeIn: (typeof MADE_IN_OPTIONS)[number];
-  tags: string[];
-  badges: string[];
-  provider: string;
-  country: string;
-  countryOfOrigin: string;
-  brandOrigin: string;
-  netContent: string;
-  quantity: string;
-  description: string;
-  ingredients?: string;
-  storageInstructions?: string;
-  sku: string;
-  recipeSuggestions: RecipeSuggestion[];
-  nutritionFacts: NutritionFacts;
-  returnPolicy: string;
-  reviews: ProductReview[];
-  reviewTags: string[];
-  averageRating: number;
-  ratingBreakdown: RatingBreakdown;
-  reviewCount: number;
-  variants: ProductVariant[];
-};
-
-export type ProductVariant = {
-  id: string;
-  label: string;
-  packSize: string;
-  price: number;
-  unitPrice: string;
-};
-
-export type RecipeSuggestion = {
-  id: string;
-  title: string;
-  description: string;
-  prepTime: string;
-  usage: string;
-  ingredients: string[];
-};
-
-export type NutritionFacts = {
-  servingSize: string;
-  calories: number;
-  totalFat: string;
-  sodium: string;
-  carbohydrates: string;
-  sugar: string;
-  protein: string;
-  ingredientsNote?: string;
-  allergenNote?: string;
-};
-
-export type ProductReview = {
-  id: string;
-  customerName: string;
-  rating: number;
-  text: string;
-  date: string;
-  verifiedPurchase: boolean;
-  isPurchased: boolean;
-  images: string[];
-  tags: string[];
-};
-
-export type RatingBreakdown = Record<1 | 2 | 3 | 4 | 5, number>;
-
-export type ProductCarouselSection = {
-  title: string;
-  sectionId: string;
-  seeAllHref: string;
-  items: ProductItem[];
-};
-
-export type CategoryFilterBrand = (typeof FILTER_BRANDS)[number];
-export type DeliveryTypeOption = (typeof DELIVERY_TYPES)[number];
-export type ProductTypeOption = (typeof PRODUCT_TYPES)[number];
-export type MadeInOption = (typeof MADE_IN_OPTIONS)[number];
 
 const PRODUCT_COUNTRIES = [
   "Thailand",

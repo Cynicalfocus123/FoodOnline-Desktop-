@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ProductCarouselSection } from "../data/home";
+import type { ProductCarouselSection } from "../types/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
 

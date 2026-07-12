@@ -1,5 +1,5 @@
 import { FormEvent, type ReactNode, useMemo, useState } from "react";
-import { formatPrice, getProductById } from "../data/home";
+import { formatPrice, getProductById } from "../services/catalog";
 import {
   normalizeUserEmail,
   sanitizeUserPasswordInput,

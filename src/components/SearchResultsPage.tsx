@@ -1,5 +1,5 @@
 import { type ReactNode, useDeferredValue, useMemo } from "react";
-import { searchProducts } from "../data/home";
+import { searchProducts } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
 

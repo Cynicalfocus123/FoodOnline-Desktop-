@@ -5,7 +5,7 @@ import {
   formatPrice,
   getProductById,
   getRelatedProducts,
-} from "../data/home";
+} from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { CartQuantityControl } from "./CartQuantityControl";
 import { ProductCard } from "./ProductCard";
