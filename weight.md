@@ -78,6 +78,6 @@ The local hero MP4 is actively rendered by `HeroSlider` and was intentionally un
 
 ## Deployment
 
-- Git result: recorded after commit/push below in the final task handoff.
+- Git result: optimization commit `83defef` was pushed successfully to `origin/main` on 2026-07-12.
 - Hostinger result: blocked. This session has no Hostinger File Manager credentials or deployment connector, so no live upload can be evidenced.
 - Git/live synchronization: not confirmed. A generated `dist` folder is deployment-ready but is not equivalent to a live Hostinger upload.

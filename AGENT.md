@@ -9,7 +9,7 @@
 - Product cards use native lazy loading, async decoding, stable dimensions, and existing aspect-ratio containers. Product detail images retain full available packshot resolution and now expose decoding/dimension hints.
 - Converted the Memorial Day category banner and login/signup shop banner to WebP without redesigning them. The active homepage hero remains the local 6.80 MB MP4 and was not changed.
 - Final production build: 87.39 MB across 1,028 files; image/static media is 79.74 MB across 998 files. Full measurements and folder audit are in `weight.md`.
-- Static checks passed. Live Hostinger File Manager deployment remains blocked because this session has no Hostinger credentials or deployment connector; do not claim Git/live synchronization until an evidenced upload occurs.
+- Static checks passed. Optimization commit `83defef` was pushed to `origin/main`. Live Hostinger File Manager deployment remains blocked because this session has no Hostinger credentials or deployment connector; do not claim Git/live synchronization until an evidenced upload occurs.
 
 ## Site Weight Optimization Pass (2026-07-12)
 
