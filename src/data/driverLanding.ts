@@ -39,18 +39,6 @@ export const driverAssets = {
     src: "driver-value-pair.webp",
     alt: "Two FoodOnlines drivers standing near a delivery truck",
   },
-  flex: {
-    src: "driver-flex.webp",
-    alt: "Driver using a phone to choose grocery delivery routes",
-  },
-  fleet: {
-    src: "driver-fleet.webp",
-    alt: "FoodOnlines fleet driver near a delivery van",
-  },
-  handoff: {
-    src: "driver-delivery-hand-off.webp",
-    alt: "Driver handing a grocery order to a customer",
-  },
   appRoute: {
     src: "driver-program-van.webp",
     alt: "FoodOnlines branded delivery van on the road",
@@ -66,10 +54,6 @@ export const driverAssets = {
   payout: {
     src: "driver-payout-phone.webp",
     alt: "Driver payout confirmation on a phone",
-  },
-  team: {
-    src: "driver-team.webp",
-    alt: "FoodOnlines delivery team",
   },
 } as const;
 

@@ -13,7 +13,7 @@
   },
   "performance": {
     "updated_at": "2026-07-12",
-    "production_asset_strategy": "Vite publicDir disabled; scripts/copy-public-assets.mjs copies only referenced runtime public assets into dist.",
+    "production_asset_strategy": "Hostinger root builds use base /; Vite publicDir is disabled; scripts/copy-public-assets.mjs copies and validates referenced runtime public assets plus deployment rules in dist.",
     "hero_video": {
       "file": "public/assets/food-horizontal.mp4",
       "format": "H.264 MP4",
@@ -26,40 +26,40 @@
   },
   "routes": {
     "home": {
-      "path": "#home",
+      "path": "/",
       "view": "home"
     },
     "login": {
-      "path": "#login",
+      "path": "/login",
       "view": "login"
     },
     "cart": {
-      "path": "#cart",
+      "path": "/cart",
       "view": "cart",
       "refresh_safe": true
     },
     "checkout": {
-      "path": "#checkout",
+      "path": "/checkout",
       "view": "checkout",
       "refresh_safe": true
     },
     "category_listing": {
-      "path": "#category/:categorySlug",
+      "path": "/category/:categorySlug",
       "view": "category",
       "refresh_safe": true
     },
     "product_detail": {
-      "path": "#product/:productId",
+      "path": "/product/:productId",
       "view": "product",
       "refresh_safe": true
     },
     "search_results": {
-      "path": "#search/:query",
+      "path": "/search/:query",
       "view": "search",
       "refresh_safe": true
     },
     "account": {
-      "path": "#account[/section]",
+      "path": "/account[/section]",
       "view": "account",
       "refresh_safe": true,
       "sections": [

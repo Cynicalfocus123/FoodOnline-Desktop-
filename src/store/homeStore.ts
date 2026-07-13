@@ -16,6 +16,7 @@ import {
   validateSignupRole,
 } from "../lib/security";
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
+import { getPublicRouteHref } from "../lib/routes";
 
 export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "language";
 export type SiteView =
@@ -39,7 +40,12 @@ export type SiteView =
   | "returnPolicy"
   | "termsOfUse"
   | "privacyPolicy"
-  | "faq";
+  | "faq"
+  | "recipes"
+  | "companyNews"
+  | "ourMission"
+  | "accessibility"
+  | "sitemap";
 export type SignupStep = "role" | "form" | "complete";
 
 function readProductReturnRoute(
@@ -153,7 +159,7 @@ function writeAuthRouteHash(route: "signup" | "login") {
     return;
   }
 
-  window.history.pushState(null, "", `${import.meta.env.BASE_URL}#${route}`);
+  window.history.pushState(null, "", getPublicRouteHref(route));
 }
 
 function isDriversRoute(hash: string) {
@@ -329,49 +335,11 @@ function writeRouteHash(route: string | null) {
   }
 
   if (route) {
-    if (/\/company\/drivers\/?$/i.test(window.location.pathname)) {
-      window.history.pushState(null, "", `${import.meta.env.BASE_URL}#${route}`);
-      return;
-    }
-
-    window.location.hash = route;
+    window.history.pushState(null, "", getPublicRouteHref(route));
     return;
   }
 
-  if (
-    window.location.hash.startsWith("#product/") ||
-    window.location.hash.startsWith("#category/") ||
-    window.location.hash.startsWith("#search/") ||
-    window.location.hash.startsWith("#cart") ||
-    window.location.hash.startsWith("#checkout") ||
-    window.location.hash.startsWith("#account") ||
-    window.location.hash.startsWith("#signup") ||
-    window.location.hash.startsWith("#login") ||
-    window.location.hash.startsWith("#about-us") ||
-    window.location.hash.startsWith("#contact-us") ||
-    window.location.hash.startsWith("#return-policy") ||
-    window.location.hash.startsWith("#terms-and-conditions") ||
-    window.location.hash.startsWith("#privacy-policy") ||
-    window.location.hash.startsWith("#become-vendor") ||
-    window.location.hash.startsWith("#become-partner") ||
-    window.location.hash.startsWith("#become-a-sponsor") ||
-    window.location.hash.startsWith("#wholesaler") ||
-    window.location.hash.startsWith("#affiliate") ||
-    window.location.hash.startsWith("#company/drivers") ||
-    /\/about-us\/?$/i.test(window.location.pathname) ||
-    /\/contact-us\/?$/i.test(window.location.pathname) ||
-    /\/return-policy\/?$/i.test(window.location.pathname) ||
-    /\/terms-and-conditions\/?$/i.test(window.location.pathname) ||
-    /\/privacy-policy\/?$/i.test(window.location.pathname) ||
-    /\/become-vendor\/?$/i.test(window.location.pathname) ||
-    /\/become-partner\/?$/i.test(window.location.pathname) ||
-    /\/become-a-sponsor\/?$/i.test(window.location.pathname) ||
-    /\/wholesaler\/?$/i.test(window.location.pathname) ||
-    /\/affiliate\/?$/i.test(window.location.pathname) ||
-    /\/company\/drivers\/?$/i.test(window.location.pathname)
-  ) {
-    window.history.replaceState(null, "", `${import.meta.env.BASE_URL}#home`);
-  }
+  window.history.replaceState(null, "", getPublicRouteHref());
 }
 
 type HomeState = {
@@ -568,7 +536,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openAboutUs: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}about-us`);
+        window.history.pushState(null, "", getPublicRouteHref("about-us"));
       }
 
       return {
@@ -582,7 +550,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openContactUs: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}contact-us`);
+        window.history.pushState(null, "", getPublicRouteHref("contact-us"));
       }
 
       return {
@@ -596,7 +564,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openReturnPolicy: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}return-policy`);
+        window.history.pushState(null, "", getPublicRouteHref("return-policy"));
       }
 
       return {
@@ -610,7 +578,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openTermsOfUse: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}terms-and-conditions`);
+        window.history.pushState(null, "", getPublicRouteHref("terms-and-conditions"));
       }
 
       return {
@@ -624,7 +592,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openPrivacyPolicy: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}privacy-policy`);
+        window.history.pushState(null, "", getPublicRouteHref("privacy-policy"));
       }
 
       return {
@@ -638,7 +606,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openFaq: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}faq`);
+        window.history.pushState(null, "", getPublicRouteHref("faq"));
       }
 
       return {
@@ -652,7 +620,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openBecomeVendor: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}become-vendor`);
+        window.history.pushState(null, "", getPublicRouteHref("become-vendor"));
       }
 
       return {
@@ -666,7 +634,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openBecomePartner: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}become-partner`);
+        window.history.pushState(null, "", getPublicRouteHref("become-partner"));
       }
 
       return {
@@ -680,7 +648,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openBecomeSponsor: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}become-a-sponsor`);
+        window.history.pushState(null, "", getPublicRouteHref("become-a-sponsor"));
       }
 
       return {
@@ -694,7 +662,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openWholesaler: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}wholesaler`);
+        window.history.pushState(null, "", getPublicRouteHref("wholesaler"));
       }
 
       return {
@@ -708,7 +676,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openAffiliate: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}affiliate`);
+        window.history.pushState(null, "", getPublicRouteHref("affiliate"));
       }
 
       return {
@@ -722,7 +690,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   openDrivers: () =>
     set(() => {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `${import.meta.env.BASE_URL}company/drivers`);
+        window.history.pushState(null, "", getPublicRouteHref("company/drivers"));
       }
 
       return {
@@ -971,6 +939,24 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         };
       }
 
+      const informationRoute = hash.match(/^#(recipes|company-news|our-mission|accessibility|sitemap)(?:[/?#].*)?$/i)?.[1]?.toLowerCase();
+      if (informationRoute) {
+        const informationViews = {
+          recipes: "recipes",
+          "company-news": "companyNews",
+          "our-mission": "ourMission",
+          accessibility: "accessibility",
+          sitemap: "sitemap",
+        } as const;
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: informationViews[informationRoute as keyof typeof informationViews],
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
+
       if (productId) {
         return {
           authReturnRoute: state.authReturnRoute,
@@ -1045,7 +1031,12 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         state.siteView === "becomePartner" ||
         state.siteView === "becomeSponsor" ||
         state.siteView === "affiliate" ||
-        state.siteView === "drivers"
+        state.siteView === "drivers" ||
+        state.siteView === "recipes" ||
+        state.siteView === "companyNews" ||
+        state.siteView === "ourMission" ||
+        state.siteView === "accessibility" ||
+        state.siteView === "sitemap"
       ) {
         return {
           authReturnRoute: state.authReturnRoute,

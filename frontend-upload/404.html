@@ -6,7 +6,7 @@
     <title>FoodOnlines</title>
     <script>
       (function () {
-        var repoBase = "/FoodOnline-Desktop-/";
+        var repoBase = window.location.hostname.endsWith("github.io") ? "/FoodOnline-Desktop-/" : "/";
         var path = window.location.pathname;
         var route = path.indexOf(repoBase) === 0 ? path.slice(repoBase.length) : path.replace(/^\/+/, "");
 

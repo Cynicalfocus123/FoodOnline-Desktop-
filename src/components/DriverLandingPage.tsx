@@ -7,6 +7,7 @@ import {
   successCards,
   type DriverAssetKey,
 } from "../data/driverLanding";
+import { getPublicRouteHref } from "../lib/routes";
 
 type AccordionItem = {
   title: string;
@@ -239,7 +240,7 @@ function DriverHero() {
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <DriverButton href="#apply">Get started</DriverButton>
-            <DriverButton href="/careers" variant="white">
+            <DriverButton href={getPublicRouteHref("company/drivers#jobs")} variant="white">
               See full-time roles
             </DriverButton>
           </div>
@@ -512,7 +513,7 @@ function ApplyCta() {
             <h2 className="text-[clamp(2.2rem,5vw,4.2rem)] font-black leading-none tracking-[-0.06em] text-[#111827]">Apply here to start driving</h2>
             <p className="mt-4 max-w-2xl text-lg font-normal leading-8 text-[#6B7280]">Choose the driving path that fits you and start delivering with FoodOnlines.</p>
             <div className="mt-6">
-              <DriverButton href="/drivers/apply">Apply now</DriverButton>
+              <DriverButton href="mailto:drivers@foodonlines.com?subject=FoodOnlines%20driver%20application">Apply now</DriverButton>
             </div>
           </div>
           <div className="overflow-hidden rounded-[32px] bg-white shadow-[0_20px_45px_rgba(17,24,39,0.12)]">

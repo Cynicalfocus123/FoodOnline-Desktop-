@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { getPublicRouteHref } from "../lib/routes";
 
 type ContactTone = "blue" | "pink" | "orange";
 type ContactIconName =
@@ -226,7 +227,7 @@ export function ContactUsPage() {
             <p className="mt-8 max-w-[330px] text-lg font-semibold leading-8 text-slate-700">
               Can't find what you're looking for?
             </p>
-            <a className="mt-3 inline-flex min-h-11 items-center gap-2 text-base font-black text-sky-700 hover:underline" href="#help-center">
+            <a className="mt-3 inline-flex min-h-11 items-center gap-2 text-base font-black text-sky-700 hover:underline" href={getPublicRouteHref("faq")}>
               Try our help center
               <ArrowRightIcon />
             </a>

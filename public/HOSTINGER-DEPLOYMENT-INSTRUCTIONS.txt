@@ -1,0 +1,10 @@
+FOODONLINES HOSTINGER ROOT DEPLOYMENT
+
+1. Back up the current public_html directory.
+2. Delete stale hashed JavaScript and CSS files from public_html/assets. Do not merge old and new asset folders.
+3. Upload foodonlines-hostinger-live-latest.zip into public_html.
+4. Extract it directly in public_html. The ZIP has no wrapper folder.
+5. Confirm index.html, admin.html, .htaccess, assets, and images are directly inside public_html.
+6. Test /, /company/drivers, /wholesaler, /about-us, /contact-us, /faq, and /admin in a private window, including a hard refresh.
+
+The package is built for the domain root. Do not place it inside an additional subdirectory.

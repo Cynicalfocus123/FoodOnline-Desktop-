@@ -1,5 +1,14 @@
 # FoodOnlines Site Weight
 
+## Production Deployment Audit Result (2026-07-12)
+
+- Final `dist`: 91,637,157 bytes (87.39 MB) across 1,032 files.
+- JavaScript: 26 files, including the public entry, standalone admin entry, shared runtime, and all audited lazy route chunks.
+- Driver runtime media: 14 files in `dist/images/drivers`; Wholesaler runtime media: 10 files in `dist/images/wholesaler`.
+- Deployment-only files (`.htaccess`, `404.html`, Hostinger instructions, and stale-asset guidance) now live inside the same audited production tree, so `dist`, `frontend-upload`, and the extracted ZIP can be byte-for-byte compared.
+- Final ZIP: 90,900,400 bytes (86.69 MB), 1,032 readable files, zero SHA-256 mismatches after extraction, and zero backslash entry names.
+- The routing repair added no new raster or video media and did not change approved media quality. The small size delta comes from error recovery, clean-route support, information-route code, validation metadata, and deployment files.
+
 Generated on 2026-07-12 after the product-media production optimization pass. Measurements use binary MB (`1 MB = 1,048,576 bytes`).
 
 ## Production Result

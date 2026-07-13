@@ -1,5 +1,6 @@
 import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { assets, languageOptions, navItems, zipCodeExample } from "../data/home";
+import { getPublicRouteHref } from "../lib/routes";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 
@@ -371,12 +372,9 @@ export function Header() {
   }
 
   function handleHomeClick(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
     setIsMobileMenuOpen(false);
-
-    if (siteView !== "home") {
-      event.preventDefault();
-      backToHome();
-    }
+    backToHome();
   }
 
   function handleDesktopAccountItem(section: "overview" | "orders" | "saved" | "refer" | "coupon" | "settings") {
@@ -480,7 +478,7 @@ export function Header() {
         <div className="mx-auto max-w-[1480px] px-3 py-2 sm:px-6 lg:py-3">
           <div className="flex min-h-[56px] items-center justify-between gap-2 lg:min-h-[64px] lg:gap-3">
             <div className="flex min-w-0 items-center gap-2 lg:flex-1 lg:gap-3 xl:gap-4">
-            <a className="flex shrink-0 items-center" href="#home" aria-label="FoodOnlines home" onClick={handleHomeClick}>
+            <a className="flex shrink-0 items-center" href={getPublicRouteHref()} aria-label="FoodOnlines home" onClick={handleHomeClick}>
               <img
                 alt="FoodOnlines logo"
                 className="block h-10 w-auto max-w-[100px] object-contain min-[390px]:max-w-[128px] sm:h-12 sm:max-w-[180px] lg:max-w-[190px]"
@@ -575,7 +573,7 @@ export function Header() {
             ) : (
               <a
                 className="inline-flex min-h-11 items-center gap-2 px-1 text-[15px] font-semibold text-neutral-900 transition hover:text-leaf-600"
-                href="#login"
+                href={getPublicRouteHref("login")}
                 onClick={handleLoginClick}
               >
                 <UserIcon />
@@ -642,7 +640,7 @@ export function Header() {
             {!currentUser ? (
               <a
                 className="hidden h-10 shrink-0 items-center text-xs font-bold text-neutral-900 transition hover:text-leaf-600 min-[560px]:inline-flex"
-                href="#login"
+                href={getPublicRouteHref("login")}
                 onClick={handleLoginClick}
               >
                 Login / Register
@@ -755,7 +753,7 @@ export function Header() {
               {!currentUser ? (
                 <a
                   className="rounded-2xl px-4 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                  href="#login"
+                  href={getPublicRouteHref("login")}
                   onClick={handleLoginClick}
                 >
                   Login / Register

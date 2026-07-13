@@ -5,6 +5,8 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { HeroSlider } from "./components/HeroSlider";
 import { PromoExperience } from "./components/PromoExperience";
+import { RouteErrorBoundary } from "./components/RouteErrorBoundary";
+import { readCurrentRouteHash } from "./lib/routes";
 import { useHomeStore } from "./store/homeStore";
 import { usePublicAuthStore } from "./store/publicAuthStore";
 
@@ -32,6 +34,7 @@ const SearchResultsPage = lazy(() => import("./components/SearchResultsPage").th
 const SignupFlow = lazy(() => import("./components/SignupFlow").then((module) => ({ default: module.SignupFlow })));
 const TermsOfUsePage = lazy(() => import("./components/TermsOfUsePage").then((module) => ({ default: module.TermsOfUsePage })));
 const WholesalerPage = lazy(() => import("./components/WholesalerPage").then((module) => ({ default: module.WholesalerPage })));
+const InformationPage = lazy(() => import("./components/InformationPage").then((module) => ({ default: module.InformationPage })));
 
 export default function App() {
   const siteView = useHomeStore((state) => state.siteView);
@@ -50,10 +53,10 @@ export default function App() {
   }, [hasHydratedSession, hydrateSession, token]);
 
   useEffect(() => {
-    syncRouteFromHash(window.location.hash);
+    syncRouteFromHash(readCurrentRouteHash());
 
     const handleRouteChange = () => {
-      syncRouteFromHash(window.location.hash);
+      syncRouteFromHash(readCurrentRouteHash());
     };
 
     window.addEventListener("hashchange", handleRouteChange);
@@ -79,7 +82,14 @@ export default function App() {
           <DealsGrid />
         </div>
       ) : null}
-      <Suspense fallback={null}>
+      <RouteErrorBoundary>
+      <Suspense
+        fallback={
+          <div className="min-h-[55vh] px-4 pb-20 pt-40 text-center text-sm font-semibold text-neutral-500 sm:pt-44">
+            Loading page…
+          </div>
+        }
+      >
         {siteView === "signup" ? <SignupFlow /> : null}
         {siteView === "login" ? <LoginFlow /> : null}
         {siteView === "cart" ? <CartPage /> : null}
@@ -100,7 +110,13 @@ export default function App() {
         {siteView === "termsOfUse" ? <TermsOfUsePage /> : null}
         {siteView === "privacyPolicy" ? <PrivacyPolicyPage /> : null}
         {siteView === "faq" ? <FaqPage /> : null}
+        {siteView === "recipes" ? <InformationPage page="recipes" /> : null}
+        {siteView === "companyNews" ? <InformationPage page="company-news" /> : null}
+        {siteView === "ourMission" ? <InformationPage page="our-mission" /> : null}
+        {siteView === "accessibility" ? <InformationPage page="accessibility" /> : null}
+        {siteView === "sitemap" ? <InformationPage page="sitemap" /> : null}
       </Suspense>
+      </RouteErrorBoundary>
       <Footer />
       {siteView === "home" ? <PromoExperience /> : null}
     </main>

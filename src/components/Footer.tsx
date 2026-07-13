@@ -1,4 +1,5 @@
 import { assets, footerColumns, footerContactItems, footerDescription } from "../data/home";
+import { getPublicRouteHref } from "../lib/routes";
 import { useHomeStore } from "../store/homeStore";
 
 function FooterIcon({ type }: { type: "email" }) {
@@ -39,7 +40,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.9fr_0.9fr_1fr] lg:gap-12">
           <div className="max-w-[360px]">
-            <a aria-label="FoodOnlines home" className="inline-flex items-center" href="#home">
+            <a aria-label="FoodOnlines home" className="inline-flex items-center" href={getPublicRouteHref()}>
               <img
                 alt="FoodOnlines logo"
                 className="h-10 w-auto max-w-[140px] object-contain sm:h-12"
@@ -66,8 +67,8 @@ export function Footer() {
               <h2 className="text-[30px] font-bold tracking-[-0.03em] text-slate-800">{column.title}</h2>
               <nav className="mt-7 flex flex-col gap-5 text-[16px] text-slate-800 sm:text-[17px]">
                 {column.links.map((link) => {
-                  const label = typeof link === "string" ? link : link.label;
-                  const href = typeof link === "string" ? "#company" : link.href;
+                  const label = link.label;
+                  const href = link.href;
                   const isAboutUsLink = href === "/about-us";
                   const isContactUsLink = href === "/contact-us";
                   const isBecomeVendorLink = href === "/become-vendor";

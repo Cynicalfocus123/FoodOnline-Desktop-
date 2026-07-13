@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = process.cwd();
@@ -28,7 +28,10 @@ const directories = [
 ];
 
 const files = [
+  ".htaccess",
   "404.html",
+  "HOSTINGER-DEPLOYMENT-INSTRUCTIONS.txt",
+  "HOSTINGER-STALE-ASSETS.txt",
   "favicon.svg",
   "assets/food-hero-poster.svg",
   "assets/food-horizontal.mp4",
@@ -135,4 +138,52 @@ for (const file of files) {
   copyPublicPath(file);
 }
 
-console.log(`Copied ${directories.length} public asset directories and ${files.length} explicit public assets.`);
+const textExtensions = new Set([".css", ".html", ".js"]);
+const localReferencePattern = /(?:["'`(=:]|url\(["']?)(\/?(?:assets|images)\/[A-Za-z0-9@_.,+%()\-/' ]+\.(?:avif|css|gif|ico|jfif|jpe?g|js|mp4|png|svg|webm|webp))(?:[?#][^"'`) ]*)?/gi;
+const forbiddenReferencePattern = /(?:\.\.\/)+(?:assets|images)\/|[A-Za-z]:\\|file:\/\/|\/public\/(?:assets|images)\//i;
+const missingReferences = new Set();
+const forbiddenReferences = new Set();
+
+function auditBuiltReferences(directory) {
+  for (const entry of readdirSync(directory)) {
+    const absolutePath = join(directory, entry);
+    const stats = statSync(absolutePath);
+    if (stats.isDirectory()) {
+      auditBuiltReferences(absolutePath);
+      continue;
+    }
+
+    const extension = entry.slice(entry.lastIndexOf(".")).toLowerCase();
+    if (!textExtensions.has(extension)) {
+      continue;
+    }
+
+    const contents = readFileSync(absolutePath, "utf8");
+    for (const match of contents.matchAll(new RegExp(forbiddenReferencePattern, "gi"))) {
+      forbiddenReferences.add(match[0]);
+    }
+    for (const match of contents.matchAll(new RegExp(localReferencePattern, "gi"))) {
+      let relativePath = match[1].replace(/^\/+/, "");
+      try {
+        relativePath = decodeURIComponent(relativePath);
+      } catch {
+        // Keep malformed URL text intact so the missing-reference error reports it.
+      }
+      if (!existsSync(join(distRoot, relativePath))) {
+        missingReferences.add(relativePath);
+      }
+    }
+  }
+}
+
+auditBuiltReferences(distRoot);
+
+if (forbiddenReferences.size > 0) {
+  throw new Error(`Forbidden production paths: ${[...forbiddenReferences].slice(0, 10).join(", ")}`);
+}
+
+if (missingReferences.size > 0) {
+  throw new Error(`Missing built references: ${[...missingReferences].slice(0, 20).join(", ")}`);
+}
+
+console.log(`Copied ${directories.length} public asset directories and ${files.length} explicit public assets; production references validated.`);

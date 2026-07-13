@@ -64,9 +64,9 @@ function AdminLoginScreen() {
             </div>
             <a
               className="inline-flex min-h-11 items-center rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-700 transition hover:border-citrus-500 hover:text-citrus-500"
-              href="./"
+              href="/admin"
             >
-              Back to Site
+              Admin Home
             </a>
           </div>
 
@@ -194,9 +194,9 @@ function AdminDashboard() {
           <div className="mt-8 grid gap-3">
             <a
               className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 px-4 text-sm font-bold text-white transition hover:border-citrus-400 hover:text-citrus-200"
-              href="./"
+              href="/admin"
             >
-              Back to Site
+              Admin Home
             </a>
             <button
               className="min-h-12 rounded-full bg-white px-4 text-sm font-black text-[#112017] transition hover:bg-emerald-100"

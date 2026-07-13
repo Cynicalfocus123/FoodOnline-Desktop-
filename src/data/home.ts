@@ -1,4 +1,5 @@
 import { resolveMediaUrl } from "../lib/media";
+import { getPublicRouteHref } from "../lib/routes";
 import type {
   Category as CategoryTile,
   CategoryFilterBrand,
@@ -450,7 +451,7 @@ export function getCategorySlug(value: string) {
 }
 
 export function getCategoryHash(slug: string) {
-  return `#category/${slug}`;
+  return getPublicRouteHref(`category/${slug}`);
 }
 
 function escapeXml(value: string) {
@@ -850,13 +851,13 @@ export type NavItem = {
 };
 
 export const navItems: NavItem[] = [
-  { label: "Home", href: "#home", accent: "leaf" },
-  { label: "Recipe", href: "#company" },
-  { label: "Coupon", href: "#best-deals" },
-  { label: "Products", href: "#best-deals", hasChevron: true },
-  { label: "Healthy Product", href: "#organic-healthy-living" },
-  { label: "Wholesale Products", href: "/wholesaler", accent: "leaf" },
-  { label: "Deal-of-the-week", href: "#best-deals" },
+  { label: "Home", href: getPublicRouteHref(), accent: "leaf" },
+  { label: "Recipe", href: getPublicRouteHref("recipes") },
+  { label: "Coupon", href: getPublicRouteHref("account/coupon") },
+  { label: "Products", href: getPublicRouteHref("#best-deals"), hasChevron: true },
+  { label: "Healthy Product", href: getCategoryHash("organic-healthy-living") },
+  { label: "Wholesale Products", href: getPublicRouteHref("wholesaler"), accent: "leaf" },
+  { label: "Deal-of-the-week", href: getPublicRouteHref("#best-deals") },
 ];
 
 export const zipCodeExample = "91789";
@@ -879,16 +880,16 @@ export const slides = [
 ];
 
 export const shortcutItems: ShortcutItem[] = [
-  { label: "Categories", icon: "categories", href: "#categories" },
-  { label: "Snack", icon: "snack", href: "#snacks-munchies" },
-  { label: "Grocery", icon: "grocery", href: "#atta-rice-dal" },
-  { label: "Beverage", icon: "beverage", href: "#cold-drinks-juices" },
-  { label: "Sweet Tooth", icon: "sweet", href: "#sweet-tooth" },
-  { label: "Frozen", icon: "health", href: "#frozen" },
-  { label: "Meat & Fish", icon: "meat", href: "#chicken-meat-fish" },
-  { label: "Organic", icon: "organic", href: "#organic-healthy-living" },
-  { label: "Vegan Foods", icon: "organic", href: "#vegan-foods" },
-  { label: "Tea & Coffee", icon: "tea", href: "#tea-coffee-milk-drinks" },
+  { label: "Categories", icon: "categories", href: getPublicRouteHref("#categories") },
+  { label: "Snack", icon: "snack", href: getCategoryHash("snacks-munchies") },
+  { label: "Grocery", icon: "grocery", href: getCategoryHash("atta-rice-dal") },
+  { label: "Beverage", icon: "beverage", href: getCategoryHash("cold-drinks-juices") },
+  { label: "Sweet Tooth", icon: "sweet", href: getCategoryHash("sweet-tooth") },
+  { label: "Frozen", icon: "health", href: getCategoryHash("frozen") },
+  { label: "Meat & Fish", icon: "meat", href: getCategoryHash("chicken-meat-fish") },
+  { label: "Organic", icon: "organic", href: getCategoryHash("organic-healthy-living") },
+  { label: "Vegan Foods", icon: "organic", href: getCategoryHash("vegan-foods") },
+  { label: "Tea & Coffee", icon: "tea", href: getCategoryHash("tea-coffee-milk-drinks") },
 ];
 
 export const categories: CategoryTile[] = categoryConfigs.map((category) => ({
@@ -1164,7 +1165,7 @@ export const promoBanner: PromoBannerData = {
   title: "Memorial Day Sale",
   saleText: "UP TO 80% OFF",
   ctaLabel: "Shop Now",
-  href: "#best-deals",
+  href: getPublicRouteHref("#best-deals"),
   products: promoCategoryNames.map((name, index) => {
     const config = getCategoryConfig(name);
     const productName = PRODUCT_NAMES_BY_CATEGORY[name][index];
@@ -1193,7 +1194,7 @@ export type FooterContactItem = {
 
 export type FooterLinkColumn = {
   title: string;
-  links: Array<string | { label: string; href: string }>;
+  links: Array<{ label: string; href: string }>;
 };
 
 export const footerDescription = "We bring Grocery to your door for less";
@@ -1210,40 +1211,42 @@ export const footerColumns: FooterLinkColumn[] = [
   {
     title: "Company",
     links: [
-      "Become Our Distributor",
-      "Apply Credit",
-      { label: "Privacy Policy", href: "/privacy-policy" },
-      { label: "Return Policy", href: "/return-policy" },
-      { label: "Terms & Conditions", href: "/terms-and-conditions" },
-      { label: "About Us", href: "/about-us" },
-      { label: "Contact Us", href: "/contact-us" },
-      "Complaint",
-      "Careers",
-      "Sitmap",
+      { label: "Become Our Distributor", href: getPublicRouteHref("become-vendor") },
+      { label: "Apply Credit", href: getPublicRouteHref("contact-us") },
+      { label: "Privacy Policy", href: getPublicRouteHref("privacy-policy") },
+      { label: "Return Policy", href: getPublicRouteHref("return-policy") },
+      { label: "Terms & Conditions", href: getPublicRouteHref("terms-and-conditions") },
+      { label: "About Us", href: getPublicRouteHref("about-us") },
+      { label: "Contact Us", href: getPublicRouteHref("contact-us") },
+      { label: "Complaint", href: getPublicRouteHref("contact-us") },
+      { label: "Careers", href: getPublicRouteHref("company/drivers") },
+      { label: "Company News", href: getPublicRouteHref("company-news") },
+      { label: "Our Mission", href: getPublicRouteHref("our-mission") },
+      { label: "Sitemap", href: getPublicRouteHref("sitemap") },
     ],
   },
   {
     title: "Account",
     links: [
-      "Sign In",
-      "View Cart",
-      "My Wishlist",
-      "Track My Order",
-      "Help Ticket",
-      { label: "FAQ", href: "/faq" },
-      "Recipe",
+      { label: "Sign In", href: getPublicRouteHref("login") },
+      { label: "View Cart", href: getPublicRouteHref("cart") },
+      { label: "My Wishlist", href: getPublicRouteHref("account/saved") },
+      { label: "Track My Order", href: getPublicRouteHref("account/orders") },
+      { label: "Help Ticket", href: getPublicRouteHref("contact-us") },
+      { label: "FAQ", href: getPublicRouteHref("faq") },
+      { label: "Recipe", href: getPublicRouteHref("recipes") },
     ],
   },
   {
     title: "Corporate",
     links: [
-      { label: "Become a Vendor", href: "/become-vendor" },
-      { label: "Affiliate Program", href: "/affiliate" },
-      { label: "Become Our Drivers", href: "/company/drivers" },
-      { label: "Wholesale", href: "/wholesaler" },
-      { label: "Become a Partner", href: "/become-partner" },
-      "Accessibility",
-      { label: "Become a Sponsor", href: "/become-a-sponsor" },
+      { label: "Become a Vendor", href: getPublicRouteHref("become-vendor") },
+      { label: "Affiliate Program", href: getPublicRouteHref("affiliate") },
+      { label: "Become Our Drivers", href: getPublicRouteHref("company/drivers") },
+      { label: "Wholesale", href: getPublicRouteHref("wholesaler") },
+      { label: "Become a Partner", href: getPublicRouteHref("become-partner") },
+      { label: "Accessibility", href: getPublicRouteHref("accessibility") },
+      { label: "Become a Sponsor", href: getPublicRouteHref("become-a-sponsor") },
     ],
   },
 ];

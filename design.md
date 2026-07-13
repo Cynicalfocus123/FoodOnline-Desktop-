@@ -1,5 +1,14 @@
 # FoodOnlines Desktop Home Design
 
+## Production Routing and Deployment Safety (2026-07-12)
+
+- The active Hostinger site is a domain-root deployment. Production entry files, lazy chunks, CSS, and runtime media therefore use root-based `/assets/` and `/images/` URLs so clean nested routes and trailing-slash reloads cannot change where browser requests land.
+- Clean public URLs are the primary navigation contract for auth, account, catalog, product, search, cart, checkout, company, support, partner, Driver, Wholesaler, legal, and informational pages. Legacy hash routes remain readable for compatibility, while in-page anchors are reserved for real sections that exist in the document.
+- Apache serves `index.html` only for application routes, serves `admin.html` for `/admin`, and never rewrites missing static files to HTML. This keeps module MIME failures from turning into blank screens and avoids caching HTML under stale chunk names.
+- Lazy-route loading now has a visible loading state and a user-facing reload recovery state. These states preserve the existing shared header/footer and do not redesign any approved page.
+- Footer and header destinations use real routes. Recipes, Company News, Our Mission, Accessibility, and Sitemap share one restrained warm-background information-page design with the normal FoodOnlines header/footer rhythm.
+- Driver and Wholesaler artwork, proportions, crops, and responsive layouts remain unchanged. Only delivery paths, route safety, and missing-reference enforcement changed.
+
 ## Source Direction
 
 - Visual reference: clean grocery commerce layout with white space, green/orange accents, product cards, category tiles, and promotional hero blocks.
@@ -21,7 +30,7 @@
 
 ## Implementation Notes
 
-- 2026-07-12 Hostinger packaging direction: the default production build uses relative `./` frontend/media paths so public and admin entries can be extracted directly into the domain root without hardcoded root paths. Explicit GitHub Pages and `VITE_BASE_PATH` deployments keep their existing overrides; visual and runtime behavior is unchanged.
+- 2026-07-12 Hostinger packaging direction: the default production build uses domain-root `/` frontend/media paths so clean nested routes resolve entry modules, lazy chunks, and media from `public_html`. Explicit GitHub Pages and `VITE_BASE_PATH` deployments keep their existing overrides; visual and runtime behavior is unchanged.
 - React + TypeScript + Vite.
 - 2026-07-12 performance direction: production builds now use an explicit public-asset manifest copy after Vite build instead of shipping the whole `public/` tree. Runtime-visible media remains visually equivalent, while unused reference/source assets stay out of `dist`.
 - 2026-07-12 media delivery direction: the homepage hero video remains the same muted looping decorative MP4 experience, but the hosted file is FFmpeg-compressed H.264/yuv420p fast-start at 1600x682 with no audio. Footer-linked page media for Wholesaler, Driver, About, Contact Us, Become Vendor, Become Partner, and Affiliate now references optimized WebP variants where raster PNG weight was excessive.

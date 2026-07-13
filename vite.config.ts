@@ -14,7 +14,7 @@ function getProductionBase() {
     return "/FoodOnline-Desktop-/";
   }
 
-  return "./";
+  return "/";
 }
 
 export default defineConfig(({ mode }) => ({

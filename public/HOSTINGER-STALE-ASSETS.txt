@@ -1,0 +1,2 @@
+IMPORTANT: Replace the deployed assets and images directories with the directories from this package.
+Do not retain old hashed JavaScript or CSS chunks from an earlier build. HTML is served with no-cache headers; hashed JS and CSS are immutable.

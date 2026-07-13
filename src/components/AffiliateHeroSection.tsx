@@ -621,7 +621,7 @@ function AffiliateFaqSection() {
 
 function AffiliateSignupBannerSection() {
   return (
-    <section className="affiliate-signup-banner-section" aria-labelledby="affiliate-signup-banner-title">
+    <section className="affiliate-signup-banner-section" aria-labelledby="affiliate-signup-banner-title" id="affiliate-apply">
       <div
         className="affiliate-signup-banner"
         style={{ backgroundImage: `url("${affiliateImagePath("images/affiliate/affiliate-signup-banner.webp")}")` }}

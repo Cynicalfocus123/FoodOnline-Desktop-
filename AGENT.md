@@ -1,5 +1,30 @@
 # Agent Notes
 
+## Production Deployment Audit and Repair (2026-07-12)
+
+- Root cause: the Hostinger production default used Vite `base: "./"` while clean routes were served through Apache. On nested or trailing-slash URLs, entry modules, lazy chunks, and `BASE_URL` media became document-relative (for example `/company/assets/...` and `/company/images/drivers/...`), producing missing media and a white screen. Hostinger root builds now use `base: "/"`; the explicit GitHub Pages and `VITE_BASE_PATH` overrides remain supported.
+- Driver audit found 14 rendered runtime images plus four stale, unused data entries whose files did not exist (`driver-flex.webp`, `driver-fleet.webp`, `driver-delivery-hand-off.webp`, and `driver-team.webp`). The unused entries were removed, all 14 rendered images ship in production, and the route now resolves them from `/images/drivers/` on click, direct entry, and hard refresh.
+- Wholesaler uses 10 rendered runtime images. They existed in source and the current local package, but `./images/wholesaler/...` could resolve below `/wholesaler/` on a trailing-slash refresh; all 10 now resolve from the domain root and ship in the final build.
+- `public/.htaccess` is the deployment source of truth. Existing files are served directly, `/admin` maps to `admin.html`, clean public routes fall back to `index.html`, and missing `/assets/`, `/images/`, or extension-bearing static requests return true 404 responses instead of HTML. HTML is no-cache; hashed JS/CSS is immutable.
+- `scripts/copy-public-assets.mjs` now copies `.htaccess` and deployment instructions into `dist` and fails the build on missing or forbidden built references. `scripts/audit-production.mjs` validates the route/chunk inventory, entry paths, media folders, rewrite contract, and placeholder navigation. `scripts/sync-hostinger-mirror.mjs` creates an exact `frontend-upload/` mirror.
+- Navigation no longer funnels plain footer strings into `#company`. Header, footer, account/support, category shortcuts, Driver CTAs, and standalone admin links now use real clean routes, valid in-page anchors, `mailto:`, or `tel:` actions. Added lightweight working routes for Recipes, Company News, Our Mission, Accessibility, and Sitemap. Exact `href="#"`, empty hrefs, and `javascript:void(0)` count: 0.
+- Route audit result: 27 public/admin route patterns, 21 lazy chunk families, 26 built JavaScript files, 0 missing local production references, 0 missing lazy chunks, and 0 placeholder links.
+
+| Route(s) | Component / chunk | Local media | Missing before → after | Refresh / link status |
+| --- | --- | ---: | ---: | --- |
+| `/`, `/login`, `/signup`, `/account`, `/search/:query`, `/cart`, `/checkout`, `/category/:slug`, `/product/:id` | Home shell plus matching lazy page chunks | catalog/shared | 0 → 0 | Root assets + SPA fallback; canonical links |
+| `/company/drivers` | `DriverLandingPage-*` | 14 | 4 stale data refs → 0 | Root media; direct/hard refresh safe |
+| `/wholesaler` | `WholesalerPage-*` | 10 | 0 → 0 | Root media; direct/hard refresh safe |
+| `/become-vendor`, `/become-partner`, `/affiliate`, `/become-a-sponsor` | Matching lazy page chunks | 3 / 5 / 5 / 12 | 0 → 0 | Root media; canonical links |
+| `/about-us`, `/contact-us` | Matching lazy page chunks | 21 / 1 | 0 → 0 | Root media; canonical links |
+| `/faq`, `/privacy-policy`, `/return-policy`, `/terms-and-conditions` | Matching lazy page chunks | 0 | 0 → 0 | SPA fallback; canonical links |
+| `/recipes`, `/company-news`, `/our-mission`, `/accessibility`, `/sitemap` | `InformationPage-*` | 0 | inactive/missing route → 0 | Working clean routes |
+| `/admin` | `admin-*` standalone entry | shared | 0 → 0 | `admin.html` rewrite; root chunks |
+
+- Validated with TypeScript, clean production build, production reference audit, dist/mirror SHA-256 comparison, archive extraction/reference checks, and `git diff --check`. Final production output is 91,637,157 bytes across 1,032 files. Package: `foodonlines-hostinger-live-latest.zip`, with the same no-wrapper root layout as the previous Hostinger package and the same 1,032 files as `dist`/`frontend-upload`.
+- Final ZIP size is 90,900,400 bytes (86.69 MB). Its nine root entries are `.htaccess`, `404.html`, `admin.html`, `assets/`, `favicon.svg`, the two Hostinger text files, `images/`, and `index.html`; all entries use Linux-safe forward slashes.
+- External Hostinger status: not uploaded from this session; no Hostinger File Manager credential or connector was available. The repository mirror and upload-ready ZIP are current.
+
 ## Hostinger Live Deployment Package (2026-07-12)
 
 - Created `foodonlines-hostinger-live-latest.zip` from source build commit `432a63c` for direct extraction into Hostinger `public_html`.
