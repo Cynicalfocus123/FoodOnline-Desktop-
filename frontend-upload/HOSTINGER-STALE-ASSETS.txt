@@ -1,0 +1,24 @@
+FOODONLINES STALE HASHED ASSETS
+
+After the new site is confirmed working, these old hashed files may be removed from the live assets directory:
+
+AboutUsPage-k4N_y8Of.js
+AccountPage-D1sTDtIF.js
+AffiliateHeroSection-DzxoNxXg.js
+BecomePartnerPage-DNSSAhkC.js
+BecomeSponsorPage-CDPHtLb2.js
+BecomeVendorPage-Cu9Pt-dC.js
+CartPage-2mrhUm-k.js
+CategoryListingPage-CIakw4Mi.js
+CheckoutPage-0_PLnVvX.js
+ContactUsPage-CmpFldPX.js
+DriverLandingPage-CX2Osbf9.js
+LoginFlow-DU8AOBxC.js
+main-DdzbNsTq.js
+ProductDetailPage-C3ibtRUZ.js
+SearchResultsPage-fuEtuEHY.js
+shop  and order banner-CtuXrsSR.js
+SignupFlow-DtqgtMrM.js
+WholesalerPage-CAPhyveh.js
+
+Do not remove current hashed assets. This file is informational and performs no deletion.

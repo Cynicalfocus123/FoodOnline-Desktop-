@@ -1,0 +1,26 @@
+FOODONLINES HOSTINGER DEPLOYMENT
+
+1. Log in to Hostinger.
+2. Open File Manager for the FoodOnlines domain.
+3. Open the active website root, normally public_html.
+4. Create a backup of the current live files before replacing them.
+5. Upload foodonlines-hostinger-live-latest.zip.
+6. Extract the ZIP directly inside public_html.
+7. Select overwrite/replace existing files when prompted.
+8. Confirm that index.html, admin.html, .htaccess, and assets are directly inside public_html.
+9. Do not leave the files inside an extra dist, frontend-upload, or ZIP-name folder.
+10. Clear Hostinger cache and Cloudflare cache after deployment.
+11. Test:
+    - https://foodonlines.com/
+    - https://foodonlines.com/admin
+    - https://foodonlines.com/admin.html
+    - login
+    - signup
+    - category pages
+    - product detail
+    - search
+    - cart
+    - checkout
+    - footer pages
+
+This ZIP contains the public and standalone admin production frontends only. It does not replace the separately hosted Laravel API backend at https://www.api.foodonlines.com/api/v1.

@@ -21,6 +21,7 @@
 
 ## Implementation Notes
 
+- 2026-07-12 Hostinger packaging direction: the default production build uses relative `./` frontend/media paths so public and admin entries can be extracted directly into the domain root without hardcoded root paths. Explicit GitHub Pages and `VITE_BASE_PATH` deployments keep their existing overrides; visual and runtime behavior is unchanged.
 - React + TypeScript + Vite.
 - 2026-07-12 performance direction: production builds now use an explicit public-asset manifest copy after Vite build instead of shipping the whole `public/` tree. Runtime-visible media remains visually equivalent, while unused reference/source assets stay out of `dist`.
 - 2026-07-12 media delivery direction: the homepage hero video remains the same muted looping decorative MP4 experience, but the hosted file is FFmpeg-compressed H.264/yuv420p fast-start at 1600x682 with no audio. Footer-linked page media for Wholesaler, Driver, About, Contact Us, Become Vendor, Become Partner, and Affiliate now references optimized WebP variants where raster PNG weight was excessive.

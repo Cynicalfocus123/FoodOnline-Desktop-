@@ -1,5 +1,15 @@
 # Agent Notes
 
+## Hostinger Live Deployment Package (2026-07-12)
+
+- Created `foodonlines-hostinger-live-latest.zip` from source build commit `432a63c` for direct extraction into Hostinger `public_html`.
+- Production builds now default to Vite base `./`; explicit `VITE_BASE_PATH` and GitHub Pages overrides remain supported. Built HTML, CSS, JS, lazy chunks, and runtime media contain no root-absolute local asset paths, path escapes, Windows paths, or `file://` references.
+- ZIP root contains `index.html`, `admin.html`, `.htaccess`, `favicon.svg`, `assets/`, `images/`, `404.html`, `HOSTINGER-DEPLOYMENT-INSTRUCTIONS.txt`, and `HOSTINGER-STALE-ASSETS.txt`, with no outer wrapper directory.
+- Archive integrity: 1,031 readable entries, 0 missing required files, 0 missing local references, 0 wrapper paths, and 0 development/source files. Public entry is `main-BCK_WG4S.js`; admin entry is `admin-DarBqMkT.js`.
+- ZIP size is 90,898,700 bytes (86.69 MB). The production payload remains 1,028 files; the three deployment-only extras are `.htaccess` and the two Hostinger text files.
+- The external Hostinger website was not uploaded in this task. The package is prepared for File Manager upload, extraction, and overwrite in `public_html`.
+
+
 ## Frontend Catalog Architecture Preparation (2026-07-12)
 
 - Added shared catalog contracts in `src/types/catalog.ts`, including products, categories, images/image fit, variants, reviews, filters, query/pagination, and stable display fields.
