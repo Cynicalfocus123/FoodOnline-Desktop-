@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -30,12 +30,10 @@ async function filesUnder(directory) {
   return files;
 }
 
-const bootstrapFiles = (await filesUnder("bootstrap")).filter((file) => file === path.join("bootstrap", "app.php") || file === path.join("bootstrap", "providers.php") || file.endsWith(`${path.sep}.gitignore`));
-const storageFiles = (await filesUnder("storage")).filter((file) => file.endsWith(`${path.sep}.gitignore`) || path.basename(file) === ".gitignore");
+const bootstrapFiles = (await filesUnder("bootstrap")).filter((file) => file === path.join("bootstrap", "app.php") || file === path.join("bootstrap", "providers.php"));
 const desiredSources = [
   ...rootFiles,
   ...bootstrapFiles,
-  ...storageFiles,
   ...(await Promise.all(sourceDirectories.map(filesUnder))).flat(),
 ].sort((a, b) => normalize(a).localeCompare(normalize(b)));
 
@@ -45,14 +43,16 @@ await mkdir(output, { recursive: true });
 for (const relative of desiredSources) {
   const destination = path.join(output, relative);
   await mkdir(path.dirname(destination), { recursive: true });
-  await cp(path.join(root, relative), destination);
+  const content = (await readFile(path.join(root, relative), "utf8")).replace(/\r\n/g, "\n");
+  await writeFile(destination, content, "utf8");
 }
 
 for (const file of publicFiles) {
   const source = path.join(publicSource, file);
   const destination = path.join(output, "public", file);
   await mkdir(path.dirname(destination), { recursive: true });
-  await cp(source, destination);
+  const content = (await readFile(source, "utf8")).replace(/\r\n/g, "\n");
+  await writeFile(destination, content, "utf8");
 }
 
 async function outputFiles() {
@@ -97,7 +97,7 @@ const forbiddenNames = actual.filter((file) => {
     || lower.includes("tests/") || lower.includes("node_modules/") || lower.startsWith("src/")
     || lower === "package.json" || lower === "package-lock.json" || lower.includes("frontend-upload")
     || lower.endsWith(".sqlite") || lower.endsWith(".db") || lower.endsWith(".log")
-    || /(^|\/)(sessions|cache|logs)(\/|$)/.test(lower) && !lower.endsWith("/.gitignore");
+    || /(^|\/)(sessions|cache|logs)(\/|$)/.test(lower);
 });
 let secretFiles = 0;
 for (const relative of actual.filter((file) => file !== manifestName)) {
