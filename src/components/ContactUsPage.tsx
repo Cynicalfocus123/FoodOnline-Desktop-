@@ -237,7 +237,7 @@ export function ContactUsPage() {
               alt="Fresh FoodOnlines groceries and herbs"
               className="block w-[118%] max-w-none translate-y-[4.5%] object-contain object-left-bottom drop-shadow-[0_28px_55px_rgba(15,23,42,0.14)] sm:w-[112%] lg:w-[116%] lg:translate-x-[-2%] lg:translate-y-[4.5%]"
               loading="eager"
-              src={contactImagePath("/images/contact-us/contact-hero-groceries.webp")}
+              src={contactImagePath("images/contact-us/contact-hero-groceries.webp")}
             />
           </div>
         </aside>
