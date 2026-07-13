@@ -4,6 +4,8 @@
 
 Backend deployment preparation comes from the verified `backend-live/` folder on `main`, not from a backend ZIP and not from the frontend `public/.htaccess`. Every task also reviews and updates all tracked Markdown documentation. Actual Hostinger upload must be reported separately with evidence.
 
+The mirror is generated during the same backend implementation pass, before the single combined commit and automatic `main` push. It is never hand-edited or rebuilt as a later task; the generator removes stale renamed/deleted files.
+
 FoodOnlines live frontend hosting is currently managed through Hostinger File Manager.
 
 ## Backend separation

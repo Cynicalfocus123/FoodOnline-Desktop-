@@ -2,6 +2,8 @@
 
 > Documentation review (2026-07-13): this legacy TMDHosting upload note is not the current backend workflow. Repository backend delivery uses `backend-live/` on `main`, without a backend ZIP, and every task reviews all tracked Markdown files.
 
+> Current backend workflow is one pass from Laravel source through tests, generated mirror, parity verification, combined commit, and automatic `main` push. Generated mirror files are never hand-edited or delegated.
+
 ## Upload order
 
 1. Upload and extract `foodonlines-backend-cpanel-fixed.zip` in `/home/CPANEL_USERNAME`.

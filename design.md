@@ -4,6 +4,7 @@
 
 - Every task reviews and updates all tracked Markdown documentation, with `AGENT.md`, `design.md`, and `weight.md` always reflecting the newest state above historical snapshots.
 - Backend delivery is complete only when final source and deterministic `backend-live/` are together on `main`, verified, and pushed. Feature branches are staging areas, not the final Git/live-folder state.
+- Backend delivery is one atomic workflow: authoritative Laravel edit → tests/validation → generated mirror sync and stale cleanup → parity verification → one combined commit → automatic `main` push. Generated mirror files are never hand-edited or rebuilt by another agent.
 
 ## Backend Category Architecture — Step 2 (2026-07-13)
 

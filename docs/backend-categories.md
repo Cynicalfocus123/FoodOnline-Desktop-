@@ -2,7 +2,9 @@
 
 ## Current status and documentation rule
 
-Step 2 source and the matching `backend-live/` mirror are on `main` at `396b2ae`. Category administration supports creation, partial name/metadata edits, archive/restore, guarded permanent deletion, reordering, and aliases. Every task reviews and updates all tracked Markdown documents; older Step 1 statements elsewhere are historical snapshots.
+Step 2 source and the matching `backend-live/` mirror were introduced together by `396b2ae` and remain current on `main`. Category administration supports creation, partial name/metadata edits, archive/restore, guarded permanent deletion, reordering, and aliases. Every task reviews and updates all tracked Markdown documents; older Step 1 statements elsewhere are historical snapshots.
+
+All future category/backend changes follow one pass: authoritative Laravel edit, tests, `sync-backend-live.mjs`, parity verification, combined source/docs/mirror commit, and automatic `main` push. Generated mirror files are not edited manually and no backend ZIP is produced.
 
 ## Existing-code audit
 

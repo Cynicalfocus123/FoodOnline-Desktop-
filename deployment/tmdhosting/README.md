@@ -2,6 +2,8 @@
 
 > Documentation review (2026-07-13): TMDHosting is not the current backend deployment source. Use `backend-live/` on `main` for repository deployment preparation and report any external Hostinger action separately. All tracked Markdown files are reviewed at each task completion.
 
+> Current single-pass rule: generate the mirror from authoritative Laravel source before the same commit and `main` push; never edit it manually, delegate it, or build a backend ZIP.
+
 Current workspace still mixes frontend and backend scaffold. For TMDHosting, deploy backend as its own Laravel app root and keep full application **outside** `public_html`.
 
 ## Recommended server layout

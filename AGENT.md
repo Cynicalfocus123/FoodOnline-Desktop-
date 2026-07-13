@@ -5,6 +5,7 @@
 - Every completed task must review and update all tracked Markdown files, including `AGENT.md`, `design.md`, and `weight.md`, so current-state instructions appear before dated historical records. Historical sections remain labeled snapshots and do not override the newest section.
 - Every completed backend task must place the final source and regenerated `backend-live/` on `main` in the same Git commit history, run the relevant tests and cache checks, verify the SHA-256 mirror manifest, and push `main`. Do not leave completed backend work only on a feature branch.
 - Preserve unrelated working-tree changes. External Hostinger deployment is separate and must never be claimed without evidence. A backend ZIP remains prohibited.
+- Single-pass rule: implement backend changes only in the authoritative Laravel source, run validation, run `node scripts/sync-backend-live.mjs`, verify parity, stage source/documentation/generated mirror together, commit once, and push `main`. Never manually edit generated `backend-live/`, delegate its rebuild, or postpone synchronization to a second task. The generator must remove stale files after source removal or rename.
 
 ## Permanent Backend Live-Folder Policy (2026-07-13)
 
@@ -19,7 +20,7 @@
 - Statuses are `draft`, `published`, and `archived`; visibilities are `public`, `hidden`, and `catalog_only`. Published slug changes preserve the old slug as a 301 alias. The verified legacy alias is `baby-care` to `vegan-foods`.
 - Public endpoints provide paginated categories, an ordered tree, slug/alias lookup, children, and breadcrumbs without internal fields. Protected admin endpoints provide filtering, CRUD, move, reorder, archive, restore, permanent delete, and alias management through the existing admin-token boundary.
 - The idempotent seeder creates the 16 authoritative frontend root categories and one alias without changing frontend code. Category tests cover models, scopes, hierarchy, validation, public/admin APIs, aliasing, deletion, reordering, seeding, and cache invalidation.
-- Both category migrations apply, roll back, and reapply on SQLite. Category tests pass (14 tests, 98 assertions); the full suite passes (25 tests, 158 assertions); config and route caches compile. Source and `backend-live/` are together on `main` at `396b2ae`; external Hostinger remains untouched. Step 3 is code-ready.
+- Both category migrations apply, roll back, and reapply on SQLite. Category tests pass (14 tests, 98 assertions); the full suite passes (25 tests, 158 assertions); config and route caches compile. Category source and `backend-live/` were introduced together by `396b2ae` and remain current on `main`; external Hostinger remains untouched. Step 3 is code-ready.
 
 ## Laravel Foundation Audit and Stabilization — Step 1 (2026-07-13)
 
