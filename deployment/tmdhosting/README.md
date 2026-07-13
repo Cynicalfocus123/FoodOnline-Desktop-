@@ -1,5 +1,7 @@
 # TMDHosting cPanel backend deploy notes
 
+> Phase 3 review (2026-07-13): the current grocery catalog and real relative-path public entry exist in the Hostinger-oriented `backend-live/` workflow, not this historical host guide.
+
 > Documentation review (2026-07-13): TMDHosting is not the current backend deployment source. Use `backend-live/` on `main` for repository deployment preparation and report any external Hostinger action separately. All tracked Markdown files are reviewed at each task completion.
 
 > Current single-pass rule: generate the mirror from authoritative Laravel source before the same commit and `main` push; never edit it manually, delegate it, or build a backend ZIP.

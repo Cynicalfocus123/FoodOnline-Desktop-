@@ -1,5 +1,15 @@
 # Agent Notes
 
+## Core Grocery Product Catalog Backend — Phase 3 (2026-07-13)
+
+- Phase 3 adds reusable brands, shared grocery products, sellable product variants, and ordered product-media metadata as four MySQL/SQLite-compatible tables. Products own category/brand and food information; variants exclusively own SKU, optional string GTIN, package/net-content data, direct-store price/currency, manual availability, active/default state; media owns safe paths, fit, primary state, and order.
+- Product statuses are `draft`, `published`, and `archived`; variant availability states are `in_stock`, `out_of_stock`, `preorder`, and `backorder`. Transactional services enforce exactly one active default variant and one primary image for publication, promote replacements on normal deactivation/removal, and protect published products from losing their final sellable variant or image.
+- Publication requires a published non-deleted `public` or `catalog_only` category, one active default variant with SKU/positive configured-currency price, and one primary image. Public lists additionally require a `public` category; direct detail permits `catalog_only` and rejects hidden categories.
+- Protected admin routes now manage brands, products, variants, media, publication/archive/restore, default/primary selection, and exact ownership-checked reordering. Public routes provide paginated/filterable/sortable products, slug detail, and active brands with visible products. Default-variant compatibility fields match the inactive frontend API mapper without changing frontend code.
+- Four factories and seven focused test files cover authorization, validation, invariants, publication, filtering/search/sorts, visibility, and response privacy. The full validation result and generated-mirror counts are recorded in `weight.md` and `docs/backend-product-catalog.md`.
+- `backend-live/` is regenerated only from final authoritative source and contains the real relative-path `public/index.php`, deployment instructions, `.env.example`, runtime source, empty writable-directory placeholders, and deterministic manifest. Phase 3 source/documentation/mirror are delivered together by the `Implement core grocery product catalog backend` commit on `main`; external Hostinger remains untouched.
+- No dynamic attribute system, fake product/brand seeder, seller offers, inventory, R2 upload, orders, payments, backend ZIP, or frontend modification was added. Phase 4 must inspect this completed model before selecting supplier offers, inventory, fulfillment, or import work.
+
 ## Permanent Documentation and Delivery Synchronization Policy (2026-07-13)
 
 - Every completed task must review and update all tracked Markdown files, including `AGENT.md`, `design.md`, and `weight.md`, so current-state instructions appear before dated historical records. Historical sections remain labeled snapshots and do not override the newest section.

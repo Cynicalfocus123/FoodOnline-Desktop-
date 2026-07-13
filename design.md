@@ -1,5 +1,14 @@
 # FoodOnlines Desktop Home Design
 
+## Backend Grocery Catalog Architecture — Phase 3 (2026-07-13)
+
+- `Product` is the shared customer-facing grocery identity and belongs to one current `Category` plus an optional reusable `Brand`. It owns descriptive, origin, storage, ingredient, allergen, featured, and publication fields—not SKU, package size, or price.
+- `ProductVariant` is the sellable package. It owns normalized unique SKU, optional string GTIN, size/net-content/pack/package fields, FoodOnlines direct-store price and compare-at price, configured currency, availability, active state, and order. One transactional service makes the first active variant default, clears sibling defaults, and promotes another active variant when possible.
+- `ProductMedia` stores image metadata only: safe local/HTTPS/R2 metadata path, alt text, `contain`/`cover`, primary state, and order. The first image becomes primary, selecting another clears the previous primary, and deleting the primary promotes the next ordered image. Uploading, byte processing, thumbnails, and R2 credentials remain deferred.
+- Public list compatibility fields (`price`, `old_price`, `currency_code`, `in_stock`, `availability_status`, `size`, and `sku`) derive from the active default variant. `primary_image`, `image_urls`, and `image_fit` derive from ordered media. Detail adds food fields, active variants, ordered media, and category/brand summaries without exposing audits, inactive variants, or internal state.
+- Current prices deliberately represent the FoodOnlines direct-store retail price. A later supplier-marketplace phase may separate seller offers, seller-specific prices, inventory, and fulfillment without moving shared grocery identity into offer records.
+- No dynamic attributes, category-specific custom-field engine, fake catalog import, frontend API switch, or visual design change was made. Existing React catalog behavior and all approved visual surfaces remain unchanged.
+
 ## Permanent Documentation and Backend Delivery Contract (2026-07-13)
 
 - Every task reviews and updates all tracked Markdown documentation, with `AGENT.md`, `design.md`, and `weight.md` always reflecting the newest state above historical snapshots.

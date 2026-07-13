@@ -47,6 +47,7 @@ class Category extends Model
     public function children(): HasMany { return $this->hasMany(self::class, 'parent_id')->ordered(); }
     public function activeChildren(): HasMany { return $this->children()->published()->where('visibility', 'public'); }
     public function aliases(): HasMany { return $this->hasMany(CategoryAlias::class); }
+    public function products(): HasMany { return $this->hasMany(Product::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
     public function updater(): BelongsTo { return $this->belongsTo(User::class, 'updated_by'); }
 

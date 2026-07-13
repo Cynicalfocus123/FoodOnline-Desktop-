@@ -2,7 +2,7 @@
 
 ## Current-state note
 
-This document records Step 1 foundation behavior. Step 2 categories are now implemented on `main`; see `docs/backend-categories.md`. Every completed task reviews and updates all tracked Markdown files, and newer dated sections supersede historical readiness statements without deleting their audit history.
+This document records Step 1 foundation behavior. Phase 3 products/brands/variants/media are now implemented on `main`; see `docs/backend-product-catalog.md`. Step 2 categories remain documented in `docs/backend-categories.md`. Every completed task reviews and updates all tracked Markdown files, and newer dated sections supersede historical readiness statements without deleting their audit history.
 
 Backend implementation and repository live-folder delivery are one operation: validate authoritative source, generate and verify `backend-live/`, commit all source/docs/mirror changes together, and push `main`. Never hand-edit the mirror or defer it to another task/agent.
 

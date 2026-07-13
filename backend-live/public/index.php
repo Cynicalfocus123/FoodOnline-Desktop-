@@ -5,8 +5,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Replace this with the actual private Hostinger path to the repository root.
-$backendBasePath = '/home/ACCOUNT/domains/api.foodonlines.com/foodonlines-backend';
+$backendBasePath = dirname(__DIR__);
 
 if (file_exists($maintenance = $backendBasePath.'/storage/framework/maintenance.php')) {
     require $maintenance;

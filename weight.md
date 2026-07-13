@@ -1,5 +1,12 @@
 # FoodOnlines Site Weight
 
+## Backend Product Catalog Complexity and Live-Mirror Parity — Phase 3 (2026-07-13)
+
+- Added 4 migrations/tables (`brands`, `products`, `product_variants`, `product_media`), 4 models, 4 factories, 3 transactional services, 5 controllers, focused form requests/resources, 24 protected admin routes, and 3 public catalog routes. No production product or brand seeder was added.
+- Added 7 focused product/brand test files. Final validation is **42 tests / 272 assertions**. The deployable runtime/public-entry payload is **154 files**; generated `backend-live/` is **154 payload files plus `SHA256SUMS` (155 total)**.
+- The mirror generator now includes `.env.example`, `DEPLOYMENT.md`, a real relative-path `public/index.php`, API `.htaccess`, and required empty storage/cache placeholders. It excludes tests, frontend code/media, secrets, databases, runtime data, dependencies, and archives.
+- Final mirror verification: **0 missing files, 0 stale extras, 0 checksum mismatches, 0 secret files, 0 frontend files, and 0 ZIP files**. External Hostinger backend remains not updated; frontend production weight is unchanged.
+
 ## Permanent Completion Accounting (2026-07-13)
 
 - Every task updates all tracked Markdown records, including this file, and records validation plus source/deployment-mirror parity where applicable.

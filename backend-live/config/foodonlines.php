@@ -2,6 +2,7 @@
 
 return [
     'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
+    'catalog_currency' => strtoupper((string) env('FOODONLINES_CATALOG_CURRENCY', 'USD')),
 
     'admin' => [
         'name' => env('ADMIN_NAME', 'FoodOnlines Admin'),

@@ -1,5 +1,7 @@
 # Hostinger File Manager Deployment
 
+> Phase 3 current state (2026-07-13): the generated mirror now includes the real relative-path API `public/index.php`, catalog runtime, `.env.example`, deployment guide, and writable-directory placeholders. External Hostinger remains unchanged without separate evidence.
+
 ## Current backend rule
 
 Backend deployment preparation comes from the verified `backend-live/` folder on `main`, not from a backend ZIP and not from the frontend `public/.htaccess`. Every task also reviews and updates all tracked Markdown documentation. Actual Hostinger upload must be reported separately with evidence.

@@ -18,11 +18,15 @@ class SafeMediaPath implements ValidationRule
         $windowsPath = preg_match('/^[a-z]:[\\\\\/]/i', $value) === 1 || str_contains($value, '\\');
         $traversal = preg_match('#(^|/)\.\.(/|$)#', $value) === 1;
         $executable = preg_match('/\.(?:php\d*|phtml|phar|cgi|pl|py|sh|exe|bat|cmd|js|html?)(?:\?|#|$)/i', $lower) === 1;
-        $supported = str_starts_with($lower, 'https://')
-            || str_starts_with($lower, 'r2://')
-            || preg_match('#^/?[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
+        $developmentPath = preg_match('#^/?(?:src|dist|frontend-upload|node_modules|temp|tmp)(?:/|$)#i', $value) === 1;
+        $https = filter_var($value, FILTER_VALIDATE_URL) !== false
+            && strtolower((string) parse_url($value, PHP_URL_SCHEME)) === 'https'
+            && is_string(parse_url($value, PHP_URL_HOST));
+        $r2 = preg_match('#^r2://[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
+        $local = preg_match('#^/?[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
+        $supported = $https || $r2 || $local;
 
-        if ($unsafeScheme || $windowsPath || $traversal || $executable || ! $supported) {
+        if ($unsafeScheme || $windowsPath || $traversal || $executable || $developmentPath || ! $supported) {
             $fail("The {$attribute} must be a safe local path, HTTPS URL, or explicit R2 object key.");
         }
     }
