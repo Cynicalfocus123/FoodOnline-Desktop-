@@ -24,6 +24,9 @@ class AuthenticateUserToken
             ->with('user')
             ->where('token_hash', hash('sha256', $plainToken))
             ->whereNull('revoked_at')
+            ->where(function ($query): void {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
             ->first();
 
         $supportedAccountTypes = config('foodonlines.supported_account_types', ['customer', 'supplier', 'partner']);

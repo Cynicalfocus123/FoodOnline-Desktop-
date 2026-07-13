@@ -1,5 +1,16 @@
 # FoodOnlines Desktop Home Design
 
+## Backend Foundation Architecture — Step 1 (2026-07-13)
+
+- The repository root is the single Laravel 12 application root. The backend is a versioned JSON API whose production contract begins at `https://www.api.foodonlines.com/api/v1`; public and standalone-admin frontends remain API clients and were not redesigned.
+- `/api/v1/auth` owns public registration, login, session restoration, and logout for `customer`, `supplier`, and `partner` accounts. `/api/v1/account` owns the existing authenticated address book, notification preferences, masked payment metadata, password, and deletion-request flows.
+- `/api/v1/admin` is a separate trust boundary with a distinct token table, middleware, shorter token lifetime, login throttle, and admin-role/status checks. Public tokens cannot authorize admin routes, and admin tokens cannot authorize public account routes.
+- Bearer tokens are returned once to the client and stored server-side only as SHA-256 digests. New public tokens default to 30 days; new admin tokens default to 8 hours. Logout revokes the current digest, password rotation revokes other active sessions, and legacy null-expiry tokens remain readable during migration.
+- API errors remain JSON under `/api/*`; unknown endpoints/resources return a safe generic 404. Exact production CORS origins are `https://foodonlines.com` and `https://www.foodonlines.com`. Named throttles protect the whole API plus stricter registration/public-login/admin-login boundaries.
+- `GET /api/v1/health` is a dependency-light liveness response. Database queue tables exist as foundation, while `.env.example` keeps `QUEUE_CONNECTION=sync` until a persistent Hostinger worker is deliberately configured.
+- `/api/v1/catalog` is reserved and intentionally empty. Step 2 may add catalog read models and routes inside that boundary only after the Step 1 code is deployed, production migrations run, and live auth/admin smoke tests pass.
+- This backend foundation changes no visual layout, responsive behavior, public navigation, or admin presentation.
+
 ## Production Routing and Deployment Safety (2026-07-12)
 
 - The active Hostinger site is a domain-root deployment. Production entry files, lazy chunks, CSS, and runtime media therefore use root-based `/assets/` and `/images/` URLs so clean nested routes and trailing-slash reloads cannot change where browser requests land.

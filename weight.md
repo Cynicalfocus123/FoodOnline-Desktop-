@@ -1,5 +1,14 @@
 # FoodOnlines Site Weight
 
+## Backend Foundation Complexity — Step 1 (2026-07-13)
+
+- Backend root: repository root; one Laravel installation, no nested duplicate.
+- Locked runtime: Laravel 12.63.0 on PHP `^8.2`; validated locally with PHP 8.3.32 and Composer 2.10.2.
+- Foundation weight: 80 application/config/route/migration/test/deployment-entry PHP files (3,640 lines), 27 versioned API routes, 11 migrations, 11 tests, and 60 passing assertions. No new binary or frontend production media was added.
+- Technical debt reduced: missing HTTP entry point, missing test harness, missing dependency lock, absent health route, anonymous numeric throttles, unlimited token lifetime for new sessions, incomplete queue schema, permissive CORS origin sourcing, and sensitive email/error detail in mail-failure logs.
+- Remaining debt: the live Hostinger backend and MySQL migration state could not be inspected; two legacy schema-compatibility migrations intentionally have non-destructive no-op rollback paths; production queue processing remains disabled until a supervised worker exists; no standalone public profile-update contract currently exists; and the API hostname did not resolve from this session.
+- Step 2 readiness: **85/100 (code-ready, deployment-gated)**. Required final 15 points are production PHP/Composer verification, MySQL migration/status confirmation, DNS/TLS reachability, live CORS/auth/admin/health smoke tests, and proof that the Git commit is deployed. Catalog work must not begin before those gates pass.
+
 ## Production Deployment Audit Result (2026-07-12)
 
 - Final `dist`: 91,637,157 bytes (87.39 MB) across 1,032 files.

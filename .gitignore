@@ -7,6 +7,7 @@ dist/
 *.zip
 .env
 vendor/
+.phpunit.result.cache
 bootstrap/cache/*.php
 storage/*.key
 storage/framework/cache/*

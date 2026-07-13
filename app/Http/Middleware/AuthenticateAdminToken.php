@@ -24,6 +24,9 @@ class AuthenticateAdminToken
             ->with('user')
             ->where('token_hash', hash('sha256', $plainToken))
             ->whereNull('revoked_at')
+            ->where(function ($query): void {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
             ->first();
 
         if (! $token || ! $token->user || $token->user->role !== 'admin' || $token->user->status !== 'active') {

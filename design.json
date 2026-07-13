@@ -2,7 +2,7 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.0.0",
-    "updated_at": "2026-07-12",
+    "updated_at": "2026-07-13",
     "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
   },
   "sources": {
@@ -971,13 +971,87 @@
       "searchQuery"
     ]
   },
+  "backend_foundation": {
+    "updated_at": "2026-07-13",
+    "step": 1,
+    "root": ".",
+    "runtime": {
+      "php_constraint": "^8.2",
+      "validated_php": "8.3.32",
+      "laravel": "12.63.0",
+      "composer": "2.10.2",
+      "database": "mysql",
+      "cache": "file",
+      "session": "file",
+      "queue_default_in_env_example": "sync",
+      "mail": "smtp",
+      "logging": "stack/single"
+    },
+    "base_url": "https://www.api.foodonlines.com/api/v1",
+    "versioning": "All stable application routes live under /api/v1.",
+    "public_system": {
+      "account_types": ["customer", "supplier", "partner"],
+      "auth_routes": [
+        "POST /auth/register",
+        "POST /auth/login",
+        "GET /auth/me",
+        "POST /auth/logout"
+      ],
+      "token_store": "user_api_tokens",
+      "token_ttl_minutes": 43200
+    },
+    "admin_system": {
+      "role": "admin",
+      "token_store": "admin_api_tokens",
+      "token_ttl_minutes": 480,
+      "separate_from_public_tokens": true,
+      "dashboard_routes": ["GET /admin/dashboard", "GET /admin/dashboard-stats"]
+    },
+    "security": {
+      "passwords": "Laravel hashed cast plus Hash::make/Hash::check",
+      "tokens": "80-character random bearer token returned once; SHA-256 digest stored; logout revokes",
+      "cors_origins": ["https://foodonlines.com", "https://www.foodonlines.com"],
+      "rate_limits": ["api", "registration", "login", "admin-login"],
+      "api_errors": "JSON with safe generic 404 messages and standard validation error bags",
+      "sensitive_logging": "No bearer tokens, passwords, email addresses, or exception messages in foundation logs"
+    },
+    "account_features_preserved": [
+      "addresses",
+      "notification_preferences",
+      "masked_payment_method_metadata",
+      "password_changes",
+      "account_deletion_requests"
+    ],
+    "health": "GET /health",
+    "catalog": {
+      "prefix": "/catalog",
+      "status": "reserved_empty_for_step_2"
+    },
+    "readiness": {
+      "score": 85,
+      "status": "code_ready_deployment_gated",
+      "remaining_gates": [
+        "Hostinger backend access",
+        "production PHP and Composer verification",
+        "production MySQL migrations",
+        "API DNS and TLS reachability",
+        "live health, CORS, public auth, and admin smoke tests"
+      ]
+    }
+  },
   "tests": {
-    "latest_change": "logged-in account dropdown/mobile account page/settings backend flow",
+    "latest_change": "Laravel foundation audit and stabilization Step 1",
     "commands": [
+      "composer validate --strict",
+      "composer audit",
+      "php artisan about",
+      "php artisan route:list --path=api/v1 --except-vendor",
+      "php artisan migrate:status",
+      "php artisan test",
       "cmd /c npx tsc --noEmit",
       "cmd /c npm run build",
       "git diff --check"
     ],
-    "verification_note": "Build and typecheck pass locally with the new account routes, account settings API calls, and admin delete-account request panel. PHP CLI is unavailable on this machine, so Laravel migration/cache commands must run on the live server terminal."
+    "verification_note": "Laravel 12.63.0 validated on PHP 8.3.32. Eleven migrations ran and 11 tests passed with 60 assertions. Live Hostinger/MySQL validation remains gated by unavailable backend access and unresolved API DNS."
   }
 }

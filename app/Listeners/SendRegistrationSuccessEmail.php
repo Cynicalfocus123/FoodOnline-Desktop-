@@ -20,6 +20,7 @@ class SendRegistrationSuccessEmail
         }
 
         $payload = [
+            'user_id' => $user->getAuthIdentifier(),
             'email' => $email,
             'first_name' => $this->stringValue($user->first_name ?? $user->firstName ?? null),
             'name' => $this->stringValue($user->name ?? null),
@@ -34,10 +35,9 @@ class SendRegistrationSuccessEmail
                 ));
             } catch (Throwable $exception) {
                 Log::warning('Registration success email failed to send.', [
-                    'email' => $payload['email'],
+                    'user_id' => $payload['user_id'],
                     'account_type' => $payload['account_type'],
                     'exception' => $exception::class,
-                    'message' => $exception->getMessage(),
                 ]);
             }
         })->afterResponse();

@@ -17,6 +17,7 @@ class UserAuthTokenService
             'name' => $name,
             'token_hash' => hash('sha256', $plainToken),
             'last_used_at' => now(),
+            'expires_at' => now()->addMinutes(max(1, (int) config('foodonlines.tokens.user_ttl_minutes', 43200))),
         ]);
 
         return $plainToken;

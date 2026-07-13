@@ -84,7 +84,7 @@ class RegisterUserRequest extends FormRequest
                 'regex:/^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$/',
             ],
             'password' => [
-                'nullable',
+                'required',
                 'string',
                 'min:10',
                 'max:72',

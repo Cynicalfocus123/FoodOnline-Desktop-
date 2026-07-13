@@ -16,4 +16,9 @@ return [
         'supplier',
         'partner',
     ],
+
+    'tokens' => [
+        'user_ttl_minutes' => (int) env('USER_TOKEN_TTL_MINUTES', 43200),
+        'admin_ttl_minutes' => (int) env('ADMIN_TOKEN_TTL_MINUTES', 480),
+    ],
 ];

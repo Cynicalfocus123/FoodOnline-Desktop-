@@ -15,6 +15,7 @@ class AdminApiToken extends Model
         'name',
         'token_hash',
         'last_used_at',
+        'expires_at',
         'revoked_at',
     ];
 
@@ -23,6 +24,7 @@ class AdminApiToken extends Model
      */
     protected $casts = [
         'last_used_at' => 'datetime',
+        'expires_at' => 'datetime',
         'revoked_at' => 'datetime',
     ];
 

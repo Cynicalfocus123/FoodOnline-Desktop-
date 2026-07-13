@@ -2,6 +2,10 @@
 
 FoodOnlines live frontend hosting is currently managed through Hostinger File Manager.
 
+## Backend separation
+
+The Laravel API is a separate deployment for `www.api.foodonlines.com`; it is not part of frontend `dist/` or `frontend-upload/`. Follow the repository-root `DEPLOYMENT.md` and `docs/backend-foundation.md`, keep the Laravel application outside the API document root, expose only `public/`, and do not create a backend ZIP for Step 1.
+
 ## Production Output
 
 Run the normal project build:

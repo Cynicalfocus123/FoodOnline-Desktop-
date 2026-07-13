@@ -34,6 +34,7 @@ class AdminAuthController extends Controller
             'name' => 'admin-dashboard',
             'token_hash' => hash('sha256', $plainToken),
             'last_used_at' => now(),
+            'expires_at' => now()->addMinutes(max(1, (int) config('foodonlines.tokens.admin_ttl_minutes', 480))),
         ]);
 
         return response()->json([

@@ -14,18 +14,23 @@ use App\Http\Controllers\Api\Auth\CurrentUserController;
 use App\Http\Controllers\Api\Auth\LoginUserController;
 use App\Http\Controllers\Api\Auth\LogoutUserController;
 use App\Http\Controllers\Api\Auth\RegisterUserController;
+use App\Http\Controllers\Api\HealthController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
+    Route::get('/health', HealthController::class)
+        ->middleware('throttle:api')
+        ->name('api.v1.health');
+
     Route::post('/auth/register', RegisterUserController::class)
-        ->middleware('throttle:8,1')
+        ->middleware(['throttle:api', 'throttle:registration'])
         ->name('api.v1.auth.register');
 
     Route::post('/auth/login', LoginUserController::class)
-        ->middleware('throttle:5,1')
+        ->middleware(['throttle:api', 'throttle:login'])
         ->name('api.v1.auth.login');
 
-    Route::middleware(['user.token', 'throttle:60,1'])->group(function (): void {
+    Route::middleware(['user.token', 'throttle:api'])->group(function (): void {
         Route::post('/auth/logout', LogoutUserController::class)->name('api.v1.auth.logout');
         Route::get('/auth/me', CurrentUserController::class)->name('api.v1.auth.me');
 
@@ -49,17 +54,23 @@ Route::prefix('v1')->group(function (): void {
 
     Route::prefix('admin')->group(function (): void {
         Route::post('/login', [AdminAuthController::class, 'login'])
-            ->middleware('throttle:5,1')
+            ->middleware(['throttle:api', 'throttle:admin-login'])
             ->name('api.v1.admin.login');
 
-        Route::middleware(['admin.token', 'throttle:60,1'])->group(function (): void {
+        Route::middleware(['admin.token', 'throttle:api'])->group(function (): void {
             Route::post('/logout', [AdminAuthController::class, 'logout'])->name('api.v1.admin.logout');
             Route::get('/me', [AdminAuthController::class, 'me'])->name('api.v1.admin.me');
             Route::get('/users', [AdminUsersController::class, 'index'])->name('api.v1.admin.users');
             Route::put('/settings', [AdminSettingsController::class, 'update'])->name('api.v1.admin.settings');
             Route::get('/dashboard-stats', [AdminDashboardController::class, 'stats'])->name('api.v1.admin.dashboard-stats');
+            Route::get('/dashboard', [AdminDashboardController::class, 'stats'])->name('api.v1.admin.dashboard');
             Route::get('/delete-account-requests', [AdminAccountDeletionRequestsController::class, 'index'])->name('api.v1.admin.delete-account-requests.index');
             Route::put('/delete-account-requests/{requestId}', [AdminAccountDeletionRequestsController::class, 'update'])->name('api.v1.admin.delete-account-requests.update');
         });
+    });
+
+    // Reserved for Step 2. No catalog behavior belongs in the foundation phase.
+    Route::prefix('catalog')->group(function (): void {
+        // Intentionally empty.
     });
 });
