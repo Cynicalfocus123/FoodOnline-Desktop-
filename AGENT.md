@@ -1,5 +1,20 @@
 # Agent Notes
 
+## Permanent Backend Live-Folder Policy (2026-07-13)
+
+- For backend tasks, the repository live version is `backend-live/`; it is not the external Hostinger server. Every completed backend source change must regenerate and commit this mirror in the same commit with `node scripts/sync-backend-live.mjs`.
+- The script copies only deployable Laravel runtime source and the isolated files from `deployment/hostinger/backend-public/`. It never copies the frontend `public/.htaccess`, `.env`, secrets, frontend code, tests, logs, caches, sessions, databases, ZIP files, or `vendor/`.
+- `backend-live/SHA256SUMS` is deterministic. Completion requires zero missing files, stale extras, checksum mismatches, secrets, frontend files, and ZIP files. Rebuild after every rebase, merge, or conflict resolution. Never create a backend ZIP or claim an external Hostinger update without separate evidence.
+
+## Category Management Backend — Step 2 (2026-07-13)
+
+- Added `categories` and `category_aliases` with integer primary keys, public UUIDs, nullable parent relationships, synchronized depth/materialized paths, soft-delete support, audit IDs, media metadata, SEO fields, publication state, visibility flags, and query indexes.
+- Hierarchies allow four levels (depth `0..3`); one service prevents self-parenting, direct/indirect cycles, descendant moves, and excessive subtree depth. Normal removal archives; restore returns to draft; permanent deletion requires archive state, exact slug confirmation, and no active or soft-deleted children.
+- Statuses are `draft`, `published`, and `archived`; visibilities are `public`, `hidden`, and `catalog_only`. Published slug changes preserve the old slug as a 301 alias. The verified legacy alias is `baby-care` to `vegan-foods`.
+- Public endpoints provide paginated categories, an ordered tree, slug/alias lookup, children, and breadcrumbs without internal fields. Protected admin endpoints provide filtering, CRUD, move, reorder, archive, restore, permanent delete, and alias management through the existing admin-token boundary.
+- The idempotent seeder creates the 16 authoritative frontend root categories and one alias without changing frontend code. Category tests cover models, scopes, hierarchy, validation, public/admin APIs, aliasing, deletion, reordering, seeding, and cache invalidation.
+- Both category migrations apply, roll back, and reapply on SQLite. Category tests pass (14 tests, 98 assertions); the full suite passes (25 tests, 158 assertions); config and route caches compile. External Hostinger remains untouched. Step 3 is code-ready after this source and `backend-live/` commit is pushed together.
+
 ## Laravel Foundation Audit and Stabilization — Step 1 (2026-07-13)
 
 - The only Laravel root is the repository root: `artisan`, `composer.json`, `app/`, `bootstrap/`, `config/`, `database/`, `public/`, `resources/`, `routes/`, `storage/`, and `tests/` now form one application. No nested or duplicate Laravel install exists.

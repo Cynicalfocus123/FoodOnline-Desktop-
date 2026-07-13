@@ -1,0 +1,20 @@
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Replace this with the actual private Hostinger path to the repository root.
+$backendBasePath = '/home/ACCOUNT/domains/api.foodonlines.com/foodonlines-backend';
+
+if (file_exists($maintenance = $backendBasePath.'/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require $backendBasePath.'/vendor/autoload.php';
+
+/** @var Application $app */
+$app = require_once $backendBasePath.'/bootstrap/app.php';
+$app->usePublicPath(__DIR__);
+$app->handleRequest(Request::capture());

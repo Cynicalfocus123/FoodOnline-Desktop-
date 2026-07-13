@@ -1,5 +1,14 @@
 # FoodOnlines Desktop Home Design
 
+## Backend Category Architecture — Step 2 (2026-07-13)
+
+- Categories are an adjacency list (`parent_id`) with synchronized `depth` and slug-based `path` metadata. Four levels are supported. Centralized transactional validation rejects self-parenting, cycles, descendant moves, and moves that would make any subtree too deep.
+- Public catalog responses use string IDs, UUIDs, stable names/slugs/descriptions, normalized media URLs, feature/navigation/homepage flags, default sort, and children. Lists expose published public categories only; `catalog_only` records remain directly addressable, while hidden/draft/archived/deleted records and audit fields stay private.
+- Admin category management uses the existing bearer-admin trust boundary and includes filtered pagination, hierarchy moves, exact sibling ordering, archive/restore, confirmed permanent deletion, aliases, publication/visibility state, image/icon/desktop/mobile banner paths, SEO metadata, and timestamps.
+- Category aliases are explicit records for legacy or renamed slugs. A published canonical slug change automatically preserves the prior slug as an active 301 alias; JSON lookup returns canonical data and alias-resolution metadata.
+- The current 16 frontend categories remain roots so existing route expectations do not gain an invisible parent. Products and category-specific attributes are future relationships for Step 3; no product table, frontend API switch, media upload, R2, inventory, order, payment, or visual-design change is part of Step 2.
+- `backend-live/` is the repository deployment mirror for backend work. It is deterministically regenerated from whitelisted Laravel runtime source plus `deployment/hostinger/backend-public/`; its public entry is isolated from the frontend `public/.htaccess` and its SHA-256 manifest must verify before commit.
+
 ## Backend Foundation Architecture — Step 1 (2026-07-13)
 
 - The repository root is the single Laravel 12 application root. The backend is a versioned JSON API whose production contract begins at `https://www.api.foodonlines.com/api/v1`; public and standalone-admin frontends remain API clients and were not redesigned.
