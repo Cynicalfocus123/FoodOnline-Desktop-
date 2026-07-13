@@ -1,5 +1,7 @@
 # Frontend Admin Upload Instructions
 
+> Documentation review (2026-07-13): this is a legacy frontend/TMDHosting note and does not govern backend delivery. Backend source and `backend-live/` must be synchronized on `main`; all tracked Markdown files are reviewed at each task completion.
+
 ## Target
 
 - Upload admin dashboard frontend into: `/home/mstarhol/foodonlines.com`

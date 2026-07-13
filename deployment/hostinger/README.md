@@ -1,5 +1,9 @@
 # Hostinger File Manager Deployment
 
+## Current backend rule
+
+Backend deployment preparation comes from the verified `backend-live/` folder on `main`, not from a backend ZIP and not from the frontend `public/.htaccess`. Every task also reviews and updates all tracked Markdown documentation. Actual Hostinger upload must be reported separately with evidence.
+
 FoodOnlines live frontend hosting is currently managed through Hostinger File Manager.
 
 ## Backend separation

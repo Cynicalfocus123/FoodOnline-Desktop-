@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Repository deployment source
+
+`backend-live/` is the required repository live-folder mirror and must be regenerated, verified, committed with its matching backend source, and pushed on `main` for every backend task. `backend-live/SHA256SUMS` is the deployment file inventory. External Hostinger remains a separate manual/integrated action and must not be claimed without evidence. All tracked Markdown files are reviewed and updated at task completion.
+
 This is the non-ZIP deployment workflow for the Laravel API at `https://www.api.foodonlines.com`. Step 1 must not create a backend deployment archive.
 
 ## Hostinger layout

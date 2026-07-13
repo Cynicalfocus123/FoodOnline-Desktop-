@@ -1,5 +1,7 @@
 # TMDHosting cPanel backend deploy notes
 
+> Documentation review (2026-07-13): TMDHosting is not the current backend deployment source. Use `backend-live/` on `main` for repository deployment preparation and report any external Hostinger action separately. All tracked Markdown files are reviewed at each task completion.
+
 Current workspace still mixes frontend and backend scaffold. For TMDHosting, deploy backend as its own Laravel app root and keep full application **outside** `public_html`.
 
 ## Recommended server layout

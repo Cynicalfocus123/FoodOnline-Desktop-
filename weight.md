@@ -1,12 +1,17 @@
 # FoodOnlines Site Weight
 
+## Permanent Completion Accounting (2026-07-13)
+
+- Every task updates all tracked Markdown records, including this file, and records validation plus source/deployment-mirror parity where applicable.
+- Backend completion requires matching source and `backend-live/` on pushed `main`; feature-branch-only work is incomplete. Historical readiness scores below describe their dated phases, not the current state.
+
 ## Backend Category Complexity and Live-Mirror Parity — Step 2 (2026-07-13)
 
 - Added 2 migrations, 2 models, 1 factory, 1 idempotent seeder, category validation/rules, 3 catalog resources, 2 admin resources, 3 controllers, 3 catalog routes, 11 protected admin routes, and 4 category test files plus a shared test helper.
 - Local seed contract: 16 root categories and 1 active legacy alias. Hierarchy metadata adds bounded traversal and a four-level maximum; versioned file-cache keys provide conservative public tree/lookup caching and whole-category invalidation after every write.
 - Eligible backend runtime/public-entry payload: 101 files. Generated `backend-live/`: 101 matching payload files plus `SHA256SUMS` (102 total). Verification: 0 missing, 0 stale extras, 0 checksum mismatches, 0 secrets, 0 frontend files, and 0 ZIP files. Runtime cache/session/log directories are deliberately absent; deployment creates writable runtime directories outside the committed mirror.
 - Technical debt: the current user table has only the verified `admin` role rather than the future `super_admin`/`catalog_manager`/read-only permission matrix; R2 media resolution, products, attributes, production MySQL execution, and external Hostinger deployment remain future or externally gated work.
-- Validation passed: 14 category tests with 98 assertions, 25 full-suite tests with 158 assertions, migration apply/rollback/reapply, config cache, route cache, Composer validation/audit, PHP syntax, and mirror parity. Step 3 is code-ready once the source and regenerated `backend-live/` commit is pushed. No frontend production weight changed.
+- Validation passed: 14 category tests with 98 assertions, 25 full-suite tests with 158 assertions, migration apply/rollback/reapply, config cache, route cache, Composer validation/audit, PHP syntax, and mirror parity. Source and the 102-file `backend-live/` tree are pushed together on `main` at `396b2ae`; Step 3 is code-ready. No frontend production weight changed.
 
 ## Backend Foundation Complexity — Step 1 (2026-07-13)
 

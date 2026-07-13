@@ -1,5 +1,7 @@
 # FoodOnlines Laravel Backend Deployment
 
+> Documentation review (2026-07-13): this TMDHosting workflow is historical. Current backend preparation uses the verified `backend-live/` mirror on `main`; external hosting actions require separate evidence. All tracked Markdown files are reviewed at each task completion.
+
 Use this file as source for packaged `foodonlines-backend/DEPLOYMENT.md`.
 
 ## Summary

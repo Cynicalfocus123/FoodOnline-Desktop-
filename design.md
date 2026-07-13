@@ -1,5 +1,10 @@
 # FoodOnlines Desktop Home Design
 
+## Permanent Documentation and Backend Delivery Contract (2026-07-13)
+
+- Every task reviews and updates all tracked Markdown documentation, with `AGENT.md`, `design.md`, and `weight.md` always reflecting the newest state above historical snapshots.
+- Backend delivery is complete only when final source and deterministic `backend-live/` are together on `main`, verified, and pushed. Feature branches are staging areas, not the final Git/live-folder state.
+
 ## Backend Category Architecture — Step 2 (2026-07-13)
 
 - Categories are an adjacency list (`parent_id`) with synchronized `depth` and slug-based `path` metadata. Four levels are supported. Centralized transactional validation rejects self-parenting, cycles, descendant moves, and moves that would make any subtree too deep.

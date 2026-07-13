@@ -1,5 +1,9 @@
 # FoodOnlines Category Backend
 
+## Current status and documentation rule
+
+Step 2 source and the matching `backend-live/` mirror are on `main` at `396b2ae`. Category administration supports creation, partial name/metadata edits, archive/restore, guarded permanent deletion, reordering, and aliases. Every task reviews and updates all tracked Markdown documents; older Step 1 statements elsewhere are historical snapshots.
+
 ## Existing-code audit
 
 | Existing file/area | Purpose and status | Conflict risk | Action |

@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Foundation
 
+## Current-state note
+
+This document records Step 1 foundation behavior. Step 2 categories are now implemented on `main`; see `docs/backend-categories.md`. Every completed task reviews and updates all tracked Markdown files, and newer dated sections supersede historical readiness statements without deleting their audit history.
+
 ## Scope and root
 
 Step 1 establishes the Laravel API foundation only. The repository root is the one backend root; do not create or deploy a nested Laravel application.
