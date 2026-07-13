@@ -24,6 +24,7 @@
 - Validated with TypeScript, clean production build, production reference audit, dist/mirror SHA-256 comparison, archive extraction/reference checks, and `git diff --check`. Final production output is 91,637,157 bytes across 1,032 files. Package: `foodonlines-hostinger-live-latest.zip`, with the same no-wrapper root layout as the previous Hostinger package and the same 1,032 files as `dist`/`frontend-upload`.
 - Final ZIP size is 90,900,400 bytes (86.69 MB). Its nine root entries are `.htaccess`, `404.html`, `admin.html`, `assets/`, `favicon.svg`, the two Hostinger text files, `images/`, and `index.html`; all entries use Linux-safe forward slashes.
 - External Hostinger status: not uploaded from this session; no Hostinger File Manager credential or connector was available. The repository mirror and upload-ready ZIP are current.
+- Production repair commit: `50bf592` on `main`; the following documentation-only commit records that immutable implementation/package hash.
 
 ## Hostinger Live Deployment Package (2026-07-12)
 
