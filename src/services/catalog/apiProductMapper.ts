@@ -1,9 +1,26 @@
 import { resolveMediaUrl } from "../../lib/media";
 import type { Product, ProductImageFit, ProductVariant } from "../../types/catalog";
+import { applyPresentationCompatibility } from "./presentationCompatibility";
+
+export interface ApiVariantDto {
+  id?: string | number;
+  uuid?: string;
+  title?: string | null;
+  sku?: string | null;
+  size?: string | null;
+  price?: string | number | null;
+  old_price?: string | number | null;
+  currency_code?: string | null;
+  availability_status?: ProductVariant["availabilityStatus"] | null;
+  in_stock?: boolean | null;
+  is_default?: boolean;
+}
 
 export interface ApiProductDto {
-  id: string | number;
+  id?: string | number;
+  uuid?: string;
   name?: string | null;
+  slug?: string | null;
   category_slug?: string | null;
   category_id?: string | number | null;
   category_name?: string | null;
@@ -11,48 +28,120 @@ export interface ApiProductDto {
   old_price?: string | number | null;
   primary_image?: string | null;
   image_urls?: Array<string | null> | null;
+  images?: Array<{ url?: string | null; alt?: string | null; image_fit?: ProductImageFit | null }> | null;
   image_fit?: ProductImageFit | null;
   in_stock?: boolean | number | null;
-  variants?: ProductVariant[] | null;
+  availability_status?: ProductVariant["availabilityStatus"] | null;
+  variants?: ApiVariantDto[] | null;
+  default_variant?: ApiVariantDto | null;
   brand?: string | null;
+  brand_id?: string | null;
+  brand_summary?: { name?: string | null; country_code?: string | null; logo_url?: string | null } | null;
   size?: string | null;
   description?: string | null;
+  country_of_origin_code?: string | null;
+  storage_type?: string | null;
+  ingredients?: string | null;
+  allergen_statement?: string | null;
+  storage_instructions?: string | null;
   sku?: string | null;
+  nutrition_facts?: { serving_size?: string | null; calories?: number | null; total_fat_g?: string | null; sodium_mg?: string | null; total_carbohydrate_g?: string | null; total_sugars_g?: string | null; protein_g?: string | null; ingredients_note?: string | null; allergen_note?: string | null } | null;
 }
 
-function toFiniteNumber(value: string | number | null | undefined, fallback: number) {
-  const parsed = typeof value === "number" ? value : Number(value);
+function numberValue(value: string | number | null | undefined, fallback = 0) {
+  const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function resolveOptionalMediaUrl(value: string | null | undefined) {
+function media(value: string | null | undefined) {
   return value?.trim() ? resolveMediaUrl(value) : null;
 }
 
-export function mapApiProduct(dto: ApiProductDto, fallback: Product): Product {
-  const imageUrls = (dto.image_urls ?? [])
-    .map(resolveOptionalMediaUrl)
-    .filter((url): url is string => Boolean(url));
-  const primaryImage = resolveOptionalMediaUrl(dto.primary_image) ?? imageUrls[0] ?? fallback.image;
-  const normalizedImages = imageUrls.length ? imageUrls : [primaryImage, ...fallback.imageUrls.slice(1)];
-
+function mapVariant(dto: ApiVariantDto, fallbackId: string, fallbackPrice: number): ProductVariant {
+  const price = numberValue(dto.price, fallbackPrice);
+  const oldPrice = dto.old_price == null ? undefined : numberValue(dto.old_price);
   return {
-    ...fallback,
-    id: String(dto.id),
-    name: dto.name ?? fallback.name,
-    categorySlug: dto.category_slug ?? fallback.categorySlug,
-    categoryId: dto.category_id == null ? fallback.categoryId : String(dto.category_id),
-    categoryName: dto.category_name ?? fallback.categoryName,
-    price: toFiniteNumber(dto.price, fallback.price),
-    oldPrice: dto.old_price == null ? undefined : toFiniteNumber(dto.old_price, fallback.oldPrice ?? fallback.price),
-    image: primaryImage,
-    imageUrls: normalizedImages,
-    imageFit: dto.image_fit ?? fallback.imageFit,
-    inStock: dto.in_stock == null ? fallback.inStock : Boolean(dto.in_stock),
-    variants: dto.variants ?? fallback.variants,
-    brand: dto.brand ?? fallback.brand,
-    size: dto.size ?? fallback.size,
-    description: dto.description ?? fallback.description,
-    sku: dto.sku ?? fallback.sku,
+    id: dto.uuid ?? String(dto.id ?? fallbackId),
+    uuid: dto.uuid,
+    label: dto.title ?? "Default",
+    packSize: dto.size ?? "Standard pack",
+    price,
+    oldPrice,
+    unitPrice: `${new Intl.NumberFormat("en-US", { style: "currency", currency: dto.currency_code ?? "USD" }).format(price)}/pack`,
+    currencyCode: dto.currency_code ?? "USD",
+    availabilityStatus: dto.availability_status ?? (dto.in_stock === false ? "out_of_stock" : "in_stock"),
+    inStock: dto.in_stock ?? dto.availability_status === "in_stock",
   };
+}
+
+export function mapApiProduct(dto: ApiProductDto): Product {
+  const id = dto.uuid ?? String(dto.id ?? dto.slug ?? "unknown-product");
+  const price = numberValue(dto.price);
+  const imageUrls = [
+    ...(dto.images ?? []).map((image) => media(image.url)),
+    ...(dto.image_urls ?? []).map(media),
+    media(dto.primary_image),
+  ].filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index);
+  const variants = (dto.variants ?? []).map((variant, index) => mapVariant(variant, `${id}-variant-${index + 1}`, price));
+  const defaultVariant = dto.default_variant ? mapVariant(dto.default_variant, `${id}-default`, price) : variants.find((variant) => variant.id === id) ?? variants[0];
+  const effectiveVariants = variants.length ? variants : [defaultVariant ?? mapVariant({ uuid: `${id}-default`, title: "Default", size: dto.size, price, availability_status: dto.availability_status, in_stock: Boolean(dto.in_stock) }, `${id}-default`, price)];
+  const effectiveDefault = defaultVariant ?? effectiveVariants[0];
+  const primaryImage = imageUrls[0] ?? `${import.meta.env.BASE_URL}assets/categories/paan-corner.jpg`;
+  const slug = dto.slug ?? String(dto.name ?? id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const product: Product = {
+    id,
+    uuid: dto.uuid ?? id,
+    slug,
+    brand: dto.brand_summary?.name ?? dto.brand ?? "FoodOnlines",
+    name: dto.name ?? "Catalog product",
+    categorySlug: dto.category_slug ?? "catalog",
+    size: dto.size ?? effectiveDefault.packSize,
+    price: effectiveDefault.price,
+    oldPrice: effectiveDefault.oldPrice,
+    discountPercent: effectiveDefault.oldPrice ? Math.round((1 - effectiveDefault.price / effectiveDefault.oldPrice) * 100) : undefined,
+    deliveryTime: "Fast delivery",
+    image: primaryImage,
+    imageUrls: imageUrls.length ? imageUrls : [primaryImage],
+    imageFit: dto.image_fit ?? dto.images?.[0]?.image_fit ?? "contain",
+    inStock: effectiveDefault.inStock,
+    unitPrice: effectiveDefault.unitPrice,
+    soldCount: 0,
+    categoryId: dto.category_id == null ? dto.category_slug ?? "" : String(dto.category_id),
+    categoryName: dto.category_name ?? "Catalog",
+    deliveryType: "Local Delivery",
+    productType: "New Arrivals",
+    madeIn: "USA",
+    tags: [],
+    badges: [],
+    provider: "FoodOnlines",
+    country: "Unknown",
+    countryOfOrigin: dto.country_of_origin_code ?? "Unknown",
+    brandOrigin: dto.brand_summary?.country_code ?? "Unknown",
+    netContent: effectiveDefault.packSize,
+    quantity: effectiveDefault.packSize,
+    description: dto.description ?? "Product details are provided by the FoodOnlines catalog.",
+    ingredients: dto.ingredients ?? undefined,
+    storageInstructions: dto.storage_instructions ?? undefined,
+    sku: dto.sku ?? effectiveDefault.id,
+    recipeSuggestions: [],
+    nutritionFacts: {
+      servingSize: dto.nutrition_facts?.serving_size ?? "See package",
+      calories: dto.nutrition_facts?.calories ?? 0,
+      totalFat: dto.nutrition_facts?.total_fat_g ?? "Not supplied",
+      sodium: dto.nutrition_facts?.sodium_mg ?? "Not supplied",
+      carbohydrates: dto.nutrition_facts?.total_carbohydrate_g ?? "Not supplied",
+      sugar: dto.nutrition_facts?.total_sugars_g ?? "Not supplied",
+      protein: dto.nutrition_facts?.protein_g ?? "Not supplied",
+      ingredientsNote: dto.nutrition_facts?.ingredients_note ?? undefined,
+      allergenNote: dto.nutrition_facts?.allergen_note ?? dto.allergen_statement ?? undefined,
+    },
+    returnPolicy: "See our return policy.",
+    reviews: [],
+    reviewTags: [],
+    averageRating: 0,
+    ratingBreakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    reviewCount: 0,
+    variants: effectiveVariants,
+  };
+  return applyPresentationCompatibility({ ...product, price: effectiveDefault.price, oldPrice: effectiveDefault.oldPrice, inStock: effectiveDefault.inStock });
 }

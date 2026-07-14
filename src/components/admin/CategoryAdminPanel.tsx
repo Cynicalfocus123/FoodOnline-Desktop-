@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { getPublicRouteHref } from "../../lib/routes";
 import {
   adminError,
   catalogApi,
@@ -167,6 +168,14 @@ export function CategoryAdminPanel({
     await load();
     await choose(result);
   }
+  const storefrontReasons = selected
+    ? [
+        selected.status !== "published" ? `Status is ${selected.status}.` : null,
+        selected.visibility !== "public" ? `Visibility is ${selected.visibility}.` : null,
+        !selected.show_on_homepage && !selected.show_in_navigation ? "Not enabled for homepage or navigation." : null,
+      ].filter((reason): reason is string => Boolean(reason))
+    : ["Save the category to evaluate storefront access."];
+  const storefrontUrl = selected ? getPublicRouteHref(`category/${selected.slug}`) : null;
   return (
     <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
       <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft">
@@ -250,6 +259,18 @@ export function CategoryAdminPanel({
             {message}
           </Notice>
         ) : null}
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-neutral-500">Public Storefront Status</p>
+              <p className={`mt-1 text-lg font-black ${selected && storefrontReasons.length === 0 ? "text-emerald-700" : "text-amber-700"}`}>
+                {selected && storefrontReasons.length === 0 ? "Accessible" : "Not publicly accessible"}
+              </p>
+            </div>
+            {storefrontUrl ? <ActionButton onClick={() => window.open(storefrontUrl, "_blank", "noopener,noreferrer")} tone="secondary">View on Storefront</ActionButton> : null}
+          </div>
+          {storefrontReasons.length ? <ul className="mt-2 grid gap-1 text-sm text-neutral-600">{storefrontReasons.map((reason) => <li key={reason}>• {reason}</li>)}</ul> : <p className="mt-2 text-sm text-neutral-600">Published public categories can be reached from the storefront.</p>}
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           <TextField
             error={errors.name?.[0]}

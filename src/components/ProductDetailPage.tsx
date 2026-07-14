@@ -1,5 +1,7 @@
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
+  mapApiProduct,
+  type Product,
   ProductReview,
   RatingBreakdown,
   formatPrice,
@@ -242,8 +244,11 @@ export function ProductDetailPage() {
   const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
   const backToProducts = useHomeStore((state) => state.backToProducts);
-  const product = getProductById(selectedProductId);
-  const relatedProducts = useMemo(() => getRelatedProducts(product, 10), [product]);
+  const [loadedProduct, setLoadedProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const loadingProduct = useMemo(() => mapApiProduct({ uuid: "loading", slug: "loading", name: "Loading product", price: 0 }), []);
+  const product = loadedProduct ?? loadingProduct;
   const isFavorite = favoriteProductIds.includes(product.id);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<DetailTabKey>("details");
@@ -254,6 +259,22 @@ export function ProductDetailPage() {
   const [shareNotice, setShareNotice] = useState<string | null>(null);
   const galleryScrollRef = useRef<HTMLDivElement | null>(null);
   const relatedScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoadedProduct(null);
+    setLoadError(null);
+    if (!selectedProductId) return () => { mounted = false; };
+    void getProductById(selectedProductId)
+      .then((item) => {
+        if (!mounted) return;
+        if (!item) { setLoadError("This product is no longer available."); return; }
+        setLoadedProduct(item);
+        void getRelatedProducts(item, 10).then((related) => mounted && setRelatedProducts(related)).catch(() => mounted && setRelatedProducts([]));
+      })
+      .catch(() => mounted && setLoadError("Unable to load this product. Please try again."));
+    return () => { mounted = false; };
+  }, [selectedProductId]);
 
   useEffect(() => {
     setActiveImageIndex(0);
@@ -349,7 +370,7 @@ export function ProductDetailPage() {
   }
 
   async function handleShare() {
-    const productUrl = `${window.location.origin}${window.location.pathname}#product/${product.id}`;
+    const productUrl = `${window.location.origin}${window.location.pathname}#product/${product.slug}`;
 
     try {
       if (navigator.share) {
@@ -368,6 +389,8 @@ export function ProductDetailPage() {
 
   return (
     <div className="bg-[#fcfcfd] pb-16 pt-[136px] sm:pt-[150px] lg:pt-[168px]" id="product-root">
+      {loadError ? <div className="mx-auto max-w-7xl px-4 pt-4 text-sm font-semibold text-rose-700">{loadError}</div> : null}
+      {!loadedProduct ? <div className="mx-auto max-w-7xl px-4 pt-4 text-sm font-semibold text-neutral-500">Loading product catalog...</div> : null}
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:gap-10">
         <button
           className="inline-flex w-fit items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
@@ -519,7 +542,7 @@ export function ProductDetailPage() {
                     </button>
                   ))}
                 </div>
-                <CartQuantityControl productId={product.id} variant="detail" />
+                <CartQuantityControl productId={product.id} variantId={selectedVariant?.id ?? product.id} disabled={selectedVariant?.inStock === false || selectedVariant?.availabilityStatus === "out_of_stock"} variant="detail" />
               </div>
             </SectionShell>
 

@@ -2,7 +2,9 @@ import { useHomeStore } from "../store/homeStore";
 
 type CartQuantityControlProps = {
   productId: string;
+  variantId?: string;
   variant?: "compact" | "detail" | "listing";
+  disabled?: boolean;
 };
 
 function MinusIcon() {
@@ -34,8 +36,8 @@ function TrashIcon() {
   );
 }
 
-export function CartQuantityControl({ productId, variant = "compact" }: CartQuantityControlProps) {
-  const quantity = useHomeStore((state) => state.cartQuantities[productId] ?? 0);
+export function CartQuantityControl({ productId, variantId = productId, variant = "compact", disabled = false }: CartQuantityControlProps) {
+  const quantity = useHomeStore((state) => state.cartQuantities[variantId] ?? 0);
   const addToCart = useHomeStore((state) => state.addToCart);
   const setCartQuantity = useHomeStore((state) => state.setCartQuantity);
 
@@ -51,11 +53,13 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         }
         onClick={(event) => {
           event.stopPropagation();
-          addToCart(productId);
+          if (disabled) return;
+          addToCart(productId, variantId);
         }}
+        disabled={disabled}
         type="button"
       >
-        {variant === "listing" ? <PlusIcon /> : "Add to cart"}
+        {disabled ? "Out of stock" : variant === "listing" ? <PlusIcon /> : "Add to cart"}
       </button>
     );
   }
@@ -80,7 +84,7 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         }
         onClick={(event) => {
           event.stopPropagation();
-          setCartQuantity(productId, quantity - 1);
+          setCartQuantity(variantId, quantity - 1);
         }}
         type="button"
       >
@@ -107,7 +111,7 @@ export function CartQuantityControl({ productId, variant = "compact" }: CartQuan
         }
         onClick={(event) => {
           event.stopPropagation();
-          setCartQuantity(productId, quantity + 1);
+          setCartQuantity(variantId, quantity + 1);
         }}
         type="button"
       >

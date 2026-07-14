@@ -16,18 +16,18 @@ import type { CatalogQuery, Product } from "../../types/catalog";
 import type { CatalogRepository } from "./catalogRepository";
 
 export const localCatalogRepository: CatalogRepository = {
-  getHomepageCatalog: () => productCarouselSections,
-  getCategories: () => categories,
-  getCategoryBySlug,
-  getCategoryProducts: getCategoryListingProducts,
-  getProductById,
-  getRelatedProducts,
-  searchProducts,
-  getAvailableFilterBrands,
-  getAvailableDeliveryTypes,
-  getAvailableProductTypes,
-  getAvailableMadeInOptions,
-  getProducts(query: CatalogQuery = {}) {
+  getHomepageCatalog: async () => productCarouselSections,
+  getCategories: async () => categories,
+  getCategoryBySlug: async (slug) => getCategoryBySlug(slug),
+  getCategoryProducts: async (slug) => getCategoryListingProducts(slug),
+  getProductById: async (id) => getProductById(id),
+  getRelatedProducts: async (product, limit) => getRelatedProducts(product, limit),
+  searchProducts: async (query) => searchProducts(query),
+  getAvailableFilterBrands: async () => getAvailableFilterBrands(),
+  getAvailableDeliveryTypes: async () => getAvailableDeliveryTypes(),
+  getAvailableProductTypes: async () => getAvailableProductTypes(),
+  getAvailableMadeInOptions: async () => getAvailableMadeInOptions(),
+  async getProducts(query: CatalogQuery = {}) {
     let products: Product[] = query.search
       ? searchProducts(query.search)
       : query.categorySlug

@@ -1,4 +1,4 @@
-import { type ReactNode, useDeferredValue, useMemo } from "react";
+import { type ReactNode, useDeferredValue, useEffect, useState } from "react";
 import { searchProducts } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
@@ -14,7 +14,19 @@ function ResultsShell({ children }: { children: ReactNode }) {
 export function SearchResultsPage() {
   const searchQuery = useHomeStore((state) => state.searchQuery);
   const deferredSearchQuery = useDeferredValue(searchQuery);
-  const results = useMemo(() => searchProducts(deferredSearchQuery), [deferredSearchQuery]);
+  const [results, setResults] = useState<Awaited<ReturnType<typeof searchProducts>>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    setIsLoading(true);
+    setError(null);
+    void searchProducts(deferredSearchQuery)
+      .then((items) => mounted && setResults(items))
+      .catch(() => mounted && setError("Search is temporarily unavailable."))
+      .finally(() => mounted && setIsLoading(false));
+    return () => { mounted = false; };
+  }, [deferredSearchQuery]);
 
   return (
     <div className="bg-[#fcfcfd] pb-16 pt-[132px] sm:pt-[146px] lg:pt-[154px]">
@@ -26,7 +38,8 @@ export function SearchResultsPage() {
               <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">
                 Results for "{searchQuery}"
               </h1>
-              <p className="text-sm font-medium text-neutral-500">{results.length} products shown</p>
+              <p className="text-sm font-medium text-neutral-500">{isLoading ? "Loading products..." : `${results.length} products shown`}</p>
+              {error ? <p className="text-sm font-semibold text-rose-700">{error}</p> : null}
             </div>
           </ResultsShell>
 

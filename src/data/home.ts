@@ -738,6 +738,7 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
 
   return {
     id,
+    slug: id,
     brand: FILTER_BRANDS[(index + category.name.length) % FILTER_BRANDS.length],
     name: productName,
     categorySlug: categoryId,

@@ -1,5 +1,5 @@
 import { FormEvent, type ReactNode, useMemo, useState } from "react";
-import { formatPrice, getProductById } from "../services/catalog";
+import { formatPrice, useCatalogProducts } from "../services/catalog";
 import {
   normalizeUserEmail,
   sanitizeUserPasswordInput,
@@ -29,6 +29,7 @@ const paymentLogos = [
 ] as const;
 
 type CartLineItem = {
+  lineId: string;
   productId: string;
   quantity: number;
   selected: boolean;
@@ -539,8 +540,10 @@ function SummaryPanel({
 
 export function CartPage() {
   const cartQuantities = useHomeStore((state) => state.cartQuantities);
+  const cartLineProductIds = useHomeStore((state) => state.cartLineProductIds);
   const selectedCartIds = useHomeStore((state) => state.selectedCartIds);
   const savedForLaterIds = useHomeStore((state) => state.savedForLaterIds);
+  const savedLineProductIds = useHomeStore((state) => state.savedLineProductIds);
   const backToHome = useHomeStore((state) => state.backToHome);
   const openCheckout = useHomeStore((state) => state.openCheckout);
   const setCartQuantity = useHomeStore((state) => state.setCartQuantity);
@@ -553,6 +556,8 @@ export function CartPage() {
   const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
   const checkoutLoginWithIdentifier = usePublicAuthStore((state) => state.checkoutLoginWithIdentifier);
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
+  const catalogIds = useMemo(() => [...Object.values(cartLineProductIds), ...Object.values(savedLineProductIds)], [cartLineProductIds, savedLineProductIds]);
+  const { products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogProducts(catalogIds);
 
   const [couponCode, setCouponCode] = useState("");
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
@@ -568,21 +573,22 @@ export function CartPage() {
 
   const activeItems = useMemo<CartLineItem[]>(
     () =>
-      Object.entries(cartQuantities).map(([productId, quantity]) => ({
-        productId,
+      Object.entries(cartQuantities).map(([lineId, quantity]) => ({
+        lineId,
+        productId: cartLineProductIds[lineId] ?? lineId,
         quantity,
-        selected: selectedCartIds.includes(productId),
+        selected: selectedCartIds.includes(lineId),
       })),
-    [cartQuantities, selectedCartIds],
+    [cartLineProductIds, cartQuantities, selectedCartIds],
   );
 
   const savedProducts = useMemo(
-    () => savedForLaterIds.map((productId) => getProductById(productId)),
-    [savedForLaterIds],
+    () => savedForLaterIds.map((lineId) => ({ lineId, product: catalogProducts.get(savedLineProductIds[lineId] ?? lineId) })).filter((item): item is { lineId: string; product: NonNullable<typeof item.product> } => Boolean(item.product)),
+    [catalogProducts, savedForLaterIds, savedLineProductIds],
   );
 
-  const selectedItems = activeItems.filter((item) => item.selected);
-  const selectedSubtotal = selectedItems.reduce((sum, item) => sum + getProductById(item.productId).price * item.quantity, 0);
+  const selectedItems = activeItems.filter((item) => item.selected && catalogProducts.has(item.productId));
+  const selectedSubtotal = selectedItems.reduce((sum, item) => sum + (catalogProducts.get(item.productId)?.price ?? 0) * item.quantity, 0);
   const selectedItemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   const shippingCost = selectedSubtotal > 0 && selectedSubtotal < FREE_SHIPPING_THRESHOLD ? ESTIMATED_SHIPPING : 0;
   const estimatedTotal = selectedSubtotal + shippingCost;
@@ -713,8 +719,8 @@ export function CartPage() {
                 <div className="grid gap-4 border-t border-neutral-200 pt-6 text-left">
                   <h3 className="text-xl font-black text-neutral-950">Saved for later</h3>
                   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {savedProducts.map((product) => (
-                      <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={product.id}>
+                    {savedProducts.map(({ lineId, product }) => (
+                      <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={lineId}>
                         <div className="flex items-center gap-3">
                           <img alt={product.name} className="h-16 w-16 rounded-2xl bg-neutral-50 object-contain" src={product.image} />
                           <div className="min-w-0">
@@ -724,7 +730,7 @@ export function CartPage() {
                         </div>
                         <button
                           className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-leaf-500 px-4 text-sm font-black text-leaf-600 transition hover:bg-leaf-50"
-                          onClick={() => moveSavedToCart(product.id)}
+                          onClick={() => moveSavedToCart(lineId)}
                           type="button"
                         >
                           Move to cart
@@ -743,7 +749,7 @@ export function CartPage() {
                     <Checkbox
                       checked={allSelected}
                       label={`All (${selectedItemCount} items selected)`}
-                      onChange={() => setAllCartSelections(activeItems.map((item) => item.productId), !allSelected)}
+                      onChange={() => setAllCartSelections(activeItems.map((item) => item.lineId), !allSelected)}
                     />
                     <div className="flex flex-col gap-2 lg:min-w-[52%]">
                       <p className="text-sm font-medium text-neutral-500">Fulfilled by FoodOnline</p>
@@ -754,18 +760,27 @@ export function CartPage() {
 
                 <div className="grid gap-4 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)] sm:p-6">
                   {activeItems.map((item, index) => {
-                    const product = getProductById(item.productId);
+                    const product = catalogProducts.get(item.productId);
+
+                    if (!product) {
+                      return (
+                        <div className="flex items-center justify-between gap-4 border-b border-neutral-200 pb-5" key={item.lineId}>
+                          <p className="text-sm font-semibold text-neutral-600">This catalog item is temporarily unavailable.</p>
+                          <button className="text-sm font-bold text-rose-700 underline" onClick={() => removeFromCart(item.lineId)} type="button">Remove</button>
+                        </div>
+                      );
+                    }
 
                     return (
                       <div
                         className={`grid gap-4 ${index < activeItems.length - 1 ? "border-b border-neutral-200 pb-5" : ""} lg:grid-cols-[24px_110px_minmax(0,1fr)_96px_120px] lg:items-start`}
-                        key={item.productId}
+                        key={item.lineId}
                       >
                         <div className="pt-1">
                           <input
                             checked={item.selected}
                             className="h-5 w-5 rounded border-neutral-300 accent-neutral-950"
-                            onChange={() => toggleCartSelection(item.productId)}
+                            onChange={() => toggleCartSelection(item.lineId)}
                             type="checkbox"
                           />
                         </div>
@@ -785,10 +800,10 @@ export function CartPage() {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-[#2563eb]">
-                            <button className="underline underline-offset-4" onClick={() => saveForLater(item.productId)} type="button">
+                            <button className="underline underline-offset-4" onClick={() => saveForLater(item.lineId)} type="button">
                               Save for later
                             </button>
-                            <button className="underline underline-offset-4" onClick={() => removeFromCart(item.productId)} type="button">
+                            <button className="underline underline-offset-4" onClick={() => removeFromCart(item.lineId)} type="button">
                               Remove
                             </button>
                           </div>
@@ -796,8 +811,8 @@ export function CartPage() {
 
                         <div className="grid gap-2">
                           <CartQuantityPill
-                            onDecrease={() => setCartQuantity(item.productId, item.quantity - 1)}
-                            onIncrease={() => setCartQuantity(item.productId, item.quantity + 1)}
+                            onDecrease={() => setCartQuantity(item.lineId, item.quantity - 1)}
+                            onIncrease={() => setCartQuantity(item.lineId, item.quantity + 1)}
                             quantity={item.quantity}
                           />
                         </div>
@@ -830,8 +845,8 @@ export function CartPage() {
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {savedProducts.map((product) => (
-                        <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={product.id}>
+                      {savedProducts.map(({ lineId, product }) => (
+                        <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={lineId}>
                           <div className="flex items-center gap-3">
                             <img alt={product.name} className="h-20 w-20 rounded-[18px] bg-neutral-50 object-contain" src={product.image} />
                             <div className="min-w-0">
@@ -843,7 +858,7 @@ export function CartPage() {
                           <div className="flex flex-wrap gap-3">
                             <button
                               className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-leaf-500 px-4 text-sm font-black text-leaf-600 transition hover:bg-leaf-50"
-                              onClick={() => moveSavedToCart(product.id)}
+                              onClick={() => moveSavedToCart(lineId)}
                               type="button"
                             >
                               Move to cart

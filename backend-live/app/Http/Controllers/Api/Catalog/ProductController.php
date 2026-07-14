@@ -42,7 +42,7 @@ class ProductController extends Controller
     }
     public function show(string $product): ProductDetailResource
     {
-        $item=$this->visibleQuery(['public','catalog_only'])->where('slug',$product)->with(['category','brand','defaultVariant','primaryMedia','activeVariants','nutritionFacts','media'=>fn($q)=>$q->ordered()])->firstOrFail();
+        $item=$this->visibleQuery(['public','catalog_only'])->where(fn (Builder $query) => $query->where('slug', $product)->orWhere('uuid', $product))->with(['category','brand','defaultVariant','primaryMedia','activeVariants','nutritionFacts','media'=>fn($q)=>$q->ordered()])->firstOrFail();
         return new ProductDetailResource($item);
     }
     private function visibleQuery(string|array $visibility): Builder

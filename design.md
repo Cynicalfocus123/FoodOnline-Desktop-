@@ -1,5 +1,15 @@
 # FoodOnlines Desktop Home Design
 
+## Public Catalog Cutover - Phase 5 (2026-07-13)
+
+- The existing public storefront design is preserved. No storefront function, homepage section, Best Selling control, filter, sort, card field, product-detail section, promo interface, payment interface, cart layout, checkout layout, or responsive behavior was removed or redesigned.
+- The existing admin design is preserved: the dark-green sidebar, citrus active state, rounded white workspaces, tabs, editor layouts, login, dashboard, and catalog navigation remain unchanged. No new admin sidebar section or admin redesign was added.
+- Catalog data is asynchronous. Public pages show loading states, empty states, API error states, and retry-safe failure states. API failure never silently activates local data.
+- Variant selection preserves the current purchase panel while changing price, compare-at price, size, unit price, availability, and the exact variant-aware local cart line. Out-of-stock variants cannot be added.
+- Product and category public media use Laravel-resolved R2 or absolute media URLs. The existing contain/cover presentation behavior remains intact.
+- Category and Product editors add compact, read-only Public Storefront Status panels: status, visibility/publication/readiness reasons, and a View on Storefront action. They reuse existing editor spacing and controls; they are not a second publication engine.
+- There is no checkout redesign. Promo-code fields, payment choices, address forms, order-summary presentation, and the existing non-transactional Place Order behavior remain UI-only until Phase 6.
+
 ## Admin Catalog Portal Design — Phase 4 (2026-07-13)
 
 - The existing dark-green sidebar, citrus active state, rounded white workspaces, typography, spacing, login, users, deletion requests, and settings remain intact. Categories, Brands, and Products are added to that same standalone admin entry; no second admin shell or public storefront redesign exists.

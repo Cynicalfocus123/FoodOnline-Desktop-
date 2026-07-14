@@ -13,6 +13,7 @@ import type {
   AdminVariant,
   MediaStorageStatus,
 } from "../../types/adminCatalog";
+import { getPublicRouteHref } from "../../lib/routes";
 import {
   ActionButton,
   CheckField,
@@ -203,6 +204,10 @@ export function ProductAdminPanel({
       setTab("publication");
     }
   }
+  const storefrontReasons = selected
+    ? Object.values(selected.readiness_errors).flat().concat(selected.status !== "published" ? [`Status is ${selected.status}.`] : [])
+    : ["Save the product to evaluate storefront access."];
+  const storefrontUrl = selected ? getPublicRouteHref(`product/${selected.slug}`) : null;
   const filters = (
     <div className="mt-5 grid gap-2 sm:grid-cols-2">
       <input
@@ -413,6 +418,18 @@ export function ProductAdminPanel({
             </Notice>
           </div>
         ) : null}
+        <div className="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-neutral-500">Public Storefront Status</p>
+              <p className={`mt-1 text-lg font-black ${selected && storefrontReasons.length === 0 ? "text-emerald-700" : "text-amber-700"}`}>
+                {selected && storefrontReasons.length === 0 ? "Published and accessible" : "Not publicly accessible"}
+              </p>
+            </div>
+            {storefrontUrl ? <ActionButton onClick={() => window.open(storefrontUrl, "_blank", "noopener,noreferrer")} tone="secondary">View on Storefront</ActionButton> : null}
+          </div>
+          {storefrontReasons.length ? <ul className="mt-2 grid gap-1 text-sm text-neutral-600">{storefrontReasons.map((reason) => <li key={reason}>• {reason}</li>)}</ul> : <p className="mt-2 text-sm text-neutral-600">The current publication and catalog requirements are satisfied.</p>}
+        </div>
         <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
           {(
             ["basics", "variants", "media", "nutrition", "publication"] as Tab[]

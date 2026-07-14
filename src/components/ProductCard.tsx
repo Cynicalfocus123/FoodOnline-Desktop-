@@ -31,9 +31,10 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const isFavorite = favoriteProductIds.includes(product.id);
   const isGrid = layout === "grid";
   const imageFit = product.imageFit ?? "contain";
+  const variantId = product.variants[0]?.id ?? product.id;
 
   function handleOpen() {
-    openProduct(product.id);
+    openProduct(product.slug);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
@@ -99,7 +100,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
             onKeyDown={(event) => event.stopPropagation()}
             role="presentation"
           >
-            <CartQuantityControl productId={product.id} variant="listing" />
+            <CartQuantityControl productId={product.id} variantId={variantId} variant="listing" />
           </div>
         ) : null}
       </div>
@@ -141,7 +142,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
             onKeyDown={(event) => event.stopPropagation()}
             role="presentation"
           >
-            <CartQuantityControl productId={product.id} />
+            <CartQuantityControl productId={product.id} variantId={variantId} />
           </div>
         </div>
       )}

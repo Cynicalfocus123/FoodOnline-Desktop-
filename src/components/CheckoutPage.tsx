@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
-import { formatPrice, getProductById, type ProductItem } from "../services/catalog";
+import { formatPrice, useCatalogProducts, type ProductItem } from "../services/catalog";
 import { apiRequest } from "../lib/apiClient";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
@@ -21,6 +21,7 @@ const cardBrandLogos = [
 type CheckoutLineItem = {
   product: ProductItem;
   quantity: number;
+  lineId: string;
 };
 
 type CountryKey =
@@ -711,12 +712,15 @@ function EmptyCheckoutState({ onCart, onShop }: { onCart: () => void; onShop: ()
 
 export function CheckoutPage() {
   const cartQuantities = useHomeStore((state) => state.cartQuantities);
+  const cartLineProductIds = useHomeStore((state) => state.cartLineProductIds);
   const selectedCartIds = useHomeStore((state) => state.selectedCartIds);
   const openCart = useHomeStore((state) => state.openCart);
   const backToHome = useHomeStore((state) => state.backToHome);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const token = usePublicAuthStore((state) => state.token);
+  const catalogIds = useMemo(() => Object.values(cartLineProductIds), [cartLineProductIds]);
+  const { products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogProducts(catalogIds);
 
   const [addressCountry, setAddressCountry] = useState<CountryKey>("thailand");
   const [addressValues, setAddressValues] = useState<AddressValues>({});
@@ -754,12 +758,18 @@ export function CheckoutPage() {
   const selectedItems = useMemo<CheckoutLineItem[]>(
     () =>
       Object.entries(cartQuantities)
-        .filter(([productId]) => selectedCartIds.includes(productId))
-        .map(([productId, quantity]) => ({
-          product: getProductById(productId),
+        .filter(([lineId]) => selectedCartIds.includes(lineId))
+        .map(([lineId, quantity]) => {
+          const baseProduct = catalogProducts.get(cartLineProductIds[lineId] ?? lineId);
+          if (!baseProduct) return null;
+          const variant = baseProduct.variants.find((item) => item.id === lineId) ?? baseProduct.variants[0];
+          return {
+          lineId,
+          product: variant ? { ...baseProduct, price: variant.price, oldPrice: variant.oldPrice, size: variant.packSize, quantity: variant.packSize, unitPrice: variant.unitPrice, inStock: variant.inStock } : baseProduct,
           quantity,
-        })),
-    [cartQuantities, selectedCartIds],
+          };
+        }).filter((item): item is CheckoutLineItem => Boolean(item)),
+    [cartLineProductIds, cartQuantities, catalogProducts, selectedCartIds],
   );
 
   const activeAddressConfig = addressConfigs[addressCountry];
@@ -1348,14 +1358,16 @@ export function CheckoutPage() {
               </div>
 
               <SectionCard eyebrow="2. Order details" title="Cart item details">
+                {isCatalogLoading ? <p className="mb-3 text-sm font-semibold text-neutral-500">Refreshing catalog prices...</p> : null}
+                {catalogError ? <p className="mb-3 text-sm font-semibold text-rose-700">{catalogError}</p> : null}
                 <div className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white">
                   <div className="flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-4 py-3">
                     <p className="text-sm font-black text-neutral-950">Order 1/1: Fulfilled by FoodOnlines</p>
                     <p className="text-sm font-bold text-neutral-600">{itemCount} items</p>
                   </div>
                   <div className="grid divide-y divide-neutral-100">
-                    {selectedItems.map(({ product, quantity }) => (
-                      <div className="grid gap-4 p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center" key={product.id}>
+                    {selectedItems.map(({ lineId, product, quantity }) => (
+                      <div className="grid gap-4 p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center" key={lineId}>
                         <img
                           alt={product.name}
                           className="h-[88px] w-[88px] rounded-[18px] bg-neutral-50 object-contain"

@@ -9,7 +9,7 @@ export type ProductImage = {
 export type DeliveryTypeOption = "Local Delivery" | "GLOBAL+";
 export type ProductTypeOption = "Deals" | "New Arrivals" | "Recently Restocked" | "SNAP";
 export type MadeInOption = "USA" | "Spain" | "Russia" | "China" | "Korea" | "Japan";
-export type CategoryFilterBrand = "NestFood" | "Stouffer" | "StarKist" | "Aldi" | "Adidas" | "Costco" | "Harris" | "ISnack" | "Burbe";
+export type CategoryFilterBrand = string;
 
 export type IconName =
   | "categories" | "snack" | "grocery" | "beverage" | "beauty" | "personal-care"
@@ -18,6 +18,8 @@ export type IconName =
   | "meat" | "organic" | "pharma" | "cleaning" | "office" | "pet";
 
 export type Category = {
+  id?: string;
+  uuid?: string;
   name: string;
   icon: IconName;
   image: string;
@@ -28,10 +30,15 @@ export type Category = {
 
 export type ProductVariant = {
   id: string;
+  uuid?: string;
   label: string;
   packSize: string;
   price: number;
   unitPrice: string;
+  oldPrice?: number;
+  currencyCode?: string;
+  availabilityStatus?: "in_stock" | "out_of_stock" | "preorder" | "backorder";
+  inStock?: boolean;
 };
 
 export type RecipeSuggestion = {
@@ -71,6 +78,8 @@ export type RatingBreakdown = Record<1 | 2 | 3 | 4 | 5, number>;
 
 export type Product = {
   id: string;
+  uuid?: string;
+  slug: string;
   brand: string;
   name: string;
   categorySlug: string;
@@ -127,6 +136,13 @@ export type ProductSortOption = "featured" | "best-selling" | "price-low" | "pri
 export type CatalogQuery = {
   categorySlug?: string;
   search?: string;
+  brand?: string;
+  countryOfOrigin?: string;
+  storageType?: "ambient" | "refrigerated" | "frozen";
+  availability?: ProductVariant["availabilityStatus"];
+  featured?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
   page?: number;
   pageSize?: number;
   sort?: ProductSortOption;

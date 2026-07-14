@@ -1,11 +1,11 @@
-import { localCatalogRepository } from "./localCatalogRepository";
+import { catalogRepository } from "./repository";
 
 export type { CatalogRepository } from "./catalogRepository";
 export type { ApiProductDto } from "./apiProductMapper";
 export { mapApiProduct } from "./apiProductMapper";
+export { mapApiCategory } from "./apiCategoryMapper";
+export { useCatalogProducts } from "./useCatalogProducts";
 export type * from "../../types/catalog";
-
-export const catalogRepository = localCatalogRepository;
 
 export const getHomepageCatalog = () => catalogRepository.getHomepageCatalog();
 export const getCategories = () => catalogRepository.getCategories();

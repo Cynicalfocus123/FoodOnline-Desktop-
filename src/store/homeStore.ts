@@ -349,7 +349,9 @@ type HomeState = {
   selectedProductId: string | null;
   selectedCategorySlug: string | null;
   cartQuantities: Record<string, number>;
+  cartLineProductIds: Record<string, string>;
   savedForLaterIds: string[];
+  savedLineProductIds: Record<string, string>;
   selectedCartIds: string[];
   favoriteProductIds: string[];
   selectedZipCode: string;
@@ -388,13 +390,13 @@ type HomeState = {
   returnAfterAuth: () => void;
   syncRouteFromHash: (hash: string) => void;
   setSearchInputValue: (value: string) => void;
-  setCartQuantity: (productId: string, quantity: number) => void;
-  addToCart: (productId: string) => void;
-  removeFromCart: (productId: string) => void;
-  saveForLater: (productId: string) => void;
-  moveSavedToCart: (productId: string) => void;
-  toggleCartSelection: (productId: string) => void;
-  setAllCartSelections: (productIds: string[], isSelected: boolean) => void;
+  setCartQuantity: (lineId: string, quantity: number) => void;
+  addToCart: (productId: string, variantId?: string) => void;
+  removeFromCart: (lineId: string) => void;
+  saveForLater: (lineId: string) => void;
+  moveSavedToCart: (lineId: string) => void;
+  toggleCartSelection: (lineId: string) => void;
+  setAllCartSelections: (lineIds: string[], isSelected: boolean) => void;
   toggleFavorite: (productId: string) => void;
   setSelectedZipCode: (zipCode: string) => void;
   selectRole: (role: string) => void;
@@ -441,7 +443,9 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedProductId: null,
   selectedCategorySlug: null,
   cartQuantities: {},
+  cartLineProductIds: {},
   savedForLaterIds: [],
+  savedLineProductIds: {},
   selectedCartIds: [],
   favoriteProductIds: [],
   selectedZipCode: "91789",
@@ -1053,17 +1057,17 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({
       searchInputValue: value,
     }),
-  setCartQuantity: (productId, quantity) =>
+  setCartQuantity: (lineId, quantity) =>
     set((state) => {
       const nextQuantity = Math.max(0, quantity);
       const nextCart = { ...state.cartQuantities };
-      const nextSelectedCartIds = state.selectedCartIds.filter((id) => id !== productId);
+      const nextSelectedCartIds = state.selectedCartIds.filter((id) => id !== lineId);
 
       if (nextQuantity <= 0) {
-        delete nextCart[productId];
+        delete nextCart[lineId];
       } else {
-        nextCart[productId] = nextQuantity;
-        nextSelectedCartIds.push(productId);
+        nextCart[lineId] = nextQuantity;
+        nextSelectedCartIds.push(lineId);
       }
 
       return {
@@ -1071,46 +1075,54 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         selectedCartIds: nextSelectedCartIds,
       };
     }),
-  addToCart: (productId) =>
+  addToCart: (productId, variantId = productId) =>
     set((state) => ({
       cartQuantities: {
         ...state.cartQuantities,
-        [productId]: (state.cartQuantities[productId] ?? 0) + 1,
+        [variantId]: (state.cartQuantities[variantId] ?? 0) + 1,
       },
-      selectedCartIds: state.selectedCartIds.includes(productId) ? state.selectedCartIds : [...state.selectedCartIds, productId],
-      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== productId),
+      cartLineProductIds: { ...state.cartLineProductIds, [variantId]: productId },
+      selectedCartIds: state.selectedCartIds.includes(variantId) ? state.selectedCartIds : [...state.selectedCartIds, variantId],
+      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== variantId),
+      savedLineProductIds: Object.fromEntries(Object.entries(state.savedLineProductIds).filter(([id]) => id !== variantId)),
     })),
-  removeFromCart: (productId) =>
+  removeFromCart: (lineId) =>
     set((state) => {
       const nextCart = { ...state.cartQuantities };
-      delete nextCart[productId];
+      const nextProducts = { ...state.cartLineProductIds };
+      delete nextCart[lineId];
+      delete nextProducts[lineId];
 
       return {
         cartQuantities: nextCart,
-        selectedCartIds: state.selectedCartIds.filter((id) => id !== productId),
+        cartLineProductIds: nextProducts,
+        selectedCartIds: state.selectedCartIds.filter((id) => id !== lineId),
       };
     }),
-  saveForLater: (productId) =>
+  saveForLater: (lineId) =>
     set((state) => {
       const nextCart = { ...state.cartQuantities };
-      delete nextCart[productId];
+      delete nextCart[lineId];
 
       return {
         cartQuantities: nextCart,
-        selectedCartIds: state.selectedCartIds.filter((id) => id !== productId),
-        savedForLaterIds: state.savedForLaterIds.includes(productId)
+        selectedCartIds: state.selectedCartIds.filter((id) => id !== lineId),
+        savedForLaterIds: state.savedForLaterIds.includes(lineId)
           ? state.savedForLaterIds
-          : [...state.savedForLaterIds, productId],
+          : [...state.savedForLaterIds, lineId],
+        savedLineProductIds: { ...state.savedLineProductIds, [lineId]: state.cartLineProductIds[lineId] ?? lineId },
       };
     }),
-  moveSavedToCart: (productId) =>
+  moveSavedToCart: (lineId) =>
     set((state) => ({
       cartQuantities: {
         ...state.cartQuantities,
-        [productId]: state.cartQuantities[productId] ?? 1,
+        [lineId]: state.cartQuantities[lineId] ?? 1,
       },
-      selectedCartIds: state.selectedCartIds.includes(productId) ? state.selectedCartIds : [...state.selectedCartIds, productId],
-      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== productId),
+      cartLineProductIds: { ...state.cartLineProductIds, [lineId]: state.savedLineProductIds[lineId] ?? lineId },
+      selectedCartIds: state.selectedCartIds.includes(lineId) ? state.selectedCartIds : [...state.selectedCartIds, lineId],
+      savedForLaterIds: state.savedForLaterIds.filter((id) => id !== lineId),
+      savedLineProductIds: Object.fromEntries(Object.entries(state.savedLineProductIds).filter(([id]) => id !== lineId)),
     })),
   toggleCartSelection: (productId) =>
     set((state) => ({

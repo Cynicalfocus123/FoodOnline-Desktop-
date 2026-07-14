@@ -160,6 +160,10 @@ function FilterPanel({
   maxPrice,
   setMinPrice,
   setMaxPrice,
+  deliveryOptions,
+  productTypeOptions,
+  madeInOptions,
+  brandOptions,
 }: {
   collapsedSections: Record<FilterSectionKey, boolean>;
   onToggleSection: (section: FilterSectionKey) => void;
@@ -178,11 +182,11 @@ function FilterPanel({
   maxPrice: number;
   setMinPrice: (value: number) => void;
   setMaxPrice: (value: number) => void;
+  deliveryOptions: DeliveryTypeOption[];
+  productTypeOptions: ProductTypeOption[];
+  madeInOptions: MadeInOption[];
+  brandOptions: string[];
 }) {
-  const deliveryOptions = getAvailableDeliveryTypes();
-  const productTypeOptions = getAvailableProductTypes();
-  const madeInOptions = getAvailableMadeInOptions();
-  const brandOptions = getAvailableFilterBrands();
   const minPercent = (minPrice / 500) * 100;
   const maxPercent = (maxPrice / 500) * 100;
 
@@ -341,8 +345,11 @@ function FilterPanel({
 
 export function CategoryListingPage() {
   const selectedCategorySlug = useHomeStore((state) => state.selectedCategorySlug);
-  const category = getCategoryBySlug(selectedCategorySlug);
-  const products = useMemo(() => getCategoryListingProducts(category.categorySlug), [category.categorySlug]);
+  const [categoryData, setCategoryData] = useState<Awaited<ReturnType<typeof getCategoryBySlug>>>(null);
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [filterOptions, setFilterOptions] = useState({ delivery: [] as DeliveryTypeOption[], productType: [] as ProductTypeOption[], madeIn: [] as MadeInOption[], brands: [] as string[] });
+  const category = categoryData ?? { name: "Loading catalog", icon: "categories" as const, image: "", sectionId: "", categorySlug: selectedCategorySlug ?? "", href: "" };
   const [selectedSort, setSelectedSort] = useState<SortOption>("featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -357,6 +364,27 @@ export function CategoryListingPage() {
   const tabletSortReference = useRef<HTMLDivElement | null>(null);
   const desktopSortReference = useRef<HTMLDivElement | null>(null);
   const mobileSortReference = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoadError(null);
+    setCategoryData(null);
+    setProducts([]);
+    void Promise.all([
+      getCategoryBySlug(selectedCategorySlug),
+      getCategoryListingProducts(selectedCategorySlug),
+      getAvailableDeliveryTypes(),
+      getAvailableProductTypes(),
+      getAvailableMadeInOptions(),
+      getAvailableFilterBrands(),
+    ]).then(([nextCategory, nextProducts, delivery, productType, madeIn, brands]) => {
+      if (!mounted) return;
+      setCategoryData(nextCategory);
+      setProducts(nextProducts);
+      setFilterOptions({ delivery, productType, madeIn, brands });
+    }).catch(() => mounted && setLoadError("Unable to load this category. Please retry."));
+    return () => { mounted = false; };
+  }, [selectedCategorySlug]);
 
   useEffect(() => {
     setSelectedSort("featured");
@@ -519,7 +547,10 @@ export function CategoryListingPage() {
         <div className="grid gap-6 lg:grid-cols-[290px_minmax(0,1fr)] lg:items-start">
           <div className="hidden lg:block">
             <FilterPanel
+              brandOptions={filterOptions.brands}
               collapsedSections={collapsedSections}
+              deliveryOptions={filterOptions.delivery}
+              madeInOptions={filterOptions.madeIn}
               maxPrice={maxPrice}
               minPrice={minPrice}
               onReset={resetFilters}
@@ -529,6 +560,7 @@ export function CategoryListingPage() {
               selectedMadeIn={selectedMadeIn}
               selectedPriceBand={selectedPriceBand}
               selectedProductTypes={selectedProductTypes}
+              productTypeOptions={filterOptions.productType}
               setMaxPrice={setMaxPrice}
               setMinPrice={setMinPrice}
               setSelectedPriceBand={setSelectedPriceBand}
@@ -541,6 +573,7 @@ export function CategoryListingPage() {
 
           <div className="grid gap-5">
             <SectionShell>
+              {loadError ? <p className="mb-3 text-sm font-semibold text-rose-700">{loadError}</p> : null}
               <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div className="grid gap-2">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-citrus-500">Category Listing</p>
@@ -694,7 +727,10 @@ export function CategoryListingPage() {
               </button>
             </div>
             <FilterPanel
+              brandOptions={filterOptions.brands}
               collapsedSections={collapsedSections}
+              deliveryOptions={filterOptions.delivery}
+              madeInOptions={filterOptions.madeIn}
               maxPrice={maxPrice}
               minPrice={minPrice}
               onReset={resetFilters}
@@ -704,6 +740,7 @@ export function CategoryListingPage() {
               selectedMadeIn={selectedMadeIn}
               selectedPriceBand={selectedPriceBand}
               selectedProductTypes={selectedProductTypes}
+              productTypeOptions={filterOptions.productType}
               setMaxPrice={setMaxPrice}
               setMinPrice={setMinPrice}
               setSelectedPriceBand={setSelectedPriceBand}

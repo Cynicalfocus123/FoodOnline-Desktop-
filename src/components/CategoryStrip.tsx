@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
 import { assets, promoBanner } from "../data/home";
 import { getCategories } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 
 export function CategoryStrip() {
-  const categories = getCategories();
+  const [categories, setCategories] = useState<Awaited<ReturnType<typeof getCategories>>>([]);
+  const [error, setError] = useState<string | null>(null);
   const openCategory = useHomeStore((state) => state.openCategory);
+
+  useEffect(() => {
+    let mounted = true;
+    setError(null);
+    void getCategories().then((items) => mounted && setCategories(items)).catch(() => mounted && setError("Categories are temporarily unavailable."));
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16" id="categories">
@@ -13,7 +22,8 @@ export function CategoryStrip() {
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-citrus-500">Browse all categories</p>
         </div>
 
-        <div className="mt-8 grid grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
+        {error ? <p className="mt-8 rounded-2xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">{error}</p> : null}
+        <div className="mt-8 grid min-h-24 grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
           {categories.map((category) => (
             <a
               className="group rounded-[20px] border border-neutral-200 bg-white p-2 text-center shadow-[0_8px_20px_rgba(15,23,42,0.03)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf-400 focus-visible:ring-offset-2 sm:rounded-[22px] sm:p-3 lg:rounded-[26px] lg:p-5"

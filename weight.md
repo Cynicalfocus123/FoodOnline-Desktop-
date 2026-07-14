@@ -1,5 +1,16 @@
 # FoodOnlines Site Weight
 
+## Public Catalog Cutover Accounting - Phase 5 (2026-07-13)
+
+- Frontend files changed: async catalog repository/client/mappers, catalog types and runtime configuration, public category/home/list/search/detail components, variant-aware local cart store/control, cart and checkout hydration, presentation compatibility, and existing admin Category/Product editor panels.
+- Backend files changed: one public Product detail query now accepts the stable slug or product UUID; no transactional ecommerce tables, endpoints, or systems were added.
+- API services added: explicit API/local repository selection, Laravel category/product clients, API DTO mappers, category mapping, and catalog product hydration hook.
+- Compatibility files added: `src/services/catalog/presentationCompatibility.ts` and asynchronous local repository adapter.
+- Admin components changed: existing Category and Product panels; no new sidebar section. Storefront Status panels and View on Storefront actions were added inside those editors.
+- Tests/validation: TypeScript passed; production build passed; production audit passed with `27` routes, `21` lazy chunks, `27` JavaScript files, `0` missing references, `0` placeholder links, `1,033` dist files, and `91,691,503` bytes. PHP was unavailable in the shell, so Laravel tests and PHP syntax/cache checks remain unrun and are not claimed.
+- Deployment mirrors: `frontend-upload/` synchronized from `dist/`; `backend-live/` synchronized at `170` payload files plus manifest with `0` missing, `0` stale, `0` checksum mismatches, `0` secrets, `0` frontend files, and `0` ZIP files.
+- External Hostinger frontend/backend: not updated. External Cloudflare R2, CORS, custom domain, DNS, credentials, migrations, and production catalog-source configuration: unchanged/not externally verified. No backend ZIP or frontend ZIP was created.
+
 ## Admin Catalog and R2 Workflow Accounting — Phase 4 (2026-07-13)
 
 - Added **2 migrations / 2 tables** (`media_uploads`, `product_nutrition_facts`), modified no Phase 1–3 table definitions, added **2 models**, **4 media services plus one cleanup command**, **7 protected media/nutrition routes**, and extended the existing dashboard route with seven catalog counts.

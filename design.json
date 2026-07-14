@@ -858,6 +858,22 @@
       "checkout_page": "single_column_cards_safe_area_sticky_order_total"
     }
   },
+  "phase_5_public_catalog_cutover": {
+    "catalog_source": "VITE_CATALOG_SOURCE=api by default; local is explicit and API failure never silently falls back",
+    "async_states": ["loading", "empty", "error", "retry-safe"],
+    "product_identity": "product UUID for favorites; stable slug for public routes",
+    "variant_identity": "active variant UUID",
+    "cart_line_identity": "variant UUID with product UUID hydration",
+    "favorites_identity": "product UUID",
+    "saved_for_later_identity": "variant line UUID preserving selected variant",
+    "presentation_compatibility_layer": "isolated frontend-only fields; Laravel identity, price, media, nutrition, category, brand, and variant fields win",
+    "preserved_functions": ["Best Selling", "all existing sorts", "all existing filters", "product-card fields", "product-detail sections", "promo UI", "payment UI", "cart UI", "checkout UI"],
+    "category_storefront_status_panel": "read-only status, visibility, accessibility reasons, and View on Storefront inside existing Category editor",
+    "product_storefront_status_panel": "read-only publication/readiness reasons and View on Storefront inside existing Product editor",
+    "public_storefront_links": "category and product stable-slug routes",
+    "existing_admin_editor_changes": "category/product status panels and storefront actions only; existing sidebar and editor design preserved",
+    "deferred_phase_6_systems": ["backend carts", "orders", "promotions", "inventory", "payments", "shipping", "reviews", "recipes", "recommendations", "seller offers", "new admin modules"]
+  },
   "data_bindings": {
     "catalog_file": "src/data/home.ts",
     "store_file": "src/store/homeStore.ts",
