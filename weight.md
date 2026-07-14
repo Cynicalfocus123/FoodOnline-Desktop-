@@ -1,5 +1,14 @@
 # FoodOnlines Site Weight
 
+## Admin Catalog and R2 Workflow Accounting — Phase 4 (2026-07-13)
+
+- Added **2 migrations / 2 tables** (`media_uploads`, `product_nutrition_facts`), modified no Phase 1–3 table definitions, added **2 models**, **4 media services plus one cleanup command**, **7 protected media/nutrition routes**, and extended the existing dashboard route with seven catalog counts.
+- Added **4 focused admin component files**, one typed catalog service, one catalog type module, and one complete ISO country module. Existing `AdminPortal`, sidebar data, API method typing, and admin stats state were extended; no public storefront component, cart, checkout, favorites, search, or product-detail visual was edited.
+- Added **8 focused backend test files**. Final full backend result: **52 tests / 351 assertions**; focused media/nutrition result: **14 tests / 105 assertions**. Composer validation/audit, PHP syntax, migration apply/rollback/reapply, config cache, route cache, TypeScript, and production build all passed.
+- Generated backend deployment payload: **170 files**; `backend-live/`: **171 total files** including the manifest. Verification: **0 missing, 0 stale, 0 checksum mismatches, 0 secrets, 0 frontend files, 0 backend-live ZIP files**.
+- Frontend production result: **91,679,167 bytes across 1,032 `dist/` files**; `frontend-upload/` contains **1,032 files** after synchronization. Production audit: 27 routes, 21 lazy chunks, 26 JavaScript files, 0 missing local references, and 0 placeholder links.
+- Phase 4 created **0 backend ZIPs and 0 frontend ZIPs**. Four unrelated legacy ZIPs already tracked outside the Phase 4 output remain untouched. External Hostinger backend/frontend: not updated. External Cloudflare R2 bucket, CORS, custom domain, DNS, and credentials: code-ready, not configured from this session.
+
 ## Backend Product Catalog Complexity and Live-Mirror Parity — Phase 3 (2026-07-13)
 
 - Added 4 migrations/tables (`brands`, `products`, `product_variants`, `product_media`), 4 models, 4 factories, 3 transactional services, 5 controllers, focused form requests/resources, 24 protected admin routes, and 3 public catalog routes. No production product or brand seeder was added.

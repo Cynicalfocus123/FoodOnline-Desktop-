@@ -6,8 +6,12 @@ class CategoryMediaUrl
 {
     public function make(?string $path): ?string
     {
-        if ($path === null || $path === '' || str_starts_with(strtolower($path), 'r2://')) {
+        if ($path === null || $path === '') {
             return null;
+        }
+
+        if (str_starts_with(strtolower($path), 'r2://')) {
+            return rtrim((string) config('foodonlines.media.public_url'), '/').'/'.ltrim(substr($path, 5), '/');
         }
 
         if (preg_match('#^https://#i', $path) === 1) {

@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> Phase 4 current state (2026-07-13): the existing standalone admin dashboard manages categories, aliases, brands, products, variants, media, nutrition, and publication readiness. Laravel provides secure browser-to-R2 authorization/completion plus cleanup, but external Hostinger and Cloudflare configuration remain separate and were not performed. See `docs/admin-catalog-and-r2.md`.
+
 > Phase 3 current state (2026-07-13): Laravel brands, grocery products, sellable variants, and product media APIs are implemented on `main`; see `docs/backend-product-catalog.md`. No frontend catalog switch or external Hostinger deployment is implied.
 
 ## Current repository delivery state

@@ -1,5 +1,7 @@
 # Upload Instructions
 
+> Phase 4 review (2026-07-13): do not use this legacy archive flow for the admin catalog/R2 release. Use the non-ZIP root deployment guide and synchronized mirrors.
+
 > Phase 3 review (2026-07-13): do not use this legacy upload order for the current brands/products/variants/media backend.
 
 > Documentation review (2026-07-13): this legacy TMDHosting upload note is not the current backend workflow. Repository backend delivery uses `backend-live/` on `main`, without a backend ZIP, and every task reviews all tracked Markdown files.

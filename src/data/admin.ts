@@ -12,6 +12,21 @@ export const adminSidebarItems = [
     description: "Review signup requests and account intake",
   },
   {
+    key: "categories",
+    label: "Categories",
+    description: "Hierarchy, visibility, media, and aliases",
+  },
+  {
+    key: "brands",
+    label: "Brands",
+    description: "Brand records, countries, and logos",
+  },
+  {
+    key: "products",
+    label: "Products",
+    description: "Products, variants, images, and nutrition",
+  },
+  {
     key: "settings",
     label: "Admin Settings",
     description: "Rotate admin profile and password",

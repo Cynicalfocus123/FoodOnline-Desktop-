@@ -1,5 +1,7 @@
 # FoodOnlines Core Grocery Product Catalog
 
+> Phase 4 extension (2026-07-13): the Phase 3 models and invariants are now exposed in the existing admin portal, product media supports verified managed R2 objects, and product detail can return nullable nutrition facts. See `admin-catalog-and-r2.md`; seller offers/inventory remain out of scope.
+
 ## Phase 3 scope
 
 Phase 3 implements backend-only brands, products, sellable variants, and product image metadata. It preserves the Laravel 12.63.0 authentication/category contracts, keeps the frontend on its local synchronous catalog adapter, seeds no fake catalog, and does not introduce attributes, seller offers, inventory, uploads, orders, or payments.

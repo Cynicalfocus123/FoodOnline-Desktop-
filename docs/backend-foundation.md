@@ -1,5 +1,7 @@
 # FoodOnlines Laravel Backend Foundation
 
+> Phase 4 extension (2026-07-13): the same Laravel 12/admin-token foundation now hosts protected catalog administration, R2 direct-upload authorization, cleanup, nutrition, and catalog dashboard counts without changing public/admin token separation. See `admin-catalog-and-r2.md`.
+
 ## Current-state note
 
 This document records Step 1 foundation behavior. Phase 3 products/brands/variants/media are now implemented on `main`; see `docs/backend-product-catalog.md`. Step 2 categories remain documented in `docs/backend-categories.md`. Every completed task reviews and updates all tracked Markdown files, and newer dated sections supersede historical readiness statements without deleting their audit history.

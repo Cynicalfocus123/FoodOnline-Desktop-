@@ -1,5 +1,7 @@
 # FoodOnlines Laravel Backend Deployment
 
+> Phase 4 review (2026-07-13): this historical TMDHosting workflow is not the current deployment source for the admin catalog/R2 workflow; use `backend-live/`, root `DEPLOYMENT.md`, and `docs/admin-catalog-and-r2.md`.
+
 > Phase 3 review (2026-07-13): grocery brands/products/variants/media now live in the current Hostinger-oriented `backend-live/` mirror; this historical TMDHosting package is not catalog deployment truth.
 
 > Documentation review (2026-07-13): this TMDHosting workflow is historical. Current backend preparation uses the verified `backend-live/` mirror on `main`; external hosting actions require separate evidence. All tracked Markdown files are reviewed at each task completion.

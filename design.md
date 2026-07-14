@@ -1,5 +1,13 @@
 # FoodOnlines Desktop Home Design
 
+## Admin Catalog Portal Design — Phase 4 (2026-07-13)
+
+- The existing dark-green sidebar, citrus active state, rounded white workspaces, typography, spacing, login, users, deletion requests, and settings remain intact. Categories, Brands, and Products are added to that same standalone admin entry; no second admin shell or public storefront redesign exists.
+- Category management uses a hierarchy-aware list and full-width editor for identity, parent, status, visibility, order, merchandising flags, SEO, managed tile/icon/desktop/mobile media, aliases, archive, and restore. Brand management follows the same list/editor rhythm with complete searchable ISO country data, active state, order, and managed logo upload.
+- Product management uses filterable list/detail composition. The editor is separated into Basics, Variants, Media, Nutrition, and Publication tabs. Variants expose SKU, GTIN, size/net content, pack/package, price/previous price, currency, availability, active/default state, and order. Media cards expose preview, upload/replace, progress, alt text, contain/cover, primary, accessible move controls, and protected deletion.
+- Publication readiness is textual, not color-only: every backend readiness error is listed beside current status and publish/archive/restore actions. Forms display safe Laravel validation messages, prevent destructive actions without confirmation, retain saved target state during failed replacement, and disable upload interaction when R2 status is unavailable.
+- Responsive behavior uses one-column editors and scroll-safe lists on narrow screens, touch-sized controls, 16px inputs to avoid mobile zoom, no page-level horizontal overflow, and horizontally safe tab/list regions. Reordering always has button controls and is never drag-only. The public storefront layout and behavior remain unchanged.
+
 ## Backend Grocery Catalog Architecture — Phase 3 (2026-07-13)
 
 - `Product` is the shared customer-facing grocery identity and belongs to one current `Category` plus an optional reusable `Brand`. It owns descriptive, origin, storage, ingredient, allergen, featured, and publication fields—not SKU, package size, or price.

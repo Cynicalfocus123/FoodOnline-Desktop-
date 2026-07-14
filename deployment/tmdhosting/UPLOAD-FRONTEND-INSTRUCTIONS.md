@@ -1,5 +1,7 @@
 # Frontend Admin Upload Instructions
 
+> Phase 4 review (2026-07-13): the current admin catalog build is in `frontend-upload/`; this historical package does not configure R2, and the public storefront remains mock-backed.
+
 > Phase 3 review (2026-07-13): this frontend upload note does not include, switch to, or deploy the new Laravel grocery catalog.
 
 > Documentation review (2026-07-13): this is a legacy frontend/TMDHosting note and does not govern backend delivery. Backend source and `backend-live/` must be synchronized on `main`; all tracked Markdown files are reviewed at each task completion.

@@ -1,5 +1,7 @@
 # Hostinger File Manager Deployment
 
+> Phase 4 current state (2026-07-13): `backend-live/` includes the admin catalog, R2-compatible runtime, upload cleanup command, and nutrition migrations. `frontend-upload/` includes the rebuilt admin entry. Neither mirror proves an external Hostinger upload; follow `docs/admin-catalog-and-r2.md` before enabling media uploads.
+
 > Phase 3 current state (2026-07-13): the generated mirror now includes the real relative-path API `public/index.php`, catalog runtime, `.env.example`, deployment guide, and writable-directory placeholders. External Hostinger remains unchanged without separate evidence.
 
 ## Current backend rule

@@ -1,5 +1,7 @@
 # FoodOnlines Category Backend
 
+> Phase 4 extension (2026-07-13): the existing category fields and alias APIs now have an admin UI and managed R2 upload purposes for tile, icon, desktop banner, and mobile banner. See `admin-catalog-and-r2.md`; the Phase 2 hierarchy contract remains unchanged.
+
 ## Current status and documentation rule
 
 Step 2 source and the matching `backend-live/` mirror were introduced together by `396b2ae` and remain current on `main`. Phase 3 now adds the restrictive `Category::products()` relationship and complete product catalog described in `docs/backend-product-catalog.md` without redesigning category behavior. Category administration supports creation, partial name/metadata edits, archive/restore, guarded permanent deletion, reordering, and aliases. Every task reviews and updates all tracked Markdown documents; older Step 1 statements elsewhere are historical snapshots.

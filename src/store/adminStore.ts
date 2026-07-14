@@ -36,6 +36,13 @@ type DashboardStats = {
   suppliers: number;
   partners: number;
   active_users: number;
+  total_categories: number;
+  total_brands: number;
+  total_products: number;
+  published_products: number;
+  draft_products: number;
+  archived_products: number;
+  out_of_stock_default_variants: number;
 };
 
 type ApiDeleteAccountRequest = {
@@ -106,6 +113,13 @@ const emptyStats: DashboardStats = {
   suppliers: 0,
   partners: 0,
   active_users: 0,
+  total_categories: 0,
+  total_brands: 0,
+  total_products: 0,
+  published_products: 0,
+  draft_products: 0,
+  archived_products: 0,
+  out_of_stock_default_variants: 0,
 };
 
 function createAuditEntry(action: string, detail: string): AdminAuditEntry {

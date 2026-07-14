@@ -12,6 +12,11 @@ import { SignupRoleKey } from "../lib/registerSchema";
 import { adminApiBaseUrl } from "../lib/runtimeConfig";
 import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
+import { catalogApi } from "../services/admin/catalogApi";
+import type { MediaStorageStatus } from "../types/adminCatalog";
+import { BrandAdminPanel } from "./admin/BrandAdminPanel";
+import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
+import { ProductAdminPanel } from "./admin/ProductAdminPanel";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -138,6 +143,8 @@ function AdminDashboard() {
   const isLoadingDeleteAccountRequests = useAdminStore((state) => state.isLoadingDeleteAccountRequests);
   const fetchDeleteAccountRequests = useAdminStore((state) => state.fetchDeleteAccountRequests);
   const updateDeleteAccountRequestStatus = useAdminStore((state) => state.updateDeleteAccountRequestStatus);
+  const token = useAdminStore((state) => state.token);
+  const [mediaStorage, setMediaStorage] = useState<MediaStorageStatus | null>(null);
 
   useEffect(() => {
     if (activeSidebarKey === "deleteAccount") {
@@ -145,13 +152,19 @@ function AdminDashboard() {
     }
   }, [activeSidebarKey, fetchDeleteAccountRequests]);
 
+  useEffect(() => {
+    if (token) {
+      void catalogApi.storageStatus(token).then(setMediaStorage).catch(() => setMediaStorage(null));
+    }
+  }, [token]);
+
   const filteredUsers = useMemo(
     () => users.filter((user) => user.selectedRole === activeUsersTab),
     [activeUsersTab, users],
   );
 
   return (
-    <main className="min-h-screen bg-[#f5f7f4] text-ink">
+    <main className="min-h-screen overflow-x-hidden bg-[#f5f7f4] text-ink">
       <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col lg:flex-row">
         <aside className="border-b border-neutral-200 bg-[#112017] px-5 py-6 text-white lg:min-h-screen lg:w-[290px] lg:border-b-0 lg:border-r lg:px-6">
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-200">FoodOnline</p>
@@ -216,6 +229,16 @@ function AdminDashboard() {
             <MetricCard label="Partners" value={String(stats.partners)} light />
           </div>
 
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <MetricCard label="Categories" value={String(stats.total_categories)} light />
+            <MetricCard label="Brands" value={String(stats.total_brands)} light />
+            <MetricCard label="Products" value={String(stats.total_products)} light />
+            <MetricCard label="Published products" value={String(stats.published_products)} light />
+            <MetricCard label="Draft products" value={String(stats.draft_products)} light />
+            <MetricCard label="Archived products" value={String(stats.archived_products)} light />
+            <MetricCard label="Out-of-stock defaults" value={String(stats.out_of_stock_default_variants)} light />
+          </div>
+
           <div className="mt-6">
             {activeSidebarKey === "overview" ? <OverviewPanel auditLog={auditLog} /> : null}
             {activeSidebarKey === "users" ? (
@@ -234,6 +257,9 @@ function AdminDashboard() {
               />
             ) : null}
             {activeSidebarKey === "settings" ? <AdminSettingsPanel /> : null}
+            {activeSidebarKey === "categories" && token ? <CategoryAdminPanel storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "brands" && token ? <BrandAdminPanel storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "products" && token ? <ProductAdminPanel storage={mediaStorage} token={token} /> : null}
           </div>
         </section>
       </div>

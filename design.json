@@ -1,9 +1,9 @@
 {
   "project": {
     "name": "FoodOnlines Desktop Web",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "updated_at": "2026-07-13",
-    "notes": "Desktop design memory file for public storefront UI structure and backend-ready mock bindings."
+    "notes": "Desktop design memory for the unchanged public storefront plus the existing standalone admin catalog portal with Categories, Brands, Products, Variants, Media, Nutrition, and Publication sections."
   },
   "sources": {
     "desktop_notes": "D:/Foodonline desktop version/design.md",

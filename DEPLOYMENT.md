@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Phase 4 media deployment note
+
+Phase 4 adds the admin catalog portal, two forward migrations, the `media:cleanup` command, and one S3-compatible `r2` disk. Production deployment must install locked Composer dependencies, apply migrations, configure the server-only `MEDIA_*`/`R2_*` values from `.env.example`, set the documented bucket CORS/custom domain, rebuild caches, and schedule `php artisan media:cleanup --limit=100`. Repository synchronization does not configure Cloudflare or upload Hostinger files; see `docs/admin-catalog-and-r2.md`.
+
 ## Repository deployment source
 
 `backend-live/` is the required repository live-folder mirror and must be regenerated, verified, committed with its matching backend source, and pushed on `main` for every backend task. `backend-live/SHA256SUMS` is the deployment file inventory. External Hostinger remains a separate manual/integrated action and must not be claimed without evidence. All tracked Markdown files are reviewed and updated at task completion.

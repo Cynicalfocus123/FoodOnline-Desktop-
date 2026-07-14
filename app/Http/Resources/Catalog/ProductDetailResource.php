@@ -20,6 +20,7 @@ class ProductDetailResource extends ProductListResource
             'image_urls'=>$images->pluck('url')->filter()->values(),'images'=>$images,
             'default_variant'=>$this->defaultVariant?new ProductVariantResource($this->defaultVariant):null,
             'variants'=>ProductVariantResource::collection($this->whenLoaded('activeVariants')),
+            'nutrition_facts'=>$this->nutritionFacts ? new ProductNutritionFactResource($this->nutritionFacts) : null,
             'published_at'=>$this->published_at?->toIso8601String(),
         ];
     }

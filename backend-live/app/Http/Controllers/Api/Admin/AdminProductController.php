@@ -35,5 +35,5 @@ class AdminProductController extends Controller
     public function destroy(Product $product): JsonResponse { $this->publication->archive($product,request()->user()); return response()->json(null,204); }
     public function publish(Product $product): AdminProductResource { return new AdminProductResource($this->detail($this->publication->publish($product,request()->user()))); }
     public function restore(Product $product): AdminProductResource { return new AdminProductResource($this->detail($this->publication->restore($product,request()->user()))); }
-    private function detail(Product $product): Product { return $product->load(['category','brand','defaultVariant','primaryMedia','variants'=>fn($q)=>$q->ordered(),'media'=>fn($q)=>$q->ordered()]); }
+    private function detail(Product $product): Product { return $product->load(['category','brand','defaultVariant','primaryMedia','nutritionFacts','variants'=>fn($q)=>$q->ordered(),'media'=>fn($q)=>$q->ordered()]); }
 }

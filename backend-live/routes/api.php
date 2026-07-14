@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\Admin\AdminBrandController;
 use App\Http\Controllers\Api\Admin\AdminProductController;
 use App\Http\Controllers\Api\Admin\AdminProductMediaController;
 use App\Http\Controllers\Api\Admin\AdminProductVariantController;
+use App\Http\Controllers\Api\Admin\AdminMediaUploadController;
+use App\Http\Controllers\Api\Admin\AdminProductNutritionFactController;
 use App\Http\Controllers\Api\Account\AccountDeletionRequestController;
 use App\Http\Controllers\Api\Account\AddressBookController;
 use App\Http\Controllers\Api\Account\NotificationPreferenceController;
@@ -110,6 +112,13 @@ Route::prefix('v1')->group(function (): void {
             Route::patch('/product-media/{media}', [AdminProductMediaController::class, 'update'])->name('api.v1.admin.product-media.update');
             Route::delete('/product-media/{media}', [AdminProductMediaController::class, 'destroy'])->name('api.v1.admin.product-media.destroy');
             Route::post('/product-media/{media}/make-primary', [AdminProductMediaController::class, 'makePrimary'])->name('api.v1.admin.product-media.make-primary');
+            Route::get('/media-storage/status', [AdminMediaUploadController::class, 'status'])->name('api.v1.admin.media-storage.status');
+            Route::post('/media-uploads', [AdminMediaUploadController::class, 'store'])->name('api.v1.admin.media-uploads.store');
+            Route::post('/media-uploads/{mediaUpload}/complete', [AdminMediaUploadController::class, 'complete'])->name('api.v1.admin.media-uploads.complete');
+            Route::delete('/media-uploads/{mediaUpload}', [AdminMediaUploadController::class, 'destroy'])->name('api.v1.admin.media-uploads.destroy');
+            Route::get('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'show'])->name('api.v1.admin.products.nutrition.show');
+            Route::put('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'update'])->name('api.v1.admin.products.nutrition.update');
+            Route::delete('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'destroy'])->name('api.v1.admin.products.nutrition.destroy');
         });
     });
 

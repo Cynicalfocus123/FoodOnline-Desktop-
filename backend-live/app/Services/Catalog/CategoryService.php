@@ -8,12 +8,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Services\Media\ManagedMediaDeletionService;
 
 class CategoryService
 {
     public function __construct(
         private readonly CategoryHierarchyService $hierarchy,
         private readonly CategoryCache $cache,
+        private readonly ManagedMediaDeletionService $deletion,
     ) {}
 
     /** @param array<string, mixed> $data */
@@ -45,6 +47,7 @@ class CategoryService
     {
         return DB::transaction(function () use ($category, $data, $admin): Category {
             $oldSlug = $category->slug;
+            $oldMedia = collect(['image_path', 'icon_path', 'desktop_banner_path', 'mobile_banner_path'])->mapWithKeys(fn ($field) => [$field => $category->{$field}]);
             $wasPublished = $category->status === 'published';
             $parentId = array_key_exists('parent_id', $data)
                 ? ($data['parent_id'] === null ? null : (int) $data['parent_id'])
@@ -64,6 +67,9 @@ class CategoryService
             }
 
             $category->fill($data)->save();
+            foreach ($oldMedia as $field => $oldPath) {
+                if (array_key_exists($field, $data) && $oldPath !== $category->{$field}) { $this->deletion->afterCommit($oldPath); }
+            }
             if ($oldSlug !== $slug && $wasPublished) {
                 CategoryAlias::query()->updateOrCreate(
                     ['alias_slug' => $oldSlug],

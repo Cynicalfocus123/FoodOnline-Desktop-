@@ -6,9 +6,12 @@ use App\Models\Product;
 use App\Models\ProductMedia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Services\Media\ManagedMediaDeletionService;
 
 class ProductMediaService
 {
+    public function __construct(private readonly ManagedMediaDeletionService $deletion) {}
+
     /** @param array<string, mixed> $data */
     public function create(Product $product, array $data): ProductMedia
     {
@@ -28,6 +31,7 @@ class ProductMediaService
         return DB::transaction(function () use ($media, $data): ProductMedia {
             Product::query()->whereKey($media->product_id)->lockForUpdate()->firstOrFail();
             $locked = ProductMedia::query()->whereKey($media->id)->lockForUpdate()->firstOrFail();
+            $oldPath = $locked->path;
             if ((bool) ($data['is_primary'] ?? false)) {
                 ProductMedia::query()->where('product_id', $locked->product_id)->whereKeyNot($locked->id)->update(['is_primary' => false]);
             }
@@ -35,6 +39,7 @@ class ProductMediaService
                 throw ValidationException::withMessages(['is_primary' => ['Use another image as primary before clearing the primary image.']]);
             }
             $locked->fill($data)->save();
+            if ($oldPath !== $locked->path) { $this->deletion->afterCommit($oldPath); }
             return $locked->fresh();
         });
     }
@@ -49,8 +54,10 @@ class ProductMediaService
             $remaining = ProductMedia::query()->where('product_id', $product->id)->whereKeyNot($locked->id)->ordered()->lockForUpdate()->get();
             if ($product->status === 'published' && $remaining->isEmpty()) { throw ValidationException::withMessages(['media' => ['A published product must retain at least one image.']]); }
             $wasPrimary = $locked->is_primary;
+            $path = $locked->path;
             $locked->delete();
             if ($wasPrimary && $remaining->isNotEmpty()) { $remaining->first()->forceFill(['is_primary' => true])->save(); }
+            $this->deletion->afterCommit($path);
         });
     }
 
