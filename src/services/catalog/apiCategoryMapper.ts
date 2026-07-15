@@ -29,5 +29,6 @@ export function mapApiCategory(dto: ApiCategoryDto, index = 0): Category {
     categorySlug: slug,
     href: getPublicRouteHref(`category/${slug}`),
     seo: dto.seo,
+    apiImageAvailable: Boolean(dto.image_url?.trim()),
   };
 }

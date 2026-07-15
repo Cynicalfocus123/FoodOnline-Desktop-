@@ -72,7 +72,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
           }`}
           onClick={(event) => {
             stopCardOpen(event);
-            toggleFavorite(product.id);
+            toggleFavorite(product.id, Boolean(product.apiBacked));
           }}
           type="button"
         >
@@ -100,7 +100,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
             onKeyDown={(event) => event.stopPropagation()}
             role="presentation"
           >
-            <CartQuantityControl productId={product.id} variantId={variantId} variant="listing" />
+            <CartQuantityControl apiBacked={Boolean(product.apiBacked)} apiVariantIdentityReady={product.apiVariantsAvailable !== false} productId={product.id} variantId={variantId} variant="listing" />
           </div>
         ) : null}
       </div>
@@ -142,7 +142,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
             onKeyDown={(event) => event.stopPropagation()}
             role="presentation"
           >
-            <CartQuantityControl productId={product.id} variantId={variantId} />
+            <CartQuantityControl apiBacked={Boolean(product.apiBacked)} apiVariantIdentityReady={product.apiVariantsAvailable !== false} productId={product.id} variantId={variantId} />
           </div>
         </div>
       )}

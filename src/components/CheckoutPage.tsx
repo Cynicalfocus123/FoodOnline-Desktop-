@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type Re
 import { formatPrice, useCatalogProducts, type ProductItem } from "../services/catalog";
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { checkoutApi, type CheckoutQuote, type CommerceOrder, type PaymentMethodAvailability } from "../services/commerceApi";
+import { isBackendOrderableProduct } from "../services/catalog/catalogCompatibility";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 
@@ -778,7 +779,7 @@ export function CheckoutPage() {
         .filter(([lineId]) => selectedCartIds.includes(lineId))
         .map(([lineId, quantity]) => {
           const baseProduct = catalogProducts.get(cartLineProductIds[lineId] ?? lineId);
-          if (!baseProduct) return null;
+          if (!baseProduct || !isBackendOrderableProduct(baseProduct) || !cartItemIds[lineId]) return null;
           const variant = baseProduct.variants.find((item) => item.id === lineId) ?? baseProduct.variants[0];
           return {
           lineId,
@@ -786,7 +787,7 @@ export function CheckoutPage() {
           quantity,
           };
         }).filter((item): item is CheckoutLineItem => Boolean(item)),
-    [cartLineProductIds, cartQuantities, catalogProducts, selectedCartIds],
+    [cartItemIds, cartLineProductIds, cartQuantities, catalogProducts, selectedCartIds],
   );
 
   const activeAddressConfig = addressConfigs[addressCountry];

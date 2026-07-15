@@ -27,6 +27,7 @@ export type Category = {
   categorySlug: string;
   href: string;
   seo?: { title?: string | null; description?: string | null; canonical_url?: string | null; robots_index?: boolean; robots_follow?: boolean };
+  apiImageAvailable?: boolean;
 };
 
 export type ProductVariant = {
@@ -40,6 +41,15 @@ export type ProductVariant = {
   currencyCode?: string;
   availabilityStatus?: "in_stock" | "out_of_stock" | "preorder" | "backorder";
   inStock?: boolean;
+  sku?: string;
+  gtin?: string;
+};
+
+export type ProductSourceIdentity = "local" | "api" | "hybrid";
+
+export type ProductCompatibilityState = {
+  localProductIds: string[];
+  localVariantToApiVariant: Record<string, string>;
 };
 
 export type RecipeSuggestion = {
@@ -122,6 +132,14 @@ export type Product = {
   reviewCount: number;
   variants: ProductVariant[];
   apiBacked?: boolean;
+  catalogOrigin?: ProductSourceIdentity;
+  compatibilityOnly?: boolean;
+  apiMediaAvailable?: boolean;
+  apiVariantsAvailable?: boolean;
+  apiReviewDataAvailable?: boolean;
+  apiNutritionDataAvailable?: boolean;
+  apiSoldCountAvailable?: boolean;
+  compatibility?: ProductCompatibilityState;
 };
 
 export type ProductItem = Product;

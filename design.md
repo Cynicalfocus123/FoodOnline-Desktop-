@@ -1,5 +1,14 @@
 # FoodOnlines Desktop Home Design
 
+## Temporary Hybrid Catalog Data Layer (2026-07-15)
+
+- The approved storefront, admin portal, routes, responsive layouts, cards, galleries, filters, cart, and checkout visuals are unchanged. Existing components now receive merged catalog data through an explicit repository layer.
+- Production uses `VITE_CATALOG_SOURCE=hybrid`: all 16 original category tiles, 15 original homepage product rails, 240 base products, 60-item category grids, local images, galleries, detail copy, search records, and related products remain available while valid Laravel-only categories/products append automatically.
+- Matching categories retain their original visual position/icon and local image when API media is absent; valid API UUID, canonical slug, name, SEO, and media override compatibility values. Matching products retain local presentation only where Laravel omitted it; backend identity, price, availability, exact variants, SKU, valid media, nutrition, reviews, and real sold counts remain authoritative.
+- API media leads merged galleries only when actually supplied. Original gallery URLs follow in their approved order with normalized URL deduplication. Local `imageFit` remains when API media is absent, preserving current contain/cover behavior.
+- Local-only cart rows use the existing amber status styling to state that the item is synchronizing and cannot yet be ordered. No cart, checkout, product-card, product-detail, category, search, or admin layout was redesigned.
+- `api` remains the future strict fully migrated mode; `local` remains isolated demo/development mode. Hybrid compatibility can be removed only after every approved category, product, exact variant/SKU, media/gallery, detail field, alias, search record, and cart identity exists in Laravel and production API/R2 behavior is verified.
+
 ## Operational Commerce and Production Readiness — Phase 7 (2026-07-15)
 
 - The approved public storefront and existing admin shell remain visually intact. Returns, reviews, Favorites, Saved for Later, Buy Again, notifications, receipts, and support reuse the existing cards, modals, account sections, buttons, loading/empty/error states, and mobile sticky patterns.

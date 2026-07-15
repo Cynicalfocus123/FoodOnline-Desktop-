@@ -18,6 +18,8 @@ import {
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 import { getPublicRouteHref } from "../lib/routes";
 import { commerceApi, type CommerceCart } from "../services/commerceApi";
+import { catalogRepository } from "../services/catalog/repository";
+import type { Product } from "../types/catalog";
 
 export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "language";
 export type SiteView =
@@ -49,6 +51,7 @@ export type SiteView =
   | "sitemap";
 export type SignupStep = "role" | "form" | "complete";
 export type CommerceLineStatus = { available: boolean; availableQuantity: number | null; unavailableReason: string | null };
+export type CatalogLineSource = "api" | "local";
 
 function readProductReturnRoute(
   state: Pick<HomeState, "siteView" | "selectedCategorySlug" | "searchQuery" | "productReturnRoute">,
@@ -354,12 +357,16 @@ type HomeState = {
   cartLineProductIds: Record<string, string>;
   cartItemIds: Record<string, string>;
   cartLineStatuses: Record<string, CommerceLineStatus>;
+  cartLineSources: Record<string, CatalogLineSource>;
+  cartVariantAliases: Record<string, string>;
   cartSyncStatus: "idle" | "loading" | "ready" | "error";
   cartSyncMessage: string | null;
   savedForLaterIds: string[];
   savedLineProductIds: Record<string, string>;
+  savedLineSources: Record<string, CatalogLineSource>;
   selectedCartIds: string[];
   favoriteProductIds: string[];
+  favoriteProductSources: Record<string, CatalogLineSource>;
   selectedZipCode: string;
   searchInputValue: string;
   searchQuery: string;
@@ -400,13 +407,14 @@ type HomeState = {
   hydrateCommerceCart: () => Promise<void>;
   mergeGuestCart: () => Promise<void>;
   hydrateSavedData: () => Promise<void>;
-  addToCart: (productId: string, variantId?: string) => void;
+  addToCart: (productId: string, variantId?: string, apiBacked?: boolean, apiVariantIdentityReady?: boolean) => void;
   removeFromCart: (lineId: string) => void;
   saveForLater: (lineId: string) => void;
   moveSavedToCart: (lineId: string) => void;
   toggleCartSelection: (lineId: string) => void;
   setAllCartSelections: (lineIds: string[], isSelected: boolean) => void;
-  toggleFavorite: (productId: string) => void;
+  toggleFavorite: (productId: string, apiBacked?: boolean) => void;
+  migrateCatalogIdentity: (product: Product) => void;
   setSelectedZipCode: (zipCode: string) => void;
   selectRole: (role: string) => void;
   continueToForm: () => void;
@@ -445,18 +453,24 @@ function mapRegisterFieldErrors(error: ApiError): SignupFieldErrors {
   };
 }
 
-function cartState(cart: CommerceCart, selectedCartIds: string[]) {
-  const lineIds = cart.lines.map((line) => line.variant_uuid);
+function cartState(cart: CommerceCart, state: Pick<HomeState, "cartQuantities" | "cartLineProductIds" | "cartLineSources" | "cartVariantAliases" | "selectedCartIds">) {
+  const remoteLineIds = cart.lines.map((line) => line.variant_uuid);
+  const localLineIds = Object.keys(state.cartQuantities).filter((lineId) => state.cartLineSources[lineId] === "local");
+  const lineIds = [...remoteLineIds, ...localLineIds];
+  const localQuantities = Object.fromEntries(localLineIds.map((lineId) => [lineId, state.cartQuantities[lineId]]));
+  const localProducts = Object.fromEntries(localLineIds.map((lineId) => [lineId, state.cartLineProductIds[lineId] ?? lineId]));
   return {
-    cartQuantities: Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, line.quantity])),
-    cartLineProductIds: Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, line.product_uuid])),
+    cartQuantities: { ...Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, line.quantity])), ...localQuantities },
+    cartLineProductIds: { ...Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, line.product_uuid])), ...localProducts },
     cartItemIds: Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, line.id])),
     cartLineStatuses: Object.fromEntries(cart.lines.map((line) => [line.variant_uuid, {
       available: line.available,
       availableQuantity: line.available_quantity,
       unavailableReason: line.unavailable_reason,
     }])),
-    selectedCartIds: selectedCartIds.length ? selectedCartIds.filter((id) => lineIds.includes(id)) : lineIds,
+    cartLineSources: { ...Object.fromEntries(remoteLineIds.map((lineId) => [lineId, "api" as const])), ...Object.fromEntries(localLineIds.map((lineId) => [lineId, "local" as const])) },
+    cartVariantAliases: state.cartVariantAliases,
+    selectedCartIds: state.selectedCartIds.length ? state.selectedCartIds.filter((id) => lineIds.includes(id)) : lineIds,
   };
 }
 
@@ -478,12 +492,16 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   cartLineProductIds: {},
   cartItemIds: {},
   cartLineStatuses: {},
+  cartLineSources: {},
+  cartVariantAliases: {},
   cartSyncStatus: "idle",
   cartSyncMessage: null,
   savedForLaterIds: [],
   savedLineProductIds: {},
+  savedLineSources: {},
   selectedCartIds: [],
   favoriteProductIds: [],
+  favoriteProductSources: {},
   selectedZipCode: "91789",
   searchInputValue: "",
   searchQuery: "",
@@ -1095,7 +1113,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }),
   hydrateCommerceCart: async () => {
     if (get().cartSyncStatus === "loading") return;
-    const localLines = Object.entries(get().cartQuantities);
+    const localLines = Object.entries(get().cartQuantities).filter(([lineId]) => get().cartLineSources[lineId] !== "local");
     set({ cartSyncStatus: "loading", cartSyncMessage: null });
     try {
       const token = usePublicAuthStore.getState().token;
@@ -1104,9 +1122,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       for (const [variantUuid, quantity] of localLines) {
         if (!remoteVariants.has(variantUuid) && quantity > 0) cart = await commerceApi.addItem(variantUuid, quantity, token);
       }
-      const lineIds = cart.lines.map((line) => line.variant_uuid);
-      set((state) => ({ ...cartState(cart, state.selectedCartIds), cartSyncStatus: "ready", cartSyncMessage: null,
-        selectedCartIds: state.selectedCartIds.length ? state.selectedCartIds.filter((id) => lineIds.includes(id)) : lineIds }));
+      set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
     } catch (error) {
       const message = error instanceof ApiError && error.status === 422
         ? "Some saved cart items could not be restored because their exact variants are no longer available. They remain visible until you remove them."
@@ -1120,7 +1136,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({ cartSyncStatus: "loading", cartSyncMessage: null });
     try {
       const cart = await commerceApi.mergeGuestCart(token);
-      set((state) => ({ ...cartState(cart, state.selectedCartIds), cartSyncStatus: "ready", cartSyncMessage: null }));
+      set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
     } catch (error) {
       set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to merge cart." });
     }
@@ -1128,17 +1144,26 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   hydrateSavedData: async () => {
     const token = usePublicAuthStore.getState().token;
     if (!token) return;
-    const localFavorites = get().favoriteProductIds;
-    const localSaved = get().savedForLaterIds;
+    const localFavorites = get().favoriteProductIds.filter((id) => get().favoriteProductSources[id] !== "local");
+    const localSaved = get().savedForLaterIds.filter((id) => get().savedLineSources[id] !== "local");
+    const compatibilityFavorites = get().favoriteProductIds.filter((id) => get().favoriteProductSources[id] === "local");
+    const compatibilitySaved = get().savedForLaterIds.filter((id) => get().savedLineSources[id] === "local");
     try {
       await commerceApi.mergeSavedData(localFavorites, localSaved, token);
       const [favorites, saved] = await Promise.all([commerceApi.favorites(token), commerceApi.savedItems(token)]);
-      set((state) => ({ favoriteProductIds: favorites.data.map((item) => item.product_uuid), savedForLaterIds: saved.data.map((item) => item.variant_uuid), savedLineProductIds: Object.fromEntries(saved.data.filter((item) => item.product_uuid).map((item) => [item.variant_uuid, item.product_uuid!])) }));
+      set((state) => ({
+        favoriteProductIds: [...new Set([...favorites.data.map((item) => item.product_uuid), ...compatibilityFavorites])],
+        favoriteProductSources: { ...Object.fromEntries(favorites.data.map((item) => [item.product_uuid, "api" as const])), ...Object.fromEntries(compatibilityFavorites.map((id) => [id, "local" as const])) },
+        savedForLaterIds: [...new Set([...saved.data.map((item) => item.variant_uuid), ...compatibilitySaved])],
+        savedLineProductIds: { ...Object.fromEntries(saved.data.filter((item) => item.product_uuid).map((item) => [item.variant_uuid, item.product_uuid!])), ...Object.fromEntries(compatibilitySaved.map((id) => [id, state.savedLineProductIds[id] ?? id])) },
+        savedLineSources: { ...Object.fromEntries(saved.data.map((item) => [item.variant_uuid, "api" as const])), ...Object.fromEntries(compatibilitySaved.map((id) => [id, "local" as const])) },
+      }));
     } catch {
       // Anonymous compatibility state remains visible if the account sync is temporarily unavailable.
     }
   },
   setCartQuantity: (lineId, quantity) => {
+    const isLocalLine = get().cartLineSources[lineId] === "local";
     set((state) => {
       const nextQuantity = Math.max(0, quantity);
       const nextCart = { ...state.cartQuantities };
@@ -1146,6 +1171,13 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
       if (nextQuantity <= 0) {
         delete nextCart[lineId];
+        const nextSources = { ...state.cartLineSources };
+        delete nextSources[lineId];
+        return {
+          cartQuantities: nextCart,
+          cartLineSources: nextSources,
+          selectedCartIds: nextSelectedCartIds,
+        };
       } else {
         nextCart[lineId] = nextQuantity;
         nextSelectedCartIds.push(lineId);
@@ -1156,6 +1188,10 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         selectedCartIds: nextSelectedCartIds,
       };
     });
+    if (isLocalLine) {
+      set({ cartSyncStatus: "ready", cartSyncMessage: "This item is still being synchronized with our catalog and cannot be ordered yet." });
+      return;
+    }
     const token = usePublicAuthStore.getState().token;
     const request = enqueueCartMutation(() => {
       const itemUuid = get().cartItemIds[lineId];
@@ -1163,22 +1199,37 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ? commerceApi.updateItem(itemUuid, Math.max(1, quantity), token)
         : commerceApi.addItem(lineId, Math.max(1, quantity), token);
     });
-    void request.then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds), cartSyncStatus: "ready", cartSyncMessage: null })))
+    void request.then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
       .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Cart update failed." }); void get().hydrateCommerceCart(); });
   },
-  addToCart: (productId, variantId = productId) => {
+  addToCart: (productId, variantId = productId, apiBacked = true, apiVariantIdentityReady = true) => {
+    if (apiBacked && !apiVariantIdentityReady) {
+      set({ cartSyncStatus: "loading", cartSyncMessage: "Confirming the exact catalog variant..." });
+      void catalogRepository.getProductById(productId).then((product) => {
+        const exactVariant = product?.variants.find((variant) => variant.uuid) ?? product?.variants[0];
+        if (!product || !exactVariant?.uuid) throw new Error("This product variant is still being synchronized and cannot be ordered yet.");
+        set((state) => ({ cartVariantAliases: { ...state.cartVariantAliases, [variantId]: exactVariant.uuid! } }));
+        get().addToCart(product.id, exactVariant.uuid, true, true);
+      }).catch((error) => set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to confirm this catalog variant." }));
+      return;
+    }
     set((state) => ({
       cartQuantities: {
         ...state.cartQuantities,
         [variantId]: (state.cartQuantities[variantId] ?? 0) + 1,
       },
       cartLineProductIds: { ...state.cartLineProductIds, [variantId]: productId },
+      cartLineSources: { ...state.cartLineSources, [variantId]: apiBacked ? "api" : "local" },
       selectedCartIds: state.selectedCartIds.includes(variantId) ? state.selectedCartIds : [...state.selectedCartIds, variantId],
       savedForLaterIds: state.savedForLaterIds.filter((id) => id !== variantId),
       savedLineProductIds: Object.fromEntries(Object.entries(state.savedLineProductIds).filter(([id]) => id !== variantId)),
     }));
+    if (!apiBacked) {
+      set({ cartSyncStatus: "ready", cartSyncMessage: "This item is still being synchronized with our catalog and cannot be ordered yet." });
+      return;
+    }
     const token = usePublicAuthStore.getState().token;
-    void commerceApi.addItem(variantId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds), cartSyncStatus: "ready", cartSyncMessage: null })))
+    void commerceApi.addItem(variantId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
       .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to add this item." }); void get().hydrateCommerceCart(); });
   },
   removeFromCart: (lineId) => {
@@ -1186,16 +1237,19 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set((state) => {
       const nextCart = { ...state.cartQuantities };
       const nextProducts = { ...state.cartLineProductIds };
+      const nextSources = { ...state.cartLineSources };
       delete nextCart[lineId];
       delete nextProducts[lineId];
+      delete nextSources[lineId];
 
       return {
         cartQuantities: nextCart,
         cartLineProductIds: nextProducts,
+        cartLineSources: nextSources,
         selectedCartIds: state.selectedCartIds.filter((id) => id !== lineId),
       };
     });
-    if (itemUuid) void commerceApi.removeItem(itemUuid, usePublicAuthStore.getState().token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart());
+    if (itemUuid) void commerceApi.removeItem(itemUuid, usePublicAuthStore.getState().token).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart());
   },
   saveForLater: (lineId) => {
     const itemUuid = get().cartItemIds[lineId];
@@ -1211,9 +1265,10 @@ export const useHomeStore = create<HomeState>((set, get) => ({
           ? state.savedForLaterIds
           : [...state.savedForLaterIds, lineId],
         savedLineProductIds: { ...state.savedLineProductIds, [lineId]: state.cartLineProductIds[lineId] ?? lineId },
+        savedLineSources: { ...state.savedLineSources, [lineId]: state.cartLineSources[lineId] ?? "api" },
       };
     });
-    if (itemUuid) { const token = usePublicAuthStore.getState().token; void commerceApi.removeItem(itemUuid, token).then((cart) => { if (token) void commerceApi.saveItem(lineId, savedQuantity, token); return cart; }).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart()); }
+    if (itemUuid) { const token = usePublicAuthStore.getState().token; void commerceApi.removeItem(itemUuid, token).then((cart) => { if (token) void commerceApi.saveItem(lineId, savedQuantity, token); return cart; }).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart()); }
   },
   moveSavedToCart: (lineId) => {
     set((state) => ({
@@ -1222,13 +1277,19 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         [lineId]: state.cartQuantities[lineId] ?? 1,
       },
       cartLineProductIds: { ...state.cartLineProductIds, [lineId]: state.savedLineProductIds[lineId] ?? lineId },
+      cartLineSources: { ...state.cartLineSources, [lineId]: state.savedLineSources[lineId] ?? "api" },
       selectedCartIds: state.selectedCartIds.includes(lineId) ? state.selectedCartIds : [...state.selectedCartIds, lineId],
       savedForLaterIds: state.savedForLaterIds.filter((id) => id !== lineId),
       savedLineProductIds: Object.fromEntries(Object.entries(state.savedLineProductIds).filter(([id]) => id !== lineId)),
+      savedLineSources: Object.fromEntries(Object.entries(state.savedLineSources).filter(([id]) => id !== lineId)),
     }));
+    if (get().cartLineSources[lineId] === "local") {
+      set({ cartSyncStatus: "ready", cartSyncMessage: "This item is still being synchronized with our catalog and cannot be ordered yet." });
+      return;
+    }
     const token = usePublicAuthStore.getState().token;
-    if (token) { void commerceApi.moveSavedItemToCart(lineId, token).then(() => commerceApi.getCart(token)).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart()); }
-    else void commerceApi.addItem(lineId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart());
+    if (token) { void commerceApi.moveSavedItemToCart(lineId, token).then(() => commerceApi.getCart(token)).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart()); }
+    else void commerceApi.addItem(lineId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart());
   },
   toggleCartSelection: (productId) =>
     set((state) => ({
@@ -1242,14 +1303,48 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ? Array.from(new Set([...state.selectedCartIds.filter((id) => !productIds.includes(id)), ...productIds]))
         : state.selectedCartIds.filter((id) => !productIds.includes(id)),
     })),
-  toggleFavorite: (productId) => {
+  toggleFavorite: (productId, apiBacked = true) => {
     const token = usePublicAuthStore.getState().token; const removing = get().favoriteProductIds.includes(productId);
     set((state) => ({
       favoriteProductIds: state.favoriteProductIds.includes(productId)
         ? state.favoriteProductIds.filter((id) => id !== productId)
         : [...state.favoriteProductIds, productId],
+      favoriteProductSources: { ...state.favoriteProductSources, [productId]: apiBacked ? "api" : "local" },
     }));
-    if (token) void (removing ? commerceApi.removeFavorite(productId, token) : commerceApi.saveFavorite(productId, token)).catch(() => undefined);
+    if (token && apiBacked) void (removing ? commerceApi.removeFavorite(productId, token) : commerceApi.saveFavorite(productId, token)).catch(() => undefined);
+  },
+  migrateCatalogIdentity: (product) => {
+    const compatibility = product.compatibility;
+    if (!product.apiBacked || !compatibility?.localProductIds.length) return;
+    let migrated = false;
+    set((state) => {
+      const next = {
+        cartQuantities: { ...state.cartQuantities }, cartLineProductIds: { ...state.cartLineProductIds }, cartLineSources: { ...state.cartLineSources },
+        selectedCartIds: [...state.selectedCartIds], savedForLaterIds: [...state.savedForLaterIds], savedLineProductIds: { ...state.savedLineProductIds }, savedLineSources: { ...state.savedLineSources },
+        favoriteProductIds: [...state.favoriteProductIds], favoriteProductSources: { ...state.favoriteProductSources }, cartVariantAliases: { ...state.cartVariantAliases },
+      };
+      for (const [localVariantId, apiVariantId] of Object.entries(compatibility.localVariantToApiVariant)) {
+        if (next.cartQuantities[localVariantId] != null && compatibility.localProductIds.includes(next.cartLineProductIds[localVariantId])) {
+          next.cartQuantities[apiVariantId] = (next.cartQuantities[apiVariantId] ?? 0) + next.cartQuantities[localVariantId];
+          next.cartLineProductIds[apiVariantId] = product.id; next.cartLineSources[apiVariantId] = "api"; next.cartVariantAliases[localVariantId] = apiVariantId;
+          delete next.cartQuantities[localVariantId]; delete next.cartLineProductIds[localVariantId]; delete next.cartLineSources[localVariantId];
+          next.selectedCartIds = [...new Set(next.selectedCartIds.map((id) => id === localVariantId ? apiVariantId : id))]; migrated = true;
+        }
+        if (next.savedForLaterIds.includes(localVariantId)) {
+          next.savedForLaterIds = [...new Set(next.savedForLaterIds.map((id) => id === localVariantId ? apiVariantId : id))];
+          next.savedLineProductIds[apiVariantId] = product.id; next.savedLineSources[apiVariantId] = "api";
+          delete next.savedLineProductIds[localVariantId]; delete next.savedLineSources[localVariantId]; migrated = true;
+        }
+      }
+      for (const localProductId of compatibility.localProductIds) {
+        if (next.favoriteProductIds.includes(localProductId)) {
+          next.favoriteProductIds = [...new Set(next.favoriteProductIds.map((id) => id === localProductId ? product.id : id))];
+          next.favoriteProductSources[product.id] = "api"; delete next.favoriteProductSources[localProductId]; migrated = true;
+        }
+      }
+      return next;
+    });
+    if (migrated) { void get().hydrateCommerceCart(); void get().hydrateSavedData(); }
   },
   setSelectedZipCode: (zipCode) =>
     set({

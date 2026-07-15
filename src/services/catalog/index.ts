@@ -5,6 +5,8 @@ export type { ApiProductDto } from "./apiProductMapper";
 export { mapApiProduct } from "./apiProductMapper";
 export { mapApiCategory } from "./apiCategoryMapper";
 export { useCatalogProducts } from "./useCatalogProducts";
+export { hybridCatalogRepository } from "./hybridCatalogRepository";
+export type { CatalogSynchronizationWarning, HybridCatalogRepository } from "./hybridCatalogRepository";
 export type * from "../../types/catalog";
 
 export const getHomepageCatalog = () => catalogRepository.getHomepageCatalog();

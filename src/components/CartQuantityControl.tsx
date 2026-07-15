@@ -3,6 +3,8 @@ import { useHomeStore } from "../store/homeStore";
 type CartQuantityControlProps = {
   productId: string;
   variantId?: string;
+  apiBacked?: boolean;
+  apiVariantIdentityReady?: boolean;
   variant?: "compact" | "detail" | "listing";
   disabled?: boolean;
 };
@@ -36,8 +38,9 @@ function TrashIcon() {
   );
 }
 
-export function CartQuantityControl({ productId, variantId = productId, variant = "compact", disabled = false }: CartQuantityControlProps) {
-  const quantity = useHomeStore((state) => state.cartQuantities[variantId] ?? 0);
+export function CartQuantityControl({ productId, variantId = productId, apiBacked = false, apiVariantIdentityReady = true, variant = "compact", disabled = false }: CartQuantityControlProps) {
+  const lineId = useHomeStore((state) => state.cartVariantAliases[variantId] ?? variantId);
+  const quantity = useHomeStore((state) => state.cartQuantities[lineId] ?? 0);
   const addToCart = useHomeStore((state) => state.addToCart);
   const setCartQuantity = useHomeStore((state) => state.setCartQuantity);
 
@@ -54,7 +57,7 @@ export function CartQuantityControl({ productId, variantId = productId, variant 
         onClick={(event) => {
           event.stopPropagation();
           if (disabled) return;
-          addToCart(productId, variantId);
+          addToCart(productId, variantId, apiBacked, apiVariantIdentityReady);
         }}
         disabled={disabled}
         type="button"
@@ -84,7 +87,7 @@ export function CartQuantityControl({ productId, variantId = productId, variant 
         }
         onClick={(event) => {
           event.stopPropagation();
-          setCartQuantity(variantId, quantity - 1);
+          setCartQuantity(lineId, quantity - 1);
         }}
         type="button"
       >
@@ -111,7 +114,7 @@ export function CartQuantityControl({ productId, variantId = productId, variant 
         }
         onClick={(event) => {
           event.stopPropagation();
-          setCartQuantity(variantId, quantity + 1);
+          setCartQuantity(lineId, quantity + 1);
         }}
         type="button"
       >

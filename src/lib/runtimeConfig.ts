@@ -1,8 +1,11 @@
 const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || "https://www.api.foodonlines.com/api/v1";
 
 export const apiBaseUrl = configuredApiBaseUrl.replace(/\/+$/, "");
-export type CatalogSource = "api" | "local";
-export const catalogSource: CatalogSource = import.meta.env.VITE_CATALOG_SOURCE === "local" ? "local" : "api";
+export type CatalogSource = "api" | "local" | "hybrid";
+
+const configuredCatalogSource = import.meta.env.VITE_CATALOG_SOURCE?.trim().toLowerCase();
+export const catalogSource: CatalogSource =
+  configuredCatalogSource === "local" || configuredCatalogSource === "api" ? configuredCatalogSource : "hybrid";
 export const adminApiBaseUrl = apiBaseUrl;
 export const registerEndpointPath = "/auth/register";
 export const loginEndpointPath = "/auth/login";

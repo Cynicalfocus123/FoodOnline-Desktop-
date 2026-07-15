@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> Current catalog compatibility (2026-07-15): production uses explicit hybrid mode so the complete approved local storefront remains visible while matching/new Laravel catalog records overlay and append automatically. Strict API-only and isolated local modes remain available. See `docs/hybrid-catalog-compatibility.md`.
+
 > Phase 7 current state (2026-07-15): operational commerce is implemented in the Laravel source and mirrored `backend-live/`, while the production frontend build and `frontend-upload/` mirror include persistent favorites/saved data, real reviews, Buy Again, notifications, receipts, SEO, and admin operations. Local Node validation is evidence-based; PHP/MySQL and external Hostinger/R2/SMTP/queue state are not claimed. See `docs/operational-commerce-phase-7.md`.
 
 > Phase 6 current state (2026-07-14): the existing storefront now has a transactional Laravel commerce boundary for backend/guest/authenticated carts, server checkout quotes, inventory reservations, admin promotions, real COD orders, customer order history, and admin ecommerce operations. COD is the only operational payment method; no merchant provider or raw card flow is configured. See `docs/transactional-commerce-phase-6.md`.

@@ -1,5 +1,13 @@
 # FoodOnlines Site Weight
 
+## Hybrid Storefront Catalog Compatibility Accounting (2026-07-15)
+
+- Frontend-only scope: explicit three-mode runtime selection, deterministic category/product/variant/media identity, centralized merge utilities, hybrid repository, safe local-only commerce compatibility, exact API variant hydration on add, focused Node tests, and production configuration/documentation. Backend source changed-file count is 0 and `backend-live/` is unchanged.
+- Local compatibility inventory: 16 category tiles, 240 base products, 960 category-listing records (60 per category), and 15 homepage product sections. Original runtime category/product/gallery assets remain part of production copying and audit.
+- Focused test result before final production build: 20/20 passing with zero failures. Coverage includes zero/matching/new API categories, API failure/empty homepage fallback, zero/matching/new products, API/local media precedence, gallery deduplication, listing-clone protection, no name-only identity, exact/unknown local detail lookup, local-only order safety, exact variant migration, pack-size rejection, homepage deduplication, and related-product exclusion.
+- Final Node evidence: `npx.cmd tsc --noEmit` and `npx.cmd tsc -b` passed; `npm.cmd run lint --if-present` exited successfully with no lint script; focused tests passed **20/20**; production build passed with **111 modules transformed**. Production audit passed with **27 routes**, **21 lazy chunks**, **27 JavaScript files**, **0 missing references**, **0 placeholder links**, **1,033 files**, and **91,750,703 bytes**.
+- Final `frontend-upload/` parity: **1,033 files**, 0 missing, 0 extra, 0 size mismatches, and 0 SHA-256 mismatches against `dist/`. Required public/admin/category/detail/search/cart/checkout bundles are present; the production API URL and hybrid synchronization code are bundled; localhost/127.0.0.1/file URL findings are 0. No ZIP and no external Hostinger upload are created or claimed.
+
 ## Operational Commerce and Production Readiness Accounting — Phase 7 (2026-07-15)
 
 - Phase 7 source additions include 5 forward migrations, operational return/review/saved-data/support/notification/security/operations models, account/catalog/admin/auth controllers, return/review/saved-data/security services, security-link/database notifications, receipt and maintenance/diagnostic/failed-job commands, authenticated frontend API integration, product SEO/JSON-LD/sitemaps, customer account activity, and additive admin operational panels. Exact file counts are recorded from the final tree below after mirror generation.

@@ -1,5 +1,6 @@
 import { FormEvent, type ReactNode, useMemo, useState } from "react";
 import { formatPrice, useCatalogProducts } from "../services/catalog";
+import { isBackendOrderableProduct } from "../services/catalog/catalogCompatibility";
 import {
   normalizeUserEmail,
   sanitizeUserPasswordInput,
@@ -543,6 +544,7 @@ export function CartPage() {
   const cartQuantities = useHomeStore((state) => state.cartQuantities);
   const cartLineProductIds = useHomeStore((state) => state.cartLineProductIds);
   const cartLineStatuses = useHomeStore((state) => state.cartLineStatuses);
+  const cartItemIds = useHomeStore((state) => state.cartItemIds);
   const cartSyncStatus = useHomeStore((state) => state.cartSyncStatus);
   const cartSyncMessage = useHomeStore((state) => state.cartSyncMessage);
   const selectedCartIds = useHomeStore((state) => state.selectedCartIds);
@@ -592,12 +594,16 @@ export function CartPage() {
     [catalogProducts, savedForLaterIds, savedLineProductIds],
   );
 
-  const selectedItems = activeItems.filter((item) => item.selected && item.available && catalogProducts.has(item.productId));
+  const selectedItems = activeItems.filter((item) => {
+    const product = catalogProducts.get(item.productId);
+    return item.selected && item.available && isBackendOrderableProduct(product) && Boolean(cartItemIds[item.lineId]);
+  });
+  const compatibilityItems = activeItems.filter((item) => catalogProducts.get(item.productId)?.compatibilityOnly);
   const selectedSubtotal = selectedItems.reduce((sum, item) => sum + (catalogProducts.get(item.productId)?.price ?? 0) * item.quantity, 0);
   const selectedItemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   const shippingCost = selectedSubtotal > 0 && selectedSubtotal < FREE_SHIPPING_THRESHOLD ? ESTIMATED_SHIPPING : 0;
   const estimatedTotal = selectedSubtotal + shippingCost;
-  const selectableItems = activeItems.filter((item) => item.available);
+  const selectableItems = activeItems.filter((item) => item.available && isBackendOrderableProduct(catalogProducts.get(item.productId)));
   const allSelected = selectableItems.length > 0 && selectableItems.every((item) => item.selected);
   const hasActiveItems = activeItems.length > 0;
 
@@ -712,6 +718,11 @@ export function CartPage() {
               {cartSyncMessage ?? "Refreshing your backend cart..."}
             </p>
           ) : null}
+          {compatibilityItems.length ? (
+            <p className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800" role="status">
+              {compatibilityItems.length === 1 ? "This item is" : "These items are"} still being synchronized with our catalog and cannot be ordered yet. You can keep, remove, or save {compatibilityItems.length === 1 ? "it" : "them"} for later.
+            </p>
+          ) : null}
 
           {!hasActiveItems ? (
             <div className="grid gap-6 rounded-[28px] border border-neutral-200 bg-white p-8 text-center shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
@@ -810,6 +821,7 @@ export function CartPage() {
                             <h2 className="text-base font-semibold leading-7 text-neutral-950 sm:text-lg">{product.name}</h2>
                           <p className="text-sm text-neutral-500">Specification: {product.quantity}</p>
                           {!item.available ? <p className="text-sm font-bold text-amber-700">Currently unavailable at this quantity. Remove it or reduce the quantity.</p> : null}
+                          {product.compatibilityOnly ? <p className="text-sm font-bold text-amber-700">This item is still being synchronized with our catalog and cannot be ordered yet.</p> : null}
                           </div>
 
                           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-[#2563eb]">

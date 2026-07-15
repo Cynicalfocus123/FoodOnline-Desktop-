@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { catalogRepository } from "./repository";
 import type { Product } from "../../types/catalog";
+import { useHomeStore } from "../../store/homeStore";
 
 export function useCatalogProducts(ids: string[]) {
   const [products, setProducts] = useState<Map<string, Product>>(new Map());
@@ -21,7 +22,9 @@ export function useCatalogProducts(ids: string[]) {
     void Promise.all(uniqueIds.map(async (id) => [id, await catalogRepository.getProductById(id)] as const))
       .then((items) => {
         if (!mounted) return;
-        setProducts(new Map(items.filter((item): item is [string, Product] => Boolean(item[1]))));
+        const loaded = items.filter((item): item is [string, Product] => Boolean(item[1]));
+        loaded.forEach(([, product]) => useHomeStore.getState().migrateCatalogIdentity(product));
+        setProducts(new Map(loaded));
       })
       .catch(() => mounted && setError("Some catalog items could not be loaded."))
       .finally(() => mounted && setIsLoading(false));

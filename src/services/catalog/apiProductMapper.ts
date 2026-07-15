@@ -7,6 +7,7 @@ export interface ApiVariantDto {
   uuid?: string;
   title?: string | null;
   sku?: string | null;
+  gtin?: string | null;
   size?: string | null;
   price?: string | number | null;
   old_price?: string | number | null;
@@ -73,6 +74,8 @@ function mapVariant(dto: ApiVariantDto, fallbackId: string, fallbackPrice: numbe
     currencyCode: dto.currency_code ?? "USD",
     availabilityStatus: dto.availability_status ?? (dto.in_stock === false ? "out_of_stock" : "in_stock"),
     inStock: dto.in_stock ?? dto.availability_status === "in_stock",
+    sku: dto.sku ?? undefined,
+    gtin: dto.gtin ?? undefined,
   };
 }
 
@@ -84,6 +87,8 @@ export function mapApiProduct(dto: ApiProductDto): Product {
     ...(dto.image_urls ?? []).map(media),
     media(dto.primary_image),
   ].filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index);
+  const hasApiMedia = imageUrls.length > 0;
+  const hasApiVariants = Boolean(dto.variants?.length || dto.default_variant?.uuid || dto.default_variant?.id);
   const variants = (dto.variants ?? []).map((variant, index) => mapVariant(variant, `${id}-variant-${index + 1}`, price));
   const defaultVariant = dto.default_variant ? mapVariant(dto.default_variant, `${id}-default`, price) : variants.find((variant) => variant.id === id) ?? variants[0];
   const effectiveVariants = variants.length ? variants : [defaultVariant ?? mapVariant({ uuid: `${id}-default`, title: "Default", size: dto.size, price, availability_status: dto.availability_status, in_stock: Boolean(dto.in_stock) }, `${id}-default`, price)];
@@ -124,7 +129,7 @@ export function mapApiProduct(dto: ApiProductDto): Product {
     description: dto.description ?? "Product details are provided by the FoodOnlines catalog.",
     ingredients: dto.ingredients ?? undefined,
     storageInstructions: dto.storage_instructions ?? undefined,
-    sku: dto.sku ?? effectiveDefault.id,
+    sku: dto.sku ?? effectiveDefault.sku ?? effectiveDefault.id,
     recipeSuggestions: [],
     nutritionFacts: {
       servingSize: dto.nutrition_facts?.serving_size ?? "See package",
@@ -145,6 +150,13 @@ export function mapApiProduct(dto: ApiProductDto): Product {
     reviewCount: Number(dto.review_summary?.review_count ?? 0),
     variants: effectiveVariants,
     apiBacked: true,
+    catalogOrigin: "api",
+    compatibilityOnly: false,
+    apiMediaAvailable: hasApiMedia,
+    apiVariantsAvailable: hasApiVariants,
+    apiReviewDataAvailable: dto.review_summary != null,
+    apiNutritionDataAvailable: dto.nutrition_facts != null,
+    apiSoldCountAvailable: dto.sold_count != null,
   };
   return applyPresentationCompatibility({ ...product, price: effectiveDefault.price, oldPrice: effectiveDefault.oldPrice, inStock: effectiveDefault.inStock });
 }

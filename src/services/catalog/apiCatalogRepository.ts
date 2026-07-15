@@ -43,7 +43,7 @@ async function listProducts(query: CatalogQuery = {}) {
 
 export const apiCatalogRepository: CatalogRepository = {
   async getCategories() {
-    return listCategories("homepage=1&per_page=100&sort=sort_order");
+    return listCategories("per_page=100&sort=sort_order");
   },
   async getCategoryBySlug(slug) {
     if (!slug) return null;

@@ -3,7 +3,26 @@
     "name": "FoodOnlines Desktop Web",
     "version": "1.2.0",
     "updated_at": "2026-07-15",
-    "notes": "Desktop design memory for the unchanged public storefront and existing admin catalog portal, now with Phase 7 operational commerce and production-readiness contracts layered over the Phase 6 transactional commerce boundary."
+    "notes": "Desktop design memory for the unchanged public storefront and existing admin catalog portal, now using a temporary hybrid catalog compatibility layer over the Phase 7 operational commerce boundary."
+  },
+  "hybrid_catalog_compatibility": {
+    "production_source": "hybrid",
+    "api_base_url": "https://www.api.foodonlines.com/api/v1",
+    "supported_sources": ["api", "local", "hybrid"],
+    "local_inventory": {
+      "categories": 16,
+      "base_products": 240,
+      "category_listing_records": 960,
+      "homepage_sections": 15
+    },
+    "category_identity": ["shared UUID", "normalized canonical slug"],
+    "product_identity": ["shared UUID", "normalized canonical slug", "stable SKU plus exact variant identity"],
+    "identity_prohibitions": ["display-name-only merge", "different pack-size merge", "listing-clone collapse"],
+    "media_priority": ["valid API primary/ordered media", "original local primary", "original local gallery", "generic fallback"],
+    "api_failure": "return complete local catalog with a safe non-blocking synchronization warning only in hybrid mode",
+    "local_cart_safety": "retain display/edit state, exclude from Laravel cart hydration, checkout quote, and order submission until exact backend identity exists",
+    "visual_change": "none; existing components, markup, routes, responsive behavior, and admin portal remain approved",
+    "removal_gate": "all approved categories, products, exact variants, media, detail/search/filter fields, aliases, and saved commerce identities must exist and be production-verified in Laravel/R2 before strict api mode"
   },
   "phase_7_operational_commerce": {
     "return_state_model": ["requested", "approved", "rejected", "information_requested", "received", "inspecting", "refund_pending", "refunded", "closed", "cancelled"],

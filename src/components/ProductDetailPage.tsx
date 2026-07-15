@@ -529,7 +529,7 @@ export function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <IconButton label={isFavorite ? "Remove from favorites" : "Save item"} onClick={() => toggleFavorite(product.id)}>
+                  <IconButton label={isFavorite ? "Remove from favorites" : "Save item"} onClick={() => toggleFavorite(product.id, Boolean(product.apiBacked))}>
                     <HeartIcon filled={isFavorite} />
                   </IconButton>
                   <IconButton label="Share product" onClick={handleShare}>
@@ -575,7 +575,7 @@ export function ProductDetailPage() {
                     </button>
                   ))}
                 </div>
-                <CartQuantityControl productId={product.id} variantId={selectedVariant?.id ?? product.id} disabled={selectedVariant?.inStock === false || selectedVariant?.availabilityStatus === "out_of_stock"} variant="detail" />
+                <CartQuantityControl apiBacked={Boolean(product.apiBacked)} apiVariantIdentityReady={product.apiVariantsAvailable !== false} productId={product.id} variantId={selectedVariant?.id ?? product.id} disabled={selectedVariant?.inStock === false || selectedVariant?.availabilityStatus === "out_of_stock"} variant="detail" />
               </div>
             </SectionShell>
 

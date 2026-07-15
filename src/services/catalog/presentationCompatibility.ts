@@ -1,5 +1,6 @@
 import { productCatalog } from "../../data/home";
 import type { Product } from "../../types/catalog";
+import { productsRepresentSameIdentity } from "./catalogIdentity";
 
 /**
  * Frontend-only merchandising and experience fields. API identity, prices,
@@ -7,7 +8,7 @@ import type { Product } from "../../types/catalog";
  */
 export function applyPresentationCompatibility(product: Product): Product {
   const localMatch = productCatalog.find(
-    (candidate) => candidate.sku.toLowerCase() === product.sku.toLowerCase() || candidate.name.toLowerCase() === product.name.toLowerCase(),
+    (candidate) => productsRepresentSameIdentity(candidate, product),
   );
 
   if (!localMatch) {
@@ -32,6 +33,6 @@ export function applyPresentationCompatibility(product: Product): Product {
     averageRating: product.apiBacked ? product.averageRating : product.reviewCount ? product.averageRating : localMatch.averageRating,
     ratingBreakdown: product.apiBacked ? product.ratingBreakdown : product.reviewCount ? product.ratingBreakdown : localMatch.ratingBreakdown,
     reviewCount: product.apiBacked ? product.reviewCount : product.reviewCount || localMatch.reviewCount,
-    nutritionFacts: product.nutritionFacts.calories ? product.nutritionFacts : localMatch.nutritionFacts,
+    nutritionFacts: product.apiNutritionDataAvailable ? product.nutritionFacts : localMatch.nutritionFacts,
   };
 }
