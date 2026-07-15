@@ -8,3 +8,4 @@ Artisan::command('foodonlines:about', function (): void {
 })->purpose('Show backend readiness message.');
 
 Schedule::command('media:cleanup --limit=100')->hourly()->withoutOverlapping();
+Schedule::command('inventory:expire-reservations --limit=100')->everyFiveMinutes()->withoutOverlapping();

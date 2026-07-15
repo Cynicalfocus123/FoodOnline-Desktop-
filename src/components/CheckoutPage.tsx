@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { formatPrice, useCatalogProducts, type ProductItem } from "../services/catalog";
-import { apiRequest } from "../lib/apiClient";
+import { ApiError, apiRequest } from "../lib/apiClient";
+import { checkoutApi, type CheckoutQuote, type CommerceOrder, type PaymentMethodAvailability } from "../services/commerceApi";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 
 const FREE_SHIPPING_THRESHOLD = 49;
-const ESTIMATED_SHIPPING = 5.99;
-const ESTIMATED_TAX = 0;
 
 const paymentIconAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 const cardBrandLogos = [
@@ -67,6 +66,11 @@ type SavedAddress = {
 };
 
 type PaymentMethod = "card" | "cod" | "bankTransfer" | "promptPay" | "paypal" | "googlePay" | "alipay" | "cashApp";
+
+const paymentMethodCodes: Record<PaymentMethod, PaymentMethodAvailability["code"]> = {
+  card: "card", cod: "cod", bankTransfer: "bank_transfer", promptPay: "promptpay", paypal: "paypal",
+  googlePay: "google_pay", alipay: "alipay", cashApp: "cash_app",
+};
 
 type CardFormValues = {
   cardholderName: string;
@@ -615,6 +619,8 @@ function PaymentRadioRow({
   logos,
   onSelect,
   title,
+  disabled = false,
+  unavailableReason,
 }: {
   checked: boolean;
   description: string;
@@ -623,12 +629,14 @@ function PaymentRadioRow({
   logos?: typeof cardBrandLogos;
   onSelect: () => void;
   title: string;
+  disabled?: boolean;
+  unavailableReason?: string | null;
 }) {
   return (
     <label
-      className="grid cursor-pointer grid-cols-[28px_52px_minmax(0,1fr)] items-start gap-3 py-3 text-neutral-900 transition hover:text-leaf-700 sm:grid-cols-[28px_58px_minmax(0,1fr)]"
+      className={`grid grid-cols-[28px_52px_minmax(0,1fr)] items-start gap-3 py-3 text-neutral-900 transition sm:grid-cols-[28px_58px_minmax(0,1fr)] ${disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer hover:text-leaf-700"}`}
     >
-      <input checked={checked} className="sr-only" name="payment-method" onChange={onSelect} type="radio" />
+      <input checked={checked} className="sr-only" disabled={disabled} name="payment-method" onChange={onSelect} type="radio" />
       <span
         className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
           checked ? "border-neutral-950 bg-neutral-950 text-white" : "border-neutral-300 bg-white text-transparent"
@@ -651,6 +659,7 @@ function PaymentRadioRow({
           ) : null}
         </span>
         <span className="mt-1 block text-sm leading-6 text-neutral-500">{description}</span>
+        {unavailableReason ? <span className="mt-1 block text-xs font-bold text-amber-700">Unavailable: {unavailableReason}</span> : null}
       </span>
     </label>
   );
@@ -714,11 +723,14 @@ export function CheckoutPage() {
   const cartQuantities = useHomeStore((state) => state.cartQuantities);
   const cartLineProductIds = useHomeStore((state) => state.cartLineProductIds);
   const selectedCartIds = useHomeStore((state) => state.selectedCartIds);
+  const cartItemIds = useHomeStore((state) => state.cartItemIds);
+  const hydrateCommerceCart = useHomeStore((state) => state.hydrateCommerceCart);
   const openCart = useHomeStore((state) => state.openCart);
   const backToHome = useHomeStore((state) => state.backToHome);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const token = usePublicAuthStore((state) => state.token);
+  const hasBackendSession = Boolean(currentUser && token);
   const catalogIds = useMemo(() => Object.values(cartLineProductIds), [cartLineProductIds]);
   const { products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogProducts(catalogIds);
 
@@ -732,7 +744,12 @@ export function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [checkoutAddress, setCheckoutAddress] = useState<SavedAddress | null>(null);
   const [addressFormRestoreAddress, setAddressFormRestoreAddress] = useState<SavedAddress | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [paymentAvailability, setPaymentAvailability] = useState<PaymentMethodAvailability[]>([]);
+  const [quote, setQuote] = useState<CheckoutQuote | null>(null);
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<CommerceOrder | null>(null);
+  const [guestEmail, setGuestEmail] = useState(currentUser?.email ?? "");
   const [cardValues, setCardValues] = useState<CardFormValues>({
     cardholderName: "",
     cardNumber: "",
@@ -781,15 +798,19 @@ export function CheckoutPage() {
   const isAddressReady = selectedAddress ? true : Object.keys(addressValidation).length === 0;
   const cardValidation = validateCardForm(cardValues);
   const billingAddressValidation = cardValues.billingSameAsShipping ? {} : validateAddress(billingAddressValues, activeBillingAddressConfig);
-  const isPaymentReady = paymentMethod !== "card" || (Object.keys(cardValidation).length === 0 && Object.keys(billingAddressValidation).length === 0);
+  const selectedPaymentAvailability = paymentAvailability.find((method) => method.code === paymentMethodCodes[paymentMethod]);
+  const isPaymentReady = Boolean(selectedPaymentAvailability?.enabled);
   const itemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
-  const retailSubtotal = selectedItems.reduce((sum, item) => sum + (item.product.oldPrice ?? item.product.price) * item.quantity, 0);
-  const subtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const displayedRetailSubtotal = selectedItems.reduce((sum, item) => sum + (item.product.oldPrice ?? item.product.price) * item.quantity, 0);
+  const displayedSubtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const retailSubtotal = quote ? Number(quote.retail_subtotal.amount) : displayedRetailSubtotal;
+  const subtotal = quote ? Number(quote.subtotal.amount) : displayedSubtotal;
   const itemDiscount = Math.max(0, retailSubtotal - subtotal);
-  const shipping = subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD ? ESTIMATED_SHIPPING : 0;
-  const couponDiscount = Math.min(coupon?.discount ?? 0, subtotal);
-  const estimatedTotal = Math.max(0, subtotal + shipping + ESTIMATED_TAX - couponDiscount);
-  const canPlaceOrder = selectedItems.length > 0 && isAddressReady && isPaymentReady;
+  const shipping = quote ? Number(quote.shipping.amount) : 0;
+  const couponDiscount = quote ? Number(quote.promo_discount.amount) : 0;
+  const estimatedTax = quote ? Number(quote.tax.amount) : 0;
+  const estimatedTotal = quote ? Number(quote.total.amount) : Math.max(0, subtotal);
+  const canPlaceOrder = selectedItems.length > 0 && isAddressReady && isPaymentReady && Boolean(quote?.can_place_order) && !isQuoteLoading && new Date(quote?.expires_at ?? 0).getTime() > Date.now();
   const checkoutButtonLabel = isPlacingOrder ? "Placing order..." : "Place Order";
 
   useEffect(() => {
@@ -841,6 +862,74 @@ export function CheckoutPage() {
       isMounted = false;
     };
   }, [currentUser, token]);
+
+  useEffect(() => {
+    let active = true;
+    void checkoutApi.paymentMethods(token).then((response) => {
+      if (!active) return;
+      setPaymentAvailability(response.payment_methods);
+      const selected = response.payment_methods.find((method) => method.code === paymentMethodCodes[paymentMethod]);
+      if (!selected?.enabled) {
+        const firstEnabled = response.payment_methods.find((method) => method.enabled);
+        if (firstEnabled) {
+          const uiMethod = (Object.entries(paymentMethodCodes).find(([, code]) => code === firstEnabled.code)?.[0] ?? "cod") as PaymentMethod;
+          setPaymentMethod(uiMethod);
+        }
+      }
+    }).catch((error) => setCheckoutNotice(error instanceof Error ? error.message : "Payment methods are unavailable."));
+    return () => { active = false; };
+  }, [paymentMethod, token]);
+
+  useEffect(() => {
+    if (paymentMethod !== "card") {
+      setCardValues({ cardholderName: "", cardNumber: "", expiryDate: "", cvv: "", billingSameAsShipping: true });
+      setCardErrors({});
+    }
+  }, [paymentMethod]);
+
+  useEffect(() => {
+    if (!selectedAddress || !selectedItems.length || !isPaymentReady || (!hasBackendSession && !guestEmail.trim())) {
+      setQuote(null);
+      return;
+    }
+
+    let active = true;
+    const timer = window.setTimeout(() => {
+      setIsQuoteLoading(true);
+      setCheckoutNotice(null);
+      const addressPayload = {
+        full_name: selectedAddress.values.fullName,
+        phone_number: selectedAddress.values.phoneNumber,
+        country_key: selectedAddress.country,
+        address_values: selectedAddress.values,
+        summary: selectedAddress.summary,
+        delivery_note: selectedAddress.values.deliveryNote || null,
+      };
+      void checkoutApi.quote({
+        cart_item_ids: selectedCartIds.map((id) => cartItemIds[id]).filter(Boolean),
+        guest_email: hasBackendSession ? null : guestEmail.trim(),
+        shipping_address: addressPayload,
+        billing_same_as_shipping: true,
+        promo_code: coupon?.code ?? null,
+        payment_method_code: paymentMethodCodes[paymentMethod],
+      }, token).then((response) => {
+        if (!active) return;
+        setQuote(response.quote);
+        if (response.quote.promo_code) {
+          setCoupon({ code: response.quote.promo_code, discount: Number(response.quote.promo_discount.amount) });
+          setCouponMessage(`${response.quote.promo_code} applied.`);
+          setCouponError(null);
+        }
+      }).catch((error) => {
+        if (!active) return;
+        setQuote(null);
+        const message = error instanceof ApiError ? error.message.replace(/^Request failed \(422\): /, "") : "Unable to calculate checkout totals.";
+        if (coupon?.code) { setCoupon(null); setCouponError(message); } else { setCheckoutNotice(message); }
+      }).finally(() => { if (active) setIsQuoteLoading(false); });
+    }, 300);
+
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [cartItemIds, coupon?.code, currentUser, guestEmail, hasBackendSession, isPaymentReady, paymentMethod, selectedAddress, selectedCartIds, selectedItems, token]);
 
   function updateAddressValue(field: AddressField, value: string) {
     setAddressValues((current) => ({
@@ -1109,20 +1198,9 @@ export function CheckoutPage() {
     }
 
     setIsApplyingCoupon(true);
-    await new Promise((resolve) => window.setTimeout(resolve, 250));
-
-    // TODO: Replace this placeholder with the backend coupon validation endpoint when it exists.
-    if (normalizedCode === "WELCOME") {
-      const discount = Number((subtotal * 0.1).toFixed(2));
-      setCoupon({ code: normalizedCode, discount });
-      setCouponMessage(`${normalizedCode} applied.`);
-      setCouponError(null);
-    } else {
-      setCoupon(null);
-      setCouponError("This coupon is not available for the selected items.");
-    }
-
-    setIsApplyingCoupon(false);
+    setCoupon({ code: normalizedCode, discount: 0 });
+    setCouponMessage("Validating promo with the store...");
+    window.setTimeout(() => setIsApplyingCoupon(false), 350);
   }
 
   function handleRemoveCoupon() {
@@ -1139,41 +1217,32 @@ export function CheckoutPage() {
       return;
     }
 
-    if (paymentMethod === "card") {
-      const nextCardErrors = validateCardForm(cardValues);
-      setCardTouched({
-        cardholderName: true,
-        cardNumber: true,
-        expiryDate: true,
-        cvv: true,
-      });
-      setCardErrors(nextCardErrors);
-
-      if (Object.keys(nextCardErrors).length) {
-        return;
-      }
-
-      if (!cardValues.billingSameAsShipping) {
-        const nextBillingErrors = validateAddress(billingAddressValues, activeBillingAddressConfig);
-        const nextBillingTouched = activeBillingAddressConfig.fields.reduce<TouchedFields>((fields, field) => {
-          fields[field.key] = true;
-          return fields;
-        }, {});
-
-        setBillingAddressTouched(nextBillingTouched);
-        setBillingAddressErrors(nextBillingErrors);
-
-        if (Object.keys(nextBillingErrors).length) {
-          return;
-        }
-      }
-    }
+    if (!quote || !canPlaceOrder) { setCheckoutNotice("Wait for a current server quote before placing the order."); return; }
 
     setIsPlacingOrder(true);
-    await new Promise((resolve) => window.setTimeout(resolve, 350));
-    // TODO: Create the order through the backend and tokenize card data with a PCI-compliant payment provider before enabling real charges.
-    setCheckoutNotice("Checkout details are ready. Secure order creation and payment tokenization still need backend connection.");
-    setIsPlacingOrder(false);
+    try {
+      const response = await checkoutApi.placeOrder(quote.uuid, crypto.randomUUID(), token, selectedAddress?.values.deliveryNote);
+      setPlacedOrder(response.order);
+      if (response.guest_access_token) sessionStorage.setItem(`foodonline-order-${response.order.uuid}`, response.guest_access_token);
+      await hydrateCommerceCart();
+    } catch (error) {
+      setCheckoutNotice(error instanceof Error ? error.message : "Unable to place the order.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
+  }
+
+  if (placedOrder) {
+    return (
+      <section className="bg-[#fcfcfd] px-4 pb-20 pt-[132px] sm:px-6 sm:pt-[146px] lg:pt-[154px]">
+        <div className="mx-auto grid max-w-4xl gap-6 rounded-[30px] border border-emerald-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] sm:p-10">
+          <div className="grid gap-2"><p className="text-xs font-black uppercase tracking-[0.18em] text-leaf-600">Order confirmed</p><h1 className="text-4xl font-black text-neutral-950">Thank you for your order</h1><p className="text-neutral-600">Order <strong>{placedOrder.order_number}</strong> was created successfully.</p></div>
+          <div className="grid gap-3 rounded-2xl bg-neutral-50 p-5 sm:grid-cols-3"><div><p className="text-xs font-bold uppercase text-neutral-500">Total</p><p className="mt-1 text-lg font-black">{placedOrder.total.currency_code} {placedOrder.total.amount}</p></div><div><p className="text-xs font-bold uppercase text-neutral-500">Payment</p><p className="mt-1 font-black">Cash on Delivery · {placedOrder.payment_status}</p></div><div><p className="text-xs font-bold uppercase text-neutral-500">Fulfillment</p><p className="mt-1 font-black capitalize">{placedOrder.fulfillment_status}</p></div></div>
+          <div className="grid gap-3">{placedOrder.items.map((item) => <div className="flex items-center justify-between gap-4 border-b border-neutral-100 pb-3" key={item.uuid}><div><p className="font-black text-neutral-950">{item.product_name}</p><p className="text-sm text-neutral-500">{item.variant_title} · SKU {item.sku} · Qty {item.quantity}</p></div><p className="font-black">{placedOrder.total.currency_code} {item.line_total}</p></div>)}</div>
+          <div className="flex flex-wrap gap-3"><button className="min-h-12 rounded-2xl bg-leaf-600 px-6 font-black text-white" onClick={() => hasBackendSession ? useHomeStore.getState().openAccount("orders") : backToHome()} type="button">{hasBackendSession ? "View My Orders" : "Continue Shopping"}</button><button className="min-h-12 rounded-2xl border border-neutral-200 px-6 font-black" onClick={backToHome} type="button">Back to Store</button></div>
+        </div>
+      </section>
+    );
   }
 
   if (!selectedItems.length) {
@@ -1189,8 +1258,9 @@ export function CheckoutPage() {
               <p className="text-xs font-black uppercase tracking-[0.18em] text-citrus-500">Secure grocery checkout</p>
               <h1 className="text-4xl font-black tracking-[-0.04em] text-neutral-950">Checkout</h1>
               <p className="max-w-3xl text-sm leading-6 text-neutral-500">
-                {currentUser ? `Signed in as ${currentUser.email}.` : "Guest checkout is available for this order."}
+                {hasBackendSession ? `Signed in as ${currentUser?.email ?? "your account"}.` : "Guest checkout is available for this order."}
               </p>
+              {!hasBackendSession ? <label className="mt-2 grid max-w-md gap-1 text-sm font-bold text-neutral-700" htmlFor="checkout-guest-email"><span>Order email</span><input className="min-h-12 rounded-2xl border border-neutral-300 px-4 font-semibold outline-none focus:border-leaf-500" id="checkout-guest-email" onChange={(event) => setGuestEmail(event.target.value)} placeholder="name@example.com" type="email" value={guestEmail} /><span className="text-xs font-semibold text-neutral-500">Phone-only demo sessions cannot place authenticated orders; this checkout remains a secure guest order.</span></label> : null}
             </div>
             <div className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm font-black text-leaf-700 shadow-[0_8px_24px_rgba(34,197,94,0.08)]">
               <ShieldIcon />
@@ -1405,17 +1475,21 @@ export function CheckoutPage() {
                   <div className="grid divide-y divide-neutral-200 border-b border-neutral-200">
                     {paymentMethods.map((method) => (
                       <div key={method.id}>
+                        {(() => { const availability = paymentAvailability.find((item) => item.code === paymentMethodCodes[method.id]); return (
                         <PaymentRadioRow
                           checked={paymentMethod === method.id}
                           description={method.description}
+                          disabled={!availability?.enabled}
                           icon={method.icon}
                           logoSrc={method.logoSrc}
                           logos={method.logos}
                           onSelect={() => setPaymentMethod(method.id)}
                           title={method.title}
+                          unavailableReason={availability?.unavailable_reason ?? (paymentAvailability.length ? "Payment method is unavailable." : "Checking availability...")}
                         />
+                        ); })()}
 
-                        {method.id === "card" && paymentMethod === "card" ? (
+                        {method.id === "card" && false ? (
                           <div className="grid gap-5 pb-6 sm:ml-[86px]">
                             <div className="grid gap-1">
                               <h3 className="text-lg font-semibold text-neutral-950">Add a New Card</h3>
@@ -1610,7 +1684,7 @@ export function CheckoutPage() {
                   <SummaryRow label="Subtotal" value={formatPrice(subtotal)} />
                   <SummaryRow label="Coupon discount" value={couponDiscount > 0 ? `-${formatPrice(couponDiscount)}` : formatPrice(0)} valueClassName={couponDiscount > 0 ? "text-leaf-700" : "text-neutral-950"} />
                   <SummaryRow label="Delivery fee" muted={shipping <= 0 ? "Free shipping threshold reached" : `Free over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`} value={shipping <= 0 ? "FREE" : formatPrice(shipping)} />
-                  <SummaryRow label="Taxes / VAT" muted="Calculated by available checkout rules" value={formatPrice(ESTIMATED_TAX)} />
+                  <SummaryRow label="Taxes / VAT" muted="Calculated by the store" value={formatPrice(estimatedTax)} />
                 </div>
 
                 <div className="mt-5 border-t border-neutral-900 pt-5">
@@ -1621,7 +1695,7 @@ export function CheckoutPage() {
                 </div>
 
                 <p className="mt-3 min-h-[22px] text-sm font-semibold leading-6 text-neutral-500">
-                  {canPlaceOrder ? "Total is ready at the bottom before checkout." : "Complete delivery address and payment details to place order."}
+                  {isQuoteLoading ? "Refreshing secure server totals..." : canPlaceOrder ? `Server quote valid until ${new Date(quote!.expires_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : "Complete delivery details and wait for a current server quote."}
                 </p>
                 {checkoutNotice ? (
                   <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-800">
@@ -1642,7 +1716,7 @@ export function CheckoutPage() {
           </div>
           <button
             className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-2xl bg-leaf-600 px-5 text-sm font-black text-white transition hover:bg-leaf-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-            disabled={!canPlaceOrder || isPlacingOrder}
+            disabled={!canPlaceOrder || isPlacingOrder || isQuoteLoading}
             onClick={handlePlaceOrder}
             type="button"
           >

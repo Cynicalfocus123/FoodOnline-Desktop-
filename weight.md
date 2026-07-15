@@ -1,5 +1,12 @@
 # FoodOnlines Site Weight
 
+## Transactional Commerce Core Accounting — Phase 6 (2026-07-14)
+
+- Working-tree additions cover 4 commerce migrations, 18 commerce models/concerns/support records, 3 public commerce controllers, 5 admin commerce controllers, 2 account/payment changes, 9 commerce services/payment gateway classes, 1 reservation-expiration command, 1 queued job, 1 mail class, the commerce API clients, customer checkout/order integration, admin commerce panels, and focused transactional feature tests. Existing unrelated working-tree deletions and untracked user files remain unstaged and untouched.
+- Frontend validation currently passed with Node 24.18.0: `npm.cmd run build` completed TypeScript, Vite, and public-asset copy (`104` modules transformed). PHP/Composer validation, migrations, Laravel tests, route/config caches, and genuine MySQL concurrency tests are not run because no PHP executable or Composer executable is available in this shell; no passing backend count is invented.
+- Final Phase 6 counts must be updated after the final build, production audit, frontend mirror sync, backend-live sync, and any available PHP validation. Record exact `dist`/`frontend-upload` files and bytes, mirror missing/stale/checksum/secret/ZIP findings, test/assertion counts, and push result from command output only.
+- External Hostinger frontend/backend, production migrations, SMTP, queue worker, scheduler/cron, R2, DNS, and merchant payment provider remain unconfigured/not externally verified. No backend ZIP or frontend ZIP is created.
+
 ## Public Catalog Cutover Accounting - Phase 5 (2026-07-13)
 
 - Frontend files changed: async catalog repository/client/mappers, catalog types and runtime configuration, public category/home/list/search/detail components, variant-aware local cart store/control, cart and checkout hydration, presentation compatibility, and existing admin Category/Product editor panels.

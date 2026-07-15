@@ -1,5 +1,17 @@
 # FoodOnlines Desktop Home Design
 
+## Transactional Commerce Core — Phase 6 (2026-07-14)
+
+- The approved public storefront, account layout, cart composition, checkout composition, admin shell, catalog editors, responsive breakpoints, and FoodOnlines green/orange visual language remain intact. Phase 6 changes the data source beneath those surfaces.
+- Cart states now include backend refresh, ready, unavailable-at-current-quantity, migration-warning, retry/error, selected-for-checkout, saved-for-later, and empty states. Exact variant lines remain distinct even when they belong to one product; unavailable lines stay visible with a safe remove/reduce action.
+- Checkout keeps the existing address, promo, payment, summary, and sticky mobile total layout. Quote states are loading, current, expired, changed-cart/price, invalid-promo, unavailable-shipping/payment, and ready-to-place. Browser prices and totals remain display-only while the server quote supplies shipping, tax, discounts, and total.
+- All existing payment rows remain visually present. Unsupported providers are visibly disabled with a backend reason; COD is the selected operational default and shows pending-until-collection language. Raw card/CVV form interaction is unavailable until a future secure provider adapter exists.
+- Successful COD checkout uses a real confirmation surface with order number, exact variants, quantity, total, payment state, fulfillment state, and a customer order-history destination. Guest confirmation keeps the secure access token in session storage only.
+- Customer My Orders uses the existing account subpage rhythm for loading, empty, error, list, detail, status, address snapshot, history, and eligible cancellation states. It never renders another customer's order.
+- Admin Orders uses the existing rounded white workspaces and tables with search, order details, customer/contact data, address snapshots, exact SKU/variant lines, financial breakdown, promo/payment/fulfillment state, history, tracking, status actions, COD collection, refunds, notes, and confirmation dialogs. Admin Inventory and Promo Codes use the same shell with loading, empty, validation, error, audit, and responsive overflow-safe list/editor states.
+- Commerce settings remain embedded in the existing Admin Settings area. Inventory controls expose single-location quantities, reservations, thresholds, tracking, backorders, adjustments, and movement history; Promo Codes expose discount type/value, dates, limits, minimum/maximum values, currency, restrictions, activation, and archival behavior.
+- Desktop keeps wide tables/details and sticky checkout summary; tablet collapses dense controls without page overflow; mobile stacks panels, keeps 16px inputs and touch-safe buttons, uses safe-area-aware checkout actions, and allows horizontal scrolling only inside intentionally wide admin tables.
+
 ## Public Catalog Cutover - Phase 5 (2026-07-13)
 
 - The existing public storefront design is preserved. No storefront function, homepage section, Best Selling control, filter, sort, card field, product-detail section, promo interface, payment interface, cart layout, checkout layout, or responsive behavior was removed or redesigned.

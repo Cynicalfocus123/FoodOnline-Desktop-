@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Phase 6 transactional commerce deployment note
+
+Phase 6 adds four forward commerce migrations, cart/quote/order/inventory/promotion APIs, COD payment records, queued confirmation mail, and reservation-expiration scheduling. Before production use, install the locked Composer dependencies, configure the server-only commerce values from `.env.example`, apply migrations with `php artisan migrate --force`, rebuild config/routes, and verify a disposable COD order in an authorized environment. Keep unsupported provider methods disabled until a real approved adapter and credentials exist; do not send raw card numbers or CVV.
+
 ## Phase 4 media deployment note
 
 Phase 4 adds the admin catalog portal, two forward migrations, the `media:cleanup` command, and one S3-compatible `r2` disk. Production deployment must install locked Composer dependencies, apply migrations, configure the server-only `MEDIA_*`/`R2_*` values from `.env.example`, set the documented bucket CORS/custom domain, rebuild caches, and schedule `php artisan media:cleanup --limit=100`. Repository synchronization does not configure Cloudflare or upload Hostinger files; see `docs/admin-catalog-and-r2.md`.

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class ProductVariant extends Model
@@ -45,6 +47,10 @@ class ProductVariant extends Model
 
     public function getRouteKeyName(): string { return 'uuid'; }
     public function product(): BelongsTo { return $this->belongsTo(Product::class); }
+    public function inventory(): HasOne { return $this->hasOne(VariantInventory::class); }
+    public function cartItems(): HasMany { return $this->hasMany(CartItem::class, 'product_variant_id'); }
+    public function reservations(): HasMany { return $this->hasMany(InventoryReservation::class, 'product_variant_id'); }
+    public function inventoryMovements(): HasMany { return $this->hasMany(InventoryMovement::class, 'product_variant_id'); }
     public function scopeActive(Builder $query): Builder { return $query->where('is_active', true); }
     public function scopeAvailable(Builder $query): Builder { return $query->active()->whereIn('availability_status', ['in_stock', 'preorder', 'backorder']); }
     public function scopeOrdered(Builder $query): Builder { return $query->orderByDesc('is_default')->orderBy('sort_order')->orderBy('id'); }

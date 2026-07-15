@@ -13,11 +13,17 @@ use App\Http\Controllers\Api\Admin\AdminProductMediaController;
 use App\Http\Controllers\Api\Admin\AdminProductVariantController;
 use App\Http\Controllers\Api\Admin\AdminMediaUploadController;
 use App\Http\Controllers\Api\Admin\AdminProductNutritionFactController;
+use App\Http\Controllers\Api\Admin\AdminOrderController;
+use App\Http\Controllers\Api\Admin\AdminInventoryController;
+use App\Http\Controllers\Api\Admin\AdminPromotionController;
+use App\Http\Controllers\Api\Admin\AdminCommerceSettingsController;
+use App\Http\Controllers\Api\Admin\AdminAuditLogController;
 use App\Http\Controllers\Api\Account\AccountDeletionRequestController;
 use App\Http\Controllers\Api\Account\AddressBookController;
 use App\Http\Controllers\Api\Account\NotificationPreferenceController;
 use App\Http\Controllers\Api\Account\PasswordController;
 use App\Http\Controllers\Api\Account\PaymentMethodController;
+use App\Http\Controllers\Api\Account\OrderController as AccountOrderController;
 use App\Http\Controllers\Api\Auth\CurrentUserController;
 use App\Http\Controllers\Api\Auth\LoginUserController;
 use App\Http\Controllers\Api\Auth\LogoutUserController;
@@ -26,6 +32,9 @@ use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\Catalog\CategoryController;
 use App\Http\Controllers\Api\Catalog\BrandController;
 use App\Http\Controllers\Api\Catalog\ProductController;
+use App\Http\Controllers\Api\Commerce\CartController;
+use App\Http\Controllers\Api\Commerce\CheckoutController;
+use App\Http\Controllers\Api\Commerce\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -61,6 +70,10 @@ Route::prefix('v1')->group(function (): void {
 
         Route::put('/account/password', [PasswordController::class, 'update'])->name('api.v1.account.password.update');
         Route::post('/account/delete-request', [AccountDeletionRequestController::class, 'store'])->name('api.v1.account.delete-request.store');
+        Route::get('/account/orders', [AccountOrderController::class, 'index'])->name('api.v1.account.orders.index');
+        Route::get('/account/orders/{order}', [AccountOrderController::class, 'show'])->name('api.v1.account.orders.show');
+        Route::post('/account/orders/{order}/cancel', [AccountOrderController::class, 'cancel'])->name('api.v1.account.orders.cancel');
+        Route::post('/cart/merge', [CartController::class, 'merge'])->name('api.v1.cart.merge');
     });
 
     Route::prefix('admin')->group(function (): void {
@@ -119,8 +132,34 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'show'])->name('api.v1.admin.products.nutrition.show');
             Route::put('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'update'])->name('api.v1.admin.products.nutrition.update');
             Route::delete('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'destroy'])->name('api.v1.admin.products.nutrition.destroy');
+            Route::get('/orders', [AdminOrderController::class, 'index'])->name('api.v1.admin.orders.index');
+            Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('api.v1.admin.orders.show');
+            Route::post('/orders/{order}/actions', [AdminOrderController::class, 'action'])->name('api.v1.admin.orders.action');
+            Route::get('/inventory', [AdminInventoryController::class, 'index'])->name('api.v1.admin.inventory.index');
+            Route::post('/inventory/{variant}/adjust', [AdminInventoryController::class, 'adjust'])->name('api.v1.admin.inventory.adjust');
+            Route::get('/inventory/{variant}/movements', [AdminInventoryController::class, 'history'])->name('api.v1.admin.inventory.history');
+            Route::get('/promo-codes', [AdminPromotionController::class, 'index'])->name('api.v1.admin.promotions.index');
+            Route::post('/promo-codes', [AdminPromotionController::class, 'store'])->name('api.v1.admin.promotions.store');
+            Route::get('/promo-codes/{promotion}', [AdminPromotionController::class, 'show'])->name('api.v1.admin.promotions.show');
+            Route::patch('/promo-codes/{promotion}', [AdminPromotionController::class, 'update'])->name('api.v1.admin.promotions.update');
+            Route::post('/promo-codes/{promotion}/archive', [AdminPromotionController::class, 'archive'])->name('api.v1.admin.promotions.archive');
+            Route::get('/commerce-settings', [AdminCommerceSettingsController::class, 'show'])->name('api.v1.admin.commerce-settings.show');
+            Route::put('/commerce-settings', [AdminCommerceSettingsController::class, 'update'])->name('api.v1.admin.commerce-settings.update');
+            Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])->name('api.v1.admin.audit-logs.index');
         });
     });
+
+    Route::middleware(['user.optional', 'throttle:api'])->group(function (): void {
+        Route::get('/cart', [CartController::class, 'show'])->name('api.v1.cart.show');
+        Route::post('/cart/items', [CartController::class, 'store'])->name('api.v1.cart.items.store');
+        Route::patch('/cart/items/{cartItem}', [CartController::class, 'update'])->name('api.v1.cart.items.update');
+        Route::delete('/cart/items/{cartItem}', [CartController::class, 'destroy'])->name('api.v1.cart.items.destroy');
+        Route::delete('/cart', [CartController::class, 'clear'])->name('api.v1.cart.clear');
+        Route::get('/checkout/payment-methods', [CheckoutController::class, 'paymentMethods'])->name('api.v1.checkout.payment-methods');
+        Route::post('/checkout/quote', [CheckoutController::class, 'quote'])->name('api.v1.checkout.quote');
+        Route::post('/orders', [OrderController::class, 'store'])->name('api.v1.orders.store');
+    });
+    Route::get('/orders/{order}/guest', [OrderController::class, 'guestShow'])->middleware('throttle:api')->name('api.v1.orders.guest.show');
 
     Route::prefix('catalog')->group(function (): void {
         Route::get('/categories', [CategoryController::class, 'index'])->middleware('throttle:api')->name('api.v1.catalog.categories.index');

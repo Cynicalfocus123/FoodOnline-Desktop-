@@ -33,6 +33,7 @@ type CartLineItem = {
   productId: string;
   quantity: number;
   selected: boolean;
+  available: boolean;
 };
 
 type CheckoutIdentifierMode = "email" | "phone";
@@ -541,6 +542,9 @@ function SummaryPanel({
 export function CartPage() {
   const cartQuantities = useHomeStore((state) => state.cartQuantities);
   const cartLineProductIds = useHomeStore((state) => state.cartLineProductIds);
+  const cartLineStatuses = useHomeStore((state) => state.cartLineStatuses);
+  const cartSyncStatus = useHomeStore((state) => state.cartSyncStatus);
+  const cartSyncMessage = useHomeStore((state) => state.cartSyncMessage);
   const selectedCartIds = useHomeStore((state) => state.selectedCartIds);
   const savedForLaterIds = useHomeStore((state) => state.savedForLaterIds);
   const savedLineProductIds = useHomeStore((state) => state.savedLineProductIds);
@@ -578,8 +582,9 @@ export function CartPage() {
         productId: cartLineProductIds[lineId] ?? lineId,
         quantity,
         selected: selectedCartIds.includes(lineId),
+        available: cartLineStatuses[lineId]?.available ?? true,
       })),
-    [cartLineProductIds, cartQuantities, selectedCartIds],
+    [cartLineProductIds, cartLineStatuses, cartQuantities, selectedCartIds],
   );
 
   const savedProducts = useMemo(
@@ -587,12 +592,13 @@ export function CartPage() {
     [catalogProducts, savedForLaterIds, savedLineProductIds],
   );
 
-  const selectedItems = activeItems.filter((item) => item.selected && catalogProducts.has(item.productId));
+  const selectedItems = activeItems.filter((item) => item.selected && item.available && catalogProducts.has(item.productId));
   const selectedSubtotal = selectedItems.reduce((sum, item) => sum + (catalogProducts.get(item.productId)?.price ?? 0) * item.quantity, 0);
   const selectedItemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   const shippingCost = selectedSubtotal > 0 && selectedSubtotal < FREE_SHIPPING_THRESHOLD ? ESTIMATED_SHIPPING : 0;
   const estimatedTotal = selectedSubtotal + shippingCost;
-  const allSelected = activeItems.length > 0 && activeItems.every((item) => item.selected);
+  const selectableItems = activeItems.filter((item) => item.available);
+  const allSelected = selectableItems.length > 0 && selectableItems.every((item) => item.selected);
   const hasActiveItems = activeItems.length > 0;
 
   function resetAuthModal() {
@@ -689,7 +695,7 @@ export function CartPage() {
   }
 
   function handleApplyCoupon() {
-    setCouponMessage("Coupons are not connected yet. Checkout totals stay frontend-only for now.");
+    setCouponMessage("Coupons are validated securely at checkout.");
   }
 
   return (
@@ -700,6 +706,12 @@ export function CartPage() {
             <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">Your Cart</h1>
             <p className="text-sm leading-6 text-neutral-500">FoodOnlines.com cart, secure checkout, and account-ready saved items.</p>
           </div>
+
+          {cartSyncStatus === "loading" || cartSyncMessage ? (
+            <p className={`mb-5 rounded-2xl border px-4 py-3 text-sm font-semibold ${cartSyncStatus === "error" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-emerald-100 bg-emerald-50 text-emerald-800"}`} role="status">
+              {cartSyncMessage ?? "Refreshing your backend cart..."}
+            </p>
+          ) : null}
 
           {!hasActiveItems ? (
             <div className="grid gap-6 rounded-[28px] border border-neutral-200 bg-white p-8 text-center shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
@@ -749,7 +761,7 @@ export function CartPage() {
                     <Checkbox
                       checked={allSelected}
                       label={`All (${selectedItemCount} items selected)`}
-                      onChange={() => setAllCartSelections(activeItems.map((item) => item.lineId), !allSelected)}
+                      onChange={() => setAllCartSelections(selectableItems.map((item) => item.lineId), !allSelected)}
                     />
                     <div className="flex flex-col gap-2 lg:min-w-[52%]">
                       <p className="text-sm font-medium text-neutral-500">Fulfilled by FoodOnline</p>
@@ -796,7 +808,8 @@ export function CartPage() {
                           <div className="grid gap-1">
                             <p className="text-xs font-bold uppercase tracking-[0.16em] text-neutral-400">Fulfilled by FoodOnline</p>
                             <h2 className="text-base font-semibold leading-7 text-neutral-950 sm:text-lg">{product.name}</h2>
-                            <p className="text-sm text-neutral-500">Specification: {product.quantity}</p>
+                          <p className="text-sm text-neutral-500">Specification: {product.quantity}</p>
+                          {!item.available ? <p className="text-sm font-bold text-amber-700">Currently unavailable at this quantity. Remove it or reduce the quantity.</p> : null}
                           </div>
 
                           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-[#2563eb]">

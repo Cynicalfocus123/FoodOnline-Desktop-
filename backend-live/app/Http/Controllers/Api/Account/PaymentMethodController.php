@@ -28,39 +28,9 @@ class PaymentMethodController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $validated = $request->validate([
-            'provider' => ['nullable', 'string', 'max:40'],
-            'brand' => ['required', 'string', 'max:40'],
-            'last4' => ['required', 'string', 'size:4'],
-            'expiry_month' => ['required', 'integer', 'between:1,12'],
-            'expiry_year' => ['required', 'integer', 'min:2024', 'max:2099'],
-            'token_reference' => ['nullable', 'string', 'max:191'],
-            'is_default' => ['nullable', 'boolean'],
-        ]);
-
-        $shouldBeDefault = (bool) ($validated['is_default'] ?? false) || ! UserPaymentMethod::query()->where('user_id', $user->id)->exists();
-
-        if ($shouldBeDefault) {
-            UserPaymentMethod::query()->where('user_id', $user->id)->update(['is_default' => false]);
-        }
-
-        $method = UserPaymentMethod::query()->create([
-            'user_id' => $user->id,
-            'provider' => $validated['provider'] ?? null,
-            'brand' => $validated['brand'],
-            'last4' => $validated['last4'],
-            'expiry_month' => (int) $validated['expiry_month'],
-            'expiry_year' => (int) $validated['expiry_year'],
-            'token_reference' => $validated['token_reference'] ?? null,
-            'is_default' => $shouldBeDefault,
-            'status' => 'active',
-        ]);
-
         return response()->json([
-            'message' => 'Payment method saved.',
-            'payment_method' => $this->toPayload($method),
-        ], 201);
+            'message' => 'Adding cards is unavailable until a secure merchant payment provider is configured. Raw card details are not accepted.',
+        ], 409);
     }
 
     public function destroy(Request $request, int $methodId): JsonResponse
@@ -93,24 +63,9 @@ class PaymentMethodController extends Controller
 
     public function makeDefault(Request $request, int $methodId): JsonResponse
     {
-        $user = $request->user();
-        $method = UserPaymentMethod::query()
-            ->where('user_id', $user->id)
-            ->where('status', 'active')
-            ->whereKey($methodId)
-            ->firstOrFail();
-
-        UserPaymentMethod::query()
-            ->where('user_id', $user->id)
-            ->where('status', 'active')
-            ->update(['is_default' => false]);
-
-        $method->forceFill(['is_default' => true])->save();
-
         return response()->json([
-            'message' => 'Default payment method updated.',
-            'payment_method' => $this->toPayload($method),
-        ]);
+            'message' => 'Legacy saved-card metadata is unverified and cannot be selected for payment.',
+        ], 409);
     }
 
     /**
@@ -127,6 +82,9 @@ class PaymentMethodController extends Controller
             'expiry_year' => $method->expiry_year,
             'is_default' => (bool) $method->is_default,
             'status' => $method->status,
+            'usable_for_payment' => false,
+            'verification_status' => 'legacy_unverified',
+            'unavailable_reason' => 'Payment provider is not configured.',
         ];
     }
 }

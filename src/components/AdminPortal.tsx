@@ -17,6 +17,7 @@ import type { MediaStorageStatus } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
 import { ProductAdminPanel } from "./admin/ProductAdminPanel";
+import { AuditAdminPanel, CommerceSettingsPanel, InventoryAdminPanel, OrdersAdminPanel, PromotionsAdminPanel } from "./admin/CommerceAdminPanels";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -237,6 +238,10 @@ function AdminDashboard() {
             <MetricCard label="Draft products" value={String(stats.draft_products)} light />
             <MetricCard label="Archived products" value={String(stats.archived_products)} light />
             <MetricCard label="Out-of-stock defaults" value={String(stats.out_of_stock_default_variants)} light />
+            <MetricCard label="Orders today" value={String(stats.orders_today)} light />
+            <MetricCard label="Pending orders" value={String(stats.pending_orders)} light />
+            <MetricCard label="COD pending" value={String(stats.cod_pending_collection)} light />
+            <MetricCard label="Low stock" value={String(stats.low_stock_variants)} light />
           </div>
 
           <div className="mt-6">
@@ -256,10 +261,14 @@ function AdminDashboard() {
                 updateStatus={updateDeleteAccountRequestStatus}
               />
             ) : null}
-            {activeSidebarKey === "settings" ? <AdminSettingsPanel /> : null}
+            {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
             {activeSidebarKey === "categories" && token ? <CategoryAdminPanel storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "brands" && token ? <BrandAdminPanel storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "products" && token ? <ProductAdminPanel storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "orders" && token ? <OrdersAdminPanel token={token} /> : null}
+            {activeSidebarKey === "inventory" && token ? <InventoryAdminPanel token={token} /> : null}
+            {activeSidebarKey === "promotions" && token ? <PromotionsAdminPanel token={token} /> : null}
+            {activeSidebarKey === "audit" && token ? <AuditAdminPanel token={token} /> : null}
           </div>
         </section>
       </div>

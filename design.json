@@ -1,9 +1,9 @@
 {
   "project": {
     "name": "FoodOnlines Desktop Web",
-    "version": "1.1.0",
-    "updated_at": "2026-07-13",
-    "notes": "Desktop design memory for the unchanged public storefront plus the existing standalone admin catalog portal with Categories, Brands, Products, Variants, Media, Nutrition, and Publication sections."
+    "version": "1.2.0",
+    "updated_at": "2026-07-14",
+    "notes": "Desktop design memory for the unchanged public storefront and existing admin catalog portal, now with the Phase 6 transactional commerce boundary for backend carts, server quotes, COD orders, inventory, promotions, customer history, and admin ecommerce operations."
   },
   "sources": {
     "desktop_notes": "D:/Foodonline desktop version/design.md",
@@ -873,6 +873,33 @@
     "public_storefront_links": "category and product stable-slug routes",
     "existing_admin_editor_changes": "category/product status panels and storefront actions only; existing sidebar and editor design preserved",
     "deferred_phase_6_systems": ["backend carts", "orders", "promotions", "inventory", "payments", "shipping", "reviews", "recipes", "recommendations", "seller offers", "new admin modules"]
+  },
+  "phase_6_transactional_commerce": {
+    "updated_at": "2026-07-14",
+    "backend_cart": {
+      "guest_token": "random bearer value returned once; SHA-256 digest only at rest",
+      "authenticated_identity": "user id plus active cart",
+      "line_identity": "exact product variant UUID; product UUID is hydration/display context",
+      "merge_rule": "min(99, authenticated quantity + guest quantity), clamped to tracked available stock",
+      "states": ["loading", "ready", "unavailable", "migration_warning", "error", "empty"]
+    },
+    "quote_identity": "short-lived checkout quote UUID owned by cart and actor; selected item and address snapshots plus calculation hash",
+    "order_identity": "public order UUID plus unique order number and actor/idempotency key",
+    "payment_identity": "provider-neutral order payment UUID with method, status, minor-unit amount, currency, paid/refunded values, and safe metadata",
+    "status_models": {
+      "order": ["pending", "confirmed", "processing", "completed", "cancelled"],
+      "payment": ["pending", "authorized", "paid", "failed", "cancelled", "partially_refunded", "refunded"],
+      "fulfillment": ["unfulfilled", "reserved", "processing", "shipped", "delivered", "returned", "cancelled"],
+      "reservation": ["active", "consumed", "released", "expired"],
+      "promotion": ["active", "inactive", "scheduled", "expired", "exhausted"]
+    },
+    "inventory_state": "single location; quantity_on_hand, quantity_reserved, derived available quantity, tracking, backorder, threshold, locked reservations, append-only movements",
+    "promo_state": "percentage basis points or fixed minor units, explicit currency, dates, usage limits, minimum/maximum values, product/category restrictions, quote validation and order redemption snapshot",
+    "admin_sections": ["Orders", "Inventory", "Promo Codes", "Commerce Settings", "Audit Logs"],
+    "customer_sections": ["Checkout quote", "Order confirmation", "My Orders", "Order detail", "Eligible cancellation"],
+    "disabled_providers": ["card", "bank_transfer", "promptpay", "paypal", "google_pay", "alipay", "cash_app"],
+    "operational_payment": "cash on delivery only by default; pending until admin collection",
+    "future_payment_adapter": "provider-neutral gateway interface for a future approved hosted/tokenized merchant adapter; no SDK or raw card data in Phase 6"
   },
   "data_bindings": {
     "catalog_file": "src/data/home.ts",

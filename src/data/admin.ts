@@ -26,6 +26,10 @@ export const adminSidebarItems = [
     label: "Products",
     description: "Products, variants, images, and nutrition",
   },
+  { key: "orders", label: "Orders", description: "Orders, payments, fulfillment, and history" },
+  { key: "inventory", label: "Inventory", description: "Variant stock, reservations, and movements" },
+  { key: "promotions", label: "Promo Codes", description: "Discount rules, limits, and redemption" },
+  { key: "audit", label: "Audit Logs", description: "Server-recorded commerce admin actions" },
   {
     key: "settings",
     label: "Admin Settings",

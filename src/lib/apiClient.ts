@@ -1,10 +1,11 @@
 import { SignupFormValues, SignupRoleKey } from "./registerSchema";
 import { apiBaseUrl } from "./runtimeConfig";
 
-type ApiOptions = {
+export type ApiOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   token?: string | null;
   body?: unknown;
+  headers?: Record<string, string>;
 };
 
 export class ApiError extends Error {
@@ -36,6 +37,7 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
       Accept: "application/json",
       "Content-Type": "application/json",
       ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+      ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });

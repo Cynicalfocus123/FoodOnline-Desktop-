@@ -43,6 +43,11 @@ type DashboardStats = {
   draft_products: number;
   archived_products: number;
   out_of_stock_default_variants: number;
+  orders_today: number;
+  pending_orders: number;
+  cod_pending_collection: number;
+  revenue_minor: number;
+  low_stock_variants: number;
 };
 
 type ApiDeleteAccountRequest = {
@@ -120,6 +125,11 @@ const emptyStats: DashboardStats = {
   draft_products: 0,
   archived_products: 0,
   out_of_stock_default_variants: 0,
+  orders_today: 0,
+  pending_orders: 0,
+  cod_pending_collection: 0,
+  revenue_minor: 0,
+  low_stock_variants: 0,
 };
 
 function createAuditEntry(action: string, detail: string): AdminAuditEntry {

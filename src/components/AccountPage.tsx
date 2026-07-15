@@ -14,6 +14,7 @@ import {
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { AccountSection, useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
 
 type AccountAddress = {
   id: number;
@@ -527,42 +528,8 @@ export function AccountPage() {
 
   async function saveCard(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!token || !validateCardForm()) return;
-
-    setPaymentState("saving");
-    setPaymentMessage(null);
-    try {
-      const digits = cardNumber.replace(/\D/g, "");
-      const expiryDigits = expiryDate.replace(/\D/g, "");
-
-      await apiRequest("/account/payment-methods", {
-        method: "POST",
-        token,
-        body: {
-          provider: null,
-          brand: detectBrand(cardNumber),
-          last4: digits.slice(-4),
-          expiry_month: Number(expiryDigits.slice(0, 2)),
-          expiry_year: Number(`20${expiryDigits.slice(2, 4)}`),
-          token_reference: null, // TODO: swap to real provider token.
-          is_default: paymentMethods.length === 0,
-        },
-      });
-
-      setCardholderName("");
-      setCardNumber("");
-      setExpiryDate("");
-      setCvv("");
-      setBillingSameAsShipping(true);
-      setBillingErrors({});
-      setIsAddCardOpen(false);
-      await loadPaymentMethods(token);
-      setPaymentMessage("Payment method saved.");
-    } catch (error) {
-      setPaymentMessage(toErrorMessage(error, "Unable to save payment method."));
-    } finally {
-      setPaymentState("idle");
-    }
+    setCardholderName(""); setCardNumber(""); setExpiryDate(""); setCvv(""); setIsAddCardOpen(false);
+    setPaymentMessage("Adding cards is unavailable until a secure payment provider is connected. No card details were sent.");
   }
 
   async function removePaymentMethod(methodId: number) {
@@ -759,10 +726,7 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "orders" ? (
-              <SimplePanel
-                title="My orders"
-                subtitle={`Order status shortcut selected: ${statusShortcuts.find((item) => item.key === statusFilter)?.label ?? "Pending"}.`}
-              />
+              <OrderHistoryPanel filter={statusFilter} token={token} />
             ) : null}
 
             {accountSection === "saved" ? (
@@ -987,11 +951,11 @@ export function AccountPage() {
 
           {!isAddCardOpen ? (
             <button
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-leaf-500 px-5 text-sm font-black text-leaf-700"
-              onClick={() => setIsAddCardOpen(true)}
+              className="inline-flex min-h-12 cursor-not-allowed items-center justify-center rounded-full border border-neutral-300 px-5 text-sm font-black text-neutral-500"
+              disabled
               type="button"
             >
-              Add new card
+              Add new card — provider not configured
             </button>
           ) : (
             <form className="grid gap-3 rounded-2xl border border-neutral-200 p-4" onSubmit={saveCard}>
@@ -1308,6 +1272,54 @@ function SettingsCard({
       <span className="text-sm leading-6 text-neutral-600">{description}</span>
       <span className="text-sm font-black text-leaf-700">More</span>
     </button>
+  );
+}
+
+function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)[number]["key"]; token: string | null }) {
+  const [orders, setOrders] = useState<CommerceOrder[]>([]);
+  const [selected, setSelected] = useState<CommerceOrder | null>(null);
+  const [message, setMessage] = useState("Loading orders...");
+
+  useEffect(() => {
+    if (!token) { setMessage("Sign in with your FoodOnlines account to view orders."); return; }
+    let active = true;
+    void checkoutApi.accountOrders(token).then((response) => {
+      if (!active) return;
+      setOrders(response.data);
+      setMessage(response.data.length ? "" : "No orders yet.");
+    }).catch((error) => setMessage(error instanceof Error ? error.message : "Unable to load orders."));
+    return () => { active = false; };
+  }, [token]);
+
+  const visible = orders.filter((order) => {
+    if (filter === "pending") return order.order_status === "pending";
+    if (filter === "unshipped") return ["reserved", "processing", "unfulfilled"].includes(order.fulfillment_status);
+    if (filter === "shipped") return order.fulfillment_status === "shipped";
+    if (filter === "toReview") return order.fulfillment_status === "delivered";
+    return ["returned", "cancelled"].includes(order.fulfillment_status);
+  });
+
+  async function cancel(order: CommerceOrder) {
+    if (!token || !window.confirm(`Cancel order ${order.order_number}? Reserved inventory will be released.`)) return;
+    try {
+      const response = await checkoutApi.cancelOrder(order.uuid, token);
+      setOrders((current) => current.map((item) => item.uuid === order.uuid ? response.order : item));
+      setSelected(response.order);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to cancel order."); }
+  }
+
+  return (
+    <div className="mt-6 grid gap-4">
+      {message ? <p className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600">{message}</p> : null}
+      {visible.map((order) => (
+        <article className="rounded-2xl border border-neutral-200 bg-white p-4" key={order.uuid}>
+          <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-lg font-black text-neutral-950">{order.order_number}</p><p className="mt-1 text-sm text-neutral-500">{new Date(order.placed_at).toLocaleString()} · {order.items.length} line(s)</p></div><div className="text-right"><p className="text-lg font-black">{order.total.currency_code} {order.total.amount}</p><p className="text-xs font-bold capitalize text-leaf-700">{order.order_status} · {order.fulfillment_status}</p></div></div>
+          <div className="mt-4 flex flex-wrap gap-2"><button className="rounded-full border border-leaf-500 px-4 py-2 text-sm font-black text-leaf-700" onClick={() => setSelected(selected?.uuid === order.uuid ? null : order)} type="button">{selected?.uuid === order.uuid ? "Hide details" : "View details"}</button>{["pending", "confirmed"].includes(order.order_status) && !["shipped", "delivered"].includes(order.fulfillment_status) ? <button className="rounded-full border border-red-200 px-4 py-2 text-sm font-black text-red-700" onClick={() => void cancel(order)} type="button">Cancel order</button> : null}</div>
+          {selected?.uuid === order.uuid ? <div className="mt-4 grid gap-3 border-t border-neutral-100 pt-4">{order.items.map((item) => <div className="flex justify-between gap-3 text-sm" key={item.uuid}><span><strong>{item.product_name}</strong><br/><span className="text-neutral-500">{item.variant_title} · SKU {item.sku} · Qty {item.quantity}</span></span><strong>{order.total.currency_code} {item.line_total}</strong></div>)}<p className="text-sm text-neutral-600">Payment: <strong className="capitalize">{order.payment_method_code} · {order.payment_status}</strong></p>{order.addresses.find((address) => address.type === "shipping") ? <p className="text-sm text-neutral-600">Ship to: {order.addresses.find((address) => address.type === "shipping")!.summary}</p> : null}</div> : null}
+        </article>
+      ))}
+      {!message && !visible.length ? <p className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">No orders match this status.</p> : null}
+    </div>
   );
 }
 
