@@ -7,6 +7,9 @@ use App\Models\Category;
 use App\Models\MediaUpload;
 use App\Models\Product;
 use App\Models\ProductMedia;
+use App\Models\ProductReview;
+use App\Models\ReturnRequest;
+use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -65,6 +68,26 @@ class MediaUploadAuthorizationService
             throw ValidationException::withMessages(['storage' => ['Media storage could not authorize the upload. Try again later.']]);
         }
 
+        return ['upload' => $upload, 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
+    }
+
+    public function authorizeCustomer(array $data, User $user): array
+    {
+        if (! config('foodonlines.media.uploads_enabled')) { throw ValidationException::withMessages(['storage' => ['Media uploads are currently unavailable.']]); }
+        [$targetType, $target, $prefix, $limit] = match ($data['purpose']) {
+            'review_image' => ['review', ProductReview::query()->where('uuid', $data['target_uuid'])->where('user_id', $user->id)->first(), 'reviews/'.$data['target_uuid'].'/image', 5],
+            'return_evidence' => ['return', ReturnRequest::query()->where('uuid', $data['target_uuid'])->where('user_id', $user->id)->first(), 'returns/'.$data['target_uuid'].'/evidence', 8],
+            'support_attachment' => ['support', SupportTicket::query()->where('uuid', $data['target_uuid'])->where('user_id', $user->id)->first(), 'support/'.$data['target_uuid'].'/attachment', 5],
+            default => throw ValidationException::withMessages(['purpose' => ['Unsupported customer media purpose.']]),
+        };
+        if (! $target) { throw ValidationException::withMessages(['target_uuid' => ['The media target was not found.']]); }
+        $existing = match ($targetType) { 'review' => $target->media()->count(), 'return' => $target->media()->count(), default => $target->media()->count() };
+        if ($existing >= $limit) { throw ValidationException::withMessages(['target_uuid' => ['The media limit for this target has been reached.']]); }
+        $mime = strtolower($data['mime_type']); $maximum = $data['purpose'] === 'return_evidence' ? 10 * 1024 * 1024 : 8 * 1024 * 1024;
+        if (! in_array($mime, config('foodonlines.media.allowed_mime_types', []), true) || (int) $data['size_bytes'] > $maximum) { throw ValidationException::withMessages(['size_bytes' => ['This image is not an approved size or type.']]); }
+        $extension = match ($mime) { 'image/jpeg' => 'jpg', 'image/png' => 'png', default => 'webp' }; $uuid = (string) Str::uuid(); $expiresAt = now()->addMinutes(max(1, (int) config('foodonlines.media.upload_ttl_minutes', 5))); $disk = (string) config('foodonlines.media.disk', 'r2');
+        $upload = MediaUpload::query()->create(['uuid' => $uuid, 'purpose' => $data['purpose'], 'target_type' => $targetType, 'target_id' => $target->id, 'disk' => $disk, 'object_key' => $prefix.'-'.$uuid.'.'.$extension, 'original_filename' => basename(str_replace('\\', '/', $data['original_filename'])), 'expected_mime_type' => $mime, 'expected_size_bytes' => (int) $data['size_bytes'], 'status' => 'pending', 'expires_at' => $expiresAt, 'created_by' => $user->id]);
+        try { $signed = $this->signer->sign($disk, $upload->object_key, $expiresAt, $mime); } catch (\Throwable) { $upload->update(['status' => 'deleted']); throw ValidationException::withMessages(['storage' => ['Media storage could not authorize the upload.']]); }
         return ['upload' => $upload, 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
     }
 

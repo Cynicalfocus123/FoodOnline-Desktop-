@@ -31,6 +31,7 @@ class User extends Authenticatable
         'registered_from',
         'role',
         'status',
+        'staff_role', 'staff_permissions', 'mfa_secret', 'mfa_enabled_at', 'last_login_at',
     ];
 
     /**
@@ -39,6 +40,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'mfa_secret',
     ];
 
     /**
@@ -47,6 +49,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'staff_permissions' => 'array',
+        'mfa_enabled_at' => 'datetime',
+        'last_login_at' => 'datetime',
     ];
 
     /**
@@ -90,4 +95,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public function favorites(): HasMany { return $this->hasMany(UserFavorite::class); }
+    public function savedItems(): HasMany { return $this->hasMany(UserSavedItem::class); }
+    public function reviews(): HasMany { return $this->hasMany(ProductReview::class); }
+    public function returnRequests(): HasMany { return $this->hasMany(ReturnRequest::class); }
+    public function supportTickets(): HasMany { return $this->hasMany(SupportTicket::class); }
+    public function adminRecoveryCodes(): HasMany { return $this->hasMany(AdminRecoveryCode::class); }
+    public function userApiTokens(): HasMany { return $this->hasMany(UserApiToken::class); }
 }

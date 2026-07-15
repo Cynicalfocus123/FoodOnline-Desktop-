@@ -7,6 +7,12 @@ use App\Models\Category;
 use App\Models\MediaUpload;
 use App\Models\Product;
 use App\Models\ProductMedia;
+use App\Models\ProductReview;
+use App\Models\ReviewMedia;
+use App\Models\ReturnMedia;
+use App\Models\ReturnRequest;
+use App\Models\SupportMedia;
+use App\Models\SupportTicket;
 use App\Models\User;
 use App\Services\Catalog\ProductMediaService;
 use Illuminate\Support\Facades\DB;
@@ -73,6 +79,18 @@ class MediaUploadVerificationService
                 $target = $media;
                 $type = 'product_media';
                 $locked->product_media_id = $media->id;
+            } elseif ($locked->target_type === 'review') {
+                $review = ProductReview::query()->whereKey($locked->target_id)->lockForUpdate()->firstOrFail();
+                $target = ReviewMedia::query()->create(['uuid' => (string) \Illuminate\Support\Str::uuid(), 'product_review_id' => $review->id, 'media_upload_id' => $locked->id, 'path' => $path, 'alt_text' => $data['alt_text'] ?? null, 'sort_order' => (int) ($review->media()->max('sort_order') ?? -1) + 1]);
+                $type = 'review_media';
+            } elseif ($locked->target_type === 'return') {
+                $return = ReturnRequest::query()->whereKey($locked->target_id)->lockForUpdate()->firstOrFail();
+                $target = ReturnMedia::query()->create(['uuid' => (string) \Illuminate\Support\Str::uuid(), 'return_request_id' => $return->id, 'media_upload_id' => $locked->id, 'path' => $path, 'alt_text' => $data['alt_text'] ?? null, 'sort_order' => (int) ($return->media()->max('sort_order') ?? -1) + 1]);
+                $type = 'return_media';
+            } elseif ($locked->target_type === 'support') {
+                $ticket = SupportTicket::query()->whereKey($locked->target_id)->lockForUpdate()->firstOrFail();
+                $target = SupportMedia::query()->create(['uuid' => (string) \Illuminate\Support\Str::uuid(), 'support_ticket_id' => $ticket->id, 'media_upload_id' => $locked->id, 'path' => $path, 'alt_text' => $data['alt_text'] ?? null, 'sort_order' => (int) ($ticket->media()->max('sort_order') ?? -1) + 1]);
+                $type = 'support_media';
             } elseif ($locked->target_type === 'brand') {
                 $target = Brand::query()->whereKey($locked->target_id)->lockForUpdate()->firstOrFail();
                 $oldPath = $target->logo_path;

@@ -7,6 +7,8 @@ use App\Models\InventoryMovement;
 use App\Models\InventoryReservation;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use App\Models\ReturnRequest;
+use App\Models\ReturnRequestItem;
 use App\Models\User;
 use App\Models\VariantInventory;
 use Illuminate\Http\Request;
@@ -122,11 +124,33 @@ class InventoryService
         }, 3);
     }
 
-    private function movement(VariantInventory $inventory, string $type, int $delta, int $quantityBefore, int $reservedBefore, string $reason, ?Order $order = null, ?InventoryReservation $reservation = null, ?User $admin = null): void
+    public function restockReturn(ReturnRequest $return, ReturnRequestItem $item, int $quantity, User $admin): VariantInventory
+    {
+        if ($quantity < 0 || $quantity > $item->quantity_received) {
+            throw ValidationException::withMessages(['restock_quantity' => ['Restock quantity cannot exceed the received quantity.']]);
+        }
+        $variant = $item->orderItem()->with('variant')->firstOrFail()->variant;
+        if (! $variant) {
+            throw ValidationException::withMessages(['inventory' => ['The returned variant no longer exists.']]);
+        }
+
+        $this->ensureRows([$variant->id]);
+        $inventory = VariantInventory::query()->where('product_variant_id', $variant->id)->lockForUpdate()->firstOrFail();
+        $beforeQuantity = $inventory->quantity_on_hand;
+        $beforeReserved = $inventory->quantity_reserved;
+        if ($quantity > 0) {
+            $inventory->increment('quantity_on_hand', $quantity);
+            $inventory->refresh();
+            $this->movement($inventory, 'return_restock', $quantity, $beforeQuantity, $beforeReserved, 'Returned item restocked.', $return->order, null, $admin, $return);
+        }
+        return $inventory;
+    }
+
+    private function movement(VariantInventory $inventory, string $type, int $delta, int $quantityBefore, int $reservedBefore, string $reason, ?Order $order = null, ?InventoryReservation $reservation = null, ?User $admin = null, ?ReturnRequest $return = null): void
     {
         InventoryMovement::query()->create([
             'product_variant_id' => $inventory->product_variant_id, 'admin_user_id' => $admin?->id, 'order_id' => $order?->id,
-            'reservation_id' => $reservation?->id, 'movement_type' => $type, 'quantity_delta' => $delta,
+            'reservation_id' => $reservation?->id, 'return_request_id' => $return?->id, 'movement_type' => $type, 'quantity_delta' => $delta,
             'quantity_before' => $quantityBefore, 'quantity_after' => $inventory->quantity_on_hand,
             'reserved_before' => $reservedBefore, 'reserved_after' => $inventory->quantity_reserved, 'reason' => $reason,
         ]);

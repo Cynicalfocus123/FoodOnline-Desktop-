@@ -18,6 +18,7 @@ import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
 import { ProductAdminPanel } from "./admin/ProductAdminPanel";
 import { AuditAdminPanel, CommerceSettingsPanel, InventoryAdminPanel, OrdersAdminPanel, PromotionsAdminPanel } from "./admin/CommerceAdminPanels";
+import { ReturnsAdminPanel, ReviewsAdminPanel, ReportsAdminPanel, StaffAdminPanel, OperationsAdminPanel, SupportAdminPanel } from "./admin/OperationalAdminPanels";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -269,6 +270,12 @@ function AdminDashboard() {
             {activeSidebarKey === "inventory" && token ? <InventoryAdminPanel token={token} /> : null}
             {activeSidebarKey === "promotions" && token ? <PromotionsAdminPanel token={token} /> : null}
             {activeSidebarKey === "audit" && token ? <AuditAdminPanel token={token} /> : null}
+            {activeSidebarKey === "returns" && token ? <ReturnsAdminPanel token={token} /> : null}
+            {activeSidebarKey === "reviews" && token ? <ReviewsAdminPanel token={token} /> : null}
+            {activeSidebarKey === "support" && token ? <SupportAdminPanel token={token} /> : null}
+            {activeSidebarKey === "reports" && token ? <ReportsAdminPanel token={token} /> : null}
+            {activeSidebarKey === "staff" && token ? <StaffAdminPanel token={token} /> : null}
+            {activeSidebarKey === "operations" && token ? <OperationsAdminPanel token={token} /> : null}
           </div>
         </section>
       </div>

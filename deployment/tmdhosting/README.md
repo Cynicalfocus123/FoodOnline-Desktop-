@@ -1,5 +1,7 @@
 # TMDHosting cPanel backend deploy notes
 
+> Phase 7 review (2026-07-15): this historical guide does not represent external deployment evidence. Use `backend-live/` and `docs/operational-commerce-phase-7.md` for current operational-commerce scope.
+
 > Phase 4 review (2026-07-13): the R2 media and nutrition runtime is synchronized only through the current Hostinger-oriented `backend-live/` process. This historical guide does not configure Cloudflare or deploy Phase 4.
 
 > Phase 3 review (2026-07-13): the current grocery catalog and real relative-path public entry exist in the Hostinger-oriented `backend-live/` workflow, not this historical host guide.

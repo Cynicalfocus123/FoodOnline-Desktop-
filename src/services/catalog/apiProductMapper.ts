@@ -46,6 +46,8 @@ export interface ApiProductDto {
   storage_instructions?: string | null;
   sku?: string | null;
   nutrition_facts?: { serving_size?: string | null; calories?: number | null; total_fat_g?: string | null; sodium_mg?: string | null; total_carbohydrate_g?: string | null; total_sugars_g?: string | null; protein_g?: string | null; ingredients_note?: string | null; allergen_note?: string | null } | null;
+  sold_count?: number | null;
+  review_summary?: { average_rating?: number; review_count?: number; breakdown?: Record<string, number> } | null;
 }
 
 function numberValue(value: string | number | null | undefined, fallback = 0) {
@@ -105,7 +107,7 @@ export function mapApiProduct(dto: ApiProductDto): Product {
     imageFit: dto.image_fit ?? dto.images?.[0]?.image_fit ?? "contain",
     inStock: effectiveDefault.inStock,
     unitPrice: effectiveDefault.unitPrice,
-    soldCount: 0,
+    soldCount: Number(dto.sold_count ?? 0),
     categoryId: dto.category_id == null ? dto.category_slug ?? "" : String(dto.category_id),
     categoryName: dto.category_name ?? "Catalog",
     deliveryType: "Local Delivery",
@@ -138,10 +140,11 @@ export function mapApiProduct(dto: ApiProductDto): Product {
     returnPolicy: "See our return policy.",
     reviews: [],
     reviewTags: [],
-    averageRating: 0,
-    ratingBreakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-    reviewCount: 0,
+    averageRating: Number(dto.review_summary?.average_rating ?? 0),
+    ratingBreakdown: { 1: Number(dto.review_summary?.breakdown?.["1"] ?? 0), 2: Number(dto.review_summary?.breakdown?.["2"] ?? 0), 3: Number(dto.review_summary?.breakdown?.["3"] ?? 0), 4: Number(dto.review_summary?.breakdown?.["4"] ?? 0), 5: Number(dto.review_summary?.breakdown?.["5"] ?? 0) },
+    reviewCount: Number(dto.review_summary?.review_count ?? 0),
     variants: effectiveVariants,
+    apiBacked: true,
   };
   return applyPresentationCompatibility({ ...product, price: effectiveDefault.price, oldPrice: effectiveDefault.oldPrice, inStock: effectiveDefault.inStock });
 }

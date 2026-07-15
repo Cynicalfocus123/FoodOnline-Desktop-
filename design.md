@@ -1,5 +1,13 @@
 # FoodOnlines Desktop Home Design
 
+## Operational Commerce and Production Readiness — Phase 7 (2026-07-15)
+
+- The approved public storefront and existing admin shell remain visually intact. Returns, reviews, Favorites, Saved for Later, Buy Again, notifications, receipts, and support reuse the existing cards, modals, account sections, buttons, loading/empty/error states, and mobile sticky patterns.
+- Review UI shows backend-calculated rating aggregates and Verified Purchase labels; customer review submission is available from product detail and moderation remains an admin operation. Return history and support timelines are authenticated and ownership-scoped. Receipt actions open a no-index server-rendered receipt without exposing internal order fields.
+- Favorites identify a product UUID; Saved for Later identifies the exact variant UUID and quantity. Anonymous local state merges into the authenticated backend after login, with unavailable variants retained rather than silently substituted. Buy Again uses current server prices and availability.
+- Admin Returns, Reviews, Support, Reports/CSV, Staff/MFA, and Operations are additive panels inside the existing responsive admin layout. Backend permissions, authenticated CSV download, failed-job retry, and safe diagnostics enforce the sensitive actions; no payment-provider UI is activated.
+- SEO metadata, authoritative Product JSON-LD, sitemap endpoints, responsive behavior, keyboard-sized controls, and visible loading/empty/error states are preserved across desktop, tablet, and mobile breakpoints. Phase 8 is reserved for one approved hosted or tokenized merchant payment flow.
+
 ## Transactional Commerce Core — Phase 6 (2026-07-14)
 
 - The approved public storefront, account layout, cart composition, checkout composition, admin shell, catalog editors, responsive breakpoints, and FoodOnlines green/orange visual language remain intact. Phase 6 changes the data source beneath those surfaces.

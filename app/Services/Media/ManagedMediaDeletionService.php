@@ -6,6 +6,9 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\MediaUpload;
 use App\Models\ProductMedia;
+use App\Models\ReviewMedia;
+use App\Models\ReturnMedia;
+use App\Models\SupportMedia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,7 +38,7 @@ class ManagedMediaDeletionService
 
     public function isReferenced(string $path): bool
     {
-        if (ProductMedia::query()->where('path', $path)->exists() || Brand::query()->where('logo_path', $path)->exists()) { return true; }
+        if (ProductMedia::query()->where('path', $path)->exists() || ReviewMedia::query()->where('path', $path)->exists() || ReturnMedia::query()->where('path', $path)->exists() || SupportMedia::query()->where('path', $path)->exists() || Brand::query()->where('logo_path', $path)->exists()) { return true; }
         return Category::query()->where(fn ($query) => $query->where('image_path', $path)->orWhere('icon_path', $path)->orWhere('desktop_banner_path', $path)->orWhere('mobile_banner_path', $path))->exists();
     }
 
@@ -43,6 +46,6 @@ class ManagedMediaDeletionService
     {
         if (! is_string($path) || ! str_starts_with($path, 'r2://')) { return null; }
         $key = substr($path, 5);
-        return preg_match('#^(products|brands|categories)/[0-9a-f-]+/[a-z-]+-[0-9a-f-]+\.(jpg|png|webp)$#i', $key) === 1 ? $key : null;
+        return preg_match('#^(products|brands|categories|reviews|returns|support)/[0-9a-f-]+/[a-z-]+-[0-9a-f-]+\.(jpg|png|webp)$#i', $key) === 1 ? $key : null;
     }
 }

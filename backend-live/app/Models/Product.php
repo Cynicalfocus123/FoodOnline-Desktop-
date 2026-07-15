@@ -46,6 +46,8 @@ class Product extends Model
     public function media(): HasMany { return $this->hasMany(ProductMedia::class); }
     public function primaryMedia(): HasOne { return $this->hasOne(ProductMedia::class)->where('is_primary', true); }
     public function nutritionFacts(): HasOne { return $this->hasOne(ProductNutritionFact::class); }
+    public function reviews(): HasMany { return $this->hasMany(ProductReview::class); }
+    public function favorites(): HasMany { return $this->hasMany(UserFavorite::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
     public function updater(): BelongsTo { return $this->belongsTo(User::class, 'updated_by'); }
     public function scopePublished(Builder $query): Builder { return $query->where('status', 'published')->whereNotNull('published_at'); }

@@ -2,8 +2,24 @@
   "project": {
     "name": "FoodOnlines Desktop Web",
     "version": "1.2.0",
-    "updated_at": "2026-07-14",
-    "notes": "Desktop design memory for the unchanged public storefront and existing admin catalog portal, now with the Phase 6 transactional commerce boundary for backend carts, server quotes, COD orders, inventory, promotions, customer history, and admin ecommerce operations."
+    "updated_at": "2026-07-15",
+    "notes": "Desktop design memory for the unchanged public storefront and existing admin catalog portal, now with Phase 7 operational commerce and production-readiness contracts layered over the Phase 6 transactional commerce boundary."
+  },
+  "phase_7_operational_commerce": {
+    "return_state_model": ["requested", "approved", "rejected", "information_requested", "received", "inspecting", "refund_pending", "refunded", "closed", "cancelled"],
+    "review_state_model": ["pending", "approved", "rejected", "hidden"],
+    "favorite_identity": "authenticated user + product UUID",
+    "saved_item_identity": "authenticated user + exact product variant UUID + quantity",
+    "notification_identity": "database notification UUID owned by the authenticated user",
+    "staff_role_model": ["super_admin", "order_manager", "inventory_manager", "catalog_manager", "customer_support", "marketing_manager", "read_only"],
+    "permission_model": "backend middleware checks explicit staff permissions; implicit and explicit super_admin accounts retain full access with final-super-admin protection",
+    "mfa_state": "encrypted TOTP secret, enabled timestamp, hashed one-time recovery codes, and challenge/re-authentication records",
+    "report_sections": ["orders", "paid_cod", "unpaid_cod", "returns", "top_products", "csv_export"],
+    "support_state": ["open", "pending_customer", "pending_staff", "resolved", "closed"],
+    "seo_metadata": ["title", "description", "canonical_url", "robots_index", "robots_follow", "product_json_ld", "sitemaps"],
+    "r2_media_purposes": ["product_image", "brand_logo", "category_image", "category_icon", "category_desktop_banner", "category_mobile_banner", "review_image", "return_evidence", "support_attachment"],
+    "deferred_phase_8_payment_adapter": "one approved hosted or tokenized merchant provider, signed webhooks, reconciliation, provider refunds, and provider-backed saved methods",
+    "design_preservation": "existing public storefront, account shell, checkout, admin shell, responsive states, and accessibility patterns remain authoritative"
   },
   "sources": {
     "desktop_notes": "D:/Foodonline desktop version/design.md",

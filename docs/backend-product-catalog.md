@@ -1,5 +1,9 @@
 # FoodOnlines Core Grocery Product Catalog
 
+## Phase 7 compatibility note (2026-07-15)
+
+Products and variants now expose SEO fields, review aggregates, and real order-data Best Selling without changing publication or exact variant identity. Review media uses the existing R2-compatible media workflow; see `docs/operational-commerce-phase-7.md`.
+
 > Phase 4 extension (2026-07-13): the Phase 3 models and invariants are now exposed in the existing admin portal, product media supports verified managed R2 objects, and product detail can return nullable nutrition facts. See `admin-catalog-and-r2.md`; seller offers/inventory remain out of scope.
 
 ## Phase 3 scope

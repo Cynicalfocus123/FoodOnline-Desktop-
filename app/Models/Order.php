@@ -22,4 +22,6 @@ class Order extends Model
     public function history(): HasMany { return $this->hasMany(OrderStatusHistory::class)->orderBy('created_at'); }
     public function reservations(): HasMany { return $this->hasMany(InventoryReservation::class); }
     public function notes(): HasMany { return $this->hasMany(OrderNote::class); }
+    public function returns(): HasMany { return $this->hasMany(ReturnRequest::class); }
+    public function supportTickets(): HasMany { return $this->hasMany(SupportTicket::class); }
 }

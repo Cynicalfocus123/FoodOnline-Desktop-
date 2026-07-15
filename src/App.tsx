@@ -47,6 +47,7 @@ export default function App() {
   const token = usePublicAuthStore((state) => state.token);
   const hydrateCommerceCart = useHomeStore((state) => state.hydrateCommerceCart);
   const mergeGuestCart = useHomeStore((state) => state.mergeGuestCart);
+  const hydrateSavedData = useHomeStore((state) => state.hydrateSavedData);
 
   useEffect(() => {
     if (!hasHydratedSession) {
@@ -56,8 +57,8 @@ export default function App() {
 
   useEffect(() => {
     if (!hasHydratedSession) return;
-    void (token ? mergeGuestCart() : hydrateCommerceCart());
-  }, [hasHydratedSession, hydrateCommerceCart, mergeGuestCart, token]);
+    void Promise.all([token ? mergeGuestCart() : hydrateCommerceCart(), token ? hydrateSavedData() : Promise.resolve()]);
+  }, [hasHydratedSession, hydrateCommerceCart, hydrateSavedData, mergeGuestCart, token]);
 
   useEffect(() => {
     syncRouteFromHash(readCurrentRouteHash());

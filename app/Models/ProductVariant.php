@@ -51,6 +51,8 @@ class ProductVariant extends Model
     public function cartItems(): HasMany { return $this->hasMany(CartItem::class, 'product_variant_id'); }
     public function reservations(): HasMany { return $this->hasMany(InventoryReservation::class, 'product_variant_id'); }
     public function inventoryMovements(): HasMany { return $this->hasMany(InventoryMovement::class, 'product_variant_id'); }
+    public function savedItems(): HasMany { return $this->hasMany(UserSavedItem::class, 'product_variant_id'); }
+    public function reviews(): HasMany { return $this->hasMany(ProductReview::class, 'product_variant_id'); }
     public function scopeActive(Builder $query): Builder { return $query->where('is_active', true); }
     public function scopeAvailable(Builder $query): Builder { return $query->active()->whereIn('availability_status', ['in_stock', 'preorder', 'backorder']); }
     public function scopeOrdered(Builder $query): Builder { return $query->orderByDesc('is_default')->orderBy('sort_order')->orderBy('id'); }

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MediaUpload extends Model
 {
-    public const PURPOSES = ['product_image', 'brand_logo', 'category_image', 'category_icon', 'category_desktop_banner', 'category_mobile_banner'];
+    public const PURPOSES = ['product_image', 'brand_logo', 'category_image', 'category_icon', 'category_desktop_banner', 'category_mobile_banner', 'review_image', 'return_evidence', 'support_attachment'];
     public const STATUSES = ['pending', 'finalized', 'expired', 'cleanup_pending', 'deleted'];
 
     protected $fillable = [
@@ -27,4 +28,7 @@ class MediaUpload extends Model
     public function getRouteKeyName(): string { return 'uuid'; }
     public function productMedia(): BelongsTo { return $this->belongsTo(ProductMedia::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
+    public function reviewMedia(): HasMany { return $this->hasMany(ReviewMedia::class); }
+    public function returnMedia(): HasMany { return $this->hasMany(ReturnMedia::class); }
+    public function supportMedia(): HasMany { return $this->hasMany(SupportMedia::class); }
 }

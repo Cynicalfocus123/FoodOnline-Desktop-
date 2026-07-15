@@ -27,11 +27,11 @@ export function applyPresentationCompatibility(product: Product): Product {
     brandOrigin: product.brandOrigin === "Unknown" ? localMatch.brandOrigin : product.brandOrigin,
     recipeSuggestions: product.recipeSuggestions.length ? product.recipeSuggestions : localMatch.recipeSuggestions,
     returnPolicy: product.returnPolicy === "See our return policy." ? localMatch.returnPolicy : product.returnPolicy,
-    reviews: product.reviews.length ? product.reviews : localMatch.reviews,
-    reviewTags: product.reviewTags.length ? product.reviewTags : localMatch.reviewTags,
-    averageRating: product.reviewCount ? product.averageRating : localMatch.averageRating,
-    ratingBreakdown: product.reviewCount ? product.ratingBreakdown : localMatch.ratingBreakdown,
-    reviewCount: product.reviewCount || localMatch.reviewCount,
+    reviews: product.apiBacked ? product.reviews : product.reviews.length ? product.reviews : localMatch.reviews,
+    reviewTags: product.apiBacked ? product.reviewTags : product.reviewTags.length ? product.reviewTags : localMatch.reviewTags,
+    averageRating: product.apiBacked ? product.averageRating : product.reviewCount ? product.averageRating : localMatch.averageRating,
+    ratingBreakdown: product.apiBacked ? product.ratingBreakdown : product.reviewCount ? product.ratingBreakdown : localMatch.ratingBreakdown,
+    reviewCount: product.apiBacked ? product.reviewCount : product.reviewCount || localMatch.reviewCount,
     nutritionFacts: product.nutritionFacts.calories ? product.nutritionFacts : localMatch.nutritionFacts,
   };
 }

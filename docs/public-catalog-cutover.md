@@ -1,5 +1,9 @@
 # Public Catalog Cutover - Phase 5
 
+## Phase 7 compatibility note (2026-07-15)
+
+The API-backed storefront remains authoritative. Phase 7 adds real review loading/submission, product SEO metadata/JSON-LD, Best Selling from order data, and persistent saved-data synchronization while preserving the Phase 5 presentation compatibility layer.
+
 ## Scope
 
 Phase 5 connects the existing public storefront and existing admin catalog editors to Laravel's public catalog contract. It preserves the current visual design and behavior while making API data authoritative. Transactional ecommerce remains deferred to Phase 6.

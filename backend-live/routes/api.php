@@ -28,6 +28,8 @@ use App\Http\Controllers\Api\Auth\CurrentUserController;
 use App\Http\Controllers\Api\Auth\LoginUserController;
 use App\Http\Controllers\Api\Auth\LogoutUserController;
 use App\Http\Controllers\Api\Auth\RegisterUserController;
+use App\Http\Controllers\Api\Auth\PasswordRecoveryController;
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\Catalog\CategoryController;
 use App\Http\Controllers\Api\Catalog\BrandController;
@@ -35,6 +37,24 @@ use App\Http\Controllers\Api\Catalog\ProductController;
 use App\Http\Controllers\Api\Commerce\CartController;
 use App\Http\Controllers\Api\Commerce\CheckoutController;
 use App\Http\Controllers\Api\Commerce\OrderController;
+use App\Http\Controllers\Api\Account\SavedDataController;
+use App\Http\Controllers\Api\Account\ReturnRequestController;
+use App\Http\Controllers\Api\Account\ReviewController as AccountReviewController;
+use App\Http\Controllers\Api\Account\BuyAgainController;
+use App\Http\Controllers\Api\Account\NotificationController as AccountNotificationController;
+use App\Http\Controllers\Api\Account\SupportTicketController;
+use App\Http\Controllers\Api\Account\SessionController;
+use App\Http\Controllers\Api\Account\MediaUploadController as AccountMediaUploadController;
+use App\Http\Controllers\Api\Account\ReceiptController;
+use App\Http\Controllers\Api\Catalog\ReviewController as CatalogReviewController;
+use App\Http\Controllers\Api\ReviewInteractionController;
+use App\Http\Controllers\Api\Admin\AdminReturnController;
+use App\Http\Controllers\Api\Admin\AdminReviewController;
+use App\Http\Controllers\Api\Admin\AdminSupportController;
+use App\Http\Controllers\Api\Admin\AdminReportController;
+use App\Http\Controllers\Api\Admin\AdminOperationsController;
+use App\Http\Controllers\Api\Admin\AdminSecurityController;
+use App\Http\Controllers\Api\Admin\AdminFailedJobController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -49,10 +69,14 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/login', LoginUserController::class)
         ->middleware(['throttle:api', 'throttle:login'])
         ->name('api.v1.auth.login');
+    Route::post('/auth/password/forgot', [PasswordRecoveryController::class, 'request'])->middleware(['throttle:api', 'throttle:login'])->name('api.v1.auth.password.forgot');
+    Route::post('/auth/password/reset', [PasswordRecoveryController::class, 'reset'])->middleware(['throttle:api', 'throttle:login'])->name('api.v1.auth.password.reset');
+    Route::post('/auth/email/verify', [EmailVerificationController::class, 'verify'])->middleware('throttle:api')->name('api.v1.auth.email.verify');
 
     Route::middleware(['user.token', 'throttle:api'])->group(function (): void {
         Route::post('/auth/logout', LogoutUserController::class)->name('api.v1.auth.logout');
         Route::get('/auth/me', CurrentUserController::class)->name('api.v1.auth.me');
+        Route::post('/auth/email/verification-notification', [EmailVerificationController::class, 'request'])->name('api.v1.auth.email.verification-notification');
 
         Route::get('/account/addresses', [AddressBookController::class, 'index'])->name('api.v1.account.addresses.index');
         Route::post('/account/addresses', [AddressBookController::class, 'store'])->name('api.v1.account.addresses.store');
@@ -73,7 +97,41 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/account/orders', [AccountOrderController::class, 'index'])->name('api.v1.account.orders.index');
         Route::get('/account/orders/{order}', [AccountOrderController::class, 'show'])->name('api.v1.account.orders.show');
         Route::post('/account/orders/{order}/cancel', [AccountOrderController::class, 'cancel'])->name('api.v1.account.orders.cancel');
+        Route::get('/account/orders/{order}/receipt', [ReceiptController::class, 'show'])->name('api.v1.account.orders.receipt');
         Route::post('/cart/merge', [CartController::class, 'merge'])->name('api.v1.cart.merge');
+        Route::get('/account/favorites', [SavedDataController::class, 'favorites'])->name('api.v1.account.favorites.index');
+        Route::post('/account/favorites', [SavedDataController::class, 'favorite'])->name('api.v1.account.favorites.store');
+        Route::delete('/account/favorites/{product}', [SavedDataController::class, 'removeFavorite'])->name('api.v1.account.favorites.destroy');
+        Route::post('/account/favorites/merge', [SavedDataController::class, 'merge'])->name('api.v1.account.favorites.merge');
+        Route::get('/account/saved-items', [SavedDataController::class, 'savedItems'])->name('api.v1.account.saved-items.index');
+        Route::post('/account/saved-items', [SavedDataController::class, 'save'])->name('api.v1.account.saved-items.store');
+        Route::delete('/account/saved-items/{variant}', [SavedDataController::class, 'removeSaved'])->name('api.v1.account.saved-items.destroy');
+        Route::post('/account/saved-items/merge', [SavedDataController::class, 'merge'])->name('api.v1.account.saved-items.merge');
+        Route::post('/account/saved-items/{variant}/move-to-cart', [SavedDataController::class, 'moveToCart'])->name('api.v1.account.saved-items.move');
+        Route::get('/account/returns', [ReturnRequestController::class, 'index'])->name('api.v1.account.returns.index');
+        Route::post('/account/returns', [ReturnRequestController::class, 'store'])->name('api.v1.account.returns.store');
+        Route::get('/account/returns/{returnRequest}', [ReturnRequestController::class, 'show'])->name('api.v1.account.returns.show');
+        Route::post('/account/returns/{returnRequest}/cancel', [ReturnRequestController::class, 'cancel'])->name('api.v1.account.returns.cancel');
+        Route::get('/account/reviews', [AccountReviewController::class, 'index'])->name('api.v1.account.reviews.index');
+        Route::post('/catalog/products/{product}/reviews', [AccountReviewController::class, 'store'])->name('api.v1.catalog.products.reviews.store');
+        Route::patch('/account/reviews/{review}', [AccountReviewController::class, 'update'])->name('api.v1.account.reviews.update');
+        Route::delete('/account/reviews/{review}', [AccountReviewController::class, 'destroy'])->name('api.v1.account.reviews.destroy');
+        Route::get('/account/notifications', [AccountNotificationController::class, 'index'])->name('api.v1.account.notifications.index');
+        Route::post('/account/notifications/{notification}/read', [AccountNotificationController::class, 'read'])->name('api.v1.account.notifications.read');
+        Route::post('/account/notifications/read-all', [AccountNotificationController::class, 'readAll'])->name('api.v1.account.notifications.read-all');
+        Route::delete('/account/notifications/{notification}', [AccountNotificationController::class, 'destroy'])->name('api.v1.account.notifications.destroy');
+        Route::get('/account/support-tickets', [SupportTicketController::class, 'index'])->name('api.v1.account.support.index');
+        Route::post('/account/support-tickets', [SupportTicketController::class, 'store'])->name('api.v1.account.support.store');
+        Route::get('/account/support-tickets/{ticket}', [SupportTicketController::class, 'show'])->name('api.v1.account.support.show');
+        Route::post('/account/support-tickets/{ticket}/messages', [SupportTicketController::class, 'message'])->name('api.v1.account.support.message');
+        Route::get('/account/sessions', [SessionController::class, 'index'])->name('api.v1.account.sessions.index');
+        Route::delete('/account/sessions/{token}', [SessionController::class, 'destroy'])->name('api.v1.account.sessions.destroy');
+        Route::post('/account/media-uploads', [AccountMediaUploadController::class, 'store'])->name('api.v1.account.media-uploads.store');
+        Route::post('/account/media-uploads/{mediaUpload}/complete', [AccountMediaUploadController::class, 'complete'])->name('api.v1.account.media-uploads.complete');
+        Route::post('/account/orders/{order}/buy-again', [BuyAgainController::class, 'store'])->name('api.v1.account.orders.buy-again');
+        Route::post('/reviews/{review}/helpful', [ReviewInteractionController::class, 'helpful'])->name('api.v1.reviews.helpful');
+        Route::delete('/reviews/{review}/helpful', [ReviewInteractionController::class, 'removeHelpful'])->name('api.v1.reviews.helpful.destroy');
+        Route::post('/reviews/{review}/report', [ReviewInteractionController::class, 'report'])->name('api.v1.reviews.report');
     });
 
     Route::prefix('admin')->group(function (): void {
@@ -146,6 +204,28 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/commerce-settings', [AdminCommerceSettingsController::class, 'show'])->name('api.v1.admin.commerce-settings.show');
             Route::put('/commerce-settings', [AdminCommerceSettingsController::class, 'update'])->name('api.v1.admin.commerce-settings.update');
             Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])->name('api.v1.admin.audit-logs.index');
+            Route::get('/returns', [AdminReturnController::class, 'index'])->middleware('admin.permission:returns.view')->name('api.v1.admin.returns.index');
+            Route::get('/returns/{returnRequest}', [AdminReturnController::class, 'show'])->middleware('admin.permission:returns.view')->name('api.v1.admin.returns.show');
+            Route::post('/returns/{returnRequest}/actions', [AdminReturnController::class, 'action'])->middleware('admin.permission:returns.manage')->name('api.v1.admin.returns.action');
+            Route::get('/reviews', [AdminReviewController::class, 'index'])->middleware('admin.permission:reviews.view')->name('api.v1.admin.reviews.index');
+            Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->middleware('admin.permission:reviews.view')->name('api.v1.admin.reviews.show');
+            Route::post('/reviews/{review}/actions', [AdminReviewController::class, 'action'])->middleware('admin.permission:reviews.moderate')->name('api.v1.admin.reviews.action');
+            Route::get('/support-tickets', [AdminSupportController::class, 'index'])->middleware('admin.permission:support.view')->name('api.v1.admin.support.index');
+            Route::get('/support-tickets/{ticket}', [AdminSupportController::class, 'show'])->middleware('admin.permission:support.view')->name('api.v1.admin.support.show');
+            Route::post('/support-tickets/{ticket}/messages', [AdminSupportController::class, 'message'])->middleware('admin.permission:support.manage')->name('api.v1.admin.support.message');
+            Route::post('/support-tickets/{ticket}/close', [AdminSupportController::class, 'close'])->middleware('admin.permission:support.manage')->name('api.v1.admin.support.close');
+            Route::get('/reports/summary', [AdminReportController::class, 'summary'])->middleware('admin.permission:reports.view')->name('api.v1.admin.reports.summary');
+            Route::get('/reports/orders.csv', [AdminReportController::class, 'ordersCsv'])->middleware('admin.permission:reports.export')->name('api.v1.admin.reports.orders');
+            Route::get('/operations', [AdminOperationsController::class, 'show'])->middleware('admin.permission:dashboard.view')->name('api.v1.admin.operations.show');
+            Route::get('/failed-jobs', [AdminFailedJobController::class, 'index'])->middleware('admin.permission:dashboard.view')->name('api.v1.admin.failed-jobs.index');
+            Route::post('/failed-jobs/{uuid}/retry', [AdminFailedJobController::class, 'retry'])->middleware('admin.permission:dashboard.manage')->name('api.v1.admin.failed-jobs.retry');
+            Route::get('/staff', [AdminSecurityController::class, 'staff'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.index');
+            Route::patch('/staff/{user}', [AdminSecurityController::class, 'updateStaff'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.update');
+            Route::get('/staff/sessions', [AdminSecurityController::class, 'sessions'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.sessions');
+            Route::delete('/staff/sessions/{token}', [AdminSecurityController::class, 'revokeSession'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.sessions.revoke');
+            Route::post('/mfa/setup', [AdminSecurityController::class, 'mfaSetup'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.setup');
+            Route::post('/mfa/enable', [AdminSecurityController::class, 'mfaEnable'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.enable');
+            Route::post('/mfa/disable', [AdminSecurityController::class, 'mfaDisable'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.disable');
         });
     });
 
@@ -168,5 +248,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/products', [ProductController::class, 'index'])->middleware('throttle:api')->name('api.v1.catalog.products.index');
         Route::get('/products/{product}', [ProductController::class, 'show'])->middleware('throttle:api')->name('api.v1.catalog.products.show');
         Route::get('/brands', [BrandController::class, 'index'])->middleware('throttle:api')->name('api.v1.catalog.brands.index');
+        Route::get('/products/{product}/reviews', [CatalogReviewController::class, 'index'])->middleware('throttle:api')->name('api.v1.catalog.products.reviews.index');
+        Route::get('/products/{product}/review-summary', [CatalogReviewController::class, 'summary'])->middleware('throttle:api')->name('api.v1.catalog.products.reviews.summary');
     });
 });

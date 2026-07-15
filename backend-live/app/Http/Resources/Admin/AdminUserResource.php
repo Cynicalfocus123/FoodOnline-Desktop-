@@ -17,6 +17,10 @@ class AdminUserResource extends JsonResource
             'name' => $this->resource->name,
             'email' => $this->resource->email,
             'role' => $this->resource->role,
+            'staff_role' => $this->resource->staff_role,
+            'permissions' => $this->resource->staff_permissions ?? [],
+            'mfa_enabled' => $this->resource->mfa_enabled_at !== null,
+            'last_login_at' => $this->resource->last_login_at?->toIso8601String(),
         ];
     }
 }

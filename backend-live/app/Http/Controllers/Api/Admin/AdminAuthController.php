@@ -11,10 +11,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Services\Security\TotpService;
 
 class AdminAuthController extends Controller
 {
-    public function login(AdminLoginRequest $request): JsonResponse
+    public function login(AdminLoginRequest $request, TotpService $totp): JsonResponse
     {
         $credentials = $request->validated();
         $user = User::query()
@@ -26,6 +27,11 @@ class AdminAuthController extends Controller
         if (! $user || ! is_string($user->password) || ! Hash::check((string) $credentials['password'], $user->password)) {
             return response()->json(['message' => 'Invalid admin credentials.'], 401);
         }
+        if ($user->mfa_enabled_at) {
+            $code = (string) ($credentials['mfa_code'] ?? '');
+            $valid = $totp->verify($totp->secretFor($user) ?? '', $code) || $totp->verifyRecovery($user, $code);
+            if (! $valid) { return response()->json(['message' => 'A valid MFA code is required.', 'mfa_required' => true], 422); }
+        }
 
         $plainToken = Str::random(80);
 
@@ -34,8 +40,9 @@ class AdminAuthController extends Controller
             'name' => 'admin-dashboard',
             'token_hash' => hash('sha256', $plainToken),
             'last_used_at' => now(),
-            'expires_at' => now()->addMinutes(max(1, (int) config('foodonlines.tokens.admin_ttl_minutes', 480))),
+            'expires_at' => now()->addMinutes(max(1, (int) config('foodonlines.tokens.admin_ttl_minutes', 480))), 'ip_address' => $request->ip(), 'user_agent' => substr((string) $request->userAgent(), 0, 1000),
         ]);
+        $user->forceFill(['last_login_at' => now()])->save();
 
         return response()->json([
             'message' => 'Login successful.',

@@ -30,6 +30,12 @@ export const adminSidebarItems = [
   { key: "inventory", label: "Inventory", description: "Variant stock, reservations, and movements" },
   { key: "promotions", label: "Promo Codes", description: "Discount rules, limits, and redemption" },
   { key: "audit", label: "Audit Logs", description: "Server-recorded commerce admin actions" },
+  { key: "returns", label: "Returns", description: "Review requests, inspections, restocking, and refunds" },
+  { key: "reviews", label: "Reviews", description: "Moderate customer reviews and reports" },
+  { key: "support", label: "Support", description: "Order-linked customer support tickets" },
+  { key: "reports", label: "Reports", description: "Operational metrics and protected exports" },
+  { key: "staff", label: "Staff & MFA", description: "Permissions, sessions, and administrator MFA" },
+  { key: "operations", label: "Operations", description: "Queue, scheduler, media, and system health" },
   {
     key: "settings",
     label: "Admin Settings",

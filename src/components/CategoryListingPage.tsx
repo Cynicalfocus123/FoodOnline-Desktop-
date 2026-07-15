@@ -387,6 +387,13 @@ export function CategoryListingPage() {
   }, [selectedCategorySlug]);
 
   useEffect(() => {
+    if (!categoryData) return;
+    document.title = `${categoryData.seo?.title ?? categoryData.name} | FoodOnlines`;
+    const meta = document.head.querySelector('meta[name="description"]') ?? document.head.appendChild(Object.assign(document.createElement("meta"), { name: "description" }));
+    meta.setAttribute("content", categoryData.seo?.description ?? `Shop ${categoryData.name} from FoodOnlines.`);
+  }, [categoryData]);
+
+  useEffect(() => {
     setSelectedSort("featured");
     setSelectedDeliveryTypes([]);
     setSelectedProductTypes([]);

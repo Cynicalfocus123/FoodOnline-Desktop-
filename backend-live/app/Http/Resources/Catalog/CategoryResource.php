@@ -26,6 +26,7 @@ class CategoryResource extends JsonResource
             'show_in_navigation' => $this->show_in_navigation,
             'show_on_homepage' => $this->show_on_homepage,
             'default_sort' => $this->default_sort,
+            'seo' => ['title' => $this->meta_title ?: $this->name, 'description' => $this->meta_description ?: $this->description, 'canonical_url' => $this->canonical_url, 'robots_index' => (bool) $this->robots_index, 'robots_follow' => (bool) $this->robots_follow],
             'children' => CategoryResource::collection($this->whenLoaded('activeChildren')),
         ];
     }

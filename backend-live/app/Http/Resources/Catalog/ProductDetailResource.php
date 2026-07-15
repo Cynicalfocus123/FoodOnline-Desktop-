@@ -21,6 +21,8 @@ class ProductDetailResource extends ProductListResource
             'default_variant'=>$this->defaultVariant?new ProductVariantResource($this->defaultVariant):null,
             'variants'=>ProductVariantResource::collection($this->whenLoaded('activeVariants')),
             'nutrition_facts'=>$this->nutritionFacts ? new ProductNutritionFactResource($this->nutritionFacts) : null,
+            'seo'=>['title'=>$this->meta_title ?: $this->name, 'description'=>$this->meta_description ?: $this->description, 'canonical_url'=>$this->canonical_url, 'robots_index'=>(bool) $this->robots_index, 'robots_follow'=>(bool) $this->robots_follow],
+            'review_summary'=>app(\App\Services\Commerce\ReviewService::class)->summary($this->resource),
             'published_at'=>$this->published_at?->toIso8601String(),
         ];
     }

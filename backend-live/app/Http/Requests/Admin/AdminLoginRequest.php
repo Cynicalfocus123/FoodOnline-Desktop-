@@ -27,6 +27,7 @@ class AdminLoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email:rfc', 'max:254'],
             'password' => ['required', 'string', 'min:10', 'max:72'],
+            'mfa_code' => ['nullable', 'string', 'max:32'],
         ];
     }
 }

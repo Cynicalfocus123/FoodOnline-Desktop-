@@ -1,4 +1,5 @@
 import { apiRequest, type ApiOptions } from "../lib/apiClient";
+import { apiBaseUrl } from "../lib/runtimeConfig";
 
 const GUEST_CART_KEY = "foodonline-guest-cart-token-v1";
 
@@ -73,6 +74,14 @@ export const commerceApi = {
     return response.cart;
   },
   guestToken,
+  favorites: (token: string) => apiRequest<{ data: Array<{ product_uuid: string }> }>("/account/favorites", { token }),
+  saveFavorite: (productUuid: string, token: string) => apiRequest("/account/favorites", { method: "POST", token, body: { product_uuid: productUuid } }),
+  removeFavorite: (productUuid: string, token: string) => apiRequest(`/account/favorites/${encodeURIComponent(productUuid)}`, { method: "DELETE", token }),
+  mergeSavedData: (productUuids: string[], variantUuids: string[], token: string) => apiRequest<{ merged: number; skipped: string[] }>("/account/favorites/merge", { method: "POST", token, body: { product_uuids: productUuids, variant_uuids: variantUuids } }),
+  savedItems: (token: string) => apiRequest<{ data: Array<{ variant_uuid: string; product_uuid: string | null; quantity: number }> }>("/account/saved-items", { token }),
+  saveItem: (variantUuid: string, quantity: number, token: string) => apiRequest("/account/saved-items", { method: "POST", token, body: { variant_uuid: variantUuid, quantity } }),
+  removeSavedItem: (variantUuid: string, token: string) => apiRequest(`/account/saved-items/${encodeURIComponent(variantUuid)}`, { method: "DELETE", token }),
+  moveSavedItemToCart: (variantUuid: string, token: string) => apiRequest(`/account/saved-items/${encodeURIComponent(variantUuid)}/move-to-cart`, { method: "POST", token }),
 };
 
 export type PaymentMethodAvailability = {
@@ -137,4 +146,14 @@ export const checkoutApi = {
   accountOrders: (token: string) => apiRequest<{ data: CommerceOrder[] }>("/account/orders?per_page=50", { token }),
   accountOrder: (uuid: string, token: string) => apiRequest<{ order: CommerceOrder }>(`/account/orders/${uuid}`, { token }),
   cancelOrder: (uuid: string, token: string) => apiRequest<{ order: CommerceOrder }>(`/account/orders/${uuid}/cancel`, { method: "POST", token }),
+  openReceipt: async (uuid: string, token: string) => {
+    const response = await fetch(`${apiBaseUrl}/account/orders/${encodeURIComponent(uuid)}/receipt`, { headers: { Accept: "text/html", Authorization: `Bearer ${token}` } });
+    if (!response.ok) throw new Error("Unable to open receipt.");
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(await response.blob());
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(link.href), 60_000);
+  },
 };

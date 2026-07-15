@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\MediaUpload;
+use App\Models\OperationsHealthSnapshot;
 use App\Services\Media\ManagedMediaDeletionService;
 use Illuminate\Console\Command;
 
@@ -23,6 +24,7 @@ class CleanupMediaUploads extends Command
             if ($deletion->deletePath('r2://'.$upload->object_key)) { $cleaned++; }
         }
         $this->info("Media cleanup inspected {$uploads->count()} record(s); cleaned {$cleaned}.");
+        OperationsHealthSnapshot::query()->updateOrCreate(['key' => 'media_cleanup'], ['status' => 'ok', 'message' => 'Managed media cleanup completed.', 'last_checked_at' => now(), 'metadata' => ['inspected' => $uploads->count(), 'cleaned' => $cleaned]]);
         return self::SUCCESS;
     }
 }

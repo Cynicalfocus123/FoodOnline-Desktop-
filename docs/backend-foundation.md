@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Foundation
 
+## Phase 7 compatibility note (2026-07-15)
+
+The same Laravel token, rate-limit, CORS, audit, queue, and deployment-mirror foundation now hosts Phase 7 operational commerce and staff-security routes. PHP/Composer/MySQL and external deployment status remain evidence-bounded; see `docs/operational-commerce-phase-7.md`.
+
 > Phase 4 extension (2026-07-13): the same Laravel 12/admin-token foundation now hosts protected catalog administration, R2 direct-upload authorization, cleanup, nutrition, and catalog dashboard counts without changing public/admin token separation. See `admin-catalog-and-r2.md`.
 
 ## Current-state note

@@ -18,6 +18,9 @@ return [
             'category_icon' => 4 * 1024 * 1024,
             'category_desktop_banner' => 8 * 1024 * 1024,
             'category_mobile_banner' => 8 * 1024 * 1024,
+            'review_image' => 8 * 1024 * 1024,
+            'return_evidence' => 10 * 1024 * 1024,
+            'support_attachment' => 8 * 1024 * 1024,
         ],
     ],
 
@@ -59,5 +62,14 @@ return [
         'flat_tax_basis_points' => (int) env('COMMERCE_FLAT_TAX_BASIS_POINTS', 0),
         'order_support_email' => env('COMMERCE_ORDER_SUPPORT_EMAIL', 'support@foodonlines.com'),
         'order_notification_email' => env('COMMERCE_ORDER_NOTIFICATION_EMAIL', 'orders@foodonlines.com'),
+        'return_window_days' => (int) env('COMMERCE_RETURN_WINDOW_DAYS', 14),
+    ],
+    'retention' => [
+        'guest_cart_days' => (int) env('RETENTION_GUEST_CART_DAYS', 30),
+        'quote_days' => (int) env('RETENTION_QUOTE_DAYS', 30),
+        'notification_days' => (int) env('RETENTION_NOTIFICATION_DAYS', 180),
+        'failed_job_days' => (int) env('RETENTION_FAILED_JOB_DAYS', 90),
+        'export_days' => (int) env('RETENTION_EXPORT_DAYS', 7),
+        'media_upload_days' => (int) env('RETENTION_MEDIA_UPLOAD_DAYS', 30),
     ],
 ];

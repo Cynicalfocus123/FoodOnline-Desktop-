@@ -12,6 +12,7 @@ export interface ApiCategoryDto {
   is_featured?: boolean;
   show_in_navigation?: boolean;
   show_on_homepage?: boolean;
+  seo?: Category["seo"];
 }
 
 const icons: IconName[] = ["categories", "snack", "grocery", "beverage", "dairy", "fruit", "sweet", "tea", "meat", "organic"];
@@ -27,5 +28,6 @@ export function mapApiCategory(dto: ApiCategoryDto, index = 0): Category {
     sectionId: `category-${slug}`,
     categorySlug: slug,
     href: getPublicRouteHref(`category/${slug}`),
+    seo: dto.seo,
   };
 }

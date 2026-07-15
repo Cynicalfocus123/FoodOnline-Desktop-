@@ -1,5 +1,9 @@
 # Admin Catalog Portal and Cloudflare R2 Media
 
+## Phase 7 compatibility note (2026-07-15)
+
+The same signed S3-compatible media workflow now accepts review images, return evidence, and support attachments in addition to catalog media. Phase 7 operational commerce, frontend production mirrors, and external R2 activation status are documented in `docs/operational-commerce-phase-7.md`; this document remains the catalog/R2 foundation record.
+
 ## Scope and current status
 
 Phase 4 extends the existing standalone React admin application and Laravel 12 API. It does not create a second admin application and does not switch or redesign the mock-backed public storefront. Git source, `backend-live/`, `dist/`, and `frontend-upload/` are synchronized. External Hostinger and Cloudflare R2 configuration were not changed.

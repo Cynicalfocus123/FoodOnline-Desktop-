@@ -1,5 +1,9 @@
 # FoodOnlines Category Backend
 
+## Phase 7 compatibility note (2026-07-15)
+
+Category SEO metadata and sitemap output remain additive to the Phase 2 hierarchy contract. Phase 7 operational commerce and deployment verification are documented in `docs/operational-commerce-phase-7.md`; no category identity or hierarchy behavior is replaced.
+
 > Phase 4 extension (2026-07-13): the existing category fields and alias APIs now have an admin UI and managed R2 upload purposes for tile, icon, desktop banner, and mobile banner. See `admin-catalog-and-r2.md`; the Phase 2 hierarchy contract remains unchanged.
 
 ## Current status and documentation rule

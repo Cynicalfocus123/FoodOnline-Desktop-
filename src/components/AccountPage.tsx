@@ -45,6 +45,7 @@ type NotificationPreferences = {
   sms_notifications: boolean;
   push_notifications: boolean;
 };
+type AccountNotification = { id: string; type: string; data: { title?: string; message?: string; link?: Record<string, string> }; read_at: string | null; created_at: string };
 
 type SaveState = "idle" | "saving";
 type DeleteReasonKey =
@@ -226,6 +227,7 @@ export function AccountPage() {
   const [preferences, setPreferences] = useState<NotificationPreferences>(defaultPreferences);
   const [notificationState, setNotificationState] = useState<SaveState>("idle");
   const [notificationMessage, setNotificationMessage] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<AccountNotification[]>([]);
 
   const [isPasswordOpen, setIsPasswordOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -262,6 +264,7 @@ export function AccountPage() {
     void loadAddresses(token);
     void loadPaymentMethods(token);
     void loadPreferences(token);
+    void apiRequest<{ data: AccountNotification[] }>("/account/notifications", { token }).then((response) => setNotifications(response.data)).catch(() => setNotifications([]));
   }, [currentUser, token]);
 
   useEffect(() => {
@@ -1092,6 +1095,7 @@ export function AccountPage() {
 
       <ModalShell isOpen={isNotificationsOpen} title="Notifications" onClose={() => setIsNotificationsOpen(false)}>
         <div className="grid gap-4">
+          {notifications.length ? <div className="grid gap-2 border-b border-neutral-100 pb-4"><p className="text-xs font-black uppercase tracking-[0.16em] text-neutral-500">Recent activity</p>{notifications.slice(0, 5).map((notification) => <div className={`rounded-2xl p-3 ${notification.read_at ? "bg-neutral-50" : "bg-emerald-50"}`} key={notification.id}><p className="text-sm font-black">{notification.data.title ?? notification.type}</p><p className="mt-1 text-xs text-neutral-600">{notification.data.message ?? "You have a new FoodOnlines update."}</p></div>)}</div> : <p className="text-sm text-neutral-500">No in-app notifications yet.</p>}
           <ToggleRow label="Order updates" value={preferences.order_updates} onChange={(value) => void updatePreference("order_updates", value)} />
           <ToggleRow label="Delivery updates" value={preferences.delivery_updates} onChange={(value) => void updatePreference("delivery_updates", value)} />
           <ToggleRow label="Promotions and coupons" value={preferences.promotions_and_coupons} onChange={(value) => void updatePreference("promotions_and_coupons", value)} />
@@ -1314,7 +1318,7 @@ function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)
       {visible.map((order) => (
         <article className="rounded-2xl border border-neutral-200 bg-white p-4" key={order.uuid}>
           <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-lg font-black text-neutral-950">{order.order_number}</p><p className="mt-1 text-sm text-neutral-500">{new Date(order.placed_at).toLocaleString()} · {order.items.length} line(s)</p></div><div className="text-right"><p className="text-lg font-black">{order.total.currency_code} {order.total.amount}</p><p className="text-xs font-bold capitalize text-leaf-700">{order.order_status} · {order.fulfillment_status}</p></div></div>
-          <div className="mt-4 flex flex-wrap gap-2"><button className="rounded-full border border-leaf-500 px-4 py-2 text-sm font-black text-leaf-700" onClick={() => setSelected(selected?.uuid === order.uuid ? null : order)} type="button">{selected?.uuid === order.uuid ? "Hide details" : "View details"}</button>{["pending", "confirmed"].includes(order.order_status) && !["shipped", "delivered"].includes(order.fulfillment_status) ? <button className="rounded-full border border-red-200 px-4 py-2 text-sm font-black text-red-700" onClick={() => void cancel(order)} type="button">Cancel order</button> : null}</div>
+          <div className="mt-4 flex flex-wrap gap-2"><button className="rounded-full border border-leaf-500 px-4 py-2 text-sm font-black text-leaf-700" onClick={() => setSelected(selected?.uuid === order.uuid ? null : order)} type="button">{selected?.uuid === order.uuid ? "Hide details" : "View details"}</button>{token ? <button className="rounded-full border border-neutral-200 px-4 py-2 text-sm font-black text-neutral-700" onClick={() => void checkoutApi.openReceipt(order.uuid, token)} type="button">Receipt</button> : null}{["pending", "confirmed"].includes(order.order_status) && !["shipped", "delivered"].includes(order.fulfillment_status) ? <button className="rounded-full border border-red-200 px-4 py-2 text-sm font-black text-red-700" onClick={() => void cancel(order)} type="button">Cancel order</button> : null}</div>
           {selected?.uuid === order.uuid ? <div className="mt-4 grid gap-3 border-t border-neutral-100 pt-4">{order.items.map((item) => <div className="flex justify-between gap-3 text-sm" key={item.uuid}><span><strong>{item.product_name}</strong><br/><span className="text-neutral-500">{item.variant_title} · SKU {item.sku} · Qty {item.quantity}</span></span><strong>{order.total.currency_code} {item.line_total}</strong></div>)}<p className="text-sm text-neutral-600">Payment: <strong className="capitalize">{order.payment_method_code} · {order.payment_status}</strong></p>{order.addresses.find((address) => address.type === "shipping") ? <p className="text-sm text-neutral-600">Ship to: {order.addresses.find((address) => address.type === "shipping")!.summary}</p> : null}</div> : null}
         </article>
       ))}

@@ -21,7 +21,7 @@ function queryString(query: CatalogQuery) {
   if (query.maxPrice != null) params.set("max_price", String(query.maxPrice));
   if (query.page) params.set("page", String(query.page));
   if (query.pageSize) params.set("per_page", String(query.pageSize));
-  params.set("sort", query.sort === "price-low" ? "price_asc" : query.sort === "price-high" ? "price_desc" : query.sort === "best-selling" ? "featured" : "featured");
+  params.set("sort", query.sort === "price-low" ? "price_asc" : query.sort === "price-high" ? "price_desc" : query.sort === "best-selling" ? "best_selling" : "featured");
   return params.toString();
 }
 

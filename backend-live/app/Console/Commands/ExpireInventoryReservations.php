@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\InventoryReservation;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
+use App\Models\OperationsHealthSnapshot;
 use App\Services\Commerce\InventoryService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,7 @@ class ExpireInventoryReservations extends Command
             }, 3);
         }
         $this->info("Expired reservations processed for {$orderIds->count()} order(s).");
+        OperationsHealthSnapshot::query()->updateOrCreate(['key' => 'inventory_cleanup'], ['status' => 'ok', 'message' => 'Reservation cleanup completed.', 'last_checked_at' => now(), 'metadata' => ['orders' => $orderIds->count()]]);
         return self::SUCCESS;
     }
 }

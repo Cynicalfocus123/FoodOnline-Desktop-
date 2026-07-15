@@ -22,6 +22,7 @@ class ProductListResource extends JsonResource
             'image_urls'=>$imageUrl?[$imageUrl]:[],'image_fit'=>$primary?->image_fit ?? 'contain',
             'in_stock'=>$variant?->availability_status==='in_stock','availability_status'=>$variant?->availability_status,
             'size'=>$variant?->displaySize(),'sku'=>$variant?->sku,'is_featured'=>$this->is_featured,
+            'sold_count'=>(int) ($this->sold_count ?? 0),
         ];
     }
 }

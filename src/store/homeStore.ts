@@ -399,6 +399,7 @@ type HomeState = {
   setCartQuantity: (lineId: string, quantity: number) => void;
   hydrateCommerceCart: () => Promise<void>;
   mergeGuestCart: () => Promise<void>;
+  hydrateSavedData: () => Promise<void>;
   addToCart: (productId: string, variantId?: string) => void;
   removeFromCart: (lineId: string) => void;
   saveForLater: (lineId: string) => void;
@@ -1124,6 +1125,19 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to merge cart." });
     }
   },
+  hydrateSavedData: async () => {
+    const token = usePublicAuthStore.getState().token;
+    if (!token) return;
+    const localFavorites = get().favoriteProductIds;
+    const localSaved = get().savedForLaterIds;
+    try {
+      await commerceApi.mergeSavedData(localFavorites, localSaved, token);
+      const [favorites, saved] = await Promise.all([commerceApi.favorites(token), commerceApi.savedItems(token)]);
+      set((state) => ({ favoriteProductIds: favorites.data.map((item) => item.product_uuid), savedForLaterIds: saved.data.map((item) => item.variant_uuid), savedLineProductIds: Object.fromEntries(saved.data.filter((item) => item.product_uuid).map((item) => [item.variant_uuid, item.product_uuid!])) }));
+    } catch {
+      // Anonymous compatibility state remains visible if the account sync is temporarily unavailable.
+    }
+  },
   setCartQuantity: (lineId, quantity) => {
     set((state) => {
       const nextQuantity = Math.max(0, quantity);
@@ -1185,6 +1199,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   },
   saveForLater: (lineId) => {
     const itemUuid = get().cartItemIds[lineId];
+    const savedQuantity = get().cartQuantities[lineId] ?? 1;
     set((state) => {
       const nextCart = { ...state.cartQuantities };
       delete nextCart[lineId];
@@ -1198,7 +1213,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         savedLineProductIds: { ...state.savedLineProductIds, [lineId]: state.cartLineProductIds[lineId] ?? lineId },
       };
     });
-    if (itemUuid) void commerceApi.removeItem(itemUuid, usePublicAuthStore.getState().token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart());
+    if (itemUuid) { const token = usePublicAuthStore.getState().token; void commerceApi.removeItem(itemUuid, token).then((cart) => { if (token) void commerceApi.saveItem(lineId, savedQuantity, token); return cart; }).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart()); }
   },
   moveSavedToCart: (lineId) => {
     set((state) => ({
@@ -1211,7 +1226,9 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       savedForLaterIds: state.savedForLaterIds.filter((id) => id !== lineId),
       savedLineProductIds: Object.fromEntries(Object.entries(state.savedLineProductIds).filter(([id]) => id !== lineId)),
     }));
-    void commerceApi.addItem(lineId, 1, usePublicAuthStore.getState().token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart());
+    const token = usePublicAuthStore.getState().token;
+    if (token) { void commerceApi.moveSavedItemToCart(lineId, token).then(() => commerceApi.getCart(token)).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart()); }
+    else void commerceApi.addItem(lineId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state.selectedCartIds) }))).catch(() => void get().hydrateCommerceCart());
   },
   toggleCartSelection: (productId) =>
     set((state) => ({
@@ -1225,12 +1242,15 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ? Array.from(new Set([...state.selectedCartIds.filter((id) => !productIds.includes(id)), ...productIds]))
         : state.selectedCartIds.filter((id) => !productIds.includes(id)),
     })),
-  toggleFavorite: (productId) =>
+  toggleFavorite: (productId) => {
+    const token = usePublicAuthStore.getState().token; const removing = get().favoriteProductIds.includes(productId);
     set((state) => ({
       favoriteProductIds: state.favoriteProductIds.includes(productId)
         ? state.favoriteProductIds.filter((id) => id !== productId)
         : [...state.favoriteProductIds, productId],
-    })),
+    }));
+    if (token) void (removing ? commerceApi.removeFavorite(productId, token) : commerceApi.saveFavorite(productId, token)).catch(() => undefined);
+  },
   setSelectedZipCode: (zipCode) =>
     set({
       selectedZipCode: zipCode,

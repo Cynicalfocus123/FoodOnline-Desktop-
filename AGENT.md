@@ -1,5 +1,13 @@
 # Agent Notes
 
+## Operational Commerce and Production Readiness — Phase 7 (2026-07-15)
+
+- Phase 6 source remains the transactional baseline. Phase 7 adds returns with explicit restock and manual COD refund records, backend-persisted reviews with verified-purchase calculation/moderation, real order-data Best Selling, persistent favorites, exact-variant Saved for Later, login merge, Buy Again with current pricing, database notifications, HTML receipts, support tickets/attachments, reports/CSV, searchable audit logs, staff permissions, TOTP MFA/recovery codes, session revocation, reauthentication challenges, failed-job operations, scheduler/cleanup retention, password recovery, email verification, product/category SEO, structured data, and sitemaps.
+- The existing R2-compatible upload/deletion workflow is reused for product images, brand/category media, review images, return evidence, and support attachments. `media:diagnose` reports configuration without exposing credentials; Cloudflare R2, bucket CORS, custom domain, DNS, and production credentials remain externally unconfigured.
+- Existing public and admin visual designs remain in place. Frontend API-backed reviews, SEO metadata, receipts, persistent saved data, notification activity, admin operational panels, and authenticated CSV download were added without enabling a real card, wallet, PromptPay, or other merchant provider. COD remains the only operational payment method.
+- Verification is environment-bounded: Node production build/audit are run for this phase; PHP, Composer, MySQL, external SMTP, queue workers, scheduler/cron, backups, Hostinger, and external R2 are recorded only when direct command or deployment evidence exists. No localhost/preview server, Serena session, backend ZIP, or frontend ZIP is used.
+- `backend-live/` is regenerated from authoritative Laravel source and `frontend-upload/` from the final `dist/` build in the same delivery pass. Git source and repository mirrors are updated; external Hostinger frontend/backend and external R2 are not claimed as updated. Phase 8 remains the approved-provider handoff for hosted/tokenized payment sessions, webhooks, reconciliation, and provider refunds.
+
 ## Transactional Commerce Core — Phase 6 (2026-07-14)
 
 - Phase 6 continues the Phase 5 Laravel catalog boundary without replacing the public storefront, existing cart/checkout presentation, account shell, or admin catalog portal. Laravel is authoritative for cart identity, variant availability, prices, shipping, tax, promotions, quotes, inventory, and orders.

@@ -26,6 +26,7 @@ export type Category = {
   sectionId: string;
   categorySlug: string;
   href: string;
+  seo?: { title?: string | null; description?: string | null; canonical_url?: string | null; robots_index?: boolean; robots_follow?: boolean };
 };
 
 export type ProductVariant = {
@@ -120,6 +121,7 @@ export type Product = {
   ratingBreakdown: RatingBreakdown;
   reviewCount: number;
   variants: ProductVariant[];
+  apiBacked?: boolean;
 };
 
 export type ProductItem = Product;

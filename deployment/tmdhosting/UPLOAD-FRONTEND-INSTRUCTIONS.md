@@ -1,5 +1,7 @@
 # Frontend Admin Upload Instructions
 
+> Phase 7 review (2026-07-15): the repository `frontend-upload/` mirror is the current frontend delivery artifact. This historical note does not prove an external upload or configure R2.
+
 > Phase 4 review (2026-07-13): the current admin catalog build is in `frontend-upload/`; this historical package does not configure R2, and the public storefront remains mock-backed.
 
 > Phase 3 review (2026-07-13): this frontend upload note does not include, switch to, or deploy the new Laravel grocery catalog.

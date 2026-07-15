@@ -11,6 +11,9 @@ import {
 import { useHomeStore } from "../store/homeStore";
 import { CartQuantityControl } from "./CartQuantityControl";
 import { ProductCard } from "./ProductCard";
+import { loadProductReviews, reviewSummary } from "../services/reviewApi";
+import { apiRequest } from "../lib/apiClient";
+import { usePublicAuthStore } from "../store/publicAuthStore";
 
 type DetailTabKey = "details" | "recipe" | "nutrition" | "returns";
 type ReviewFilter = "all" | "purchased" | "photos";
@@ -257,6 +260,11 @@ export function ProductDetailPage() {
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("all");
   const [isMostRecent, setIsMostRecent] = useState(false);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
+  const publicToken = usePublicAuthStore((state) => state.token);
+  const [isWritingReview, setIsWritingReview] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewBody, setReviewBody] = useState("");
+  const [reviewMessage, setReviewMessage] = useState<string | null>(null);
   const galleryScrollRef = useRef<HTMLDivElement | null>(null);
   const relatedScrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -264,12 +272,14 @@ export function ProductDetailPage() {
     let mounted = true;
     setLoadedProduct(null);
     setLoadError(null);
+    setRelatedProducts([]);
     if (!selectedProductId) return () => { mounted = false; };
     void getProductById(selectedProductId)
       .then((item) => {
         if (!mounted) return;
         if (!item) { setLoadError("This product is no longer available."); return; }
         setLoadedProduct(item);
+        void loadProductReviews(item.uuid ?? item.id).then((reviewData) => mounted && setLoadedProduct((current) => current ? { ...current, reviews: reviewData.reviews, ...reviewSummary(reviewData.summary) } : current)).catch(() => undefined);
         void getRelatedProducts(item, 10).then((related) => mounted && setRelatedProducts(related)).catch(() => mounted && setRelatedProducts([]));
       })
       .catch(() => mounted && setLoadError("Unable to load this product. Please try again."));
@@ -285,6 +295,29 @@ export function ProductDetailPage() {
     setIsMostRecent(false);
     setShareNotice(null);
   }, [product.id]);
+
+  async function submitReview() {
+    if (!publicToken) { setReviewMessage("Sign in with a real email account to submit a review."); return; }
+    try {
+      await apiRequest(`/catalog/products/${encodeURIComponent(product.uuid ?? product.id)}/reviews`, { method: "POST", token: publicToken, body: { rating: reviewRating, body: reviewBody } });
+      const reviewData = await loadProductReviews(product.uuid ?? product.id);
+      setLoadedProduct((current) => current ? { ...current, reviews: reviewData.reviews, ...reviewSummary(reviewData.summary) } : current);
+      setReviewBody(""); setIsWritingReview(false); setReviewMessage("Review submitted for moderation.");
+    } catch (error) { setReviewMessage(error instanceof Error ? error.message : "Unable to submit review."); }
+  }
+
+  useEffect(() => {
+    if (!loadedProduct || !loadedProduct.apiBacked) return;
+    const description = loadedProduct.description.slice(0, 320);
+    document.title = `${loadedProduct.name} | FoodOnlines`;
+    const setMeta = (name: string, content: string) => { let tag = document.head.querySelector(`meta[name="${name}"]`); if (!tag) { tag = document.createElement("meta"); tag.setAttribute("name", name); document.head.appendChild(tag); } tag.setAttribute("content", content); };
+    setMeta("description", description);
+    setMeta("og:title", loadedProduct.name);
+    setMeta("og:description", description);
+    let canonical = document.head.querySelector("link[rel='canonical']") as HTMLLinkElement | null; if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); } canonical.href = `${window.location.origin}/#product/${loadedProduct.slug}`;
+    const id = "foodonlines-product-jsonld"; document.getElementById(id)?.remove(); const script = document.createElement("script"); script.id = id; script.type = "application/ld+json"; script.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name: loadedProduct.name, description, sku: loadedProduct.sku, brand: { "@type": "Brand", name: loadedProduct.brand }, image: loadedProduct.imageUrls, offers: { "@type": "Offer", priceCurrency: loadedProduct.variants[0]?.currencyCode ?? "USD", price: loadedProduct.price, availability: loadedProduct.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", url: window.location.href } }); document.head.appendChild(script);
+    return () => { document.getElementById(id)?.remove(); };
+  }, [loadedProduct]);
 
   useEffect(() => {
     if (!isReviewsOpen) {
@@ -851,10 +884,12 @@ export function ProductDetailPage() {
                       <RatingBreakdownRows breakdown={product.ratingBreakdown} totalReviews={product.reviewCount} />
                       <button
                         className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-neutral-200 px-4 text-sm font-bold text-neutral-900 transition hover:border-neutral-300 hover:bg-neutral-50"
+                        onClick={() => setIsWritingReview((current) => !current)}
                         type="button"
                       >
                         Write a Review
                       </button>
+                      {isWritingReview ? <div className="grid gap-3 rounded-2xl border border-neutral-200 p-4"><div className="flex gap-1">{[1, 2, 3, 4, 5].map((rating) => <button aria-label={`${rating} stars`} className={`text-2xl ${rating <= reviewRating ? "text-amber-400" : "text-neutral-300"}`} key={rating} onClick={() => setReviewRating(rating)} type="button">★</button>)}</div><textarea className="min-h-28 rounded-xl border border-neutral-200 p-3 text-sm" onChange={(event) => setReviewBody(event.target.value)} placeholder="Share your experience" value={reviewBody} /><button className="rounded-xl bg-leaf-600 px-4 py-3 text-sm font-black text-white" onClick={() => void submitReview()} type="button">Submit review</button>{reviewMessage ? <p className="text-xs font-semibold text-neutral-600">{reviewMessage}</p> : null}</div> : null}
                     </div>
                   </SectionShell>
                 </div>

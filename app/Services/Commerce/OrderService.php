@@ -11,6 +11,7 @@ use App\Models\OrderPayment;
 use App\Models\OrderStatusHistory;
 use App\Models\PromotionRedemption;
 use App\Models\User;
+use App\Notifications\CommerceNotification;
 use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -97,6 +98,10 @@ class OrderService
             }
 
             SendOrderConfirmation::dispatch($order->id)->afterCommit();
+            DB::afterCommit(function () use ($order): void {
+                if ($order->user_id && $order->user) { $order->user->notify(new CommerceNotification('order_placed', 'Order received', 'Your order '.$order->order_number.' was received.', ['type' => 'order', 'uuid' => $order->uuid])); }
+                User::query()->where('role', 'admin')->where('status', 'active')->get()->each(fn (User $admin) => $admin->notify(new CommerceNotification('new_order', 'New order', 'Order '.$order->order_number.' is awaiting processing.', ['type' => 'order', 'uuid' => $order->uuid])));
+            });
 
             return [$order, $guestToken];
         }, 3);

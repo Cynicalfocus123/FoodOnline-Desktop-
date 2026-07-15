@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Phase 7 operational commerce deployment note
+
+Phase 7 adds forward migrations and APIs for returns, reviews, customer saved data, notifications, receipts, support, reports, staff permissions/MFA, recovery, SEO, operations, and R2-compatible review/return/support media. Apply migrations only after a backup and staging verification; configure server-only R2, SMTP, queue worker, scheduler, and retention values from `.env.example`. The repository `backend-live/` mirror is updated from source, but no external Hostinger, R2, SMTP, queue, cron, or production migration action is implied by Git.
+
 ## Phase 6 transactional commerce deployment note
 
 Phase 6 adds four forward commerce migrations, cart/quote/order/inventory/promotion APIs, COD payment records, queued confirmation mail, and reservation-expiration scheduling. Before production use, install the locked Composer dependencies, configure the server-only commerce values from `.env.example`, apply migrations with `php artisan migrate --force`, rebuild config/routes, and verify a disposable COD order in an authorized environment. Keep unsupported provider methods disabled until a real approved adapter and credentials exist; do not send raw card numbers or CVV.

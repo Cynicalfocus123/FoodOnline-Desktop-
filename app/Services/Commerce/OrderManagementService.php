@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentRefund;
 use App\Models\User;
+use App\Notifications\CommerceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -41,6 +42,9 @@ class OrderManagementService
             AdminAuditLog::query()->create(['admin_user_id' => $admin->id, 'action' => 'order.'.$action, 'subject_type' => Order::class,
                 'subject_id' => $order->id, 'before_payload' => $before, 'after_payload' => $order->fresh()->toArray(),
                 'ip_address' => $request->ip(), 'user_agent' => substr((string) $request->userAgent(), 0, 1000)]);
+            DB::afterCommit(function () use ($order, $action, $message): void {
+                if ($order->user_id && $order->user) { $order->user->notify(new CommerceNotification('order_'.$action, 'Order update', $message, ['type' => 'order', 'uuid' => $order->uuid])); }
+            });
 
             return $order->fresh()->load(['user', 'items', 'addresses', 'payment.refunds', 'history', 'reservations']);
         }, 3);

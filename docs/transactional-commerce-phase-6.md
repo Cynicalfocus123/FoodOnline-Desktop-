@@ -1,5 +1,9 @@
 # Transactional Commerce — Phase 6
 
+## Phase 7 extension note (2026-07-15)
+
+Phase 7 layers returns, reviews, persistent favorites/saved variants, Buy Again, notifications, receipts, support, reports, staff security, operations, and SEO on this transactional contract without enabling a real merchant provider. See `docs/operational-commerce-phase-7.md` for the current extension and verification boundaries.
+
 ## Scope
 
 Phase 6 adds the transactional layer beneath the existing FoodOnlines storefront and admin portal: backend carts, guest carts and merge, server checkout quotes, minor-unit money, single-location inventory, reservations, promotions, real COD orders, customer order history, guest order access, and admin ecommerce operations.
