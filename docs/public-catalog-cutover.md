@@ -1,5 +1,9 @@
 # Public Catalog Cutover - Phase 5
 
+## Dynamic category placement update (2026-07-18)
+
+Public category mapping retains placement/order information. Backend-managed navigation categories populate the Products dropdown and mobile navigation, backend-managed homepage categories populate the responsive tile grid even when empty, and one reusable broken/missing-image fallback supports every future category without a frontend rebuild.
+
 ## Phase 7 compatibility note (2026-07-15)
 
 The API-backed storefront remains authoritative. Phase 7 adds real review loading/submission, product SEO metadata/JSON-LD, Best Selling from order data, and persistent saved-data synchronization while preserving the Phase 5 presentation compatibility layer.

@@ -1,5 +1,11 @@
 # FoodOnlines Category Backend
 
+## Production category lifecycle repair (2026-07-18)
+
+Category creation now requires only a name; the request layer generates an editable canonical slug, normalizes empty optional strings to null, and the service supplies draft/public/ordering/robots defaults. Enabling navigation or homepage placement atomically normalizes to Published + Public, while Draft, Archived, Hidden, and Catalog only clear both placement flags. Archive and restore are R2-independent; restore returns to Draft. Permanent deletion requires archived state and the exact slug and rejects categories with products or children before scheduling best-effort managed-media cleanup.
+
+`LegacyCategoryBackfill` is the shared missing-only implementation used by `CategorySeeder`, fresh `DatabaseSeeder` runs, and `php artisan catalog:backfill-categories`. Existing canonical slugs—including Ice cream—are never updated. The original 16 categories and the missing-only `baby-care` alias can therefore be added safely to an existing database. Every lifecycle and alias write invalidates the shared versioned public-category cache.
+
 ## Phase 7 compatibility note (2026-07-15)
 
 Category SEO metadata and sitemap output remain additive to the Phase 2 hierarchy contract. Phase 7 operational commerce and deployment verification are documented in `docs/operational-commerce-phase-7.md`; no category identity or hierarchy behavior is replaced.
@@ -108,11 +114,11 @@ Public resources return string `id`, UUID, name, slug, description, normalized m
 
 ## Seeding, migration, rollback, and deployment mirror
 
-The idempotent `CategorySeeder` uses the authoritative 16 frontend roots and the verified `baby-care -> vegan-foods` 301 alias. It is intentionally not called by `DatabaseSeeder`; production seeding requires explicit review and invocation.
+The idempotent `CategorySeeder` uses the authoritative 16 frontend roots and the verified `baby-care -> vegan-foods` 301 alias through the missing-only backfill service. `DatabaseSeeder` calls it for fresh installations; existing production uses the dedicated command below.
 
 ```bash
 php artisan migrate --force
-php artisan db:seed --class=CategorySeeder --force
+php artisan catalog:backfill-categories
 php artisan migrate:rollback --step=2 --force
 ```
 

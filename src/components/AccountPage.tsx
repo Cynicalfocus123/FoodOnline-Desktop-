@@ -15,6 +15,7 @@ import { ApiError, apiRequest } from "../lib/apiClient";
 import { AccountSection, useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 type AccountAddress = {
   id: number;
@@ -142,10 +143,7 @@ function writeLocalNotificationPreferences(userKey: string, preferences: Notific
 }
 
 function toErrorMessage(error: unknown, fallback: string) {
-  if (error instanceof ApiError) {
-    return error.message;
-  }
-  return fallback;
+  return toUserFacingErrorMessage(error, fallback);
 }
 
 function detectBrand(cardNumber: string) {
@@ -733,19 +731,19 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "saved" ? (
-              <SimplePanel title="Saved items" subtitle="Saved-item integration is ready for your existing wishlist endpoint." />
+              <SimplePanel title="Saved items" subtitle="Your saved products will appear here when available." />
             ) : null}
 
             {accountSection === "refer" ? (
-              <SimplePanel title="Refer a friend" subtitle="Referral route is ready for your existing referral program endpoint." />
+              <SimplePanel title="Refer a friend" subtitle="Referral rewards and invitations will appear here when available." />
             ) : null}
 
             {accountSection === "coupon" ? (
-              <SimplePanel title="Coupons" subtitle="Coupon view is ready for coupon-list endpoint and redemption history." />
+              <SimplePanel title="Coupons" subtitle="Available coupons and redemption history will appear here." />
             ) : null}
 
             {accountSection === "language" ? (
-              <SimplePanel title="Language" subtitle="Language preferences are ready for the existing localization settings endpoint." />
+              <SimplePanel title="Language" subtitle="Choose your preferred shopping language when more options become available." />
             ) : null}
 
             {accountSection === "settings" ? (
@@ -1291,7 +1289,7 @@ function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)
       if (!active) return;
       setOrders(response.data);
       setMessage(response.data.length ? "" : "No orders yet.");
-    }).catch((error) => setMessage(error instanceof Error ? error.message : "Unable to load orders."));
+    }).catch((error) => setMessage(toUserFacingErrorMessage(error, "Unable to load orders.")));
     return () => { active = false; };
   }, [token]);
 
@@ -1309,7 +1307,7 @@ function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)
       const response = await checkoutApi.cancelOrder(order.uuid, token);
       setOrders((current) => current.map((item) => item.uuid === order.uuid ? response.order : item));
       setSelected(response.order);
-    } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to cancel order."); }
+    } catch (error) { setMessage(toUserFacingErrorMessage(error, "Unable to cancel order.")); }
   }
 
   return (

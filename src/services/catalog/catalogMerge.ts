@@ -35,6 +35,13 @@ export function mergeCategories(localCategories: Category[], apiCategories: Cate
   return merged;
 }
 
+export function mergeAuthoritativeCategories(localCategories: Category[], apiCategories: Category[]) {
+  return apiCategories.map((apiCategory) => {
+    const local = localCategories.find((candidate) => categoriesRepresentSameIdentity(candidate, apiCategory));
+    return local ? mergeCategory(local, apiCategory) : apiCategory;
+  });
+}
+
 function mergeGallery(apiProduct: Product, localProduct: Product) {
   const values = apiProduct.apiMediaAvailable
     ? [...apiProduct.imageUrls, ...localProduct.imageUrls]
@@ -130,6 +137,18 @@ export function mergeHomepageSections(localSections: ProductCarouselSection[], a
     }
   }
   return merged;
+}
+
+export function mergeAuthoritativeHomepageSections(
+  localSections: ProductCarouselSection[],
+  apiSections: ProductCarouselSection[],
+  homepageCategories: Category[],
+) {
+  const allowed = new Set(homepageCategories.map((category) => normalizeCatalogSlug(category.categorySlug)));
+  return mergeHomepageSections(
+    localSections.filter((section) => allowed.has(sectionSlug(section))),
+    apiSections.filter((section) => allowed.has(sectionSlug(section))),
+  ).filter((section) => section.items.length > 0);
 }
 
 export function mergeStringOptions(localOptions: string[], apiOptions: string[]) {

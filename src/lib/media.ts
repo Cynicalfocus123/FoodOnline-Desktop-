@@ -5,6 +5,7 @@ export function resolveMediaUrl(path: string) {
     return trimmedPath;
   }
 
-  const basePath = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+  const configuredBase = import.meta.env?.BASE_URL ?? "/";
+  const basePath = configuredBase.endsWith("/") ? configuredBase : `${configuredBase}/`;
   return `${basePath}${trimmedPath.replace(/^\.\//, "").replace(/^\//, "")}`;
 }

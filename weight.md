@@ -1,5 +1,20 @@
 # FoodOnlines Site Weight
 
+## 2026-07-18 category administration repair
+
+- Added dynamic category authority/mapping, header/mobile category navigation, generic artwork fallback, expanded admin lifecycle, missing-only Laravel backfill, and focused tests without adding raster, video, font, or category-specific CSS assets.
+- Final production build transformed 116 modules. The audit passed 27 routes, 21 lazy chunks, 27 JavaScript files, zero missing references, and zero placeholder links.
+- `dist/` and `frontend-upload/` each contain 1,033 files totaling 91,763,747 bytes; parity found zero missing, extra, or SHA-256-mismatched files. `backend-live/` contains 277 payload files plus its manifest with zero missing, stale, checksum, secret, frontend, or ZIP findings.
+- Validation passed 33 Node tests and 70 Laravel tests / 497 assertions plus TypeScript, PHP syntax, cache compilation, and isolated migration/backfill cycles. Composer validation/audit was not run because Composer is not installed in this shell.
+
+## 2026-07-17 frontend API visibility repair
+
+- Frontend-only scope: corrected the production API host, retained hybrid catalog behavior, removed visible integration/diagnostic details, centralized safe error presentation, and added focused normalization tests. Laravel source, `backend-live/`, migrations, database behavior, and external Hostinger state are unchanged.
+- Production delivery is a frontend-only ZIP named `foodonlines-frontend-api-visibility-fix-2026-07-17.zip`. It contains build files at ZIP root and excludes `api/`, backend files, private environment files, source maps, dependencies, and secrets.
+- Validation evidence and final build/archive counts are recorded only from the completed commands and archive inspection; no external deployment is claimed.
+- Final evidence: 25/25 tests and TypeScript passed; Vite transformed 112 modules; the production audit passed 27 routes and 1,033 files totaling 91,751,397 bytes; `frontend-upload` matched `dist` with 0 missing, stale, or hash-mismatched files.
+- Final ZIP: 1,031 files / 90,930,139 bytes / SHA-256 `a52f1d56b55d1b0d9cf1fcf325c8b87c5fd6e981d125255638f40c1d6e0b0f1a`. Archive and extracted-content inspection found 0 wrappers, unsafe paths, `api/` or backend paths, private environment files, source maps, old-host files, prohibited debug-label files, secret-pattern files, extraction omissions, stale files, or hash mismatches. One compiled file contains the corrected internal API base as expected.
+
 ## Hybrid Storefront Catalog Compatibility Accounting (2026-07-15)
 
 - Frontend-only scope: explicit three-mode runtime selection, deterministic category/product/variant/media identity, centralized merge utilities, hybrid repository, safe local-only commerce compatibility, exact API variant hydration on add, focused Node tests, and production configuration/documentation. Backend source changed-file count is 0 and `backend-live/` is unchanged.

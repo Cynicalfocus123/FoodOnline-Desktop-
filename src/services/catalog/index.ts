@@ -11,6 +11,9 @@ export type * from "../../types/catalog";
 
 export const getHomepageCatalog = () => catalogRepository.getHomepageCatalog();
 export const getCategories = () => catalogRepository.getCategories();
+export const getAllPublicCategories = () => catalogRepository.getAllPublicCategories();
+export const getNavigationCategories = () => catalogRepository.getNavigationCategories();
+export const getHomepageCategories = () => catalogRepository.getHomepageCategories();
 export const getCategoryBySlug = (slug: string | null) => catalogRepository.getCategoryBySlug(slug);
 export const getProducts = (query = {}) => catalogRepository.getProducts(query);
 export const getCategoryListingProducts = (slug: string | null) => catalogRepository.getCategoryProducts(slug);

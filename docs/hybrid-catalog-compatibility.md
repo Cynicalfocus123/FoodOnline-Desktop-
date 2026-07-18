@@ -1,5 +1,11 @@
 # Hybrid Catalog Compatibility
 
+## Category placement authority repair (2026-07-18)
+
+Successful Laravel category responses now define the complete public, navigation, and homepage category sets. Local records only supply matching artwork/presentation; local-only categories and homepage rows omitted by Laravel are suppressed. A versioned last-known successful public placement snapshot is used on API failure before the full local fallback is considered, preventing a temporary outage from reintroducing a previously archived or hidden category. Product/search/related local compatibility records are also filtered through the successful public-category authority.
+
+The repository exposes `getAllPublicCategories()`, `getNavigationCategories()`, and `getHomepageCategories()`. The header Products dropdown and mobile menu use navigation categories; the homepage tile grid uses homepage categories independently of product rows, so an empty category still has a tile while its carousel remains absent.
+
 ## Purpose and root cause
 
 Phase 5 correctly connected the public storefront to Laravel, but production selected the API repository exclusively. The category strip therefore received only API homepage categories. Homepage sections were created only from those categories, and empty API sections were removed. Laravel is not yet populated with every approved frontend category, product, image, gallery, and detail record, even though the complete original data and media remain in the repository. The result was an incomplete-looking storefront.
@@ -15,7 +21,7 @@ Hybrid mode is a temporary migration bridge. It restores the original storefront
 Current production values are committed in `.env.production`:
 
 ```text
-VITE_API_BASE_URL=https://www.api.foodonlines.com/api/v1
+VITE_API_BASE_URL=https://api.foodonlines.com/api/v1
 VITE_CATALOG_SOURCE=hybrid
 VITE_BASE_PATH=/
 ```
@@ -38,7 +44,7 @@ Usable API media is first. Original local primary/gallery media follows, normali
 
 The hybrid repository implements homepage, categories, category detail/listings, paginated products, product detail, related products, search, brands, delivery types, product types, and Made In options.
 
-- Homepage: all original sections remain in approved order. Matching API products overlay local records, API-only products append to the matched section, and non-empty API-only categories append as new sections.
+- Homepage: local sections are retained only for the authoritative Laravel homepage category set after a successful request. Matching API products overlay local records, API-only products append to the matched section, and empty categories remain tiles without empty product carousels.
 - Category pages: exact local/API category resolution occurs before products merge. Existing 60-item local grids remain, API matches overlay, and API-only records append.
 - Product detail: exact local ID, listing-clone ID, local/API slug, and API UUID are supported. Unknown identifiers return `null`; they never return the first product.
 - Search: tolerant local ranking remains first, API results merge, matching records appear once, and API-only records append.

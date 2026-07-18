@@ -711,8 +711,8 @@ export function CategoryListingPage() {
             ) : (
               <SectionShell>
                 <div className="grid gap-2">
-                  <h2 className="text-2xl font-black text-neutral-950">No matching products</h2>
-                  <p className="text-sm leading-7 text-neutral-600">Try resetting filters or widening the price range to see more items.</p>
+                  <h2 className="text-2xl font-black text-neutral-950">{products.length ? "No matching products" : "Products are coming soon"}</h2>
+                  <p className="text-sm leading-7 text-neutral-600">{products.length ? "Try resetting filters or widening the price range to see more items." : "This category is ready, and products will appear here as soon as they are added."}</p>
                 </div>
               </SectionShell>
             )}

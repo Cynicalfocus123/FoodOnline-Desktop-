@@ -20,6 +20,7 @@ import { getPublicRouteHref } from "../lib/routes";
 import { commerceApi, type CommerceCart } from "../services/commerceApi";
 import { catalogRepository } from "../services/catalog/repository";
 import type { Product } from "../types/catalog";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon" | "settings" | "language";
 export type SiteView =
@@ -1126,7 +1127,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     } catch (error) {
       const message = error instanceof ApiError && error.status === 422
         ? "Some saved cart items could not be restored because their exact variants are no longer available. They remain visible until you remove them."
-        : error instanceof Error ? error.message : "Unable to sync cart.";
+        : toUserFacingErrorMessage(error, "Unable to sync cart.");
       set({ cartSyncStatus: "error", cartSyncMessage: message });
     }
   },
@@ -1138,7 +1139,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       const cart = await commerceApi.mergeGuestCart(token);
       set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
     } catch (error) {
-      set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to merge cart." });
+      set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to merge cart.") });
     }
   },
   hydrateSavedData: async () => {
@@ -1200,7 +1201,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         : commerceApi.addItem(lineId, Math.max(1, quantity), token);
     });
     void request.then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
-      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Cart update failed." }); void get().hydrateCommerceCart(); });
+      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Cart update failed.") }); void get().hydrateCommerceCart(); });
   },
   addToCart: (productId, variantId = productId, apiBacked = true, apiVariantIdentityReady = true) => {
     if (apiBacked && !apiVariantIdentityReady) {
@@ -1210,7 +1211,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         if (!product || !exactVariant?.uuid) throw new Error("This product variant is still being synchronized and cannot be ordered yet.");
         set((state) => ({ cartVariantAliases: { ...state.cartVariantAliases, [variantId]: exactVariant.uuid! } }));
         get().addToCart(product.id, exactVariant.uuid, true, true);
-      }).catch((error) => set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to confirm this catalog variant." }));
+      }).catch((error) => set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to confirm this item." ) }));
       return;
     }
     set((state) => ({
@@ -1230,7 +1231,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     }
     const token = usePublicAuthStore.getState().token;
     void commerceApi.addItem(variantId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
-      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: error instanceof Error ? error.message : "Unable to add this item." }); void get().hydrateCommerceCart(); });
+      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to add this item.") }); void get().hydrateCommerceCart(); });
   },
   removeFromCart: (lineId) => {
     const itemUuid = get().cartItemIds[lineId];
@@ -1442,7 +1443,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         error instanceof ApiError
           ? hasBackendFieldErrors
             ? (firstBackendFieldError ?? "Please fix the highlighted fields and submit again.")
-            : error.message
+            : toUserFacingErrorMessage(error, "Registration could not be completed.")
           : "Unable to submit registration. Please try again.";
 
       set({

@@ -28,6 +28,13 @@ export type Category = {
   href: string;
   seo?: { title?: string | null; description?: string | null; canonical_url?: string | null; robots_index?: boolean; robots_follow?: boolean };
   apiImageAvailable?: boolean;
+  status?: "draft" | "published" | "archived";
+  visibility?: "public" | "hidden" | "catalog_only";
+  sortOrder?: number;
+  showInNavigation?: boolean;
+  showOnHomepage?: boolean;
+  isFeatured?: boolean;
+  catalogOrigin?: ProductSourceIdentity;
 };
 
 export type ProductVariant = {

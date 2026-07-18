@@ -17,7 +17,6 @@ class ProductPublicationService
         $category = $product->category;
         $activeDefaults = $product->variants->where('is_active', true)->where('is_default', true);
         $default = $activeDefaults->first();
-        $primary = $product->media->where('is_primary', true);
 
         if (! $category || $category->trashed() || $category->status !== 'published' || $category->published_at === null || ! in_array($category->visibility, ['public', 'catalog_only'], true)) {
             $errors['category'][] = 'The product category must be published and publicly accessible.';
@@ -27,9 +26,6 @@ class ProductPublicationService
         if ($default && (trim((string) $default->sku) === '' || (float) $default->price_amount <= 0 || $default->currency_code !== config('foodonlines.catalog_currency'))) {
             $errors['default_variant'][] = 'The default variant must have a SKU, positive price, and configured catalog currency.';
         }
-        if ($product->media->isEmpty()) { $errors['media'][] = 'At least one product image is required.'; }
-        if ($primary->count() !== 1) { $errors['primary_media'][] = 'Exactly one primary image is required.'; }
-
         return $errors;
     }
 

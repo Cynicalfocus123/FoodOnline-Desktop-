@@ -1,5 +1,7 @@
 # FoodOnlines Laravel Backend Deployment
 
+> Historical host document reviewed 2026-07-18. Current production delivery is Hostinger-only through `backend-live/` and `frontend-upload/`; use the root `DEPLOYMENT.md` and preserve `public_html/api`.
+
 > Phase 7 review (2026-07-15): this remains a historical TMDHosting workflow. Current Phase 7 source and deployment preparation use the root Laravel source plus generated `backend-live/`; external hosting and R2 are not claimed.
 
 > Phase 4 review (2026-07-13): this historical TMDHosting workflow is not the current deployment source for the admin catalog/R2 workflow; use `backend-live/`, root `DEPLOYMENT.md`, and `docs/admin-catalog-and-r2.md`.

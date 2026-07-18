@@ -4,7 +4,7 @@ import {
   catalogApi,
   uploadManagedImage,
 } from "../../services/admin/catalogApi";
-import type { AdminBrand, MediaStorageStatus } from "../../types/adminCatalog";
+import type { AdminBrand, MediaStorageState } from "../../types/adminCatalog";
 import {
   ActionButton,
   CheckField,
@@ -28,7 +28,7 @@ export function BrandAdminPanel({
   storage,
 }: {
   token: string;
-  storage: MediaStorageStatus | null;
+  storage: MediaStorageState;
 }) {
   const [items, setItems] = useState<AdminBrand[]>([]);
   const [selected, setSelected] = useState<AdminBrand | null>(null);
@@ -205,7 +205,7 @@ export function BrandAdminPanel({
           ) : null}
           {!selected ? (
             <Notice>Save the brand before uploading a logo.</Notice>
-          ) : storage?.uploads_enabled ? (
+          ) : storage.phase === "available" ? (
             <label className="mt-3 block rounded-xl border border-dashed p-3 text-sm font-bold">
               Upload logo
               <input
@@ -218,9 +218,7 @@ export function BrandAdminPanel({
               />
             </label>
           ) : (
-            <Notice tone="error">
-              Media storage unavailable. Existing logo is preserved.
-            </Notice>
+            <Notice>{storage.phase === "checking" ? "Checking image upload availability. You can save this brand now." : "Image uploads are not connected yet. You can save and manage this brand now, then add a logo later."}</Notice>
           )}
           {progress !== null ? <Notice>Uploading: {progress}%</Notice> : null}
         </div>

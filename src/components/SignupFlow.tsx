@@ -171,7 +171,7 @@ export function SignupFlow() {
               <p className="mt-2 max-w-xl text-base leading-7 text-neutral-600">
                 Thank you for registering. Your{" "}
                 {getSignupRoleMeta(completedSubmission.selectedRole).signupLabel} account has been saved to the live
-                FoodOnlines backend and is ready for sign in.
+                FoodOnlines account system and is ready for sign in.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <button
@@ -212,7 +212,7 @@ export function SignupFlow() {
             <h2 className="text-3xl font-black text-ink sm:text-4xl">Create Your Account</h2>
             <p className="mt-3 text-base leading-7 text-neutral-600">
               Finish your {selectedRole ? getSignupRoleMeta(selectedRole).signupLabel : "selected"} registration
-              with the live details required by the FoodOnlines backend.
+              with the live details required for your FoodOnlines account.
             </p>
 
             <form className="mt-8 grid gap-4" noValidate onSubmit={handleSubmit}>

@@ -1,5 +1,19 @@
 # FoodOnlines Desktop Home Design
 
+## Dynamic Category Administration and Storefront Design (2026-07-18)
+
+- Category creation begins with Name and an editable generated slug. Optional Images and SEO & Redirects use collapsed sections; aliases appear only for saved records. Placement controls explain and immediately reflect Published + Public.
+- The admin list uses complete paginated data, lifecycle filters, hierarchy indentation, visible state, stable selection, and safe loading/empty/error states. Permanent deletion appears only after archive and requires the exact slug.
+- Media connectivity is neutral operational information and never disables database Save. Only an attempted upload failure receives error styling.
+- Products navigation uses a scrollable backend-driven dropdown and mobile category list. Homepage tiles use a responsive 2/3/4/5/6-column progression. Long/multilingual names wrap and one neutral initial-based fallback handles missing or broken images.
+- Empty homepage-enabled categories retain their tile and route; their page says “Products are coming soon,” while product carousels render only with items. Existing FoodOnlines visual language remains intact.
+
+## Production API and backend visibility (2026-07-17)
+
+- API URLs, endpoint paths, backend/server/database details, and environment configuration are internal implementation details and must never appear in customer or admin UI.
+- Production screens never render raw technical errors, response bodies, exceptions, stack traces, or debugging banners. Safe, actionable messages pass through the shared error normalizer while useful field validation remains intact.
+- The internal API configuration remains centralized and environment-driven at `https://api.foodonlines.com/api/v1`; catalog selection remains hybrid. See `DESIGNER.md` for the permanent interface rule.
+
 ## Temporary Hybrid Catalog Data Layer (2026-07-15)
 
 - The approved storefront, admin portal, routes, responsive layouts, cards, galleries, filters, cart, and checkout visuals are unchanged. Existing components now receive merged catalog data through an explicit repository layer.
@@ -73,7 +87,7 @@
 
 ## Backend Foundation Architecture — Step 1 (2026-07-13)
 
-- The repository root is the single Laravel 12 application root. The backend is a versioned JSON API whose production contract begins at `https://www.api.foodonlines.com/api/v1`; public and standalone-admin frontends remain API clients and were not redesigned.
+- The repository root is the single Laravel 12 application root. The backend is a versioned JSON API whose production contract begins at `https://api.foodonlines.com/api/v1`; public and standalone-admin frontends remain API clients and were not redesigned.
 - `/api/v1/auth` owns public registration, login, session restoration, and logout for `customer`, `supplier`, and `partner` accounts. `/api/v1/account` owns the existing authenticated address book, notification preferences, masked payment metadata, password, and deletion-request flows.
 - `/api/v1/admin` is a separate trust boundary with a distinct token table, middleware, shorter token lifetime, login throttle, and admin-role/status checks. Public tokens cannot authorize admin routes, and admin tokens cannot authorize public account routes.
 - Bearer tokens are returned once to the client and stored server-side only as SHA-256 digests. New public tokens default to 30 days; new admin tokens default to 8 hours. Logout revokes the current digest, password rotation revokes other active sessions, and legacy null-expiry tokens remain readable during migration.
@@ -136,7 +150,7 @@
 - Product cards now treat any real image loaded from a `public/assets/*-mockups/` folder as an expanded category packshot, so newer categories such as `Frozen`, `Vegan Foods`, `Organic & Healthy Living`, and `Chicken, Meat & Fish` render visibly on category grids without needing per-category UI allowlists.
 - Public behavior now uses live Laravel API auth. Registration posts to `POST /api/v1/auth/register`, login posts to `POST /api/v1/auth/login`, session restore uses `GET /api/v1/auth/me`, and logout posts to `POST /api/v1/auth/logout`.
 - Email auth behavior update on 2026-05-31 keeps the existing login/register layouts, but improves production behavior behind them: email register now receives a real bearer token/user session response, stores that session through the same public auth store as login, and shows clearer required/invalid email/password messages. Phone-based checkout fallback behavior is unchanged.
-- Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://www.api.foodonlines.com/api/v1`.
+- Public/admin API base config lives in `src/lib/runtimeConfig.ts` and defaults to `https://api.foodonlines.com/api/v1`.
 - Signup form fields should allow natural spacing while typing words, with final cleaned values still validated and normalized before completion.
 - Signup now includes password and confirm password with minimal design change so newly registered public users can log in immediately.
 - Signup and login password fields include compact eye toggles, preserving the current form layout.

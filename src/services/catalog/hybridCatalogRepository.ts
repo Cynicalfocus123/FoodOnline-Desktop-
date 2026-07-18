@@ -1,4 +1,5 @@
 import { categories, productCatalogById } from "../../data/home";
+import { ApiError } from "../../lib/apiClient";
 import type {
   CatalogQuery,
   Category,
@@ -12,8 +13,9 @@ import type {
 import { apiCatalogRepository } from "./apiCatalogRepository";
 import type { CatalogRepository } from "./catalogRepository";
 import { categoriesRepresentSameIdentity, normalizeCatalogSlug, productsExcludeSameIdentity, productsRepresentSameIdentity } from "./catalogIdentity";
-import { mergeCategories, mergeCategory, mergeHomepageSections, mergeProduct, mergeProducts, mergeStringOptions } from "./catalogMerge";
+import { mergeAuthoritativeHomepageSections, mergeCategory, mergeProduct, mergeProducts, mergeStringOptions } from "./catalogMerge";
 import { localCatalogRepository } from "./localCatalogRepository";
+import { resolveCategoryAuthority, type CategoryPlacementKind } from "./catalogCategoryAuthority";
 
 export type CatalogSynchronizationWarning = {
   code: "catalog_api_unavailable";
@@ -26,6 +28,28 @@ export interface HybridCatalogRepository extends CatalogRepository {
 }
 
 type HybridOptions = { apiTimeoutMs?: number };
+type PlacementSnapshot = { version: 1; all?: Category[]; navigation?: Category[]; homepage?: Category[] };
+
+const placementSnapshotKey = "foodonlines:catalog-category-placement:v1";
+
+function readPlacementSnapshot(): PlacementSnapshot {
+  try {
+    const value = globalThis.localStorage?.getItem(placementSnapshotKey);
+    if (!value) return { version: 1 };
+    const parsed = JSON.parse(value) as PlacementSnapshot;
+    return parsed?.version === 1 ? parsed : { version: 1 };
+  } catch {
+    return { version: 1 };
+  }
+}
+
+function writePlacementSnapshot(snapshot: PlacementSnapshot) {
+  try {
+    globalThis.localStorage?.setItem(placementSnapshotKey, JSON.stringify(snapshot));
+  } catch {
+    // Storage is optional; the in-memory snapshot remains authoritative for this session.
+  }
+}
 
 const localProducts = [...productCatalogById.values()];
 const localProductsById = new Map(localProducts.map((product) => [product.id, product]));
@@ -57,6 +81,7 @@ export function createHybridCatalogRepository(
   let warning: CatalogSynchronizationWarning | null = null;
   const inFlight = new Map<string, Promise<unknown>>();
   const timeoutMs = options.apiTimeoutMs ?? 5000;
+  const placementSnapshot = readPlacementSnapshot();
 
   function apiValue<T>(key: string, request: () => Promise<T>, fallback: T): Promise<T> {
     const existing = inFlight.get(key) as Promise<T> | undefined;
@@ -84,32 +109,100 @@ export function createHybridCatalogRepository(
     return work;
   }
 
+  function apiOutcome<T>(key: string, request: () => Promise<T>, fallback: T): Promise<{ success: boolean; value: T; notFound?: boolean }> {
+    const existing = inFlight.get(key) as Promise<{ success: boolean; value: T; notFound?: boolean }> | undefined;
+    if (existing) return existing;
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<{ success: boolean; value: T }>((resolve) => {
+      timer = setTimeout(() => resolve({ success: false, value: fallback }), timeoutMs);
+    });
+    const work = Promise.race([
+      request().then((value) => ({ success: true, value })),
+      timeout,
+    ])
+      .then((result) => {
+        warning = result.success
+          ? null
+          : { code: "catalog_api_unavailable", message: "Some newer catalog updates may still be synchronizing.", occurredAt: new Date().toISOString() };
+        return result;
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.status === 404) return { success: false, value: fallback, notFound: true };
+        warning = { code: "catalog_api_unavailable", message: "Some newer catalog updates may still be synchronizing.", occurredAt: new Date().toISOString() };
+        return { success: false, value: fallback };
+      })
+      .finally(() => {
+        if (timer) clearTimeout(timer);
+        inFlight.delete(key);
+      });
+    inFlight.set(key, work);
+    return work;
+  }
+
+  async function authoritativeCategories(
+    kind: CategoryPlacementKind,
+    local: Category[],
+    request: () => Promise<Category[]>,
+  ) {
+    const result = await apiOutcome(`placement:${kind}`, request, [] as Category[]);
+    if (result.success) {
+      const merged = resolveCategoryAuthority({ kind, local, api: result.value, apiSucceeded: true });
+      placementSnapshot[kind] = merged;
+      writePlacementSnapshot(placementSnapshot);
+      return merged;
+    }
+    return resolveCategoryAuthority({ kind, local, api: [], apiSucceeded: false, remembered: placementSnapshot[kind] });
+  }
+
+  async function filterByPublicCategoryAuthority<T extends Product>(products: T[]) {
+    const localCategories = await localRepository.getAllPublicCategories();
+    const publicCategories = await authoritativeCategories("all", localCategories, () => apiRepository.getAllPublicCategories());
+    const allowed = new Set(publicCategories.map((category) => normalizeCatalogSlug(category.categorySlug)));
+    return products.filter((product) => allowed.has(normalizeCatalogSlug(product.categorySlug)));
+  }
+
   return {
     getSynchronizationWarning: () => warning,
     async getCategories() {
       const local = await localRepository.getCategories();
-      const api = await apiValue("categories", () => apiRepository.getCategories(), [] as Category[]);
-      return mergeCategories(local, api);
+      return authoritativeCategories("all", local, () => apiRepository.getAllPublicCategories());
+    },
+    async getAllPublicCategories() {
+      const local = await localRepository.getAllPublicCategories();
+      return authoritativeCategories("all", local, () => apiRepository.getAllPublicCategories());
+    },
+    async getNavigationCategories() {
+      const local = await localRepository.getNavigationCategories();
+      return authoritativeCategories("navigation", local, () => apiRepository.getNavigationCategories());
+    },
+    async getHomepageCategories() {
+      const local = await localRepository.getHomepageCategories();
+      return authoritativeCategories("homepage", local, () => apiRepository.getHomepageCategories());
     },
     async getHomepageCatalog() {
-      const local = await localRepository.getHomepageCatalog();
-      const api = await apiValue("homepage", () => apiRepository.getHomepageCatalog(), []);
-      return mergeHomepageSections(local, api);
+      const [local, localCategories] = await Promise.all([
+        localRepository.getHomepageCatalog(),
+        localRepository.getHomepageCategories(),
+      ]);
+      const homepageCategories = await authoritativeCategories("homepage", localCategories, () => apiRepository.getHomepageCategories());
+      const api = await apiValue("homepage-sections", () => apiRepository.getHomepageCatalog(), []);
+      return mergeAuthoritativeHomepageSections(local, api, homepageCategories);
     },
     async getCategoryBySlug(slug) {
       if (!slug) return null;
       const local = localRepository === localCatalogRepository ? exactLocalCategory(slug) : await localRepository.getCategoryBySlug(slug);
-      const api = await apiValue(`category:${slug}`, () => apiRepository.getCategoryBySlug(slug), null);
+      const result = await apiOutcome(`category:${slug}`, () => apiRepository.getCategoryBySlug(slug), null);
+      if (result.notFound) return null;
+      const api = result.value;
       if (local && api && categoriesRepresentSameIdentity(local, api)) return mergeCategory(local, api);
       return api ?? local;
     },
     async getCategoryProducts(slug) {
       if (!slug) return [];
+      const resolvedCategory = await this.getCategoryBySlug(slug);
+      if (!resolvedCategory) return [];
       const localCategory = localRepository === localCatalogRepository ? exactLocalCategory(slug) : await localRepository.getCategoryBySlug(slug);
-      if (!localCategory) {
-        const apiCategory = await apiValue(`category:${slug}`, () => apiRepository.getCategoryBySlug(slug), null);
-        if (!apiCategory) return [];
-      }
       const [local, api] = await Promise.all([
         localCategory ? localRepository.getCategoryProducts(slug) : Promise.resolve([]),
         apiValue(`category-products:${slug}`, () => apiRepository.getCategoryProducts(slug), []),
@@ -121,7 +214,8 @@ export function createHybridCatalogRepository(
         localRepository.getProducts(query),
         apiValue(`products:${JSON.stringify(query)}`, () => apiRepository.getProducts(query), { items: [], page: query.page ?? 1, pageSize: query.pageSize ?? 60, total: 0 } satisfies PaginatedProductResult),
       ]);
-      const items = mergeProducts(local.items, api.items);
+      const permittedLocal = await filterByPublicCategoryAuthority(local.items);
+      const items = mergeProducts(permittedLocal, api.items);
       return { items, page: query.page ?? 1, pageSize: query.pageSize ?? Math.max(items.length, 1), total: items.length };
     },
     async getProductById(id) {
@@ -141,14 +235,15 @@ export function createHybridCatalogRepository(
         localRepository.getRelatedProducts(product, Math.max(limit, 8)),
         apiValue(`related:${product.uuid ?? product.slug}:${limit}`, () => apiRepository.getRelatedProducts(product, Math.max(limit, 8)), []),
       ]);
-      return mergeProducts(local, api).filter((candidate) => !productsExcludeSameIdentity(candidate, product)).slice(0, limit);
+      const permittedLocal = await filterByPublicCategoryAuthority(local);
+      return mergeProducts(permittedLocal, api).filter((candidate) => !productsExcludeSameIdentity(candidate, product)).slice(0, limit);
     },
     async searchProducts(query) {
       const [local, api] = await Promise.all([
         localRepository.searchProducts(query),
         apiValue(`search:${query}`, () => apiRepository.searchProducts(query), []),
       ]);
-      return mergeProducts(local, api);
+      return mergeProducts(await filterByPublicCategoryAuthority(local), api);
     },
     async getAvailableFilterBrands() {
       const [local, api] = await Promise.all([

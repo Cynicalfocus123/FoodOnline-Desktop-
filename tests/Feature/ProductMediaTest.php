@@ -28,11 +28,11 @@ class ProductMediaTest extends TestCase
         $this->withToken($token)->postJson('/api/v1/admin/products/'.$product->uuid.'/media',['path'=>'images/one.webp'])->assertUnprocessable()->assertJsonValidationErrors('path');
         $this->withToken($token)->postJson('/api/v1/admin/products/'.$product->uuid.'/media/reorder',['media_ids'=>[$one->id,$other->id]])->assertUnprocessable()->assertJsonValidationErrors('media_ids');
     }
-    public function test_maximum_and_published_image_guards(): void
+    public function test_maximum_guard_and_published_product_can_use_image_fallback(): void
     {
         $product=Product::factory()->create(); $service=app(ProductMediaService::class);
         foreach(range(1,12) as $i){$service->create($product,['path'=>'images/'.$i.'.webp']);}
         try{$service->create($product,['path'=>'images/13.webp']);$this->fail('Expected image limit validation.');}catch(ValidationException){$this->addToAssertionCount(1);}
-        $published=Product::factory()->publishedReady()->create(); $this->expectException(ValidationException::class); $service->delete($published->media()->firstOrFail());
+        $published=Product::factory()->publishedReady()->create(); $service->delete($published->media()->firstOrFail()); $this->assertSame(0,$published->media()->count());
     }
 }

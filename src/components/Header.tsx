@@ -1,6 +1,8 @@
 import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { assets, languageOptions, navItems, zipCodeExample } from "../data/home";
 import { getPublicRouteHref } from "../lib/routes";
+import { getNavigationCategories } from "../services/catalog";
+import type { Category } from "../types/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 
@@ -229,6 +231,7 @@ export function Header() {
   const openCart = useHomeStore((state) => state.openCart);
   const openWholesaler = useHomeStore((state) => state.openWholesaler);
   const openSearchResults = useHomeStore((state) => state.openSearchResults);
+  const openCategory = useHomeStore((state) => state.openCategory);
   const siteView = useHomeStore((state) => state.siteView);
   const backToHome = useHomeStore((state) => state.backToHome);
   const searchInputValue = useHomeStore((state) => state.searchInputValue);
@@ -244,6 +247,8 @@ export function Header() {
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isProductsMenuOpen, setIsProductsMenuOpen] = useState(false);
+  const [navigationCategories, setNavigationCategories] = useState<Category[]>([]);
   const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
   const languageMenuReference = useRef<HTMLElement | null>(null);
   const accountMenuReference = useRef<HTMLDivElement | null>(null);
@@ -292,7 +297,18 @@ export function Header() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsAccountMenuOpen(false);
+    setIsProductsMenuOpen(false);
   }, [siteView]);
+
+  useEffect(() => {
+    let mounted = true;
+    void getNavigationCategories().then((items) => {
+      if (mounted) setNavigationCategories(items);
+    }).catch(() => {
+      if (mounted) setNavigationCategories([]);
+    });
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
     if (!isLanguageMenuOpen) {
@@ -432,6 +448,13 @@ export function Header() {
     setIsMobileMenuOpen(false);
   }
 
+  function handleCategoryClick(category: Category, event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    setIsProductsMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    openCategory(category.categorySlug);
+  }
+
   function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     openSearchResults(searchInputValue);
@@ -495,18 +518,31 @@ export function Header() {
               <span>{selectedZipCode}</span>
             </button>
 
-            <nav className="hidden min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap text-[14px] font-semibold text-neutral-800 scrollbar-none lg:flex xl:gap-5 xl:text-[15px]">
-              {navItems.map((item) => (
-                <a
-                  className={`inline-flex shrink-0 items-center gap-1.5 transition hover:text-leaf-600 ${
-                    activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"
-                  }`}
-                  href={item.href}
-                  key={item.label}
-                  onClick={(event) => handleNavClick(item.label, event)}
-                >
-                  <span>{item.label}</span>
-                  {item.hasChevron ? <MenuChevron /> : null}
+            <nav className="hidden min-w-0 items-center gap-3 whitespace-nowrap text-[14px] font-semibold text-neutral-800 lg:flex xl:gap-5 xl:text-[15px]">
+              {navItems.map((item) => item.label === "Products" ? (
+                <div className="relative" key={item.label}>
+                  <button
+                    aria-expanded={isProductsMenuOpen}
+                    className={`inline-flex min-h-11 items-center gap-1.5 transition hover:text-leaf-600 ${activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"}`}
+                    onClick={() => setIsProductsMenuOpen((open) => !open)}
+                    type="button"
+                  >
+                    <span>{item.label}</span><MenuChevron />
+                  </button>
+                  {isProductsMenuOpen ? (
+                    <div className="absolute left-0 top-full z-[1200] mt-1 grid max-h-[min(60vh,480px)] w-[320px] gap-1 overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)]">
+                      {navigationCategories.map((category) => (
+                        <a className="min-h-11 whitespace-normal break-words rounded-xl px-3 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-emerald-50 hover:text-leaf-700" href={category.href} key={category.uuid ?? category.categorySlug} onClick={(event) => handleCategoryClick(category, event)}>
+                          {category.name}
+                        </a>
+                      ))}
+                      {!navigationCategories.length ? <p className="px-3 py-2 text-sm text-neutral-500">Categories are temporarily unavailable.</p> : null}
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <a className={`inline-flex shrink-0 items-center gap-1.5 transition hover:text-leaf-600 ${activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"}`} href={item.href} key={item.label} onClick={(event) => handleNavClick(item.label, event)}>
+                  <span>{item.label}</span>{item.hasChevron ? <MenuChevron /> : null}
                 </a>
               ))}
             </nav>
@@ -738,16 +774,24 @@ export function Header() {
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-2">
               {navItems.map((item) => (
+                <div className="grid gap-1" key={item.label}>
                 <a
-                  className={`rounded-2xl px-4 py-3 text-sm font-semibold transition hover:bg-neutral-50 hover:text-leaf-600 ${
+                  className={`min-h-11 rounded-2xl px-4 py-3 text-sm font-semibold transition hover:bg-neutral-50 hover:text-leaf-600 ${
                     activeNavLabel === item.label ? "text-leaf-600" : "text-neutral-800"
                   }`}
                   href={item.href}
-                  key={item.label}
                   onClick={(event) => handleNavClick(item.label, event)}
                 >
                   {item.label}
                 </a>
+                {item.label === "Products" ? (
+                  <div className="ml-3 grid max-h-[40vh] gap-1 overflow-y-auto border-l border-neutral-200 pl-3">
+                    {navigationCategories.map((category) => (
+                      <a className="min-h-11 break-words rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-emerald-50 hover:text-leaf-700" href={category.href} key={category.uuid ?? category.categorySlug} onClick={(event) => handleCategoryClick(category, event)}>{category.name}</a>
+                    ))}
+                  </div>
+                ) : null}
+                </div>
               ))}
 
               {!currentUser ? (

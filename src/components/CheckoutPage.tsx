@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { formatPrice, useCatalogProducts, type ProductItem } from "../services/catalog";
-import { ApiError, apiRequest } from "../lib/apiClient";
+import { apiRequest } from "../lib/apiClient";
 import { checkoutApi, type CheckoutQuote, type CommerceOrder, type PaymentMethodAvailability } from "../services/commerceApi";
 import { isBackendOrderableProduct } from "../services/catalog/catalogCompatibility";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 const FREE_SHIPPING_THRESHOLD = 49;
 
@@ -877,7 +878,7 @@ export function CheckoutPage() {
           setPaymentMethod(uiMethod);
         }
       }
-    }).catch((error) => setCheckoutNotice(error instanceof Error ? error.message : "Payment methods are unavailable."));
+    }).catch((error) => setCheckoutNotice(toUserFacingErrorMessage(error, "Payment methods are unavailable.")));
     return () => { active = false; };
   }, [paymentMethod, token]);
 
@@ -924,7 +925,7 @@ export function CheckoutPage() {
       }).catch((error) => {
         if (!active) return;
         setQuote(null);
-        const message = error instanceof ApiError ? error.message.replace(/^Request failed \(422\): /, "") : "Unable to calculate checkout totals.";
+        const message = toUserFacingErrorMessage(error, "Unable to calculate checkout totals.");
         if (coupon?.code) { setCoupon(null); setCouponError(message); } else { setCheckoutNotice(message); }
       }).finally(() => { if (active) setIsQuoteLoading(false); });
     }, 300);
@@ -1218,7 +1219,7 @@ export function CheckoutPage() {
       return;
     }
 
-    if (!quote || !canPlaceOrder) { setCheckoutNotice("Wait for a current server quote before placing the order."); return; }
+    if (!quote || !canPlaceOrder) { setCheckoutNotice("Wait for current totals before placing the order."); return; }
 
     setIsPlacingOrder(true);
     try {
@@ -1227,7 +1228,7 @@ export function CheckoutPage() {
       if (response.guest_access_token) sessionStorage.setItem(`foodonline-order-${response.order.uuid}`, response.guest_access_token);
       await hydrateCommerceCart();
     } catch (error) {
-      setCheckoutNotice(error instanceof Error ? error.message : "Unable to place the order.");
+      setCheckoutNotice(toUserFacingErrorMessage(error, "Unable to place the order."));
     } finally {
       setIsPlacingOrder(false);
     }
@@ -1261,7 +1262,7 @@ export function CheckoutPage() {
               <p className="max-w-3xl text-sm leading-6 text-neutral-500">
                 {hasBackendSession ? `Signed in as ${currentUser?.email ?? "your account"}.` : "Guest checkout is available for this order."}
               </p>
-              {!hasBackendSession ? <label className="mt-2 grid max-w-md gap-1 text-sm font-bold text-neutral-700" htmlFor="checkout-guest-email"><span>Order email</span><input className="min-h-12 rounded-2xl border border-neutral-300 px-4 font-semibold outline-none focus:border-leaf-500" id="checkout-guest-email" onChange={(event) => setGuestEmail(event.target.value)} placeholder="name@example.com" type="email" value={guestEmail} /><span className="text-xs font-semibold text-neutral-500">Phone-only demo sessions cannot place authenticated orders; this checkout remains a secure guest order.</span></label> : null}
+              {!hasBackendSession ? <label className="mt-2 grid max-w-md gap-1 text-sm font-bold text-neutral-700" htmlFor="checkout-guest-email"><span>Order email</span><input className="min-h-12 rounded-2xl border border-neutral-300 px-4 font-semibold outline-none focus:border-leaf-500" id="checkout-guest-email" onChange={(event) => setGuestEmail(event.target.value)} placeholder="name@example.com" type="email" value={guestEmail} /><span className="text-xs font-semibold text-neutral-500">Enter an email address to continue with secure guest checkout.</span></label> : null}
             </div>
             <div className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm font-black text-leaf-700 shadow-[0_8px_24px_rgba(34,197,94,0.08)]">
               <ShieldIcon />
@@ -1696,7 +1697,7 @@ export function CheckoutPage() {
                 </div>
 
                 <p className="mt-3 min-h-[22px] text-sm font-semibold leading-6 text-neutral-500">
-                  {isQuoteLoading ? "Refreshing secure server totals..." : canPlaceOrder ? `Server quote valid until ${new Date(quote!.expires_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : "Complete delivery details and wait for a current server quote."}
+                  {isQuoteLoading ? "Refreshing secure totals..." : canPlaceOrder ? `Current totals valid until ${new Date(quote!.expires_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : "Complete delivery details and wait for current totals."}
                 </p>
                 {checkoutNotice ? (
                   <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-800">

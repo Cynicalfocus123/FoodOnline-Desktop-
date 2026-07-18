@@ -49,7 +49,7 @@ class ProductController extends Controller
     }
     private function visibleQuery(string|array $visibility): Builder
     {
-        return Product::query()->published()->whereHas('category',fn($q)=>$q->published()->whereIn('visibility',(array)$visibility))->whereHas('defaultVariant')->whereHas('primaryMedia');
+        return Product::query()->published()->whereHas('category',fn($q)=>$q->published()->whereIn('visibility',(array)$visibility))->whereHas('defaultVariant');
     }
     private function orderPrice(Builder $query,string $direction): Builder
     {

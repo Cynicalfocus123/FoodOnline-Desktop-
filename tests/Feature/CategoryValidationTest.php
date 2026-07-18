@@ -19,7 +19,7 @@ class CategoryValidationTest extends TestCase
         $this->withToken($token)->postJson('/api/v1/admin/categories', [
             'status' => 'live', 'visibility' => 'everyone', 'default_sort' => 'random',
             'image_path' => 'C:\\secrets\\image.php', 'canonical_url' => 'http://unsafe.example/test',
-        ])->assertUnprocessable()->assertJsonValidationErrors(['name', 'slug', 'status', 'visibility', 'default_sort', 'image_path', 'canonical_url']);
+        ])->assertUnprocessable()->assertJsonValidationErrors(['name', 'status', 'visibility', 'default_sort', 'image_path', 'canonical_url']);
     }
 
     public function test_duplicate_slug_and_alias_conflicts_are_rejected(): void

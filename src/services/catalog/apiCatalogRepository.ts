@@ -45,6 +45,15 @@ export const apiCatalogRepository: CatalogRepository = {
   async getCategories() {
     return listCategories("per_page=100&sort=sort_order");
   },
+  async getAllPublicCategories() {
+    return listCategories("root_only=1&per_page=100&sort=sort_order");
+  },
+  async getNavigationCategories() {
+    return listCategories("navigation=1&root_only=1&per_page=100&sort=sort_order");
+  },
+  async getHomepageCategories() {
+    return listCategories("homepage=1&root_only=1&per_page=100&sort=sort_order");
+  },
   async getCategoryBySlug(slug) {
     if (!slug) return null;
     const response = await apiRequest<ApiCategoryResponse>(`/catalog/categories/${encodeURIComponent(slug)}`);

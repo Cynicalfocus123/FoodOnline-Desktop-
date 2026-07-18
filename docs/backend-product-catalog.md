@@ -1,5 +1,7 @@
 # FoodOnlines Core Grocery Product Catalog
 
+> 2026-07-18 category compatibility: permanent deletion rejects assigned products. Product publication remains variant/SKU/price/category/currency dependent but no longer requires media; public resources permit the storefront fallback image.
+
 ## Phase 7 compatibility note (2026-07-15)
 
 Products and variants now expose SEO fields, review aggregates, and real order-data Best Selling without changing publication or exact variant identity. Review media uses the existing R2-compatible media workflow; see `docs/operational-commerce-phase-7.md`.

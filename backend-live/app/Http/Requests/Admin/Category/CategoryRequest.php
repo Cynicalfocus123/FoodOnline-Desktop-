@@ -18,15 +18,18 @@ abstract class CategoryRequest extends FormRequest
         foreach (['name', 'slug', 'description', 'meta_title', 'meta_description', 'canonical_url'] as $field) {
             if ($this->exists($field)) {
                 $value = $this->input($field);
-                $changes[$field] = is_string($value) ? trim(strip_tags($value)) : $value;
+                $value = is_string($value) ? trim(strip_tags($value)) : $value;
+                $changes[$field] = $value === '' && $field !== 'name' && $field !== 'slug' ? null : $value;
             }
         }
-        if ($this->exists('slug')) {
-            $changes['slug'] = Str::slug((string) $this->input('slug'));
+        if ($this->exists('slug') || $this->exists('name')) {
+            $slugSource = trim((string) $this->input('slug')) ?: (string) $this->input('name');
+            $changes['slug'] = Str::slug($slugSource);
         }
         foreach (['image_path', 'icon_path', 'desktop_banner_path', 'mobile_banner_path'] as $field) {
             if ($this->exists($field)) {
-                $changes[$field] = is_string($this->input($field)) ? trim((string) $this->input($field)) : $this->input($field);
+                $value = is_string($this->input($field)) ? trim((string) $this->input($field)) : $this->input($field);
+                $changes[$field] = $value === '' ? null : $value;
             }
         }
         $this->merge($changes);

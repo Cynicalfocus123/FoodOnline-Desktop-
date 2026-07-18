@@ -1,5 +1,9 @@
 # Admin Catalog Portal and Cloudflare R2 Media
 
+## Optional-media category workflow (2026-07-18)
+
+Category, brand, and draft-product database work is independent from media-storage status. The admin UI distinguishes checking, available, unavailable, and actual upload-failure states; unavailable storage uses neutral guidance and never disables Save. Category Images and SEO & Redirects are collapsed optional sections, aliases are available only after the first save, and a second Save action remains near the form bottom. Product publication no longer requires an image and the storefront uses its generic fallback while sellability requirements remain enforced.
+
 ## Phase 7 compatibility note (2026-07-15)
 
 The same signed S3-compatible media workflow now accepts review images, return evidence, and support attachments in addition to catalog media. Phase 7 operational commerce, frontend production mirrors, and external R2 activation status are documented in `docs/operational-commerce-phase-7.md`; this document remains the catalog/R2 foundation record.

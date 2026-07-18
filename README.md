@@ -1,5 +1,9 @@
 # FoodOnline-Desktop-
 
+> Category administration release (2026-07-18): Laravel is authoritative for public category existence and placement; admin lifecycle work is R2-independent and original categories use a safe missing-only backfill. Manual deployment uses `backend-live/` and `frontend-upload/` with `DEPLOYMENT.md`.
+
+> Frontend production API visibility fix (2026-07-17): the centralized frontend host is `https://api.foodonlines.com/api/v1`, hybrid catalog mode remains active, and production customer/admin UI must not display API, backend, infrastructure, or raw technical error details. See `AGENT.md` and `DESIGNER.md`.
+
 > Current catalog compatibility (2026-07-15): production uses explicit hybrid mode so the complete approved local storefront remains visible while matching/new Laravel catalog records overlay and append automatically. Strict API-only and isolated local modes remain available. See `docs/hybrid-catalog-compatibility.md`.
 
 > Phase 7 current state (2026-07-15): operational commerce is implemented in the Laravel source and mirrored `backend-live/`, while the production frontend build and `frontend-upload/` mirror include persistent favorites/saved data, real reviews, Buy Again, notifications, receipts, SEO, and admin operations. Local Node validation is evidence-based; PHP/MySQL and external Hostinger/R2/SMTP/queue state are not claimed. See `docs/operational-commerce-phase-7.md`.

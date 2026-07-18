@@ -1,5 +1,7 @@
 # Upload Instructions
 
+> Historical host document reviewed 2026-07-18. Current backend/frontend deployment uses the separate Hostinger live folders and safety sequence in the root `DEPLOYMENT.md`.
+
 > Phase 7 review (2026-07-15): do not use this historical archive flow for current work. Use the synchronized non-ZIP `backend-live/` and `frontend-upload/` mirrors; external hosting remains unverified.
 
 > Phase 4 review (2026-07-13): do not use this legacy archive flow for the admin catalog/R2 release. Use the non-ZIP root deployment guide and synchronized mirrors.

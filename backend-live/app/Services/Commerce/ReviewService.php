@@ -21,6 +21,7 @@ class ReviewService
         if ($product->status !== 'published' && ! $this->hasQualifyingOrder($user, $product)) { throw (new ModelNotFoundException)->setModel(Product::class); }
         if (ProductReview::query()->where('user_id', $user->id)->where('product_id', $product->id)->exists()) { throw ValidationException::withMessages(['review' => ['You already reviewed this product. Edit your existing review instead.']]); }
         [$verified, $order, $orderItem] = $this->qualifyingPurchase($user, $product, $data['order_item_uuid'] ?? null);
+        if (! $verified) { throw ValidationException::withMessages(['review' => ['A delivered purchase is required before reviewing this product.']]); }
         return ProductReview::query()->create([
             'uuid' => (string) Str::uuid(), 'product_id' => $product->id, 'product_variant_id' => ! empty($data['product_variant_uuid']) ? $product->variants->firstWhere('uuid', $data['product_variant_uuid'])?->id : $orderItem?->product_variant_id,
             'user_id' => $user->id, 'order_id' => $order?->id, 'order_item_id' => $orderItem?->id, 'rating' => (int) $data['rating'], 'title' => $data['title'] ?? null,

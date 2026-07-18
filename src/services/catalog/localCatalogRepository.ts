@@ -15,9 +15,23 @@ import {
 import type { CatalogQuery, Product } from "../../types/catalog";
 import type { CatalogRepository } from "./catalogRepository";
 
+const localCategories = categories.map((category, sortOrder) => ({
+  ...category,
+  status: "published" as const,
+  visibility: "public" as const,
+  sortOrder,
+  showInNavigation: true,
+  showOnHomepage: true,
+  isFeatured: false,
+  catalogOrigin: "local" as const,
+}));
+
 export const localCatalogRepository: CatalogRepository = {
   getHomepageCatalog: async () => productCarouselSections,
-  getCategories: async () => categories,
+  getCategories: async () => localCategories,
+  getAllPublicCategories: async () => localCategories,
+  getNavigationCategories: async () => localCategories,
+  getHomepageCategories: async () => localCategories,
   getCategoryBySlug: async (slug) => getCategoryBySlug(slug),
   getCategoryProducts: async (slug) => getCategoryListingProducts(slug),
   getProductById: async (id) => getProductById(id),

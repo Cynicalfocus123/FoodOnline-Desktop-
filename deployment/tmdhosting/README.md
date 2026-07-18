@@ -1,5 +1,7 @@
 # TMDHosting cPanel backend deploy notes
 
+> Historical host document reviewed 2026-07-18. Do not use this layout for the current Hostinger category release; follow the root `DEPLOYMENT.md`.
+
 > Phase 7 review (2026-07-15): this historical guide does not represent external deployment evidence. Use `backend-live/` and `docs/operational-commerce-phase-7.md` for current operational-commerce scope.
 
 > Phase 4 review (2026-07-13): the R2 media and nutrition runtime is synchronized only through the current Hostinger-oriented `backend-live/` process. This historical guide does not configure Cloudflare or deploy Phase 4.

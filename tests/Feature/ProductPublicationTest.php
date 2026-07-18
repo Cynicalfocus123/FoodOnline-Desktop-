@@ -15,14 +15,14 @@ use Tests\TestCase;
 class ProductPublicationTest extends TestCase
 {
     use CreatesAdminTokens,RefreshDatabase;
-    public function test_publication_requires_category_default_variant_price_sku_and_primary_image(): void
+    public function test_publication_requires_category_and_sellable_default_variant_but_not_media(): void
     {
         [$admin]=$this->adminToken(); $product=Product::factory()->create(['category_id'=>Category::factory()->draft()]);
-        try{app(ProductPublicationService::class)->publish($product,$admin);$this->fail('Expected readiness validation.');}catch(ValidationException $e){$this->assertArrayHasKey('category',$e->errors());$this->assertArrayHasKey('variants',$e->errors());$this->assertArrayHasKey('media',$e->errors());}
+        try{app(ProductPublicationService::class)->publish($product,$admin);$this->fail('Expected readiness validation.');}catch(ValidationException $e){$this->assertArrayHasKey('category',$e->errors());$this->assertArrayHasKey('variants',$e->errors());$this->assertArrayNotHasKey('media',$e->errors());}
     }
     public function test_complete_product_publishes_archives_and_restores(): void
     {
-        [$admin]=$this->adminToken(); $product=Product::factory()->create(); ProductVariant::factory()->for($product)->default()->create(); ProductMedia::factory()->for($product)->primary()->create();
+        [$admin]=$this->adminToken(); $product=Product::factory()->create(); ProductVariant::factory()->for($product)->default()->create();
         $service=app(ProductPublicationService::class); $published=$service->publish($product,$admin); $this->assertSame('published',$published->status); $this->assertNotNull($published->published_at);
         $this->getJson('/api/v1/catalog/products/'.$published->slug)->assertOk(); $archived=$service->archive($published,$admin); $this->assertNull($archived->published_at); $this->getJson('/api/v1/catalog/products/'.$published->slug)->assertNotFound(); $this->assertSame('draft',$service->restore($archived,$admin)->status);
     }

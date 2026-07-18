@@ -1,5 +1,7 @@
 # Hostinger File Manager Deployment
 
+> Category administration release (2026-07-18): deploy the verified `backend-live/` and `frontend-upload/` folders separately. Preserve the live `.env`, `vendor/` when Composer is unavailable, storage/uploads, and the existing `public_html/api` entry. Run `php artisan migrate --force`, `php artisan catalog:backfill-categories`, then the cache commands in the root `DEPLOYMENT.md`. No external Hostinger action is claimed by this repository.
+
 > Phase 7 review (2026-07-15): use the synchronized `backend-live/` and `frontend-upload/` repository mirrors for the current operational commerce source. This guide still does not prove an external Hostinger upload or external R2 activation.
 
 > Phase 4 current state (2026-07-13): `backend-live/` includes the admin catalog, R2-compatible runtime, upload cleanup command, and nutrition migrations. `frontend-upload/` includes the rebuilt admin entry. Neither mirror proves an external Hostinger upload; follow `docs/admin-catalog-and-r2.md` before enabling media uploads.
@@ -16,7 +18,7 @@ FoodOnlines live frontend hosting is currently managed through Hostinger File Ma
 
 ## Backend separation
 
-The Laravel API is a separate deployment for `www.api.foodonlines.com`; it is not part of frontend `dist/` or `frontend-upload/`. Follow the repository-root `DEPLOYMENT.md` and `docs/backend-foundation.md`, keep the Laravel application outside the API document root, expose only `public/`, and do not create a backend ZIP for Step 1.
+The Laravel application stays in its private directory and is not part of frontend `dist/` or `frontend-upload/`. Follow the repository-root `DEPLOYMENT.md`, expose only the existing `public_html/api` entry, and never delete or blindly replace that entry during a frontend upload.
 
 ## Production Output
 
@@ -26,7 +28,7 @@ Run the normal project build:
 npm run build
 ```
 
-The upload-ready frontend output is the contents of `dist/`.
+The upload-ready frontend output is the verified `frontend-upload/` mirror generated from `dist/`.
 
 ## Upload Target
 

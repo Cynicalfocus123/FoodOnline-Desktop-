@@ -200,7 +200,7 @@ class TransactionalCommerceTest extends TestCase
 
     private function userToken(): array
     {
-        $user = User::factory()->create(['account_type' => 'customer', 'role' => 'customer', 'status' => 'active']);
+        $user = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         $plain = 'commerce-user-'.bin2hex(random_bytes(18));
         UserApiToken::query()->create(['user_id' => $user->id, 'name' => 'commerce-tests', 'token_hash' => hash('sha256', $plain), 'expires_at' => now()->addHour()]);
         return [$user, $plain];

@@ -715,7 +715,7 @@ export function CartPage() {
 
           {cartSyncStatus === "loading" || cartSyncMessage ? (
             <p className={`mb-5 rounded-2xl border px-4 py-3 text-sm font-semibold ${cartSyncStatus === "error" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-emerald-100 bg-emerald-50 text-emerald-800"}`} role="status">
-              {cartSyncMessage ?? "Refreshing your backend cart..."}
+              {cartSyncMessage ?? "Refreshing your cart..."}
             </p>
           ) : null}
           {compatibilityItems.length ? (

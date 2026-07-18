@@ -1,5 +1,113 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Category administration repair deployment (2026-07-18)
+
+This release is prepared in two separate non-ZIP folders: `backend-live/` for the private Laravel application and `frontend-upload/` for the public storefront. It has not been uploaded to Hostinger and it has not changed the production database.
+
+### 1. Preparation
+
+Use the commit containing this guide. Download `backend-live/` and `frontend-upload/` only; do not upload the Git repository, `node_modules`, tests, local databases, logs, `.env`, or old archives. Record the current frontend asset filenames and confirm the current API health before changing files.
+
+### 2. Database backup
+
+In hPanel, open Databases, select the live FoodOnlines database, and export a complete SQL backup. Download it and confirm it is not empty. Do this before migrations or the category backfill. Do not use `migrate:fresh`, `migrate:reset`, `db:wipe`, destructive reseeding, `TRUNCATE`, or database/table drop commands.
+
+### 3. Current backend backup
+
+Back up the current private Laravel application directory, excluding only disposable caches when space is limited. Preserve its live `.env`, `vendor/` when Composer will not be available, `storage/`, user uploads, logs, permissions, symlinks, and any Hostinger-specific PHP files. Also back up the existing `public_html/api` public entry separately.
+
+### 4. Current frontend backup
+
+Back up the current frontend files in `public_html`, including the current `.htaccess`. Keep `public_html/api` outside any frontend replacement or deletion selection.
+
+### 5. Backend upload
+
+With SSH/Terminal, synchronize the contents of `backend-live/` into the private Laravel application directory. With File Manager, upload the same folder contents in batches while preserving paths. `backend-live/` intentionally excludes `vendor/`, the live `.env`, runtime data, secrets, and production uploads.
+
+### 6. Backend file placement
+
+- Private Laravel application directory: upload every `backend-live/` item except `public/` and `SHA256SUMS`. This includes `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/` placeholders, `artisan`, Composer files, `.env.example`, and this guide.
+- Public API entry: `backend-live/public/.htaccess` and `backend-live/public/index.php` are the clean Laravel public-entry reference. The live site already has `public_html/api`; do not delete or blindly replace it. If Hostinger maps `public_html/api` directly to the private application's `public/` directory, deploy these two files there. If the existing `public_html/api/index.php` contains a Hostinger-specific path to the private application, preserve that production path and file; verify it still loads the uploaded private application.
+- The generated reference `index.php` expects the Laravel root to be the parent of its `public/` directory. A split Hostinger entry must retain its already-working private-root bootstrap path. Never expose the private Laravel folders below `public_html`.
+
+### 7. Production environment preservation
+
+Keep the current server-only `.env` in place. Do not overwrite `APP_KEY`, database credentials, mail settings, R2 settings, live URLs/paths, queue settings, or Hostinger configuration with `.env.example`. Confirm `APP_ENV=production` and `APP_DEBUG=false` without displaying these values in the web interface.
+
+### 8. Composer or vendor handling
+
+Preferred SSH/Terminal command from the private Laravel root:
+
+```bash
+composer install --no-dev --optimize-autoloader --no-interaction
+```
+
+`backend-live/` does not include `vendor/`. If SSH/Composer is unavailable, preserve the known-working production `vendor/` directory when the lockfile dependencies are unchanged, or install the locked dependencies in a matching PHP 8.2+ environment and upload that generated `vendor/` directory. Do not upload a development vendor tree with unreviewed platform differences.
+
+### 9. Laravel permissions
+
+The PHP process must retain write access to `storage/`, `storage/framework/cache/data`, `storage/framework/sessions`, `storage/framework/views`, `storage/logs`, and `bootstrap/cache`. Preserve existing storage symlinks and uploaded objects.
+
+### 10. Migration execution
+
+After the database backup and backend upload, run from the private Laravel root:
+
+```bash
+php artisan migrate --force
+php artisan migrate:status
+```
+
+This category repair adds no schema migration; the command safely applies any outstanding forward migrations already present in the release.
+
+### 11. Original-category backfill
+
+Run the dedicated missing-only command:
+
+```bash
+php artisan catalog:backfill-categories
+```
+
+It inserts only missing canonical slugs, creates `baby-care` to `vegan-foods` only when absent, and does not change existing categories, Ice cream, names, UUIDs, hierarchy, status, visibility, placement, order, media, or SEO. It is safe to repeat; a repeat should report zero new rows.
+
+### 12. Laravel cache clearing and rebuilding
+
+The verified route set supports caching. Run:
+
+```bash
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### 13. Frontend upload
+
+Upload the contents of `frontend-upload/` into `public_html`; do not upload the containing folder as `public_html/frontend-upload`. The payload contains the production entry files, hashed assets, images, and SPA `.htaccess` only.
+
+### 14. Protecting `public_html/api`
+
+Do not delete `public_html/api`, select it during stale-frontend cleanup, or extract a frontend archive over it. `frontend-upload/` contains no `api/` directory. Compare the new `.htaccess` with the backed-up production copy before replacing it and confirm the API exclusion/public entry remains intact afterward.
+
+### 15. Hostinger cache clearing
+
+Clear Hostinger website/cache-manager caches after both uploads. If stale HTML still references old hashed files, clear browser cache or test in a private window before deleting any old asset files.
+
+### 16. Cloudflare cache clearing
+
+Purge the FoodOnlines HTML/JS/CSS cache only if Cloudflare is proxying the frontend and still serves old assets. R2 configuration is optional for category CRUD; do not enable uploads until bucket credentials, CORS, and the public media domain are ready.
+
+### 17. Production smoke testing
+
+Admin/backend: verify sign-in, category list and all status tabs, original categories and Ice cream, name-only creation, editable generated slug, saves without images/SEO/aliases, neutral upload notice, selection after save, navigation/homepage placement normalization, Draft/Archived/Hidden/Catalog-only clearing placement, archive/restore, archived-only danger zone, exact-slug deletion confirmation, product/child deletion blocks, and safe errors with no raw framework, SQL, JSON, server path, or integration configuration.
+
+Storefront: verify home and clean-route refreshes without a white page; desktop/tablet/mobile navigation; backend-created category appearance; archived/hidden/catalog-only/placement-disabled category removal; empty homepage-enabled tile; “Products are coming soon” category page; missing/broken-image fallback; long/multilingual names; existing product/detail/cart/account/auth/search flows; and continued `public_html/api` availability.
+
+### 18. Rollback
+
+Backend rollback: restore the backed-up private application files while preserving the current live `.env`, `storage/`, uploads, and permissions. Restore the database SQL backup only when the failed release changed data and restoration is necessary. Restore the prior `public_html/api` entry when it changed, then run `php artisan optimize:clear` and rebuild the caches supported by the restored revision. Confirm API health before reopening admin writes.
+
+Frontend rollback: restore the backed-up `public_html` frontend files and prior `.htaccess` without deleting or replacing `public_html/api`. Clear Hostinger/Cloudflare caches and verify the previous storefront and API both load.
+
 ## Phase 7 operational commerce deployment note
 
 Phase 7 adds forward migrations and APIs for returns, reviews, customer saved data, notifications, receipts, support, reports, staff permissions/MFA, recovery, SEO, operations, and R2-compatible review/return/support media. Apply migrations only after a backup and staging verification; configure server-only R2, SMTP, queue worker, scheduler, and retention values from `.env.example`. The repository `backend-live/` mirror is updated from source, but no external Hostinger, R2, SMTP, queue, cron, or production migration action is implied by Git.
@@ -18,7 +126,7 @@ Phase 4 adds the admin catalog portal, two forward migrations, the `media:cleanu
 
 Synchronization is not a later deployment phase. Implement once in Laravel source, test, run the generator, confirm parity/stale cleanup, then make one combined source/documentation/mirror commit and push `main`. Never edit `backend-live/` manually or delegate its generation.
 
-This is the non-ZIP deployment workflow for the Laravel API at `https://www.api.foodonlines.com`. Step 1 must not create a backend deployment archive.
+This is the non-ZIP deployment workflow for the Laravel API at `https://api.foodonlines.com`. It must not create a backend deployment archive.
 
 ## Hostinger layout
 
@@ -40,7 +148,7 @@ The repository root is the only Laravel root. Do not create a second Laravel pro
 - Composer 2
 - MySQL/MariaDB database and least-privilege application user
 - Writable `storage/` and `bootstrap/cache/`
-- API subdomain DNS and TLS certificate for `www.api.foodonlines.com`
+- API subdomain DNS and TLS certificate for `api.foodonlines.com`
 
 Confirm the server toolchain before changing the database:
 
@@ -58,7 +166,7 @@ Copy `.env.example` to server-only `.env`, generate `APP_KEY`, and fill real `DB
 ```dotenv
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://www.api.foodonlines.com
+APP_URL=https://api.foodonlines.com
 FRONTEND_URL=https://www.foodonlines.com
 SESSION_SECURE_COOKIE=true
 ```

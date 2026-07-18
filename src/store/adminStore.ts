@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { AdminAuditEntry, AdminSidebarKey, AdminUserRecord } from "../data/admin";
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { SignupRoleKey } from "../lib/registerSchema";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 type AdminScreen = "login" | "dashboard";
 
@@ -154,16 +155,16 @@ function toAdminUserRecord(user: ApiManagedUser): AdminUserRecord {
     lineId: user.line_id ?? "",
     companyName: user.company_name ?? "",
     requestStatus: user.status === "active" ? "approved" : "in_review",
-    sourceLabel: user.registered_from ?? "database",
+    sourceLabel: user.registered_from ? "Online signup" : "Account",
     createdTimestamp: user.created_at ?? new Date().toISOString(),
     reviewedAt: user.updated_at,
-    notes: user.business_type ? `Business type: ${user.business_type}` : "Database user record.",
+    notes: user.business_type ? `Business type: ${user.business_type}` : "Account record.",
   };
 }
 
 function cleanError(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
-    return error.status === 401 ? "Invalid email or password" : error.message;
+    return error.status === 401 ? "Invalid email or password" : toUserFacingErrorMessage(error, fallback);
   }
 
   return fallback;
@@ -192,7 +193,7 @@ export const useAdminStore = create<AdminStore>()(
       activeSidebarKey: "overview",
       activeUsersTab: "customer",
       authError: null,
-      securityMessage: "Admin login uses Laravel database authentication.",
+      securityMessage: "Sign in with your authorized administrator account.",
       settingsMessage: null,
       adminEmail: "",
       adminName: "",
@@ -386,7 +387,7 @@ export const useAdminStore = create<AdminStore>()(
             adminName: response.admin.name,
             settingsMessage: "Admin settings updated.",
             auditLog: [
-              createAuditEntry("settings.credentials", "Admin updated database profile settings."),
+              createAuditEntry("settings.credentials", "Admin updated profile settings."),
               ...state.auditLog,
             ].slice(0, 12),
           }));
@@ -405,7 +406,6 @@ export const useAdminStore = create<AdminStore>()(
         adminEmail: state.adminEmail,
         adminName: state.adminName,
         lastLoginAt: state.lastLoginAt,
-        securityMessage: state.securityMessage,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,
@@ -416,6 +416,7 @@ export const useAdminStore = create<AdminStore>()(
         activeUsersTab: "customer",
         authError: null,
         settingsMessage: null,
+        securityMessage: "Sign in with your authorized administrator account.",
         users: [],
         stats: emptyStats,
         deleteAccountRequests: [],

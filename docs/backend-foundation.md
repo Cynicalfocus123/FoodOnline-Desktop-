@@ -1,5 +1,7 @@
 # FoodOnlines Laravel Backend Foundation
 
+> 2026-07-18 review: the foundation remains compatible with the category lifecycle repair. Deploy the synchronized private application, preserve the existing `public_html/api` entry/live environment, and follow the root `DEPLOYMENT.md` for migration, missing-only backfill, cache, smoke-test, and rollback steps.
+
 ## Phase 7 compatibility note (2026-07-15)
 
 The same Laravel token, rate-limit, CORS, audit, queue, and deployment-mirror foundation now hosts Phase 7 operational commerce and staff-security routes. PHP/Composer/MySQL and external deployment status remain evidence-bounded; see `docs/operational-commerce-phase-7.md`.
@@ -41,7 +43,7 @@ The backend requires PHP `^8.2`. Step 1 locked Laravel 12.63.0 and validated it 
 Production base URL:
 
 ```text
-https://www.api.foodonlines.com/api/v1
+https://api.foodonlines.com/api/v1
 ```
 
 All application endpoints stay below `/api/v1`. `/api/v1/catalog` is reserved and intentionally has no routes until Step 2.
@@ -103,7 +105,7 @@ Payment-method endpoints are metadata storage only. They must receive provider/t
 
 Copy `.env.example` to a server-only `.env`. Never commit `.env` or real credentials. Required production values include:
 
-- `APP_KEY`, `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://www.api.foodonlines.com`
+- `APP_KEY`, `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://api.foodonlines.com`
 - `FRONTEND_URL=https://www.foodonlines.com`
 - MySQL `DB_*`
 - SMTP `MAIL_*`
@@ -167,7 +169,7 @@ Step 1 local result: 27 versioned routes, 11 applied migrations, 11 passing test
 - [ ] Hostinger backend code synchronized to the committed revision
 - [ ] Production PHP/Composer versions verified
 - [ ] Production MySQL migrations and status verified
-- [ ] `www.api.foodonlines.com` DNS/TLS reachable
+- [ ] `api.foodonlines.com` DNS/TLS reachable
 - [ ] Live health, CORS, public auth, and admin smoke tests pass
 
 Step 2 must not begin until the five deployment items are complete. Step 2 is where catalog work may begin; products, inventory, orders, payments, R2, and other ecommerce modules remain out of scope until their own phases.

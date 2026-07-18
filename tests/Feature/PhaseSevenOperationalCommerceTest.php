@@ -44,7 +44,7 @@ class PhaseSevenOperationalCommerceTest extends TestCase
 
     private function customerToken(): array
     {
-        $user = User::factory()->create(['account_type' => 'customer', 'role' => 'customer', 'status' => 'active']);
+        $user = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         $plain = 'phase-seven-'.bin2hex(random_bytes(18));
         UserApiToken::query()->create(['user_id' => $user->id, 'name' => 'phase-seven-tests', 'token_hash' => hash('sha256', $plain), 'expires_at' => now()->addHour()]);
 

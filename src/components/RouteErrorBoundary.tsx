@@ -11,7 +11,9 @@ export class RouteErrorBoundary extends Component<RouteErrorBoundaryProps, Route
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("FoodOnlines route failed to render", error, errorInfo);
+    if (import.meta.env.DEV) {
+      console.error("FoodOnlines route failed to render", error, errorInfo);
+    }
   }
 
   private reload = () => {

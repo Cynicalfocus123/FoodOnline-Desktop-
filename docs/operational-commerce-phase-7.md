@@ -43,3 +43,5 @@ Production smoke tests should cover the Phase 6 cart/quote/COD/order/inventory f
 ## Phase 8 payment-provider handoff
 
 Phase 8 may select one approved merchant provider and add hosted or tokenized payment sessions, 3-D Secure, signed webhooks, deduplication, reconciliation, provider refunds, and approved saved methods. It must preserve the Phase 6 cart, quote, order, inventory, promotion, customer-history, and admin-order contracts.
+
+2026-07-18 review: review, return, and support uploads remain optional attachments to database workflows. Category CRUD and placement never depend on media-storage status. The current live-folder deployment sequence is in `DEPLOYMENT.md`.

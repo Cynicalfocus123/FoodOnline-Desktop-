@@ -1,5 +1,5 @@
 import { ApiError, apiRequest } from "../../lib/apiClient";
-import { apiBaseUrl } from "../../lib/runtimeConfig";
+import { toUserFacingErrorMessage } from "../../lib/userFacingError";
 import type {
   AdminBrand,
   AdminCategory,
@@ -19,6 +19,21 @@ export const catalogApi = {
       `/admin/categories?per_page=100${query}`,
       { token },
     ),
+  allCategories: async (token: string, query = "") => {
+    const items: AdminCategory[] = [];
+    let page = 1;
+    let lastPage = 1;
+    do {
+      const response = await apiRequest<Paginated<AdminCategory>>(
+        `/admin/categories?per_page=100&page=${page}${query}`,
+        { token },
+      );
+      items.push(...response.data);
+      lastPage = Math.max(1, response.meta?.last_page ?? 1);
+      page++;
+    } while (page <= lastPage);
+    return items;
+  },
   category: (token: string, id: string) =>
     apiRequest<{ data: AdminCategory }>(`/admin/categories/${id}`, {
       token,
@@ -38,6 +53,12 @@ export const catalogApi = {
       method: "POST",
       token,
     }).then(data),
+  deleteCategory: (token: string, id: string, confirmSlug: string) =>
+    apiRequest(`/admin/categories/${id}`, {
+      method: "DELETE",
+      token,
+      body: { confirm_slug: confirmSlug },
+    }),
   addAlias: (token: string, id: string, body: unknown) =>
     apiRequest(`/admin/categories/${id}/aliases`, {
       method: "POST",
@@ -193,15 +214,12 @@ export async function uploadManagedImage(options: {
 export function adminError(error: unknown) {
   return error instanceof ApiError
     ? {
-        message: error.message.replace(/^Request failed \(\d+\):\s*/, ""),
+        message: toUserFacingErrorMessage(error, "The request could not be completed."),
         fields: error.fieldErrors,
       }
     : {
         message:
-          error instanceof Error
-            ? error.message
-            : "The request could not be completed.",
+          toUserFacingErrorMessage(error, "The request could not be completed."),
         fields: {},
       };
 }
-export const mediaPublicBaseUrl = apiBaseUrl;

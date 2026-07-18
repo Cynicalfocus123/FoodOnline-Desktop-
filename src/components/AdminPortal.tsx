@@ -6,14 +6,12 @@ import {
   adminSidebarItems,
   adminTableColumns,
   getAdminSummaryLabel,
-  laravelMySqlBlueprint,
 } from "../data/admin";
 import { SignupRoleKey } from "../lib/registerSchema";
-import { adminApiBaseUrl } from "../lib/runtimeConfig";
 import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 import { catalogApi } from "../services/admin/catalogApi";
-import type { MediaStorageStatus } from "../types/adminCatalog";
+import type { MediaStorageState } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
 import { ProductAdminPanel } from "./admin/ProductAdminPanel";
@@ -78,10 +76,6 @@ function AdminLoginScreen() {
           </div>
 
           <p className="mt-5 text-sm leading-7 text-neutral-600">{securityMessage}</p>
-          <p className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
-            API target: {adminApiBaseUrl}
-          </p>
-
           <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
             <label className="grid gap-2">
               <span className="text-sm font-bold text-neutral-700">Email</span>
@@ -146,7 +140,7 @@ function AdminDashboard() {
   const fetchDeleteAccountRequests = useAdminStore((state) => state.fetchDeleteAccountRequests);
   const updateDeleteAccountRequestStatus = useAdminStore((state) => state.updateDeleteAccountRequestStatus);
   const token = useAdminStore((state) => state.token);
-  const [mediaStorage, setMediaStorage] = useState<MediaStorageStatus | null>(null);
+  const [mediaStorage, setMediaStorage] = useState<MediaStorageState>({ phase: "checking", status: null });
 
   useEffect(() => {
     if (activeSidebarKey === "deleteAccount") {
@@ -156,7 +150,10 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (token) {
-      void catalogApi.storageStatus(token).then(setMediaStorage).catch(() => setMediaStorage(null));
+      setMediaStorage({ phase: "checking", status: null });
+      void catalogApi.storageStatus(token)
+        .then((status) => setMediaStorage({ phase: status.uploads_enabled ? "available" : "unavailable", status }))
+        .catch(() => setMediaStorage({ phase: "unavailable", status: null }));
     }
   }, [token]);
 
@@ -172,7 +169,7 @@ function AdminDashboard() {
           <p className="text-sm font-black uppercase tracking-[0.24em] text-emerald-200">FoodOnline</p>
           <h1 className="mt-4 text-3xl font-black">Admin Console</h1>
           <p className="mt-3 text-sm leading-7 text-emerald-50/80">
-            Live backend control room for customers, suppliers, and partners.
+            Manage customers, suppliers, partners, products, and orders.
           </p>
 
           <div className="mt-8 grid gap-3">
@@ -294,22 +291,21 @@ function OverviewPanel({
         <p className="text-sm font-black uppercase tracking-[0.2em] text-citrus-500">Live Operations</p>
         <h2 className="mt-3 text-3xl font-black text-ink">FoodOnlines admin command center</h2>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
-          This restores the original dashboard feel while staying connected to the real Laravel API.
-          Login, users, stats, and settings still come from production backend.
+          Review key activity, manage storefront content, and keep daily operations moving from one place.
         </p>
 
-        <div className="mt-8 grid gap-4">
-          {laravelMySqlBlueprint.tables.map((table) => (
-            <div className="rounded-3xl border border-neutral-100 bg-neutral-50 p-5" key={table.name}>
-              <p className="text-lg font-black text-ink">{table.name}</p>
-              <p className="mt-3 text-sm leading-7 text-neutral-600">{table.columns.join(" | ")}</p>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {[
+            ["Customer care", "Review accounts, support conversations, returns, and customer feedback."],
+            ["Store management", "Organize categories, brands, products, availability, and promotions."],
+            ["Order fulfillment", "Track orders, inventory, delivery progress, and payment collection."],
+            ["Business oversight", "Review performance reports, staff access, and recorded admin activity."],
+          ].map(([title, detail]) => (
+            <div className="rounded-3xl border border-neutral-100 bg-neutral-50 p-5" key={title}>
+              <p className="text-lg font-black text-ink">{title}</p>
+              <p className="mt-3 text-sm leading-7 text-neutral-600">{detail}</p>
             </div>
           ))}
-        </div>
-
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          <InfoList title="Routes" items={laravelMySqlBlueprint.routes} />
-          <InfoList title="Security" items={[...laravelMySqlBlueprint.middleware, ...laravelMySqlBlueprint.validation]} />
         </div>
       </section>
 
@@ -355,7 +351,7 @@ function UsersPanel({
           <h2 className="mt-3 text-3xl font-black text-ink">Signup queue and user intake tables</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
             All public registration fields render as safe plain text in admin tables. Customer, supplier, and
-            partner tabs read live MySQL-backed API data.
+            partner tabs show the latest account information.
           </p>
         </div>
         <div className="rounded-3xl border border-neutral-100 bg-neutral-50 px-5 py-4 text-sm font-semibold text-neutral-700">
@@ -597,14 +593,13 @@ function AdminSettingsPanel() {
           <p className="text-sm font-black uppercase tracking-[0.2em] text-neutral-700">Current status</p>
           <p className="mt-4 break-all text-lg font-black text-ink">{adminName || adminEmail}</p>
           <p className="mt-3 text-sm leading-7 text-neutral-600">{securityMessage}</p>
-          <p className="mt-3 text-sm font-bold text-emerald-700">API base: {adminApiBaseUrl}</p>
         </div>
         <InfoCard
-          title="Server security"
+          title="Account security"
           items={[
             "Current password required before settings update.",
-            "New password is hashed by Laravel before saving.",
-            "Admin token is revoked on logout.",
+            "New passwords are protected before saving.",
+            "Signing out ends the active session.",
             "Password is never returned to the browser.",
           ]}
         />
@@ -650,19 +645,6 @@ function PasswordInput({
   value: string;
 }) {
   return <TextInput label={label} maxLength={128} onChange={onChange} type="password" value={value} />;
-}
-
-function InfoList({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div className="rounded-3xl border border-neutral-100 bg-white p-5">
-      <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-700">{title}</p>
-      <div className="mt-3 grid gap-2 text-sm leading-7 text-neutral-600">
-        {items.map((item) => (
-          <p key={item}>{item}</p>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 function InfoCard({ title, items }: { title: string; items: string[] }) {

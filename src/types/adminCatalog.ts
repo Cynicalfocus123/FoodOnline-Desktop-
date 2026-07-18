@@ -124,6 +124,10 @@ export type MediaStorageStatus = {
   upload_ttl_minutes: number;
   disk: string;
 };
+export type MediaStorageState = {
+  phase: "checking" | "available" | "unavailable";
+  status: MediaStorageStatus | null;
+};
 export type MediaPurpose =
   | "product_image"
   | "brand_logo"

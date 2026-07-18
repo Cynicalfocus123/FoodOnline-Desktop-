@@ -14,6 +14,7 @@ import { ProductCard } from "./ProductCard";
 import { loadProductReviews, reviewSummary } from "../services/reviewApi";
 import { apiRequest } from "../lib/apiClient";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 type DetailTabKey = "details" | "recipe" | "nutrition" | "returns";
 type ReviewFilter = "all" | "purchased" | "photos";
@@ -303,7 +304,7 @@ export function ProductDetailPage() {
       const reviewData = await loadProductReviews(product.uuid ?? product.id);
       setLoadedProduct((current) => current ? { ...current, reviews: reviewData.reviews, ...reviewSummary(reviewData.summary) } : current);
       setReviewBody(""); setIsWritingReview(false); setReviewMessage("Review submitted for moderation.");
-    } catch (error) { setReviewMessage(error instanceof Error ? error.message : "Unable to submit review."); }
+    } catch (error) { setReviewMessage(toUserFacingErrorMessage(error, "Unable to submit review.")); }
   }
 
   useEffect(() => {
@@ -658,7 +659,7 @@ export function ProductDetailPage() {
                   <div className="rounded-[24px] border border-neutral-100 bg-neutral-50 p-5">
                     <h3 className="text-sm font-black uppercase tracking-[0.16em] text-neutral-500">Ingredients</h3>
                     <p className="mt-3 text-sm leading-7 text-neutral-600">
-                      {product.ingredients ?? "Ingredients will be supplied from backend catalog data when available."}
+                      {product.ingredients ?? "Ingredient details will be shown when available."}
                     </p>
                   </div>
                   <div className="rounded-[24px] border border-neutral-100 bg-neutral-50 p-5">
@@ -681,7 +682,7 @@ export function ProductDetailPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-black text-neutral-950">Recipe ideas</h2>
-                  <p className="mt-2 text-sm text-neutral-600">Demo recipe cards stay backend-ready and can swap to live content later.</p>
+                  <p className="mt-2 text-sm text-neutral-600">Recipe ideas can be updated as new content becomes available.</p>
                 </div>
               </div>
               <div className="mt-5 grid gap-4 lg:grid-cols-2">

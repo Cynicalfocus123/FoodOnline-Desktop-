@@ -764,7 +764,7 @@ function createProductRecord(category: CategoryConfig, productName: string, inde
     brandOrigin: PRODUCT_COUNTRIES[(index + 1) % PRODUCT_COUNTRIES.length],
     netContent: size,
     quantity,
-    description: `${productName} is a demo-ready ${category.name.toLowerCase()} product built for the desktop product page. It keeps backend-ready fields while showing a polished grocery ecommerce layout across desktop, tablet, and mobile.`,
+    description: `${productName} is a ${category.name.toLowerCase()} product presented in a polished grocery shopping layout across desktop, tablet, and mobile.`,
     ingredients: `Sample ingredients for ${productName.toLowerCase()}: primary product base, seasoning blend, and provider-specific components.`,
     storageInstructions: index % 2 === 0 ? "Keep refrigerated after opening." : "Store in a cool, dry place away from direct sunlight.",
     sku: `FO-${categoryId.toUpperCase()}-${String(index + 1).padStart(3, "0")}`,

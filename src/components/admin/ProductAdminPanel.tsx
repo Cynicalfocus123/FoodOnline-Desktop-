@@ -11,7 +11,7 @@ import type {
   AdminNutrition,
   AdminProduct,
   AdminVariant,
-  MediaStorageStatus,
+  MediaStorageState,
 } from "../../types/adminCatalog";
 import { getPublicRouteHref } from "../../lib/routes";
 import {
@@ -73,7 +73,7 @@ export function ProductAdminPanel({
   storage,
 }: {
   token: string;
-  storage: MediaStorageStatus | null;
+  storage: MediaStorageState;
 }) {
   const [items, setItems] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminCategory[]>([]);
@@ -859,7 +859,7 @@ function MediaEditor({
 }: {
   product: AdminProduct | null;
   token: string;
-  storage: MediaStorageStatus | null;
+  storage: MediaStorageState;
   progress: number | null;
   setProgress: (n: number | null) => void;
   setMessage: (s: string) => void;
@@ -914,9 +914,9 @@ function MediaEditor({
   }
   return (
     <div className="mt-5 grid gap-4">
-      {!storage?.uploads_enabled ? (
-        <Notice tone="error">
-          Media storage unavailable. Metadata controls remain available.
+      {storage.phase !== "available" ? (
+        <Notice>
+          {storage.phase === "checking" ? "Checking image upload availability. You can save this draft now." : "Image uploads are not connected yet. You can save and manage this product now, then add images later."}
         </Notice>
       ) : mediaItems.length >= 12 ? (
         <Notice>Maximum of 12 images reached.</Notice>
@@ -971,7 +971,7 @@ function MediaCard({
   media: AdminMedia;
   index: number;
   token: string;
-  storage: MediaStorageStatus | null;
+  storage: MediaStorageState;
   refresh: () => Promise<void>;
   move: (i: number, d: number) => Promise<void>;
   upload: (f: File, id?: string) => Promise<void>;
@@ -1040,7 +1040,7 @@ function MediaCard({
         >
           Delete
         </ActionButton>
-        {storage?.uploads_enabled ? (
+        {storage.phase === "available" ? (
           <label className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border px-4 text-sm font-black">
             Replace
             <input

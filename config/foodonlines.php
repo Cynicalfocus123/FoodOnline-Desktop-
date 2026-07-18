@@ -1,5 +1,8 @@
 <?php
 
+$codMaximumMinor = env('COMMERCE_COD_MAXIMUM_MINOR');
+$codMaximumMinor = is_string($codMaximumMinor) && trim($codMaximumMinor) === '' ? null : $codMaximumMinor;
+
 return [
     'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
     'catalog_currency' => strtoupper((string) env('FOODONLINES_CATALOG_CURRENCY', 'USD')),
@@ -52,7 +55,7 @@ return [
         'cod_enabled' => (bool) env('COMMERCE_COD_ENABLED', true),
         'cod_fee_minor' => (int) env('COMMERCE_COD_FEE_MINOR', 0),
         'cod_minimum_minor' => (int) env('COMMERCE_COD_MINIMUM_MINOR', 0),
-        'cod_maximum_minor' => env('COMMERCE_COD_MAXIMUM_MINOR') !== null ? (int) env('COMMERCE_COD_MAXIMUM_MINOR') : null,
+        'cod_maximum_minor' => $codMaximumMinor !== null ? (int) $codMaximumMinor : null,
         'cod_supported_countries' => array_values(array_filter(explode(',', (string) env('COMMERCE_COD_COUNTRIES', 'thailand,japan,singapore,taiwan,china,philippines,malaysia,indonesia,hongKong')))),
         'guest_checkout_enabled' => (bool) env('COMMERCE_GUEST_CHECKOUT_ENABLED', true),
         'reservation_minutes' => (int) env('COMMERCE_RESERVATION_MINUTES', 30),

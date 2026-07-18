@@ -1,4 +1,4 @@
-const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || "https://www.api.foodonlines.com/api/v1";
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || "https://api.foodonlines.com/api/v1";
 
 export const apiBaseUrl = configuredApiBaseUrl.replace(/\/+$/, "");
 export type CatalogSource = "api" | "local" | "hybrid";

@@ -13,6 +13,9 @@ import type {
 export interface CatalogRepository {
   getHomepageCatalog(): Promise<ProductCarouselSection[]>;
   getCategories(): Promise<Category[]>;
+  getAllPublicCategories(): Promise<Category[]>;
+  getNavigationCategories(): Promise<Category[]>;
+  getHomepageCategories(): Promise<Category[]>;
   getCategoryBySlug(slug: string | null): Promise<Category | null>;
   getProducts(query?: CatalogQuery): Promise<PaginatedProductResult>;
   getCategoryProducts(slug: string | null): Promise<Product[]>;

@@ -22,6 +22,17 @@ class CategoryService
     public function create(array $data, User $admin): Category
     {
         return DB::transaction(function () use ($data, $admin): Category {
+            $data = $this->normalizePlacement([
+                'status' => 'draft',
+                'visibility' => 'public',
+                'is_featured' => false,
+                'show_in_navigation' => false,
+                'show_on_homepage' => false,
+                'default_sort' => 'featured',
+                'robots_index' => true,
+                'robots_follow' => true,
+                ...$data,
+            ]);
             $parentId = isset($data['parent_id']) ? (int) $data['parent_id'] : null;
             $metadata = $this->hierarchy->metadata(null, $parentId, (string) $data['slug']);
             if (! array_key_exists('sort_order', $data)) {
@@ -46,6 +57,7 @@ class CategoryService
     public function update(Category $category, array $data, User $admin): Category
     {
         return DB::transaction(function () use ($category, $data, $admin): Category {
+            $data = $this->normalizePlacement($data, $category);
             $oldSlug = $category->slug;
             $oldMedia = collect(['image_path', 'icon_path', 'desktop_banner_path', 'mobile_banner_path'])->mapWithKeys(fn ($field) => [$field => $category->{$field}]);
             $wasPublished = $category->status === 'published';
@@ -102,7 +114,13 @@ class CategoryService
     public function restore(Category $category, User $admin): Category
     {
         return DB::transaction(function () use ($category, $admin): Category {
-            $category->forceFill(['status' => 'draft', 'published_at' => null, 'updated_by' => $admin->id])->save();
+            $category->forceFill([
+                'status' => 'draft',
+                'published_at' => null,
+                'show_in_navigation' => false,
+                'show_on_homepage' => false,
+                'updated_by' => $admin->id,
+            ])->save();
             $this->cache->invalidate();
 
             return $category->refresh();
@@ -118,12 +136,20 @@ class CategoryService
             throw ValidationException::withMessages(['category' => ['Archive the category before permanently deleting it.']]);
         }
         if ($category->children()->withTrashed()->exists()) {
-            throw ValidationException::withMessages(['category' => ['A category with child categories cannot be permanently deleted.']]);
+            throw ValidationException::withMessages(['category' => ['Reassign or remove this category\'s child categories before permanently deleting it.']]);
+        }
+        if ($category->products()->exists()) {
+            throw ValidationException::withMessages(['category' => ['Reassign this category\'s products before permanently deleting it.']]);
         }
 
         DB::transaction(function () use ($category): void {
+            $mediaPaths = collect(['image_path', 'icon_path', 'desktop_banner_path', 'mobile_banner_path'])
+                ->map(fn (string $field) => $category->{$field})
+                ->filter()
+                ->values();
             $category->aliases()->delete();
             $category->forceDelete();
+            $mediaPaths->each(fn (string $path) => $this->deletion->afterCommit($path));
             $this->cache->invalidate();
         });
     }
@@ -170,5 +196,28 @@ class CategoryService
     private function nextSortOrder(?int $parentId): int
     {
         return ((int) Category::query()->where('parent_id', $parentId)->max('sort_order')) + 1;
+    }
+
+    /** @param array<string, mixed> $data @return array<string, mixed> */
+    private function normalizePlacement(array $data, ?Category $category = null): array
+    {
+        $navigation = (bool) ($data['show_in_navigation'] ?? $category?->show_in_navigation ?? false);
+        $homepage = (bool) ($data['show_on_homepage'] ?? $category?->show_on_homepage ?? false);
+        $placementWasEnabled = (array_key_exists('show_in_navigation', $data) && $navigation)
+            || (array_key_exists('show_on_homepage', $data) && $homepage);
+        $status = (string) ($data['status'] ?? $category?->status ?? 'draft');
+        $visibility = (string) ($data['visibility'] ?? $category?->visibility ?? 'public');
+
+        if ($placementWasEnabled) {
+            $data['status'] = $status = 'published';
+            $data['visibility'] = $visibility = 'public';
+        }
+
+        if ($status !== 'published' || $visibility !== 'public') {
+            $data['show_in_navigation'] = false;
+            $data['show_on_homepage'] = false;
+        }
+
+        return $data;
     }
 }

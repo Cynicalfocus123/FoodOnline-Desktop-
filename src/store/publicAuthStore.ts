@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { SignupRoleKey } from "../lib/registerSchema";
 import { genericUserAuthError, normalizeUserEmail, sanitizeUserPasswordInput } from "../lib/security";
+import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
 export type ApiAuthenticatedUser = {
   id: number | string;
@@ -96,7 +97,7 @@ function getUserAuthError(error: unknown) {
       return genericUserAuthError;
     }
 
-    return error.message || "Unable to sign in right now.";
+    return toUserFacingErrorMessage(error, "Unable to sign in right now.");
   }
 
   return "Unable to sign in right now.";

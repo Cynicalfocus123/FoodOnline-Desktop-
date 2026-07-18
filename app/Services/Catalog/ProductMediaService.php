@@ -52,7 +52,6 @@ class ProductMediaService
             $product = Product::query()->whereKey($media->product_id)->lockForUpdate()->firstOrFail();
             $locked = ProductMedia::query()->whereKey($media->id)->lockForUpdate()->firstOrFail();
             $remaining = ProductMedia::query()->where('product_id', $product->id)->whereKeyNot($locked->id)->ordered()->lockForUpdate()->get();
-            if ($product->status === 'published' && $remaining->isEmpty()) { throw ValidationException::withMessages(['media' => ['A published product must retain at least one image.']]); }
             $wasPrimary = $locked->is_primary;
             $path = $locked->path;
             $locked->delete();

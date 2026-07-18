@@ -1,5 +1,6 @@
 import { SignupFormValues, SignupRoleKey } from "./registerSchema";
 import { apiBaseUrl } from "./runtimeConfig";
+import { safeApiStatusMessage, sanitizeApiFieldErrors, type ApiFieldErrors } from "./userFacingError";
 
 export type ApiOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -12,7 +13,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public fieldErrors: Record<string, string[]> = {},
+    public fieldErrors: ApiFieldErrors = {},
   ) {
     super(message);
   }
@@ -31,42 +32,42 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
     });
   }
 
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    method,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
-      ...options.headers,
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpointUrl, {
+      method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+        ...options.headers,
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch {
+    throw new ApiError(safeApiStatusMessage(0, null, {}), 0);
+  }
   const contentType = response.headers.get("content-type") ?? "";
   const responseText = await response.text();
-  const payload = ((): { errors?: Record<string, string[]>; message?: string } => {
+  const payload = ((): { errors?: unknown; message?: unknown } => {
     if (!contentType.includes("application/json") || !responseText) {
       return {};
     }
 
     try {
-      return JSON.parse(responseText) as { errors?: Record<string, string[]>; message?: string };
+      return JSON.parse(responseText) as { errors?: unknown; message?: unknown };
     } catch {
       return {};
     }
   })();
-  const fallbackMessage = responseText
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 180);
-  const responseMessage = payload.message || fallbackMessage || "Request failed.";
+  const fieldErrors = sanitizeApiFieldErrors(payload.errors);
+  const responseMessage = safeApiStatusMessage(response.status, payload.message, fieldErrors);
 
   if (import.meta.env.DEV) {
     console.info("[FoodOnlines API response]", {
       endpointUrl,
       method,
       status: response.status,
-      message: responseMessage,
     });
   }
 
@@ -76,11 +77,10 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
         endpointUrl,
         method,
         status: response.status,
-        message: responseMessage,
       });
     }
 
-    throw new ApiError(`Request failed (${response.status}): ${responseMessage}`, response.status, payload.errors ?? {});
+    throw new ApiError(responseMessage, response.status, fieldErrors);
   }
 
   return payload as T;

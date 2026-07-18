@@ -51,6 +51,27 @@ const distRelative = new Set(distFiles.map((file) => relative(distRoot, file).re
 const jsFiles = [...distRelative].filter((file) => file.endsWith(".js"));
 const failures = [];
 
+const compiledTextFiles = distFiles.filter((file) => [".html", ".js", ".css"].includes(extname(file)));
+const forbiddenCompiledPatterns = [
+  [/www\.api\.foodonlines\.com/i, "obsolete API hostname"],
+  [/API TARGET/i, "visible API target label"],
+  [/API BASE URL/i, "visible API base URL label"],
+  [/BACKEND URL/i, "visible backend URL label"],
+  [/SERVER URL/i, "visible server URL label"],
+  [/DEBUG API/i, "visible debug API label"],
+];
+
+for (const file of compiledTextFiles) {
+  const contents = readFileSync(file, "utf8");
+  for (const [pattern, label] of forbiddenCompiledPatterns) {
+    if (pattern.test(contents)) failures.push(`${relative(distRoot, file)}: ${label}`);
+  }
+}
+
+if (distFiles.some((file) => file.endsWith(".map"))) {
+  failures.push("source maps must not be included in the production deployment");
+}
+
 for (const [route, component, chunkPrefix, mediaDirectory] of routeAudit) {
   if (chunkPrefix && !jsFiles.some((file) => file.startsWith(`assets/${chunkPrefix}`))) {
     failures.push(`${route}: missing ${component} chunk (${chunkPrefix}*)`);
