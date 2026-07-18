@@ -56,7 +56,7 @@ Schedule `php artisan media:cleanup --limit=100` hourly. It retries safe managed
 
 ### Media smoke test
 
-After backend upload and cache rebuild, create a brand without a logo, then upload, refresh, replace, and remove its logo. Repeat with one category image and two product images; reorder the product images, change primary, delete primary, and delete the final image. Publish a genuinely sellable product without an image. Confirm review, return, and support attachments persist and resolve through `https://api.foodonlines.com/api/media/...`. Confirm missing media uses a generic storefront fallback and no administrator page exposes provider, credential, endpoint, disk, bucket, signed-URL, or server-path details.
+After backend upload and cache rebuild, create a brand without a logo, then upload, refresh, replace, and remove its logo. Repeat with one category image and two product images; reorder the product images, change primary, delete primary, and delete the final image. Publish a genuinely sellable product without an image. From the administrator Reviews, Returns, and Support panels, append and remove an attachment for each record; refresh and confirm every retained attachment persists and resolves through `https://api.foodonlines.com/api/media/...`. Confirm missing media uses a generic storefront fallback and no administrator page exposes provider, credential, endpoint, disk, bucket, signed-URL, or server-path details.
 
 ### Future optional provider switch
 

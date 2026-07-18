@@ -159,6 +159,8 @@ export const catalogApi = {
     apiRequest<{ data: MediaStorageStatus }>("/admin/media-storage/status", {
       token,
     }).then(data),
+  deleteManagedUpload: (token: string, uuid: string) =>
+    apiRequest(`/admin/media-uploads/${uuid}`, { method: "DELETE", token }),
 };
 
 export async function uploadManagedImage(options: {

@@ -19,6 +19,7 @@ export function ManagedMediaControl({
   progress,
   error,
   multiple = false,
+  allowReplace = true,
   onUpload,
   onRemove,
   onMove,
@@ -31,6 +32,7 @@ export function ManagedMediaControl({
   progress?: number | null;
   error?: string;
   multiple?: boolean;
+  allowReplace?: boolean;
   onUpload: (purpose: string, file: File, itemId?: string) => void;
   onRemove?: (item: ManagedMediaItem) => void;
   onMove?: (index: number, direction: -1 | 1) => void;
@@ -52,7 +54,7 @@ export function ManagedMediaControl({
             </div>
             <ManagedMediaPreview alt={`${item.label} preview`} className="h-32 w-full rounded-lg bg-neutral-50 object-contain" url={item.url} />
             <div className="flex flex-wrap gap-2">
-              {storage.phase === "available" ? (
+              {storage.phase === "available" && (!item.url || allowReplace) ? (
                 <label className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border border-neutral-200 px-4 text-sm font-black">
                   {item.url ? "Replace" : "Upload"}
                   <input accept="image/jpeg,image/png,image/webp" className="sr-only" multiple={multiple} onChange={(event) => Array.from(event.target.files ?? []).forEach((file) => onUpload(item.purpose, file, item.id))} type="file" />

@@ -165,6 +165,31 @@ class LocalManagedMediaTest extends TestCase
         $this->assertDatabaseMissing('support_media', ['media_upload_id' => $upload->id]);
     }
 
+    public function test_administrator_can_append_and_remove_operational_media(): void
+    {
+        [, $token] = $this->adminToken();
+        $user = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $product = Product::factory()->create();
+        $review = ProductReview::query()->create(['uuid' => (string) Str::uuid(), 'product_id' => $product->id, 'user_id' => $user->id, 'rating' => 4, 'status' => 'pending']);
+        $support = SupportTicket::query()->create(['uuid' => (string) Str::uuid(), 'ticket_number' => 'SUP-ADMIN-1', 'user_id' => $user->id, 'subject' => 'Admin attachment']);
+        $order = Order::query()->create(['uuid' => (string) Str::uuid(), 'order_number' => 'ORD-ADMIN-1', 'user_id' => $user->id, 'actor_key' => 'user-'.$user->id, 'idempotency_key' => 'admin-media', 'order_status' => 'delivered', 'payment_status' => 'paid', 'fulfillment_status' => 'delivered', 'currency_code' => 'USD', 'subtotal_minor' => 100, 'total_minor' => 100, 'payment_method_code' => 'cod', 'placed_at' => now(), 'delivered_at' => now()]);
+        $return = ReturnRequest::query()->create(['uuid' => (string) Str::uuid(), 'return_number' => 'RET-ADMIN-1', 'order_id' => $order->id, 'user_id' => $user->id, 'status' => 'requested', 'requested_resolution' => 'refund', 'reason_code' => 'damaged', 'refund_amount_minor' => 0, 'currency_code' => 'USD', 'requested_at' => now()]);
+
+        foreach ([['review_image', $review], ['return_evidence', $return], ['support_attachment', $support]] as [$purpose, $target]) {
+            $response = $this->uploadAdmin($token, $purpose, $target->uuid)->assertCreated()
+                ->assertJsonPath('data.url', fn ($url) => is_string($url) && str_contains($url, '/api/media/'))
+                ->assertJsonMissingPath('data.upload')
+                ->assertJsonMissingPath('data.object_key');
+            $uploadUuid = $response->json('data.upload_uuid');
+            $objectKey = MediaUpload::query()->where('uuid', $uploadUuid)->value('object_key');
+            Storage::disk('public')->assertExists($objectKey);
+
+            $this->withToken($token)->deleteJson('/api/v1/admin/media-uploads/'.$uploadUuid)->assertNoContent();
+            Storage::disk('public')->assertMissing($objectKey);
+            $this->assertDatabaseHas('media_uploads', ['uuid' => $uploadUuid, 'status' => 'deleted']);
+        }
+    }
+
     public function test_local_cleanup_is_idempotent_and_cannot_escape_managed_root(): void
     {
         $product = Product::factory()->create();

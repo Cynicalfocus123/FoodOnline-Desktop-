@@ -130,4 +130,7 @@ export type MediaPurpose =
   | "category_image"
   | "category_icon"
   | "category_desktop_banner"
-  | "category_mobile_banner";
+  | "category_mobile_banner"
+  | "review_image"
+  | "return_evidence"
+  | "support_attachment";

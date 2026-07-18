@@ -22,7 +22,7 @@ class CreateMediaUploadRequest extends FormRequest
             'purpose' => ['required', Rule::in(MediaUpload::PURPOSES)], 'target_uuid' => ['required', 'uuid'],
             'product_media_id' => ['nullable', 'integer', 'min:1'], 'original_filename' => ['required', 'string', 'max:255'],
             'mime_type' => ['required', 'string', Rule::in(config('foodonlines.media.allowed_mime_types', []))],
-            'size_bytes' => ['required', 'integer', 'min:1', 'max:8388608'],
+            'size_bytes' => ['required', 'integer', 'min:1', 'max:10485760'],
         ];
     }
 }

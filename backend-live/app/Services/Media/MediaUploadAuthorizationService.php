@@ -41,6 +41,14 @@ class MediaUploadAuthorizationService
                 throw ValidationException::withMessages(['target_uuid' => ['A product may have at most 12 images.']]);
             }
         }
+        $operationalLimit = match ($data['purpose']) {
+            'review_image', 'support_attachment' => 5,
+            'return_evidence' => 8,
+            default => null,
+        };
+        if ($operationalLimit !== null && $target->media()->count() >= $operationalLimit) {
+            throw ValidationException::withMessages(['target_uuid' => ['The media limit for this target has been reached.']]);
+        }
 
         $mime = strtolower($data['mime_type']);
         $maximum = (int) config("foodonlines.media.max_size_bytes.{$data['purpose']}", 0);
@@ -100,7 +108,7 @@ class MediaUploadAuthorizationService
         return ['upload' => $upload, 'strategy' => $this->storage->strategy(), 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
     }
 
-    /** @return array{string, Category|Brand|Product, ?string, string} */
+    /** @return array{string, Category|Brand|Product|ProductReview|ReturnRequest|SupportTicket, ?string, string} */
     private function resolveTarget(string $purpose, string $uuid): array
     {
         return match ($purpose) {
@@ -110,11 +118,14 @@ class MediaUploadAuthorizationService
             'category_icon' => $this->target('category', Category::query()->where('uuid', $uuid)->first(), 'icon_path', "categories/{$uuid}/icon"),
             'category_desktop_banner' => $this->target('category', Category::query()->where('uuid', $uuid)->first(), 'desktop_banner_path', "categories/{$uuid}/desktop-banner"),
             'category_mobile_banner' => $this->target('category', Category::query()->where('uuid', $uuid)->first(), 'mobile_banner_path', "categories/{$uuid}/mobile-banner"),
+            'review_image' => $this->target('review', ProductReview::query()->where('uuid', $uuid)->first(), null, "reviews/{$uuid}/image"),
+            'return_evidence' => $this->target('return', ReturnRequest::query()->where('uuid', $uuid)->first(), null, "returns/{$uuid}/evidence"),
+            'support_attachment' => $this->target('support', SupportTicket::query()->where('uuid', $uuid)->first(), null, "support/{$uuid}/attachment"),
             default => throw ValidationException::withMessages(['purpose' => ['Unsupported media purpose.']]),
         };
     }
 
-    /** @return array{string, Category|Brand|Product, ?string, string} */
+    /** @return array{string, Category|Brand|Product|ProductReview|ReturnRequest|SupportTicket, ?string, string} */
     private function target(string $type, mixed $target, ?string $field, string $prefix): array
     {
         if (! $target) { throw ValidationException::withMessages(['target_uuid' => ['The media target was not found.']]); }
