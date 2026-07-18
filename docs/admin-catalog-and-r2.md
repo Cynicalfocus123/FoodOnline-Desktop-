@@ -1,5 +1,33 @@
 # Admin Catalog Portal and Cloudflare R2 Media
 
+## Current provider-neutral media architecture (2026-07-18)
+
+The filename records the original Phase 4 implementation; it no longer means R2 is required. Hostinger local Laravel storage is the current production provider, and the existing direct-upload provider is an optional future selection.
+
+`MEDIA_DISK=local` maps managed writes to Laravel's `public` filesystem under `storage/app/public/media/`. New database references are stable `local://media/{purpose-directory}/{entity-uuid}/{purpose}-{media-uuid}.{jpg|png|webp}` values. `MEDIA_PUBLIC_URL` maps them to the public Laravel media route without exposing physical Hostinger paths. Existing `r2://`, HTTPS, and safe relative paths remain supported by the single `MediaStorageManager`/`CategoryMediaUrl` resolver.
+
+The generic capability response contains only `uploads_available`, `strategy` (`multipart` or `direct`), accepted types, and purpose limits. It does not expose a provider name, filesystem disk, bucket, endpoint, credential state, server directory, or signed URL. Administrator screens render checking, available, temporarily unavailable, uploading, uploaded, removal, and safe failure states without blocking parent CRUD.
+
+Local mode uses authenticated multipart routes:
+
+```text
+POST /api/v1/admin/media-uploads/local
+POST /api/v1/account/media-uploads/local
+GET  /api/media/{managed-path}
+```
+
+Laravel resolves the authenticated entity and purpose, enforces ownership and the product-media binding, generates the UUID key, reads the actual bytes, checks purpose-specific size, verifies the file signature with `finfo`, decodes dimensions, rejects non-JPEG/PNG/WebP content and dimensions above 8000×8000, writes through the filesystem abstraction, verifies the stored object again, and transactionally installs the managed reference. Original filenames and client paths never control storage placement.
+
+Catalog purposes are `brand_logo`, `category_image`, `category_icon`, `category_desktop_banner`, `category_mobile_banner`, and `product_image`. Customer-owned purposes are `review_image`, `return_evidence`, and `support_attachment`. No variant image, nutrition image, user-avatar, vendor-logo, or promotional-media database field currently exists, so no unsupported parallel storage model was invented.
+
+Brand and category replacement updates the database first and deletes the old unreferenced object after commit. Product galleries retain a 12-image limit, immutable replacement, order, primary selection, next-image promotion, and a valid zero-image state. Review, return, and support media are customer-owned, persisted in their existing tables, returned with safe public URLs, and individually removable by the upload owner. Publication never requires optional catalog media.
+
+`ManagedMediaDeletionService` understands both `local://` and `r2://`, allows only approved UUID media keys, checks every reference table, never touches compatibility HTTPS/relative paths, and records `cleanup_pending` after a redacted deletion failure. `media:cleanup` handles abandoned/retryable objects for either provider and is idempotent. Runtime local files are excluded from Git and deployment mirrors and must be backed up and preserved separately.
+
+The shared React `ManagedMediaControl` is used for brand/category preview, upload, replacement, removal, capability, progress, and broken-image fallback. Product galleries reuse the same provider-neutral upload client while retaining their specialized alt text, fit, reorder, primary, replacement, and deletion controls. Operational review/return/support panels render persisted attachment URLs without displaying storage details.
+
+The older direct-upload sequence below remains backward-compatible documentation for `MEDIA_DISK=r2`; it is not the current Hostinger requirement.
+
 ## Optional-media category workflow (2026-07-18)
 
 Category, brand, and draft-product database work is independent from media-storage status. The admin UI distinguishes checking, available, unavailable, and actual upload-failure states; unavailable storage uses neutral guidance and never disables Save. Category Images and SEO & Redirects are collapsed optional sections, aliases are available only after the first save, and a second Save action remains near the form bottom. Product publication no longer requires an image and the storefront uses its generic fallback while sellability requirements remain enforced.

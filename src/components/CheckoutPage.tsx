@@ -6,6 +6,7 @@ import { isBackendOrderableProduct } from "../services/catalog/catalogCompatibil
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
+import { productFallbackArtwork } from "./productVisuals";
 
 const FREE_SHIPPING_THRESHOLD = 49;
 
@@ -1444,6 +1445,7 @@ export function CheckoutPage() {
                           alt={product.name}
                           className="h-[88px] w-[88px] rounded-[18px] bg-neutral-50 object-contain"
                           loading="lazy"
+                          onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }}
                           src={product.image}
                         />
                         <div className="min-w-0">

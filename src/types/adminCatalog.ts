@@ -115,14 +115,10 @@ export type AdminProduct = {
   readiness_errors: Record<string, string[]>;
 };
 export type MediaStorageStatus = {
-  uploads_enabled: boolean;
-  configured: boolean;
-  direct_upload_supported: boolean;
-  public_base_url: string;
-  allowed_mime_types: string[];
+  uploads_available: boolean;
+  strategy: "multipart" | "direct";
+  accepted_types: string[];
   maximum_size_bytes: Record<string, number>;
-  upload_ttl_minutes: number;
-  disk: string;
 };
 export type MediaStorageState = {
   phase: "checking" | "available" | "unavailable";

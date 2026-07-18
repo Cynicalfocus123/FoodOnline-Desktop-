@@ -1,6 +1,7 @@
 import { resolveMediaUrl } from "../../lib/media";
 import type { Product, ProductImageFit, ProductVariant } from "../../types/catalog";
 import { applyPresentationCompatibility } from "./presentationCompatibility";
+import { productFallbackArtwork } from "../../components/productVisuals";
 
 export interface ApiVariantDto {
   id?: string | number;
@@ -93,7 +94,7 @@ export function mapApiProduct(dto: ApiProductDto): Product {
   const defaultVariant = dto.default_variant ? mapVariant(dto.default_variant, `${id}-default`, price) : variants.find((variant) => variant.id === id) ?? variants[0];
   const effectiveVariants = variants.length ? variants : [defaultVariant ?? mapVariant({ uuid: `${id}-default`, title: "Default", size: dto.size, price, availability_status: dto.availability_status, in_stock: Boolean(dto.in_stock) }, `${id}-default`, price)];
   const effectiveDefault = defaultVariant ?? effectiveVariants[0];
-  const primaryImage = imageUrls[0] ?? `${import.meta.env.BASE_URL}assets/categories/paan-corner.jpg`;
+  const primaryImage = imageUrls[0] ?? productFallbackArtwork(dto.name ?? "Catalog product");
   const slug = dto.slug ?? String(dto.name ?? id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const product: Product = {
     id,

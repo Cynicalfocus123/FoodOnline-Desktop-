@@ -24,6 +24,7 @@ import {
   TextField,
   inputClass,
 } from "./CatalogCommon";
+import { ManagedMediaPreview } from "./ManagedMediaControl";
 
 type Tab = "basics" | "variants" | "media" | "nutrition" | "publication";
 const blankProduct = {
@@ -346,15 +347,7 @@ export function ProductAdminPanel({
               onClick={() => void choose(item)}
               type="button"
             >
-              <div className="h-12 w-12 rounded-lg bg-neutral-50">
-                {item.primary_image ? (
-                  <img
-                    alt=""
-                    className="h-full w-full object-contain"
-                    src={item.primary_image}
-                  />
-                ) : null}
-              </div>
+              <ManagedMediaPreview alt={`${item.name} preview`} className="h-12 w-12 rounded-lg bg-neutral-50 object-contain" url={item.primary_image} />
               <span>
                 <b className="block text-sm text-ink">{item.name}</b>
                 <small className="text-neutral-500">
@@ -916,7 +909,7 @@ function MediaEditor({
     <div className="mt-5 grid gap-4">
       {storage.phase !== "available" ? (
         <Notice>
-          {storage.phase === "checking" ? "Checking image upload availability. You can save this draft now." : "Image uploads are not connected yet. You can save and manage this product now, then add images later."}
+          {storage.phase === "checking" ? "Checking image-upload availability… You can still save this product." : "Image uploads are temporarily unavailable. You can still save this product and add images later."}
         </Notice>
       ) : mediaItems.length >= 12 ? (
         <Notice>Maximum of 12 images reached.</Notice>
@@ -940,7 +933,7 @@ function MediaEditor({
         </label>
       )}
       {progress !== null ? (
-        <Notice>Uploading directly to media storage: {progress}%</Notice>
+        <Notice>Uploading… {progress}%</Notice>
       ) : null}
       <div className="grid gap-4 md:grid-cols-2">
         {mediaItems.map((media, index) => (
@@ -981,13 +974,7 @@ function MediaCard({
   return (
     <article className="grid gap-3 rounded-2xl border p-4">
       <div className="aspect-square rounded-xl bg-neutral-50">
-        {media.url ? (
-          <img
-            alt={alt || "Product media preview"}
-            className={`h-full w-full ${fit === "cover" ? "object-cover" : "object-contain"}`}
-            src={media.url}
-          />
-        ) : null}
+        <ManagedMediaPreview alt={alt || "Product media preview"} className={`h-full w-full rounded-xl ${fit === "cover" ? "object-cover" : "object-contain"}`} url={media.url} />
       </div>
       <TextField label="Alt text" onChange={setAlt} value={alt} />
       <Field label="Image fit">

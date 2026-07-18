@@ -1,5 +1,9 @@
 # FoodOnlines Interface Rules
 
+## Managed media rule (2026-07-18)
+
+Image availability is never a prerequisite for saving normal records. Use the shared managed-media control and neutral wording; never reveal provider names, credentials, buckets, disks, endpoints, server directories, signed URLs, or upload strategy. Preview returned persistent URLs, provide replace/remove actions, retain form state after failure, and use generic missing/broken-image artwork.
+
 ## Dynamic category rule (2026-07-18)
 
 All administrator-created categories use the shared responsive tile, navigation, optional-section, and neutral missing-image treatment. Public placement communicates Published + Public; media connectivity is informational unless an upload attempt fails. Names wrap safely across desktop, tablet, iOS Safari, and Android Chrome without per-category components or CSS.

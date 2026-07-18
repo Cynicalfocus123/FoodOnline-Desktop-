@@ -28,6 +28,6 @@ class ManagedMediaDeletionTest extends TestCase
         $this->assertFalse(app(ManagedMediaDeletionService::class)->deletePath($path));
         app(ProductMediaService::class)->delete($one);
         Storage::disk('r2')->assertMissing($key);
-        $this->assertSame('finalized', $upload->fresh()->status);
+        $this->assertSame('deleted', $upload->fresh()->status);
     }
 }

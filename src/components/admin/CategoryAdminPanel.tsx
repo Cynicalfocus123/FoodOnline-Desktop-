@@ -3,6 +3,7 @@ import { getPublicRouteHref } from "../../lib/routes";
 import { adminError, catalogApi, uploadManagedImage } from "../../services/admin/catalogApi";
 import type { AdminCategory, MediaPurpose, MediaStorageState } from "../../types/adminCatalog";
 import { ActionButton, CheckField, Field, Notice, PanelHeader, TextField, inputClass } from "./CatalogCommon";
+import { ManagedMediaControl } from "./ManagedMediaControl";
 import { slugifyCategoryName, updateCategoryPlacement } from "./categoryAdminLogic";
 
 const empty = {
@@ -13,6 +14,12 @@ const empty = {
 };
 type Form = typeof empty;
 type StatusFilter = "all" | AdminCategory["status"];
+const categoryMedia = [
+  { purpose: "category_image", field: "image_path", url: "image_url", label: "Category tile" },
+  { purpose: "category_icon", field: "icon_path", url: "icon_url", label: "Icon" },
+  { purpose: "category_desktop_banner", field: "desktop_banner_path", url: "desktop_banner_url", label: "Desktop banner" },
+  { purpose: "category_mobile_banner", field: "mobile_banner_path", url: "mobile_banner_url", label: "Mobile banner" },
+] as const;
 
 function formFromCategory(detail: AdminCategory): Form {
   return {
@@ -120,6 +127,19 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
     } catch (error) { setUploadError(adminError(error).message); } finally { setProgress(null); }
   }
 
+  async function removeMedia(purpose: string) {
+    if (!selected) return;
+    const definition = categoryMedia.find((item) => item.purpose === purpose);
+    if (!definition) return;
+    setUploadError("");
+    try {
+      const detail = await catalogApi.saveCategory(token, selected.id, { [definition.field]: null });
+      setSelected(detail); setForm(formFromCategory(detail)); setMessage("Image removed."); setMessageTone("success");
+    } catch (error) {
+      setUploadError(adminError(error).message);
+    }
+  }
+
   async function changeStatus(action: "archive" | "restore") {
     if (!selected || (action === "archive" && !confirm("Archive this category? It will leave navigation and the homepage."))) return;
     try {
@@ -192,7 +212,7 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><CheckField checked={form.is_featured} label="Featured" onChange={(value) => setField("is_featured", value)} /><CheckField checked={form.show_in_navigation} label="Show in navigation" onChange={(value) => setField("show_in_navigation", value)} /><CheckField checked={form.show_on_homepage} label="Show on homepage" onChange={(value) => setField("show_on_homepage", value)} /></div>
         <Notice>Public placement automatically uses Published + Public. Draft, Archived, Hidden, and Catalog only categories stay out of navigation and homepage placement.</Notice>
 
-        <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">Images — Optional</summary><div className="mt-4 grid gap-3">{!selected ? <Notice>Save the category first. Images can be added later.</Notice> : storage.phase === "checking" ? <Notice>Checking image upload availability. You can save this category now.</Notice> : storage.phase === "unavailable" ? <Notice>Image uploads are not connected yet. You can save and manage this category now, then add images later.</Notice> : <div className="grid gap-3 sm:grid-cols-2">{([ ["category_image", "Category tile"], ["category_icon", "Icon"], ["category_desktop_banner", "Desktop banner"], ["category_mobile_banner", "Mobile banner"] ] as [MediaPurpose, string][]).map(([purpose, label]) => <label className="min-h-11 rounded-xl border border-dashed border-neutral-300 p-3 text-sm font-bold" key={purpose}>{label}<input accept="image/jpeg,image/png,image/webp" className="mt-2 block w-full text-sm" onChange={(e) => e.target.files?.[0] && void mediaUpload(purpose, e.target.files[0])} type="file" /></label>)}</div>}{progress !== null ? <Notice>Uploading: {progress}%</Notice> : null}{uploadError ? <Notice tone="error">{uploadError}</Notice> : null}</div></details>
+        <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">Images — Optional</summary><div className="mt-4"><ManagedMediaControl entityId={selected?.uuid ?? null} entityType="category" error={uploadError} items={categoryMedia.map((item) => ({ id: selected?.uuid ?? "new", purpose: item.purpose, label: item.label, url: selected?.media[item.url] }))} onRemove={(item) => void removeMedia(item.purpose)} onUpload={(purpose, file) => void mediaUpload(purpose as MediaPurpose, file)} progress={progress} storage={storage} /></div></details>
 
         <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">SEO &amp; Redirects — Optional</summary><div className="mt-4 grid gap-4 md:grid-cols-2"><TextField error={errors.meta_title?.[0]} label="Meta title" onChange={(value) => setField("meta_title", value)} value={form.meta_title} /><TextField error={errors.canonical_url?.[0]} label="Canonical URL" onChange={(value) => setField("canonical_url", value)} value={form.canonical_url} /><TextField error={errors.meta_description?.[0]} label="Meta description" multiline onChange={(value) => setField("meta_description", value)} value={form.meta_description} /><div className="grid gap-3"><CheckField checked={form.robots_index} label="Allow search indexing" onChange={(value) => setField("robots_index", value)} /><CheckField checked={form.robots_follow} label="Allow link following" onChange={(value) => setField("robots_follow", value)} /></div></div>{selected ? <div className="mt-5"><h3 className="font-black">Aliases / Redirects</h3><div className="mt-3 flex flex-col gap-2 sm:flex-row"><input className={inputClass} onChange={(e) => setAlias(e.target.value)} placeholder="old-category-slug" value={alias} /><ActionButton onClick={() => void addAlias()}>Add</ActionButton></div>{aliasError ? <p className="mt-2 text-sm font-semibold text-rose-700">{aliasError}</p> : null}<div className="mt-3 grid gap-2">{selected.aliases.map((item) => <div className="flex items-center justify-between rounded-xl bg-neutral-50 p-3" key={item.id}><span className="break-all text-sm font-bold">/{item.alias_slug} · {item.redirect_code}</span><ActionButton onClick={() => void removeAlias(item.id)} tone="danger">Remove</ActionButton></div>)}</div></div> : <Notice>Save the category before adding an alias.</Notice>}</details>
 

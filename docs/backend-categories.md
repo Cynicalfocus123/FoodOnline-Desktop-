@@ -43,7 +43,7 @@ Normal removal archives a category and clears publication/navigation/homepage ex
 
 ## Media, SEO, aliases, and cache
 
-`image_path`, `icon_path`, `desktop_banner_path`, and `mobile_banner_path` accept safe local runtime paths, absolute HTTPS URLs, or explicitly marked `r2://` keys. Windows paths, traversal, script schemes, executable files, and `file://` are rejected. HTTPS URLs pass through unchanged; local paths are prefixed with `APP_URL`; unresolved R2 keys return a null public URL until R2 is implemented.
+`image_path`, `icon_path`, `desktop_banner_path`, and `mobile_banner_path` accept centralized `local://media/...` or `r2://...` managed references, safe compatibility paths, and absolute HTTPS URLs. Windows paths, traversal, script schemes, executable files, and `file://` are rejected. The shared resolver maps local references through `MEDIA_PUBLIC_URL`, preserves HTTPS, and maps optional direct references through their configured public URL.
 
 SEO supports optional title, description, canonical HTTPS URL, and robots index/follow flags. Slug aliases cannot collide with canonical slugs or other aliases. Changing a published canonical slug creates an active 301 alias for the previous slug. Public alias lookup returns canonical data plus `resolved_from_alias` and `redirect_code` metadata.
 

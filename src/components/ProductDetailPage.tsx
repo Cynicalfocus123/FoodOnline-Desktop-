@@ -15,6 +15,7 @@ import { loadProductReviews, reviewSummary } from "../services/reviewApi";
 import { apiRequest } from "../lib/apiClient";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
+import { productFallbackArtwork } from "./productVisuals";
 
 type DetailTabKey = "details" | "recipe" | "nutrition" | "returns";
 type ReviewFilter = "all" | "purchased" | "photos";
@@ -452,6 +453,7 @@ export function ProductDetailPage() {
                         decoding="async"
                         draggable={false}
                         height={900}
+                        onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }}
                         src={image}
                         width={900}
                       />
@@ -497,6 +499,7 @@ export function ProductDetailPage() {
                         draggable={false}
                         height={96}
                         loading="lazy"
+                        onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }}
                         src={image}
                         width={96}
                       />

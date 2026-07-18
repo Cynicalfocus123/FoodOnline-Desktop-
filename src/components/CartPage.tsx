@@ -10,6 +10,7 @@ import {
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { PhoneNumberInput } from "./PhoneNumberInput";
+import { productFallbackArtwork } from "./productVisuals";
 
 const FREE_SHIPPING_THRESHOLD = 49;
 const ESTIMATED_SHIPPING = 5.99;
@@ -745,7 +746,7 @@ export function CartPage() {
                     {savedProducts.map(({ lineId, product }) => (
                       <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={lineId}>
                         <div className="flex items-center gap-3">
-                          <img alt={product.name} className="h-16 w-16 rounded-2xl bg-neutral-50 object-contain" src={product.image} />
+                          <img alt={product.name} className="h-16 w-16 rounded-2xl bg-neutral-50 object-contain" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }} src={product.image} />
                           <div className="min-w-0">
                             <p className="text-sm font-semibold text-neutral-900 line-clamp-2">{product.name}</p>
                             <p className="mt-1 text-sm font-black text-neutral-950">{formatPrice(product.price)}</p>
@@ -812,6 +813,7 @@ export function CartPage() {
                           alt={product.name}
                           className="h-24 w-24 rounded-[20px] bg-neutral-50 object-contain sm:h-28 sm:w-28"
                           loading="lazy"
+                          onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }}
                           src={product.image}
                         />
 
@@ -873,7 +875,7 @@ export function CartPage() {
                       {savedProducts.map(({ lineId, product }) => (
                         <div className="grid gap-3 rounded-[22px] border border-neutral-200 p-4" key={lineId}>
                           <div className="flex items-center gap-3">
-                            <img alt={product.name} className="h-20 w-20 rounded-[18px] bg-neutral-50 object-contain" src={product.image} />
+                            <img alt={product.name} className="h-20 w-20 rounded-[18px] bg-neutral-50 object-contain" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }} src={product.image} />
                             <div className="min-w-0">
                               <p className="text-sm font-semibold text-neutral-900 line-clamp-2">{product.name}</p>
                               <p className="mt-1 text-sm text-neutral-500">{product.quantity}</p>

@@ -63,6 +63,6 @@ When a local product later matches Laravel unambiguously, the product identity c
 
 ## Removal gate and strict API cutover
 
-Switch production to `VITE_CATALOG_SOURCE=api` and delete local compatibility data only after all 16 approved categories, aliases, 240 base products, every approved listing/detail identity, exact variant UUID/SKU/pack size, primary image/gallery, description, nutrition, recipe/return presentation requirement, search/filter field, publication flag, price/availability, and cart/favorite/saved identity are present in Laravel; all R2 URLs resolve; category/home/search/detail/related/cart/checkout smoke tests pass; and API failure behavior is intentionally accepted as strict production behavior.
+Switch production to `VITE_CATALOG_SOURCE=api` and delete local compatibility data only after all 16 approved categories, aliases, 240 base products, every approved listing/detail identity, exact variant UUID/SKU/pack size, optional media/gallery state, description, nutrition, recipe/return presentation requirement, search/filter field, publication flag, price/availability, and cart/favorite/saved identity are present in Laravel; all managed-media URLs resolve; category/home/search/detail/related/cart/checkout smoke tests pass; and API failure behavior is intentionally accepted as strict production behavior.
 
 This repair does not modify Laravel, `backend-live/`, database migrations, API contracts, visual layout, route names, or external Hostinger state.

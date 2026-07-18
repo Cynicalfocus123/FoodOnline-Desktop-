@@ -1,5 +1,12 @@
 # FoodOnlines Desktop Home Design
 
+## Provider-neutral managed media design (2026-07-18)
+
+- Media is optional content enhancement. Save, publish, archive, restore, and delete controls remain usable while upload capability checks or is unavailable.
+- The shared control uses only neutral states: checking availability, available, uploading, uploaded, removed, temporarily unavailable, and safe retry guidance. Provider, credential, filesystem, route, and server details are never rendered.
+- Brand and category editors share preview/upload/replace/remove behavior. Product media keeps its gallery-specific fit, order, primary, replace, and remove controls on the same upload client. Operational review/return/support panels show safe persisted previews.
+- Missing and broken category, brand, product, and attachment images use neutral fallbacks without category-specific or provider-specific CSS. Existing visual hierarchy, rounded controls, touch targets, and responsive layouts remain unchanged.
+
 ## Dynamic Category Administration and Storefront Design (2026-07-18)
 
 - Category creation begins with Name and an editable generated slug. Optional Images and SEO & Redirects use collapsed sections; aliases appear only for saved records. Placement controls explain and immediately reflect Published + Public.

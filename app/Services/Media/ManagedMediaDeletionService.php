@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ManagedMediaDeletionService
 {
+    public function __construct(private readonly MediaStorageManager $storage) {}
+
     public function afterCommit(?string $path): void
     {
         if (! $this->objectKey($path)) { return; }
@@ -22,13 +24,18 @@ class ManagedMediaDeletionService
 
     public function deletePath(?string $path): bool
     {
-        $key = $this->objectKey($path);
-        if (! $key || $this->isReferenced($path)) { return false; }
+        $managed = $this->storage->parseManagedReference($path);
+        if (! $managed || $this->isReferenced($path)) { return false; }
+        $key = $managed['key'];
         $upload = MediaUpload::query()->where('object_key', $key)->latest('id')->first();
 
         try {
-            Storage::disk($upload?->disk ?: config('foodonlines.media.disk'))->delete($key);
-            if ($upload && $upload->status !== 'finalized') { $upload->forceFill(['status' => 'deleted', 'cleanup_attempted_at' => now(), 'cleanup_error' => null])->save(); }
+            $disk = Storage::disk($upload?->disk ?: $managed['disk']);
+            $deleted = $disk->delete($key);
+            if (! $deleted && $disk->exists($key)) {
+                throw new \RuntimeException('Managed object deletion failed.');
+            }
+            if ($upload) { $upload->forceFill(['status' => 'deleted', 'cleanup_attempted_at' => now(), 'cleanup_error' => null])->save(); }
             return true;
         } catch (\Throwable) {
             if ($upload) { $upload->forceFill(['status' => 'cleanup_pending', 'cleanup_attempted_at' => now(), 'cleanup_error' => 'Managed object deletion failed.'])->save(); }
@@ -44,8 +51,6 @@ class ManagedMediaDeletionService
 
     public function objectKey(?string $path): ?string
     {
-        if (! is_string($path) || ! str_starts_with($path, 'r2://')) { return null; }
-        $key = substr($path, 5);
-        return preg_match('#^(products|brands|categories|reviews|returns|support)/[0-9a-f-]+/[a-z-]+-[0-9a-f-]+\.(jpg|png|webp)$#i', $key) === 1 ? $key : null;
+        return $this->storage->parseManagedReference($path)['key'] ?? null;
     }
 }

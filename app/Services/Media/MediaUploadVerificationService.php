@@ -24,6 +24,7 @@ class MediaUploadVerificationService
     public function __construct(
         private readonly ProductMediaService $productMedia,
         private readonly ManagedMediaDeletionService $deletion,
+        private readonly MediaStorageManager $storage,
     ) {}
 
     /** @param array<string, mixed> $data @return array{type: string, target: mixed, upload: MediaUpload} */
@@ -58,7 +59,7 @@ class MediaUploadVerificationService
             if ($locked->status !== 'pending' || $locked->expires_at->isPast()) {
                 throw ValidationException::withMessages(['upload' => ['This upload authorization is no longer available.']]);
             }
-            $path = 'r2://'.$locked->object_key;
+            $path = $this->storage->referenceForUpload($locked);
             $oldPath = null;
 
             if ($locked->target_type === 'product') {

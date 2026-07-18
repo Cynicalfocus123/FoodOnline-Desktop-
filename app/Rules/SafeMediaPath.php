@@ -23,11 +23,12 @@ class SafeMediaPath implements ValidationRule
             && strtolower((string) parse_url($value, PHP_URL_SCHEME)) === 'https'
             && is_string(parse_url($value, PHP_URL_HOST));
         $r2 = preg_match('#^r2://[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
+        $managedLocal = preg_match('#^local://media/(?:products|brands|categories|reviews|returns|support)/[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
         $local = preg_match('#^/?[a-z0-9][a-z0-9_./-]*$#i', $value) === 1;
-        $supported = $https || $r2 || $local;
+        $supported = $https || $r2 || $managedLocal || $local;
 
         if ($unsafeScheme || $windowsPath || $traversal || $executable || $developmentPath || ! $supported) {
-            $fail("The {$attribute} must be a safe local path, HTTPS URL, or explicit R2 object key.");
+            $fail("The {$attribute} must be a safe managed-media reference, local path, or HTTPS URL.");
         }
     }
 }

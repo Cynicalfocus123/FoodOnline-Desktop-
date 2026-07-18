@@ -1,5 +1,15 @@
 # Agent Notes
 
+## Hostinger Local Managed Media (2026-07-18)
+
+- `MEDIA_DISK=local`, `MEDIA_UPLOADS_ENABLED=true`, and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media` are the current production contract. Hostinger Laravel storage is real production media, not a mock fallback; optional direct upload remains backward compatible.
+- `MediaStorageManager` is the single provider/reference/public-URL boundary. New media uses `local://media/...`; existing `r2://`, HTTPS, and safe compatibility paths remain readable without mass conversion.
+- Authenticated multipart upload validates actual bytes, signature, decoded dimensions, purpose limit, entity binding, and ownership; UUID object keys never use client paths. Brand/category/product and review/return/support purposes share authorization, verification, after-commit cleanup, retry, and referenced-object protection.
+- Optional media never blocks parent CRUD or product publication. Brand/category images support upload, persisted preview, replacement, and removal. Product galleries support multiple upload, order, primary selection/promotion, replacement, final removal, and zero-media publication. User/avatar, vendor, variant, nutrition, and promotional media fields do not exist and no parallel schema was invented.
+- Administrator capability responses and UI expose only generic availability/progress/outcome language. Runtime media is excluded from Git/deployment mirrors and must be backed up and preserved at `storage/app/public/media/`. Hostinger and external object storage were not connected or changed.
+- Final local evidence: 36 Node tests and 76 Laravel tests / 587 assertions passed; TypeScript no-emit/project build, changed-PHP syntax, config/route/view caches, media diagnostics, isolated cleanup, migration apply/rollback/reapply, production build, and audit passed. Vite transformed 119 modules. Composer validation/audit was unavailable because Composer is not installed.
+- Generated delivery evidence: `backend-live/` contains 281 source files plus `SHA256SUMS` with zero missing/stale/checksum/secret/frontend/ZIP findings. `dist/` and `frontend-upload/` each contain 1,033 files / 91,768,680 bytes with zero missing, extra, or SHA-256-mismatched files; prohibited compiled-output findings are zero.
+
 ## Production Category Administration and Storefront Synchronization (2026-07-18)
 
 - Laravel accepts name-only category creation, generates the slug, normalizes optional blanks, supplies safe defaults/ordering, enforces Published + Public for placement, clears placement for Draft/Archived/Hidden/Catalog only, and keeps non-media lifecycle work independent from R2.

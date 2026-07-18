@@ -15,12 +15,13 @@ class MediaUploadAuthorizationTest extends TestCase
 
     public function test_disabled_invalid_and_valid_authorizations_are_safe(): void
     {
+        config(['foodonlines.media.disk' => 'r2', 'foodonlines.media.uploads_enabled' => false]);
         [, $token] = $this->adminToken();
         $product = Product::factory()->create();
         $payload = ['purpose' => 'product_image', 'target_uuid' => $product->uuid, 'original_filename' => '../../front.png', 'mime_type' => 'image/png', 'size_bytes' => 100];
         $this->withToken($token)->postJson('/api/v1/admin/media-uploads', $payload)->assertUnprocessable()->assertJsonValidationErrors('storage');
 
-        config(['foodonlines.media.uploads_enabled' => true]);
+        config(['foodonlines.media.uploads_enabled' => true, 'filesystems.disks.r2.key' => 'key', 'filesystems.disks.r2.secret' => 'secret', 'filesystems.disks.r2.bucket' => 'bucket', 'filesystems.disks.r2.endpoint' => 'https://storage.example.test']);
         $signer = Mockery::mock(MediaUploadSigner::class);
         $signer->shouldReceive('sign')->once()->andReturn(['url' => 'https://upload.example.test/signed', 'headers' => ['Content-Type' => 'image/png']]);
         $this->app->instance(MediaUploadSigner::class, $signer);

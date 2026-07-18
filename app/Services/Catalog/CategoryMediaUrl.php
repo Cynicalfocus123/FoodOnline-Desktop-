@@ -2,22 +2,14 @@
 
 namespace App\Services\Catalog;
 
+use App\Services\Media\MediaStorageManager;
+
 class CategoryMediaUrl
 {
+    public function __construct(private readonly MediaStorageManager $storage) {}
+
     public function make(?string $path): ?string
     {
-        if ($path === null || $path === '') {
-            return null;
-        }
-
-        if (str_starts_with(strtolower($path), 'r2://')) {
-            return rtrim((string) config('foodonlines.media.public_url'), '/').'/'.ltrim(substr($path, 5), '/');
-        }
-
-        if (preg_match('#^https://#i', $path) === 1) {
-            return $path;
-        }
-
-        return rtrim((string) config('app.url'), '/').'/'.ltrim($path, '/');
+        return $this->storage->publicUrl($path);
     }
 }

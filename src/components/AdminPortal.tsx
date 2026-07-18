@@ -152,7 +152,7 @@ function AdminDashboard() {
     if (token) {
       setMediaStorage({ phase: "checking", status: null });
       void catalogApi.storageStatus(token)
-        .then((status) => setMediaStorage({ phase: status.uploads_enabled ? "available" : "unavailable", status }))
+        .then((status) => setMediaStorage({ phase: status.uploads_available ? "available" : "unavailable", status }))
         .catch(() => setMediaStorage({ phase: "unavailable", status: null }));
     }
   }, [token]);

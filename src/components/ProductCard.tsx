@@ -2,6 +2,7 @@ import { KeyboardEvent, MouseEvent } from "react";
 import { formatPrice, type ProductItem } from "../services/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { CartQuantityControl } from "./CartQuantityControl";
+import { productFallbackArtwork } from "./productVisuals";
 
 type ProductCardProps = {
   product: ProductItem;
@@ -89,6 +90,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
             loading="lazy"
             decoding="async"
             height={600}
+            onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = productFallbackArtwork(product.name); }}
             src={product.image}
             width={600}
           />

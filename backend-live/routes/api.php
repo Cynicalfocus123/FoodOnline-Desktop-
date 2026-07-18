@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\Auth\RegisterUserController;
 use App\Http\Controllers\Api\Auth\PasswordRecoveryController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\LocalMediaController;
 use App\Http\Controllers\Api\Catalog\CategoryController;
 use App\Http\Controllers\Api\Catalog\BrandController;
 use App\Http\Controllers\Api\Catalog\ProductController;
@@ -56,6 +57,11 @@ use App\Http\Controllers\Api\Admin\AdminOperationsController;
 use App\Http\Controllers\Api\Admin\AdminSecurityController;
 use App\Http\Controllers\Api\Admin\AdminFailedJobController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/media/{path}', LocalMediaController::class)
+    ->where('path', '.+')
+    ->middleware('throttle:api')
+    ->name('api.media.show');
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/health', HealthController::class)
@@ -126,8 +132,11 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/account/support-tickets/{ticket}/messages', [SupportTicketController::class, 'message'])->name('api.v1.account.support.message');
         Route::get('/account/sessions', [SessionController::class, 'index'])->name('api.v1.account.sessions.index');
         Route::delete('/account/sessions/{token}', [SessionController::class, 'destroy'])->name('api.v1.account.sessions.destroy');
+        Route::get('/account/media-storage/status', [AccountMediaUploadController::class, 'status'])->name('api.v1.account.media-storage.status');
         Route::post('/account/media-uploads', [AccountMediaUploadController::class, 'store'])->name('api.v1.account.media-uploads.store');
+        Route::post('/account/media-uploads/local', [AccountMediaUploadController::class, 'storeLocal'])->middleware('throttle:api')->name('api.v1.account.media-uploads.local');
         Route::post('/account/media-uploads/{mediaUpload}/complete', [AccountMediaUploadController::class, 'complete'])->name('api.v1.account.media-uploads.complete');
+        Route::delete('/account/media-uploads/{mediaUpload}', [AccountMediaUploadController::class, 'destroy'])->name('api.v1.account.media-uploads.destroy');
         Route::post('/account/orders/{order}/buy-again', [BuyAgainController::class, 'store'])->name('api.v1.account.orders.buy-again');
         Route::post('/reviews/{review}/helpful', [ReviewInteractionController::class, 'helpful'])->name('api.v1.reviews.helpful');
         Route::delete('/reviews/{review}/helpful', [ReviewInteractionController::class, 'removeHelpful'])->name('api.v1.reviews.helpful.destroy');
@@ -185,6 +194,7 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/product-media/{media}/make-primary', [AdminProductMediaController::class, 'makePrimary'])->name('api.v1.admin.product-media.make-primary');
             Route::get('/media-storage/status', [AdminMediaUploadController::class, 'status'])->name('api.v1.admin.media-storage.status');
             Route::post('/media-uploads', [AdminMediaUploadController::class, 'store'])->name('api.v1.admin.media-uploads.store');
+            Route::post('/media-uploads/local', [AdminMediaUploadController::class, 'storeLocal'])->middleware('throttle:api')->name('api.v1.admin.media-uploads.local');
             Route::post('/media-uploads/{mediaUpload}/complete', [AdminMediaUploadController::class, 'complete'])->name('api.v1.admin.media-uploads.complete');
             Route::delete('/media-uploads/{mediaUpload}', [AdminMediaUploadController::class, 'destroy'])->name('api.v1.admin.media-uploads.destroy');
             Route::get('/products/{product}/nutrition-facts', [AdminProductNutritionFactController::class, 'show'])->name('api.v1.admin.products.nutrition.show');

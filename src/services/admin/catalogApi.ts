@@ -1,5 +1,7 @@
 import { ApiError, apiRequest } from "../../lib/apiClient";
 import { toUserFacingErrorMessage } from "../../lib/userFacingError";
+import { apiBaseUrl } from "../../lib/runtimeConfig";
+import { mediaUploadTransport } from "../../components/admin/managedMediaLogic";
 import type {
   AdminBrand,
   AdminCategory,
@@ -168,8 +170,47 @@ export async function uploadManagedImage(options: {
   metadata?: Record<string, unknown>;
   onProgress: (percent: number) => void;
 }) {
+  const capability = await catalogApi.storageStatus(options.token);
+  if (!capability.uploads_available) {
+    throw new Error("Image uploads are temporarily unavailable. You can still save this record and add images later.");
+  }
+
+  if (mediaUploadTransport(capability) === "multipart") {
+    const form = new FormData();
+    form.append("purpose", options.purpose);
+    form.append("target_uuid", options.targetUuid);
+    if (options.productMediaId) form.append("product_media_id", options.productMediaId);
+    Object.entries(options.metadata ?? {}).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) form.append(key, typeof value === "boolean" ? (value ? "1" : "0") : String(value));
+    });
+    form.append("file", options.file);
+
+    return new Promise<{ data: unknown }>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${apiBaseUrl}/admin/media-uploads/local`);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.setRequestHeader("Authorization", `Bearer ${options.token}`);
+      xhr.upload.onprogress = (event) =>
+        event.lengthComputable && options.onProgress(Math.round((event.loaded / event.total) * 100));
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.responseText) as { data: unknown });
+          } catch {
+            reject(new Error("Upload failed. Check the file and try again."));
+          }
+        } else {
+          reject(new ApiError("Upload failed. Check the file and try again.", xhr.status));
+        }
+      };
+      xhr.onerror = () => reject(new Error("Upload failed. Check the file and try again."));
+      xhr.send(form);
+    });
+  }
+
   const authorization = await apiRequest<{
     upload_id: string;
+    strategy: "direct";
     upload_url: string;
     method: "PUT";
     headers: Record<string, string>;
@@ -200,9 +241,9 @@ export async function uploadManagedImage(options: {
       xhr.status >= 200 && xhr.status < 300
         ? resolve()
         : reject(
-            new Error("The image could not be uploaded to media storage."),
+            new Error("Upload failed. Check the file and try again."),
           );
-    xhr.onerror = () => reject(new Error("The image upload was interrupted."));
+    xhr.onerror = () => reject(new Error("Upload failed. Check the file and try again."));
     xhr.send(options.file);
   });
   return apiRequest<{ data: unknown }>(

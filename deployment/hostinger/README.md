@@ -1,5 +1,9 @@
 # Hostinger File Manager Deployment
 
+> Local managed-media release (2026-07-18): Hostinger Laravel storage is the current production provider. Set `MEDIA_DISK=local`, `MEDIA_UPLOADS_ENABLED=true`, and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media`. Back up and preserve the private application's complete `storage/app/public/media/` directory across every update; it is intentionally absent from `backend-live/`.
+
+The built-in `/api/media` route is recommended for a split `public_html/api` entry and needs no symlink. If the API domain maps directly to Laravel `public/`, `php artisan storage:link` with `MEDIA_PUBLIC_URL=https://api.foodonlines.com/storage` is also supported. File Manager deployments must upload private code in place while skipping the live `.env`, `vendor/`, and `storage/` directories. SSH deployments should run `php artisan media:diagnose` and `php artisan media:cleanup --limit=100` after migration/cache commands. Existing `local://media/...` files remain required even if `MEDIA_DISK=r2` is selected later.
+
 > Category administration release (2026-07-18): deploy the verified `backend-live/` and `frontend-upload/` folders separately. Preserve the live `.env`, `vendor/` when Composer is unavailable, storage/uploads, and the existing `public_html/api` entry. Run `php artisan migrate --force`, `php artisan catalog:backfill-categories`, then the cache commands in the root `DEPLOYMENT.md`. No external Hostinger action is claimed by this repository.
 
 > Phase 7 review (2026-07-15): use the synchronized `backend-live/` and `frontend-upload/` repository mirrors for the current operational commerce source. This guide still does not prove an external Hostinger upload or external R2 activation.

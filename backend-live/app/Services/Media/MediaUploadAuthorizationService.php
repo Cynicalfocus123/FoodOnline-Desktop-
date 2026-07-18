@@ -16,12 +16,15 @@ use Illuminate\Validation\ValidationException;
 
 class MediaUploadAuthorizationService
 {
-    public function __construct(private readonly MediaUploadSigner $signer) {}
+    public function __construct(
+        private readonly MediaUploadSigner $signer,
+        private readonly MediaStorageManager $storage,
+    ) {}
 
-    /** @param array<string, mixed> $data @return array{upload: MediaUpload, upload_url: string, headers: array<string, string>} */
+    /** @param array<string, mixed> $data @return array{upload: MediaUpload, strategy: string, upload_url: string, headers: array<string, string>} */
     public function authorize(array $data, User $admin): array
     {
-        if (! config('foodonlines.media.uploads_enabled')) {
+        if (! $this->storage->uploadsAvailable()) {
             throw ValidationException::withMessages(['storage' => ['Media uploads are currently unavailable.']]);
         }
 
@@ -50,9 +53,9 @@ class MediaUploadAuthorizationService
 
         $uuid = (string) Str::uuid();
         $extension = match ($mime) { 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp' };
-        $objectKey = "{$prefix}-{$uuid}.{$extension}";
+        $objectKey = $this->storage->objectPrefix("{$prefix}-{$uuid}.{$extension}");
         $expiresAt = now()->addMinutes(max(1, (int) config('foodonlines.media.upload_ttl_minutes', 5)));
-        $disk = (string) config('foodonlines.media.disk', 'r2');
+        $disk = $this->storage->disk();
         $upload = MediaUpload::query()->create([
             'uuid' => $uuid, 'purpose' => $data['purpose'], 'target_type' => $targetType, 'target_id' => $target->id,
             'target_field' => $field, 'product_media_id' => $productMedia?->id, 'disk' => $disk, 'object_key' => $objectKey,
@@ -61,19 +64,22 @@ class MediaUploadAuthorizationService
             'created_by' => $admin->id,
         ]);
 
-        try {
-            $signed = $this->signer->sign($disk, $objectKey, $expiresAt, $mime);
-        } catch (\Throwable) {
-            $upload->forceFill(['status' => 'deleted', 'cleanup_error' => 'Upload authorization could not be created.'])->save();
-            throw ValidationException::withMessages(['storage' => ['Media storage could not authorize the upload. Try again later.']]);
+        $signed = ['url' => '', 'headers' => []];
+        if ($this->storage->strategy() === 'direct') {
+            try {
+                $signed = $this->signer->sign($disk, $objectKey, $expiresAt, $mime);
+            } catch (\Throwable) {
+                $upload->forceFill(['status' => 'deleted', 'cleanup_error' => 'Upload authorization could not be created.'])->save();
+                throw ValidationException::withMessages(['storage' => ['Image uploads are temporarily unavailable.']]);
+            }
         }
 
-        return ['upload' => $upload, 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
+        return ['upload' => $upload, 'strategy' => $this->storage->strategy(), 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
     }
 
     public function authorizeCustomer(array $data, User $user): array
     {
-        if (! config('foodonlines.media.uploads_enabled')) { throw ValidationException::withMessages(['storage' => ['Media uploads are currently unavailable.']]); }
+        if (! $this->storage->uploadsAvailable()) { throw ValidationException::withMessages(['storage' => ['Image uploads are temporarily unavailable.']]); }
         [$targetType, $target, $prefix, $limit] = match ($data['purpose']) {
             'review_image' => ['review', ProductReview::query()->where('uuid', $data['target_uuid'])->where('user_id', $user->id)->first(), 'reviews/'.$data['target_uuid'].'/image', 5],
             'return_evidence' => ['return', ReturnRequest::query()->where('uuid', $data['target_uuid'])->where('user_id', $user->id)->first(), 'returns/'.$data['target_uuid'].'/evidence', 8],
@@ -85,10 +91,13 @@ class MediaUploadAuthorizationService
         if ($existing >= $limit) { throw ValidationException::withMessages(['target_uuid' => ['The media limit for this target has been reached.']]); }
         $mime = strtolower($data['mime_type']); $maximum = $data['purpose'] === 'return_evidence' ? 10 * 1024 * 1024 : 8 * 1024 * 1024;
         if (! in_array($mime, config('foodonlines.media.allowed_mime_types', []), true) || (int) $data['size_bytes'] > $maximum) { throw ValidationException::withMessages(['size_bytes' => ['This image is not an approved size or type.']]); }
-        $extension = match ($mime) { 'image/jpeg' => 'jpg', 'image/png' => 'png', default => 'webp' }; $uuid = (string) Str::uuid(); $expiresAt = now()->addMinutes(max(1, (int) config('foodonlines.media.upload_ttl_minutes', 5))); $disk = (string) config('foodonlines.media.disk', 'r2');
-        $upload = MediaUpload::query()->create(['uuid' => $uuid, 'purpose' => $data['purpose'], 'target_type' => $targetType, 'target_id' => $target->id, 'disk' => $disk, 'object_key' => $prefix.'-'.$uuid.'.'.$extension, 'original_filename' => basename(str_replace('\\', '/', $data['original_filename'])), 'expected_mime_type' => $mime, 'expected_size_bytes' => (int) $data['size_bytes'], 'status' => 'pending', 'expires_at' => $expiresAt, 'created_by' => $user->id]);
-        try { $signed = $this->signer->sign($disk, $upload->object_key, $expiresAt, $mime); } catch (\Throwable) { $upload->update(['status' => 'deleted']); throw ValidationException::withMessages(['storage' => ['Media storage could not authorize the upload.']]); }
-        return ['upload' => $upload, 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
+        $extension = match ($mime) { 'image/jpeg' => 'jpg', 'image/png' => 'png', default => 'webp' }; $uuid = (string) Str::uuid(); $expiresAt = now()->addMinutes(max(1, (int) config('foodonlines.media.upload_ttl_minutes', 5))); $disk = $this->storage->disk();
+        $upload = MediaUpload::query()->create(['uuid' => $uuid, 'purpose' => $data['purpose'], 'target_type' => $targetType, 'target_id' => $target->id, 'disk' => $disk, 'object_key' => $this->storage->objectPrefix($prefix.'-'.$uuid.'.'.$extension), 'original_filename' => basename(str_replace('\\', '/', $data['original_filename'])), 'expected_mime_type' => $mime, 'expected_size_bytes' => (int) $data['size_bytes'], 'status' => 'pending', 'expires_at' => $expiresAt, 'created_by' => $user->id]);
+        $signed = ['url' => '', 'headers' => []];
+        if ($this->storage->strategy() === 'direct') {
+            try { $signed = $this->signer->sign($disk, $upload->object_key, $expiresAt, $mime); } catch (\Throwable) { $upload->update(['status' => 'deleted']); throw ValidationException::withMessages(['storage' => ['Image uploads are temporarily unavailable.']]); }
+        }
+        return ['upload' => $upload, 'strategy' => $this->storage->strategy(), 'upload_url' => $signed['url'], 'headers' => $signed['headers']];
     }
 
     /** @return array{string, Category|Brand|Product, ?string, string} */

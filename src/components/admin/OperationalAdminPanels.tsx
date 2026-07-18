@@ -14,6 +14,19 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
+function MediaPreviewList({ media }: { media: unknown }) {
+  const items = Array.isArray(media) ? media as Array<Record<string, unknown>> : [];
+  if (!items.length) return null;
+  return <div className="mt-3 flex flex-wrap gap-2">{items.map((item) => <SafeMediaPreview key={String(item.uuid ?? item.id)} label={String(item.alt_text ?? "Attached image")} url={typeof item.url === "string" ? item.url : null} />)}</div>;
+}
+
+function SafeMediaPreview({ url, label }: { url: string | null; label: string }) {
+  const [failed, setFailed] = useState(false);
+  return !url || failed
+    ? <div className="grid h-20 w-20 place-items-center rounded-xl bg-neutral-100 px-2 text-center text-xs font-semibold text-neutral-500">Image unavailable</div>
+    : <img alt={label} className="h-20 w-20 rounded-xl border border-neutral-200 object-cover" onError={() => setFailed(true)} src={url} />;
+}
+
 export function ReturnsAdminPanel({ token }: { token: string }) {
   const [rows, setRows] = useState<Array<Record<string, unknown>>>([]);
   const [message, setMessage] = useState("Loading returns...");
@@ -22,7 +35,7 @@ export function ReturnsAdminPanel({ token }: { token: string }) {
     setMessage(result.data.length ? "" : "No return requests.");
   }).catch((error) => setMessage(errorOf(error)));
   useEffect(() => { void load(); }, [token]);
-  return <Shell title="Returns management"><p className="mt-3 text-sm text-neutral-600">Inspect returned grocery items and choose restock quantities explicitly. Cash on Delivery refunds are recorded manually.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <div className="rounded-2xl border p-4" key={String(row.uuid)}><div className="flex flex-wrap justify-between gap-3"><p className="font-black">{String(row.return_number)} · {String(row.status)}</p><div className="flex gap-2">{["approve", "received", "refund", "close"].map((action) => <button className="rounded-full border px-3 py-1 text-xs font-black" key={action} onClick={() => void operationsApi.returnAction(token, String(row.uuid), { action, amount_minor: action === "refund" ? Number(window.prompt("Manual refund minor units") ?? 0) : undefined }).then(load).catch((error) => setMessage(errorOf(error)))} type="button">{action}</button>)}</div></div><p className="mt-2 text-sm text-neutral-600">Order: {String((row.order as Record<string, unknown> | undefined)?.order_number ?? "—")}</p></div>)}</div></Shell>;
+  return <Shell title="Returns management"><p className="mt-3 text-sm text-neutral-600">Inspect returned grocery items and choose restock quantities explicitly. Cash on Delivery refunds are recorded manually.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <div className="rounded-2xl border p-4" key={String(row.uuid)}><div className="flex flex-wrap justify-between gap-3"><p className="font-black">{String(row.return_number)} · {String(row.status)}</p><div className="flex gap-2">{["approve", "received", "refund", "close"].map((action) => <button className="rounded-full border px-3 py-1 text-xs font-black" key={action} onClick={() => void operationsApi.returnAction(token, String(row.uuid), { action, amount_minor: action === "refund" ? Number(window.prompt("Manual refund minor units") ?? 0) : undefined }).then(load).catch((error) => setMessage(errorOf(error)))} type="button">{action}</button>)}</div></div><p className="mt-2 text-sm text-neutral-600">Order: {String((row.order as Record<string, unknown> | undefined)?.order_number ?? "—")}</p><MediaPreviewList media={row.media} /></div>)}</div></Shell>;
 }
 
 export function ReviewsAdminPanel({ token }: { token: string }) {
@@ -33,14 +46,14 @@ export function ReviewsAdminPanel({ token }: { token: string }) {
     setMessage(result.data.length ? "" : "No reviews awaiting moderation.");
   }).catch((error) => setMessage(errorOf(error)));
   useEffect(() => { void load(); }, [token]);
-  return <Shell title="Review moderation"><p className="mt-3 text-sm text-neutral-600">Product ratings use approved reviews only. Reported content remains visible to administrators until moderated.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <article className="rounded-2xl border p-4" key={String(row.uuid)}><div className="flex justify-between gap-3"><p className="font-black">{"★".repeat(Number(row.rating ?? 0))} · {String(row.status)}</p><div className="flex gap-2">{["approve", "reject", "hide", "restore"].map((action) => <button className="rounded-full border px-3 py-1 text-xs font-black" key={action} onClick={() => void operationsApi.reviewAction(token, String(row.uuid), { action }).then(load).catch((error) => setMessage(errorOf(error)))} type="button">{action}</button>)}</div></div><p className="mt-2 text-sm">{String(row.body ?? "")}</p><p className="mt-2 text-xs text-neutral-500">{String((row.user as Record<string, unknown> | undefined)?.email ?? "Customer")} · Verified: {row.verified_purchase ? "Yes" : "No"}</p></article>)}</div></Shell>;
+  return <Shell title="Review moderation"><p className="mt-3 text-sm text-neutral-600">Product ratings use approved reviews only. Reported content remains visible to administrators until moderated.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <article className="rounded-2xl border p-4" key={String(row.uuid)}><div className="flex justify-between gap-3"><p className="font-black">{"★".repeat(Number(row.rating ?? 0))} · {String(row.status)}</p><div className="flex gap-2">{["approve", "reject", "hide", "restore"].map((action) => <button className="rounded-full border px-3 py-1 text-xs font-black" key={action} onClick={() => void operationsApi.reviewAction(token, String(row.uuid), { action }).then(load).catch((error) => setMessage(errorOf(error)))} type="button">{action}</button>)}</div></div><p className="mt-2 text-sm">{String(row.body ?? "")}</p><p className="mt-2 text-xs text-neutral-500">{String((row.user as Record<string, unknown> | undefined)?.email ?? "Customer")} · Verified: {row.verified_purchase ? "Yes" : "No"}</p><MediaPreviewList media={row.media} /></article>)}</div></Shell>;
 }
 
 export function SupportAdminPanel({ token }: { token: string }) {
   const [rows, setRows] = useState<Array<Record<string, unknown>>>([]);
   const [message, setMessage] = useState("Loading support tickets...");
   useEffect(() => { void operationsApi.support(token).then((result) => { setRows(result.data); setMessage(result.data.length ? "" : "No support tickets."); }).catch((error) => setMessage(errorOf(error))); }, [token]);
-  return <Shell title="Customer support"><p className="mt-3 text-sm text-neutral-600">Private notes remain visible to staff only; customer replies appear in the customer’s support history.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <div className="rounded-2xl border p-4" key={String(row.uuid)}><p className="font-black">{String(row.ticket_number)} · {String(row.status)}</p><p className="mt-2 text-sm">{String(row.subject)}</p><button className="mt-3 rounded-full bg-leaf-600 px-4 py-2 text-xs font-black text-white" onClick={() => { const body = window.prompt("Reply"); if (body) void operationsApi.supportMessage(token, String(row.uuid), { body, customer_visible: true }).catch((error) => setMessage(errorOf(error))); }} type="button">Reply</button></div>)}</div></Shell>;
+  return <Shell title="Customer support"><p className="mt-3 text-sm text-neutral-600">Private notes remain visible to staff only; customer replies appear in the customer’s support history.</p>{message && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}<div className="mt-6 grid gap-3">{rows.map((row) => <div className="rounded-2xl border p-4" key={String(row.uuid)}><p className="font-black">{String(row.ticket_number)} · {String(row.status)}</p><p className="mt-2 text-sm">{String(row.subject)}</p><MediaPreviewList media={row.media} /><button className="mt-3 rounded-full bg-leaf-600 px-4 py-2 text-xs font-black text-white" onClick={() => { const body = window.prompt("Reply"); if (body) void operationsApi.supportMessage(token, String(row.uuid), { body, customer_visible: true }).catch((error) => setMessage(errorOf(error))); }} type="button">Reply</button></div>)}</div></Shell>;
 }
 
 type ReportSummary = {

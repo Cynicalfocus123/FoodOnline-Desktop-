@@ -30,7 +30,7 @@ List queries connect search, category, brand, origin, storage, availability, fea
 
 ## Mapping and identity
 
-API product mapping uses the product UUID as product identity, the stable slug for public routes, R2/absolute media URLs, the default variant for card price/availability, all active variants for detail, and nutrition/grocery fields from Laravel. The presentation compatibility layer supplies only frontend-only experience fields that Laravel does not yet own; it never overrides API identity, category, brand, price, media, nutrition, or variant fields.
+API product mapping uses the product UUID as product identity, the stable slug for public routes, provider-resolved/absolute media URLs, the default variant for card price/availability, all active variants for detail, and nutrition/grocery fields from Laravel. The presentation compatibility layer supplies only frontend-only experience fields that Laravel does not yet own; it never overrides API identity, category, brand, price, media, nutrition, or variant fields.
 
 Categories map Laravel slugs, names, homepage/navigation flags, and resolved media into the existing category strip and route shape. Brands map name, slug, country, and logo without presenting inactive brands as active API brands.
 

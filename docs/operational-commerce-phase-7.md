@@ -1,5 +1,7 @@
 # Operational Commerce and Production Readiness — Phase 7
 
+> 2026-07-18 managed-media update: review images, return evidence, and support attachments now use the shared provider-neutral workflow. Hostinger local Laravel storage is the production default, authenticated multipart upload is available without R2, persisted media includes safe public URLs, and customer ownership/removal is enforced. The older activation wording below is historical; optional direct upload remains backward compatible.
+
 ## Scope
 
 Phase 7 extends the Phase 6 transactional Laravel boundary without replacing the public storefront, account shell, checkout, catalog admin, R2 workflow, or admin shell. It adds operational customer and staff workflows while keeping COD as the only operational payment method. No merchant provider, card charging, wallet processing, provider webhook, provider refund, or provider-backed saved card is enabled.
@@ -8,9 +10,9 @@ Phase 7 extends the Phase 6 transactional Laravel boundary without replacing the
 
 Phase 6 remains the source of truth for guest/authenticated carts, exact variants, cart merge, server quotes, inventory reservations, promotions, idempotent COD orders, customer order history, guest order access, and admin order operations. Phase 7 verification is environment-bounded: Node frontend checks are run locally; PHP, Composer, MySQL, external SMTP, queue workers, cron, Hostinger, R2, and production migrations are not claimed without direct evidence. No localhost/preview server or Serena session is used.
 
-## R2 activation and media purposes
+## Historical direct-upload activation and current media purposes
 
-The existing S3-compatible signed upload and after-commit deletion workflow is reused. New purposes are `review_image`, `return_evidence`, and `support_attachment`, alongside product, brand, and category media. `media:diagnose` reports disk, public URL, size, and credential-presence status without printing secrets. Production activation still requires server-only R2 credentials, bucket policy/CORS for `https://foodonlines.com` and `https://www.foodonlines.com`, a public media URL, and a deployment smoke test.
+The same database purposes and after-commit deletion workflow support local and optional direct uploads. New purposes are `review_image`, `return_evidence`, and `support_attachment`, alongside product, brand, and category media. `media:diagnose` reports only safe capability/link readiness. Current production activation uses `MEDIA_DISK=local`, `MEDIA_UPLOADS_ENABLED=true`, and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media`; optional direct upload later requires its server-only credentials and policy.
 
 ## Customer commerce
 

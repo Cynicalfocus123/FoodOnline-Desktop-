@@ -14,6 +14,7 @@ import {
   TextField,
   inputClass,
 } from "./CatalogCommon";
+import { ManagedMediaControl } from "./ManagedMediaControl";
 
 const blank = {
   name: "",
@@ -98,11 +99,22 @@ export function BrandAdminPanel({
         )
       ).data.find((item) => item.uuid === selected.uuid);
       if (refreshed) choose(refreshed);
-      setMessage("Brand logo uploaded.");
+      setMessage("Image uploaded.");
     } catch (error) {
       setMessage(adminError(error).message);
     } finally {
       setProgress(null);
+    }
+  }
+  async function removeLogo() {
+    if (!selected) return;
+    try {
+      const updated = await catalogApi.saveBrand(token, selected.uuid, { logo_path: null });
+      await load();
+      choose(updated);
+      setMessage("Image removed.");
+    } catch (error) {
+      setMessage(adminError(error).message);
     }
   }
   return (
@@ -196,31 +208,15 @@ export function BrandAdminPanel({
         </div>
         <div>
           <h3 className="text-lg font-black">Logo</h3>
-          {selected?.logo_url ? (
-            <img
-              alt={`${selected.name} logo preview`}
-              className="mt-3 h-28 w-44 rounded-xl border object-contain p-2"
-              src={selected.logo_url}
-            />
-          ) : null}
-          {!selected ? (
-            <Notice>Save the brand before uploading a logo.</Notice>
-          ) : storage.phase === "available" ? (
-            <label className="mt-3 block rounded-xl border border-dashed p-3 text-sm font-bold">
-              Upload logo
-              <input
-                accept="image/jpeg,image/png,image/webp"
-                className="mt-2 block w-full"
-                onChange={(e) =>
-                  e.target.files?.[0] && void upload(e.target.files[0])
-                }
-                type="file"
-              />
-            </label>
-          ) : (
-            <Notice>{storage.phase === "checking" ? "Checking image upload availability. You can save this brand now." : "Image uploads are not connected yet. You can save and manage this brand now, then add a logo later."}</Notice>
-          )}
-          {progress !== null ? <Notice>Uploading: {progress}%</Notice> : null}
+          <ManagedMediaControl
+            entityId={selected?.uuid ?? null}
+            entityType="brand"
+            items={[{ id: selected?.uuid ?? "new", purpose: "brand_logo", label: "Brand logo", url: selected?.logo_url }]}
+            onRemove={() => void removeLogo()}
+            onUpload={(_purpose, file) => void upload(file)}
+            progress={progress}
+            storage={storage}
+          />
         </div>
       </form>
     </section>

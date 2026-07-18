@@ -8,9 +8,11 @@ return [
     'catalog_currency' => strtoupper((string) env('FOODONLINES_CATALOG_CURRENCY', 'USD')),
 
     'media' => [
-        'disk' => env('MEDIA_DISK', 'r2'),
-        'uploads_enabled' => (bool) env('MEDIA_UPLOADS_ENABLED', false),
-        'public_url' => rtrim((string) env('R2_PUBLIC_URL', 'https://media.foodonlines.com'), '/'),
+        'disk' => env('MEDIA_DISK', 'local'),
+        'local_disk' => 'public',
+        'local_public_url' => rtrim((string) env('MEDIA_PUBLIC_URL', rtrim((string) env('APP_URL', ''), '/').'/api/media'), '/'),
+        'uploads_enabled' => (bool) env('MEDIA_UPLOADS_ENABLED', true),
+        'r2_public_url' => rtrim((string) env('R2_PUBLIC_URL', 'https://media.foodonlines.com'), '/'),
         'upload_ttl_minutes' => (int) env('R2_UPLOAD_URL_TTL_MINUTES', 5),
         'allowed_mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
         'max_dimension' => 8000,

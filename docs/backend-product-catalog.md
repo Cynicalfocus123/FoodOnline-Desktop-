@@ -16,7 +16,7 @@ Phase 3 implements backend-only brands, products, sellable variants, and product
 
 `brands` stores an integer key, public UUID, unique name/slug identity, safe optional logo path, optional two-letter country code, active/order state, nullable admin audits, and timestamps. Inactive brands remain attached to existing products but cannot be newly assigned and are absent from the normal public filter list.
 
-`products` stores an integer key, public UUID, restrictive category and optional brand foreign keys, unique stable slug, customer description, two-letter origin, `ambient|refrigerated|frozen` storage, ingredient/allergen/storage text, `draft|published|archived` state, featured flag, publication time, nullable audits, and timestamps. A product has one category, optional brand, many variants/media, one active default variant, and one primary image.
+`products` stores an integer key, public UUID, restrictive category and optional brand foreign keys, unique stable slug, customer description, two-letter origin, `ambient|refrigerated|frozen` storage, ingredient/allergen/storage text, `draft|published|archived` state, featured flag, publication time, nullable audits, and timestamps. A product has one category, optional brand, many variants/media, one active default variant, and zero or one primary image.
 
 `product_variants` stores a public UUID, product, label, globally unique uppercase SKU, optional unique string GTIN (8/12/13/14 digits), optional display size, paired positive decimal net content and unit (`mg|g|kg|ml|l|fl_oz|oz|lb|ct`), positive pack count, package type (`bag|box|bottle|can|jar|pouch|carton|tray|tub|pack|other`), decimal(12,2) price/compare-at price, configured three-letter currency, availability (`in_stock|out_of_stock|preorder|backorder`), active/default flags, order, and timestamps. Compare-at price must exceed current price.
 
@@ -28,7 +28,7 @@ Variant changes lock the product and sibling rows in a transaction. The first ac
 
 Media changes use the equivalent transaction/locking rule. The first image becomes primary; choosing another clears siblings; deleting primary promotes the next ordered image. A published product cannot lose its final image.
 
-Publication requires a published, non-deleted category whose visibility is `public` or `catalog_only`, at least one active variant, exactly one active default with non-empty SKU/positive price/configured currency, at least one image, and exactly one primary image. Publish sets `published_at`; archive clears it and hides the product; restore returns archived to draft without publishing.
+Publication requires a published, non-deleted category whose visibility is `public` or `catalog_only`, at least one active variant, and exactly one active default with non-empty SKU, positive price, configured currency, and valid availability. Media is optional. Publish sets `published_at`; archive clears it and hides the product; restore returns archived to draft without publishing.
 
 Public list visibility additionally requires a `public` category. Direct detail permits `catalog_only`; hidden, draft, archived, incomplete, and deleted-category products return a safe 404.
 

@@ -1,5 +1,71 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Hostinger local managed media release (2026-07-18)
+
+This release makes Hostinger Laravel storage the production media provider. Cloud object storage remains optional and is not required for category, brand, product, review, return, or support workflows. Codex did not connect to Hostinger or Cloudflare and did not change either service.
+
+### Required production environment
+
+Keep the existing server-only `.env` and add or update exactly these non-secret values:
+
+```dotenv
+MEDIA_DISK=local
+MEDIA_UPLOADS_ENABLED=true
+MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media
+```
+
+Do not add storage credentials for local mode. `MEDIA_PUBLIC_URL` is the built-in public, rate-limited Laravel media route and works with Hostinger's split `public_html/api` layout without exposing a physical directory. Existing `r2://`, HTTPS, and legacy relative references continue resolving; new uploads use `local://media/...` references.
+
+### Runtime directories and preservation
+
+Uploads are written through Laravel's `public` filesystem under `storage/app/public/media/`. The current purposes create only `brands/`, `categories/`, `products/`, `reviews/`, `returns/`, and `support/` descendants. The database never receives an absolute Hostinger path or browser blob URL.
+
+Before every deployment, back up both the database and the complete private `storage/app/public/media/` directory. Never replace, empty, synchronize with deletion, or upload the repository's `storage/` placeholders over the production `storage/` directory. Runtime media is deliberately absent from Git, `backend-live/`, `frontend-upload/`, and ZIP files.
+
+SSH permissions from the private Laravel root must allow the PHP account to write `storage/` and `bootstrap/cache/`. Preserve the existing Hostinger owner/group; do not use world-writable permissions. A typical account-owned installation uses:
+
+```bash
+chmod -R u+rwX storage bootstrap/cache
+```
+
+The built-in `/api/media` route is the recommended split-layout public-media configuration. A conventional document root may alternatively use:
+
+```bash
+php artisan storage:link
+```
+
+and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/storage`. Do not create both approaches blindly. With File Manager only, use the built-in `/api/media` setting, preserve `storage/app/public/media`, upload the private backend files in place, and do not copy uploads into `public_html`.
+
+### Backend upload and commands
+
+Upload the contents of `backend-live/` into the private Laravel application while preserving the live `.env`, `vendor/`, the entire `storage/` tree, and Hostinger-specific public entry. Preserve `public_html/api`; never delete or overwrite it with frontend files. From the private Laravel root run:
+
+```bash
+composer install --no-dev --optimize-autoloader --no-interaction
+php artisan migrate --force
+php artisan migrate:status
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan media:diagnose
+php artisan media:cleanup --limit=100
+```
+
+Schedule `php artisan media:cleanup --limit=100` hourly. It retries safe managed deletion, expires abandoned local or direct uploads, protects referenced objects, and cannot delete outside approved managed-media roots.
+
+### Media smoke test
+
+After backend upload and cache rebuild, create a brand without a logo, then upload, refresh, replace, and remove its logo. Repeat with one category image and two product images; reorder the product images, change primary, delete primary, and delete the final image. Publish a genuinely sellable product without an image. Confirm review, return, and support attachments persist and resolve through `https://api.foodonlines.com/api/media/...`. Confirm missing media uses a generic storefront fallback and no administrator page exposes provider, credential, endpoint, disk, bucket, signed-URL, or server-path details.
+
+### Future optional provider switch
+
+To activate the preserved direct-upload provider later, back up the database and local runtime media, configure the existing server-only `R2_*` variables, then set `MEDIA_DISK=r2`, rebuild Laravel caches, and run `php artisan media:diagnose`. Do not mass-convert database paths. Existing `local://media/...` references continue through `MEDIA_PUBLIC_URL`, while new uploads use the selected provider. Retain `storage/app/public/media/` and its backup after switching.
+
+### Media rollback
+
+Restore the prior backend source and database backup only if required, but preserve the newest valid runtime media backup unless database references were also rolled back. Restore the previous `.env` media values, run `php artisan optimize:clear`, rebuild caches, and verify both old `r2://` and current `local://` references. Never roll back by deleting `storage/app/public/media`.
+
 ## Category administration repair deployment (2026-07-18)
 
 This release is prepared in two separate non-ZIP folders: `backend-live/` for the private Laravel application and `frontend-upload/` for the public storefront. It has not been uploaded to Hostinger and it has not changed the production database.
@@ -32,7 +98,7 @@ With SSH/Terminal, synchronize the contents of `backend-live/` into the private 
 
 ### 7. Production environment preservation
 
-Keep the current server-only `.env` in place. Do not overwrite `APP_KEY`, database credentials, mail settings, R2 settings, live URLs/paths, queue settings, or Hostinger configuration with `.env.example`. Confirm `APP_ENV=production` and `APP_DEBUG=false` without displaying these values in the web interface.
+Keep the current server-only `.env` in place. Do not overwrite `APP_KEY`, database credentials, mail settings, media settings, live URLs/paths, queue settings, or Hostinger configuration with `.env.example`. Confirm `APP_ENV=production` and `APP_DEBUG=false` without displaying these values in the web interface.
 
 ### 8. Composer or vendor handling
 
@@ -94,7 +160,7 @@ Clear Hostinger website/cache-manager caches after both uploads. If stale HTML s
 
 ### 16. Cloudflare cache clearing
 
-Purge the FoodOnlines HTML/JS/CSS cache only if Cloudflare is proxying the frontend and still serves old assets. R2 configuration is optional for category CRUD; do not enable uploads until bucket credentials, CORS, and the public media domain are ready.
+Purge the FoodOnlines HTML/JS/CSS cache only if Cloudflare is proxying the frontend and still serves old assets. This does not affect Hostinger local managed-media files.
 
 ### 17. Production smoke testing
 
@@ -110,7 +176,7 @@ Frontend rollback: restore the backed-up `public_html` frontend files and prior 
 
 ## Phase 7 operational commerce deployment note
 
-Phase 7 adds forward migrations and APIs for returns, reviews, customer saved data, notifications, receipts, support, reports, staff permissions/MFA, recovery, SEO, operations, and R2-compatible review/return/support media. Apply migrations only after a backup and staging verification; configure server-only R2, SMTP, queue worker, scheduler, and retention values from `.env.example`. The repository `backend-live/` mirror is updated from source, but no external Hostinger, R2, SMTP, queue, cron, or production migration action is implied by Git.
+Phase 7 adds forward migrations and APIs for returns, reviews, customer saved data, notifications, receipts, support, reports, staff permissions/MFA, recovery, SEO, operations, and provider-neutral review/return/support media. The current release supersedes its earlier direct-upload-only activation note: use Hostinger local media by default. The repository `backend-live/` mirror is updated from source, but no external Hostinger, object storage, SMTP, queue, cron, or production migration action is implied by Git.
 
 ## Phase 6 transactional commerce deployment note
 
@@ -118,7 +184,7 @@ Phase 6 adds four forward commerce migrations, cart/quote/order/inventory/promot
 
 ## Phase 4 media deployment note
 
-Phase 4 adds the admin catalog portal, two forward migrations, the `media:cleanup` command, and one S3-compatible `r2` disk. Production deployment must install locked Composer dependencies, apply migrations, configure the server-only `MEDIA_*`/`R2_*` values from `.env.example`, set the documented bucket CORS/custom domain, rebuild caches, and schedule `php artisan media:cleanup --limit=100`. Repository synchronization does not configure Cloudflare or upload Hostinger files; see `docs/admin-catalog-and-r2.md`.
+Phase 4 originally introduced the media tables and direct-upload provider. The current provider-neutral implementation supersedes that activation procedure: production defaults to `MEDIA_DISK=local`, retains optional direct-upload compatibility, and uses the same cleanup command and database references. See `docs/admin-catalog-and-r2.md`.
 
 ## Repository deployment source
 

@@ -2,6 +2,7 @@ FOODONLINES HOSTINGER ROOT DEPLOYMENT
 
 1. Back up the current public_html frontend files and .htaccess. Back up public_html/api separately.
 2. Preserve public_html/api. Never delete, replace, move, or include it in stale-frontend cleanup.
+   The Laravel backend now serves local managed media through that API entry. Also preserve the private backend's storage/app/public/media directory during every backend update.
 3. Upload the CONTENTS of frontend-upload directly into public_html. No ZIP is required for this release.
 4. Replace stale public_html/assets and public_html/images only after confirming they are frontend folders. Do not merge old hashed JavaScript or CSS chunks.
 5. Compare the supplied .htaccess with the backed-up production file before replacing it and confirm the existing api directory still resolves as a directory.
