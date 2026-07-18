@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "backend-live");
 const manifestName = "SHA256SUMS";
-const rootFiles = [".env.example", "artisan", "composer.json", "composer.lock", "DEPLOYMENT.md"];
+const rootFiles = ["artisan", "composer.json", "composer.lock", "DEPLOYMENT.md"];
 const sourceDirectories = ["app", "config", "database", "routes", "resources"];
 const publicSource = path.join(root, "deployment", "hostinger", "backend-public");
 const publicFiles = [".htaccess", "index.php"];
@@ -42,7 +42,6 @@ await mkdir(output, { recursive: true });
 
 for (const directory of ["storage/app/public", "storage/framework/cache/data", "storage/framework/sessions", "storage/framework/views", "storage/logs", "bootstrap/cache"]) {
   await mkdir(path.join(output, directory), { recursive: true });
-  await writeFile(path.join(output, directory, ".gitignore"), "*\n!.gitignore\n", "utf8");
 }
 
 for (const relative of desiredSources) {
@@ -74,9 +73,7 @@ async function outputFiles() {
   return walk(output);
 }
 
-const storagePlaceholders = ["storage/app/public", "storage/framework/cache/data", "storage/framework/sessions", "storage/framework/views", "storage/logs", "bootstrap/cache"]
-  .map((directory) => path.join(directory, ".gitignore"));
-const expected = [...desiredSources, ...publicFiles.map((file) => path.join("public", file)), ...storagePlaceholders]
+const expected = [...desiredSources, ...publicFiles.map((file) => path.join("public", file))]
   .map(normalize)
   .sort((a, b) => a.localeCompare(b));
 const manifestLines = [];
@@ -100,8 +97,8 @@ for (const line of manifestLines) {
 
 const forbiddenNames = actual.filter((file) => {
   const lower = file.toLowerCase();
-  if (lower.endsWith("/.gitignore") && storagePlaceholders.map(normalize).includes(lower)) return false;
-  return lower === ".env" || lower.includes("/.env") || lower.endsWith(".zip") || lower.includes("vendor/")
+  return lower === ".env" || lower.startsWith(".env.") || lower.includes("/.env") || lower === ".git" || lower.startsWith(".git/") || lower.includes("/.git/")
+    || lower.endsWith(".gitignore") || lower.endsWith(".gitattributes") || lower.endsWith(".zip") || lower.includes("vendor/")
     || lower.includes("tests/") || lower.includes("node_modules/") || lower.startsWith("src/")
     || lower === "package.json" || lower === "package-lock.json" || lower.includes("frontend-upload")
     || lower.endsWith(".sqlite") || lower.endsWith(".db") || lower.endsWith(".log")

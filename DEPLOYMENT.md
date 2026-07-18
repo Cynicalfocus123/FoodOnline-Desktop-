@@ -20,7 +20,7 @@ Do not add storage credentials for local mode. `MEDIA_PUBLIC_URL` is the built-i
 
 Uploads are written through Laravel's `public` filesystem under `storage/app/public/media/`. The current purposes create only `brands/`, `categories/`, `products/`, `reviews/`, `returns/`, and `support/` descendants. The database never receives an absolute Hostinger path or browser blob URL.
 
-Before every deployment, back up both the database and the complete private `storage/app/public/media/` directory. Never replace, empty, synchronize with deletion, or upload the repository's `storage/` placeholders over the production `storage/` directory. Runtime media is deliberately absent from Git, `backend-live/`, `frontend-upload/`, and ZIP files.
+Before every deployment, back up both the database and the complete private `storage/app/public/media/` directory. Never replace, empty, synchronize with deletion, or use the deployment package's empty `storage/` directory structure to remove anything from the production `storage/` directory. Runtime media is deliberately absent from Git, `backend-live/`, `frontend-upload/`, and ZIP files.
 
 SSH permissions from the private Laravel root must allow the PHP account to write `storage/` and `bootstrap/cache/`. Preserve the existing Hostinger owner/group; do not use world-writable permissions. A typical account-owned installation uses:
 
@@ -38,7 +38,7 @@ and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/storage`. Do not create both a
 
 ### Backend upload and commands
 
-Upload the contents of `backend-live/` into the private Laravel application while preserving the live `.env`, `vendor/`, the entire `storage/` tree, and Hostinger-specific public entry. Preserve `public_html/api`; never delete or overwrite it with frontend files. From the private Laravel root run:
+Upload the contents of `backend-live/` into the private Laravel application while preserving the live `.env`, `vendor/`, the entire `storage/` tree, and Hostinger-specific public entry. The deployment folder and ZIP intentionally contain no `.env` or `.env.*` file. Preserve `public_html/api`; never delete or overwrite it with frontend files. From the private Laravel root run:
 
 ```bash
 composer install --no-dev --optimize-autoloader --no-interaction
@@ -68,7 +68,7 @@ Restore the prior backend source and database backup only if required, but prese
 
 ## Category administration repair deployment (2026-07-18)
 
-This release is prepared in two separate non-ZIP folders: `backend-live/` for the private Laravel application and `frontend-upload/` for the public storefront. It has not been uploaded to Hostinger and it has not changed the production database.
+This release is prepared in two verified folders: `backend-live/` for the private Laravel application and `frontend-upload/` for the public storefront. When ZIP delivery is requested, their contents are packaged at archive root as `FoodOnlines_Backend_Live.zip` and `FoodOnlines_Frontend_Live.zip`. It has not been uploaded to Hostinger and it has not changed the production database.
 
 ### 1. Preparation
 
@@ -92,13 +92,13 @@ With SSH/Terminal, synchronize the contents of `backend-live/` into the private 
 
 ### 6. Backend file placement
 
-- Private Laravel application directory: upload every `backend-live/` item except `public/` and `SHA256SUMS`. This includes `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/` placeholders, `artisan`, Composer files, `.env.example`, and this guide.
+- Private Laravel application directory: upload every `backend-live/` item except `public/` and `SHA256SUMS`. This includes `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, the empty writable `storage/` directory structure, `artisan`, Composer files, and this guide. No environment template is packaged; preserve the existing server-only `.env`.
 - Public API entry: `backend-live/public/.htaccess` and `backend-live/public/index.php` are the clean Laravel public-entry reference. The live site already has `public_html/api`; do not delete or blindly replace it. If Hostinger maps `public_html/api` directly to the private application's `public/` directory, deploy these two files there. If the existing `public_html/api/index.php` contains a Hostinger-specific path to the private application, preserve that production path and file; verify it still loads the uploaded private application.
 - The generated reference `index.php` expects the Laravel root to be the parent of its `public/` directory. A split Hostinger entry must retain its already-working private-root bootstrap path. Never expose the private Laravel folders below `public_html`.
 
 ### 7. Production environment preservation
 
-Keep the current server-only `.env` in place. Do not overwrite `APP_KEY`, database credentials, mail settings, media settings, live URLs/paths, queue settings, or Hostinger configuration with `.env.example`. Confirm `APP_ENV=production` and `APP_DEBUG=false` without displaying these values in the web interface.
+Keep the current server-only `.env` in place. No environment file or template is included in the deployment folder or ZIP. Do not overwrite `APP_KEY`, database credentials, mail settings, media settings, live URLs/paths, queue settings, or Hostinger configuration. Confirm `APP_ENV=production` and `APP_DEBUG=false` without displaying these values in the web interface.
 
 ### 8. Composer or vendor handling
 
@@ -180,7 +180,7 @@ Phase 7 adds forward migrations and APIs for returns, reviews, customer saved da
 
 ## Phase 6 transactional commerce deployment note
 
-Phase 6 adds four forward commerce migrations, cart/quote/order/inventory/promotion APIs, COD payment records, queued confirmation mail, and reservation-expiration scheduling. Before production use, install the locked Composer dependencies, configure the server-only commerce values from `.env.example`, apply migrations with `php artisan migrate --force`, rebuild config/routes, and verify a disposable COD order in an authorized environment. Keep unsupported provider methods disabled until a real approved adapter and credentials exist; do not send raw card numbers or CVV.
+Phase 6 adds four forward commerce migrations, cart/quote/order/inventory/promotion APIs, COD payment records, queued confirmation mail, and reservation-expiration scheduling. Before production use, install the locked Composer dependencies, configure the required server-only commerce values in the preserved live `.env` using the separately reviewed repository template as reference, apply migrations with `php artisan migrate --force`, rebuild config/routes, and verify a disposable COD order in an authorized environment. Keep unsupported provider methods disabled until a real approved adapter and credentials exist; do not send raw card numbers or CVV.
 
 ## Phase 4 media deployment note
 
@@ -192,7 +192,7 @@ Phase 4 originally introduced the media tables and direct-upload provider. The c
 
 Synchronization is not a later deployment phase. Implement once in Laravel source, test, run the generator, confirm parity/stale cleanup, then make one combined source/documentation/mirror commit and push `main`. Never edit `backend-live/` manually or delegate its generation.
 
-This is the non-ZIP deployment workflow for the Laravel API at `https://api.foodonlines.com`. It must not create a backend deployment archive.
+The reproducible repository source remains the verified `backend-live/` folder. An explicitly requested backend archive must be generated only from that final folder, keep its contents at ZIP root, exclude runtime/environment/dependency data, and remain outside both the repository and deployment mirror.
 
 ## Hostinger layout
 
@@ -227,7 +227,7 @@ php artisan about
 
 ## Environment
 
-Copy `.env.example` to server-only `.env`, generate `APP_KEY`, and fill real `DB_*`, `MAIL_*`, and `ADMIN_*` values. Phase 3 uses `FOODONLINES_CATALOG_CURRENCY=USD`. Required public values are:
+For a new installation, create the server-only `.env` outside the deployment archive, generate `APP_KEY`, and fill real `DB_*`, `MAIL_*`, and `ADMIN_*` values using the separately reviewed repository template as reference. Phase 3 uses `FOODONLINES_CATALOG_CURRENCY=USD`. Required public values are:
 
 ```dotenv
 APP_ENV=production

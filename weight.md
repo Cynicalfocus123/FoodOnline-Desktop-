@@ -4,7 +4,7 @@
 
 - Added provider-neutral local multipart upload, managed public delivery, safe cleanup, catalog/customer media lifecycle coverage, shared administrator controls, and generic product fallbacks without adding raster, video, font, or provider-specific visual assets.
 - Runtime uploads remain outside repository and deployment weight. The final build transformed 119 modules; the audit passed 27 routes, 21 lazy chunks, 27 JavaScript files, zero missing references, and zero placeholder links.
-- `dist/` and `frontend-upload/` each contain 1,033 files totaling 91,769,707 bytes with zero missing, extra, or SHA-256-mismatched files. `backend-live/` contains 281 source files plus its manifest with zero missing, stale, checksum, secret, frontend, or ZIP findings. Compiled frontend searches found zero provider-name warnings, raw technical-error terms, development URLs, secrets, or internal paths.
+- `dist/` and `frontend-upload/` each contain 1,033 files totaling 91,769,707 bytes with zero missing, extra, or SHA-256-mismatched files. `backend-live/` contains 274 source files plus its manifest with zero missing, stale, checksum, secret, frontend, or ZIP findings; `.env*` and Git placeholder files are absent. Compiled frontend searches found zero provider-name warnings, raw technical-error terms, development URLs, secrets, or internal paths.
 - Validation passed 36 Node tests and 77 Laravel tests / 614 assertions plus TypeScript, changed-PHP syntax, cache compilation, media diagnostics, isolated cleanup, and isolated migration apply/rollback/reapply. Composer validation/audit was not run because Composer is unavailable in this shell.
 
 ## 2026-07-18 category administration repair

@@ -4,7 +4,7 @@ $codMaximumMinor = env('COMMERCE_COD_MAXIMUM_MINOR');
 $codMaximumMinor = is_string($codMaximumMinor) && trim($codMaximumMinor) === '' ? null : $codMaximumMinor;
 
 return [
-    'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
+    'frontend_url' => env('FRONTEND_URL', 'https://foodonlines.com'),
     'catalog_currency' => strtoupper((string) env('FOODONLINES_CATALOG_CURRENCY', 'USD')),
 
     'media' => [
