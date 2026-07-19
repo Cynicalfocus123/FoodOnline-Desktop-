@@ -10,6 +10,7 @@
     "audit:production": "node scripts/audit-production.mjs",
     "sync:hostinger": "node scripts/sync-hostinger-mirror.mjs",
     "sync:backend-live": "node scripts/sync-backend-live.mjs",
+    "release:zips": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/create-portable-live-zips.ps1",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {

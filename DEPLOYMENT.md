@@ -8,7 +8,7 @@ The frontend `.htaccess` now maps `/admin`, `/admin/{module}`, `/admin/{module}/
 
 After backend upload and backup, run `php artisan migrate --force`, `php artisan catalog:backfill-categories`, `php artisan optimize:clear`, `php artisan config:cache`, `php artisan route:cache`, and `php artisan view:cache`. Verify all restored categories, existing media, list/create/edit routes, managed-user archive preservation, product variants inside Product Edit, and mobile/tablet/desktop admin layouts.
 
-The explicitly requested archives are generated outside the repository from the final mirrors with their contents at ZIP root. Backend excludes environment/dependency/runtime data; frontend contains no `api/` path.
+The explicitly requested archives are generated outside the repository from the final mirrors with `npm run release:zips` and their contents at ZIP root. Every ZIP entry must use the portable `/` separator; a `\` in any archive entry is a release-blocking failure because Linux hosting panels otherwise extract it as a literal filename. The command verifies source/archive parity and performs a real extraction test before replacing either release file. Backend excludes environment/dependency/runtime data; frontend contains no `api/` path.
 
 
 ## CMS regression restoration (2026-07-18)

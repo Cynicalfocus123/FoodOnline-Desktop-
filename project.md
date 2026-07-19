@@ -6,8 +6,9 @@
 - Categories, Brands, Products, Customers, Suppliers, Partners, Promo Codes, Orders, Returns, Reviews, and Support have scalable list workspaces with search/filter/sort/export/bulk/pagination controls; editors and operational details occupy separate full-width routes.
 - Product variants remain inside Product Edit. Category/brand/product images continue working before first save. Existing records, category restoration, managed media, and storefront data contracts are preserved.
 - Managed public users now support protected admin create/edit/archive without hard deletion. Operational records keep their existing customer/commerce creation sources.
+- Production ZIPs are generated only with `npm run release:zips`; the release gate enforces Linux-safe `/` entry paths, root-level payload layout, exact file/size parity, forbidden-path checks, and successful extraction before an archive is published.
 - Verification passes 40 Node tests and 79 Laravel tests / 636 assertions, TypeScript, a 125-module production build, and the 27-route audit. Final frontend output contains 1,033 files / 91,808,185 bytes with zero missing references or placeholder links.
-- Requested release archives are verified at 274 backend files (269,413 bytes) and 1,033 frontend files (90,945,935 bytes), with exact source/archive path and size parity and no forbidden paths.
+- Requested release archives are verified at 274 backend files (268,701 bytes) and 1,033 frontend files (90,945,935 bytes), with portable `/` entries, exact source/archive path and size parity, no forbidden paths, and successful full extraction tests.
 
 ## Complete brand countries (2026-07-18)
 
