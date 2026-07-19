@@ -1,5 +1,12 @@
 # FoodOnlines Site Weight
 
+## 2026-07-18 Brand country selector
+
+- Scope: frontend-only correction of Brand country selection and display.
+- Data contract: 249 unique assigned ISO alpha-2 entries; names visible, codes retained internally; zero database/API changes.
+- Verification contract: dataset completeness/order/name mapping tests, TypeScript, production build/audit, frontend mirror parity, Git push, and evidence-bounded deployment reporting. No ZIP.
+- Final output: 1,033 files / 91,776,421 bytes in both `dist/` and `frontend-upload/`, with zero missing, extra, or SHA-256-mismatched files.
+
 ## 2026-07-18 CMS regression restoration
 
 - No raster, video, font, route, migration, dependency, authentication, product-data, or theme weight was added. The change is limited to category restoration/deletion behavior, browser-held pre-save media state, focused tests, and documentation.

@@ -1,5 +1,10 @@
 # FoodOnlines Desktop Home Design
 
+## Brand Country Selection Correction (2026-07-18)
+
+- Replace visible ISO-code entry with the existing-theme searchable country-name combobox. The field supports mouse, typing, Arrow Up/Down, Enter, Escape, and an explicit no-results state without adding a third-party visual system.
+- Display resolved country names in the brand list and editor while retaining ISO 3166-1 alpha-2 as the internal value. The 249-entry dataset is unique and alphabetically sorted; existing stored codes require no conversion.
+
 ## CMS Regression Restoration Design (2026-07-18)
 
 - Permanent category deletion keeps the archived-only danger zone and relationship safeguards but replaces typed-slug confirmation with the shared FoodOnlines modal, fixed confirmation sentence, and Cancel/Delete buttons.

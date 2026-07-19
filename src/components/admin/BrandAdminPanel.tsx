@@ -5,6 +5,7 @@ import {
   uploadManagedImage,
 } from "../../services/admin/catalogApi";
 import type { AdminBrand, MediaStorageState } from "../../types/adminCatalog";
+import { countryNameFromCode } from "../../data/countries";
 import {
   ActionButton,
   CheckField,
@@ -194,7 +195,7 @@ export function BrandAdminPanel({
             >
               <span className="block font-black">{item.name}</span>
               <span className="text-xs font-semibold text-neutral-500">
-                {item.country_code ?? "No country"} ·{" "}
+                {countryNameFromCode(item.country_code) || "No country"} ·{" "}
                 {item.is_active ? "Active" : "Inactive"}
               </span>
             </button>
@@ -229,6 +230,7 @@ export function BrandAdminPanel({
             value={form.slug}
           />
           <CountryField
+            error={errors.country_code?.[0]}
             onChange={(v) => setForm({ ...form, country_code: v })}
             value={form.country_code}
           />

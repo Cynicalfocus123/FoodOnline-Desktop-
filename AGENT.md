@@ -1,5 +1,11 @@
 # Agent Notes
 
+## Complete Brand Country Selector (2026-07-18)
+
+- Admin Brands uses a searchable, keyboard-operable country-name combobox backed by all 249 assigned ISO 3166-1 alpha-2 entries. Options and existing brand summaries show alphabetically sorted country names rather than codes; Hong Kong, Macau, Myanmar, Palestine, and Turkey use the requested familiar English names.
+- The form continues storing and sending the existing uppercase two-letter `country_code`. Existing valid codes resolve to their country names when a brand is opened, lowercase lookup is normalized for display, empty values remain optional, and no brand/database value is migrated or rewritten.
+- No database schema, Laravel API, route, authentication, brand record, theme, or storefront design change belongs to this update. Verification passed 38 Node tests, the focused Laravel brand suite (2 tests / 19 assertions), TypeScript, a 119-module production build, and the 27-route production audit. `dist/` and `frontend-upload/` each contain 1,033 files / 91,776,421 bytes with zero missing, extra, or SHA-256-mismatched files. No ZIP or localhost server is used.
+
 ## CMS Regression Restoration (2026-07-18)
 
 - Category permanent deletion now uses the shared two-button confirmation modal with the fixed question “Are you sure you want to permanently delete this item?” No name, slug, keyword, or other typed confirmation remains in the administrator UI, request validation, API client, or category service. Archived-state, child-category, and assigned-product deletion safeguards remain unchanged.

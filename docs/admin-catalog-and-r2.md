@@ -43,7 +43,7 @@ Phase 4 extends the existing standalone React admin application and Laravel 12 A
 The admin portal covers:
 
 - Categories: name, slug, parent, description, draft/published/archived status, public/hidden/catalog-only visibility, order, featured/navigation/home flags, default sort, SEO, robots directives, tile/icon/desktop/mobile media, aliases, archive, and restore.
-- Brands: name, slug, full ISO 3166-1 alpha-2 country selection, active state, order, and logo.
+- Brands: name, slug, searchable country-name selection across all 249 assigned ISO 3166-1 alpha-2 entries, active state, order, and logo. Existing two-letter codes resolve to names in the editor/list and remain the unchanged stored API value.
 - Products: category, optional brand, name, slug, description, country of origin, ambient/refrigerated/frozen storage type, ingredients, allergens, storage instructions, featured state, status, and readiness.
 - Variants: title, SKU, optional GTIN, size label, net content/value unit, pack count, package type, direct price, previous price, configured currency, availability, active/default state, and order.
 - Product media: upload, immutable replacement, delete, complete-set reorder, primary image, alt text, and `contain`/`cover`.

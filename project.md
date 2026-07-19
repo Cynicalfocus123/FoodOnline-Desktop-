@@ -1,5 +1,12 @@
 # FoodOnlines Project State
 
+## Complete brand countries (2026-07-18)
+
+- Admin Brands now presents all 249 assigned ISO 3166-1 countries and territories as unique alphabetically sorted names in a searchable, keyboard-accessible selector.
+- Existing `country_code` values automatically resolve to names for editing and list display. Saving still sends the unchanged uppercase ISO alpha-2 code, so existing records and the database contract remain compatible.
+- This is a frontend-only CMS correction: no API route, backend validation, schema, authentication, brand data, theme, or storefront design changed.
+- Verification passed 38 Node tests, 2 Laravel brand tests / 19 assertions, TypeScript, a 119-module production build, the 27-route audit, and exact 1,033-file `dist/` / `frontend-upload/` SHA-256 parity.
+
 ## Current CMS restoration (2026-07-18)
 
 - Frontend design, theme, API routes, authentication, database schema, and product data remain unchanged.

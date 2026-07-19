@@ -1,5 +1,9 @@
 # FoodOnlines Interface Rules
 
+## Brand country selector rule (2026-07-18)
+
+Brand origin is selected through the existing form styling with a searchable country-name combobox. Show alphabetically ordered names in both the selector and brand list, support typing plus arrow/Enter/Escape keyboard interaction, and keep the two-letter ISO code internal. Do not expose a manual ISO-code field or change existing brand values.
+
 ## CMS deletion and pre-save media rule (2026-07-18)
 
 Permanent item deletion uses the existing FoodOnlines visual language and a simple modal containing “Are you sure you want to permanently delete this item?” with only Cancel and Delete actions. Never require a name, slug, keyword, or danger input. Backend relationship and lifecycle safeguards remain authoritative.

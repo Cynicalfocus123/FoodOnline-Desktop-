@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> Brand country selector update (2026-07-18): Admin Brands now uses a searchable, keyboard-accessible list of all 249 assigned ISO 3166-1 alpha-2 entries, displays country names for existing records, and continues storing the unchanged two-letter code. No backend, schema, route, theme, or brand-data migration is involved.
+
 > Hostinger local media release (2026-07-18): Laravel-managed Hostinger storage is now the default upload provider for catalog and customer-operational media. New uploads use stable `local://media/...` references and the public `/api/media` resolver; administrator Reviews, Returns, and Support panels can append/remove persisted attachments; optional direct upload and existing references remain compatible. See `DEPLOYMENT.md` and `docs/admin-catalog-and-r2.md`.
 
 > CMS restoration release (2026-07-18): soft-deleted categories are restored in place before missing originals are appended, deletion uses a no-typing Cancel/Delete modal, and category/brand/product images can be selected before initial save. Manual non-ZIP deployment uses `backend-live/` and `frontend-upload/` with `DEPLOYMENT.md`.

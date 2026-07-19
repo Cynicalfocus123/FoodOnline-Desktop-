@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { countries } from "../../data/countries";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { countries, countryNameFromCode, type Country } from "../../data/countries";
 
 export const inputClass =
   "min-h-11 w-full rounded-xl border border-neutral-200 bg-white px-3 text-base font-semibold text-ink outline-none focus:border-leaf-500 focus:ring-2 focus:ring-leaf-500/15";
@@ -80,28 +80,120 @@ export function CheckField({
 export function CountryField({
   value,
   onChange,
+  error,
 }: {
   value: string;
   onChange: (value: string) => void;
+  error?: string;
 }) {
+  const inputId = useId();
+  const listboxId = useId();
+  const container = useRef<HTMLDivElement>(null);
+  const selectedName = countryNameFromCode(value);
+  const [query, setQuery] = useState(selectedName);
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const matches = useMemo(() => {
+    const search = query.trim().toLocaleLowerCase("en");
+    if (!search || (value && query === selectedName)) return countries;
+    return countries.filter((country) => country.name.toLocaleLowerCase("en").includes(search));
+  }, [query, selectedName, value]);
+
+  useEffect(() => {
+    setQuery(selectedName);
+  }, [selectedName]);
+
+  useEffect(() => {
+    if (!open || !matches[activeIndex]) return;
+    document.getElementById(`${listboxId}-${matches[activeIndex].code}`)?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex, listboxId, matches, open]);
+
+  function choose(country: Country) {
+    onChange(country.code);
+    setQuery(country.name);
+    setOpen(false);
+    setActiveIndex(0);
+  }
+
   return (
-    <Field label="Country">
-      <input
-        className={inputClass}
-        list="admin-country-list"
-        maxLength={2}
-        onChange={(event) => onChange(event.target.value.toUpperCase())}
-        placeholder="Search or enter ISO code"
-        value={value}
-      />
-      <datalist id="admin-country-list">
-        {countries.map((country) => (
-          <option key={country.code} value={country.code}>
-            {country.name}
-          </option>
-        ))}
-      </datalist>
-    </Field>
+    <div className="grid gap-1.5" ref={container}>
+      <label className="text-sm font-bold text-neutral-700" htmlFor={inputId}>Country</label>
+      <div className="relative">
+        <input
+          aria-activedescendant={open && matches[activeIndex] ? `${listboxId}-${matches[activeIndex].code}` : undefined}
+          aria-autocomplete="list"
+          aria-controls={listboxId}
+          aria-expanded={open}
+          autoComplete="off"
+          className={inputClass}
+          id={inputId}
+          onBlur={(event) => {
+            if (container.current?.contains(event.relatedTarget)) return;
+            setOpen(false);
+            setQuery(selectedName);
+          }}
+          onChange={(event) => {
+            const next = event.target.value;
+            setQuery(next);
+            setOpen(true);
+            setActiveIndex(0);
+            if (!next) onChange("");
+          }}
+          onFocus={(event) => {
+            event.currentTarget.select();
+            setActiveIndex(Math.max(0, countries.findIndex((country) => country.code === value.toUpperCase())));
+            setOpen(true);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setOpen(true);
+              setActiveIndex((current) => matches.length ? (current + 1) % matches.length : 0);
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setOpen(true);
+              setActiveIndex((current) => matches.length ? (current - 1 + matches.length) % matches.length : 0);
+            } else if (event.key === "Enter" && open && matches[activeIndex]) {
+              event.preventDefault();
+              choose(matches[activeIndex]);
+            } else if (event.key === "Escape") {
+              event.preventDefault();
+              setOpen(false);
+              setQuery(selectedName);
+            }
+          }}
+          placeholder="Search countries"
+          role="combobox"
+          spellCheck={false}
+          value={query}
+        />
+        {open ? (
+          <ul
+            className="absolute z-40 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-2 shadow-2xl"
+            id={listboxId}
+            role="listbox"
+          >
+            {matches.length ? matches.map((country, index) => (
+              <li key={country.code} role="presentation">
+                <button
+                  aria-selected={country.code === value}
+                  className={`w-full rounded-xl px-3 py-2.5 text-left text-sm font-bold ${index === activeIndex ? "bg-leaf-50 text-leaf-800" : "text-neutral-700 hover:bg-neutral-50"}`}
+                  id={`${listboxId}-${country.code}`}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => choose(country)}
+                  role="option"
+                  tabIndex={-1}
+                  type="button"
+                >
+                  {country.name}
+                </button>
+              </li>
+            )) : <li className="px-3 py-3 text-sm font-semibold text-neutral-500">No countries found.</li>}
+          </ul>
+        ) : null}
+      </div>
+      {error ? <span className="text-sm font-semibold text-rose-700">{error}</span> : null}
+    </div>
   );
 }
 export function PanelHeader({
