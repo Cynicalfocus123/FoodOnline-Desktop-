@@ -2,7 +2,7 @@
 
 > Hostinger local media release (2026-07-18): Laravel-managed Hostinger storage is now the default upload provider for catalog and customer-operational media. New uploads use stable `local://media/...` references and the public `/api/media` resolver; administrator Reviews, Returns, and Support panels can append/remove persisted attachments; optional direct upload and existing references remain compatible. See `DEPLOYMENT.md` and `docs/admin-catalog-and-r2.md`.
 
-> Category administration release (2026-07-18): Laravel is authoritative for public category existence and placement; admin lifecycle work is R2-independent and original categories use a safe missing-only backfill. Manual deployment uses `backend-live/` and `frontend-upload/` with `DEPLOYMENT.md`.
+> CMS restoration release (2026-07-18): soft-deleted categories are restored in place before missing originals are appended, deletion uses a no-typing Cancel/Delete modal, and category/brand/product images can be selected before initial save. Manual non-ZIP deployment uses `backend-live/` and `frontend-upload/` with `DEPLOYMENT.md`.
 
 > Frontend production API visibility fix (2026-07-17): the centralized frontend host is `https://api.foodonlines.com/api/v1`, hybrid catalog mode remains active, and production customer/admin UI must not display API, backend, infrastructure, or raw technical error details. See `AGENT.md` and `DESIGNER.md`.
 

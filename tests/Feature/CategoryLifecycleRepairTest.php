@@ -62,11 +62,11 @@ class CategoryLifecycleRepairTest extends TestCase
             ->assertOk()->assertJsonPath('data.status', 'draft')->assertJsonPath('data.show_in_navigation', false);
         $this->withToken($token)->postJson('/api/v1/admin/categories/'.$category->id.'/archive')->assertOk();
         Product::factory()->create(['category_id' => $category->id]);
-        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$category->id, ['confirm_slug' => $category->slug])
+        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$category->id)
             ->assertUnprocessable()->assertJsonValidationErrors('category');
     }
 
-    public function test_missing_only_backfill_is_repeatable_and_preserves_existing_and_ice_cream(): void
+    public function test_backfill_restores_soft_deleted_rows_is_repeatable_and_preserves_existing_and_ice_cream(): void
     {
         $edited = Category::factory()->draft()->create([
             'slug' => 'dairy-bread-eggs', 'path' => 'dairy-bread-eggs', 'name' => 'My Dairy',
@@ -74,10 +74,18 @@ class CategoryLifecycleRepairTest extends TestCase
             'meta_title' => 'Custom SEO', 'show_in_navigation' => false, 'show_on_homepage' => false,
         ]);
         $iceCream = Category::factory()->create(['slug' => 'ice-cream', 'path' => 'ice-cream', 'name' => 'Ice cream']);
+        $softDeleted = Category::factory()->create([
+            'slug' => 'paan-corner', 'path' => 'paan-corner', 'name' => 'Original Paan',
+            'show_in_navigation' => true, 'show_on_homepage' => true,
+        ]);
+        $softDeletedId = $softDeleted->id;
+        $softDeleted->delete();
 
-        $this->seed(CategorySeeder::class);
+        $firstRun = app(\App\Services\Catalog\LegacyCategoryBackfill::class)->run();
         $this->seed(CategorySeeder::class);
 
+        $this->assertSame(1, $firstRun['categories_restored']);
+        $this->assertSame(14, $firstRun['categories_created']);
         $this->assertSame(17, Category::query()->count());
         $legacySlugs = array_column(app(\App\Services\Catalog\LegacyCategoryBackfill::class)->categories(), 1);
         $this->assertSame(16, Category::query()->whereIn('slug', $legacySlugs)->count());
@@ -86,6 +94,11 @@ class CategoryLifecycleRepairTest extends TestCase
         $this->assertSame('r2://categories/example/image-example.webp', $edited->fresh()->image_path);
         $this->assertSame('Custom SEO', $edited->fresh()->meta_title);
         $this->assertSame('Ice cream', $iceCream->fresh()->name);
+        $this->assertSame($softDeletedId, Category::query()->where('slug', 'paan-corner')->value('id'));
+        $this->assertSame('Original Paan', Category::query()->whereKey($softDeletedId)->value('name'));
+        $this->assertTrue((bool) Category::query()->whereKey($softDeletedId)->value('show_on_homepage'));
+        $this->getJson('/api/v1/catalog/categories?homepage=1&per_page=100')
+            ->assertOk()->assertJsonFragment(['id' => (string) $softDeletedId, 'slug' => 'paan-corner']);
         $this->assertSame(1, \App\Models\CategoryAlias::query()->where('alias_slug', 'baby-care')->count());
     }
 }

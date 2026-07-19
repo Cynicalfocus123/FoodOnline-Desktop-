@@ -1,5 +1,22 @@
 # FoodOnlines Laravel Backend Deployment
 
+## CMS regression restoration (2026-07-18)
+
+This release changes no API route or database schema. Deploy the synchronized backend source and frontend mirror only; do not create or use a deployment ZIP. Preserve the live `.env`, `vendor/`, database, complete `storage/` tree and managed uploads, permissions, and `public_html/api`.
+
+After the backend source is updated and the database is backed up, run from the private Laravel root:
+
+```bash
+php artisan migrate --force
+php artisan catalog:backfill-categories
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+The backfill first restores soft-deleted category rows in place, preserving their IDs and existing data, then inserts only missing original FoodOnlines slugs and the missing legacy alias. It does not overwrite active edited categories. The command is repeatable; review its restored/created counts. Verify all categories in Admin, published homepage-enabled categories on the storefront, the no-typing delete modal, pre-save category/brand/product image association, replacement/removal, and the existing API entry before completing deployment.
+
 ## Hostinger local managed media release (2026-07-18)
 
 This release makes Hostinger Laravel storage the production media provider. Cloud object storage remains optional and is not required for category, brand, product, review, return, or support workflows. Codex did not connect to Hostinger or Cloudflare and did not change either service.
@@ -164,7 +181,7 @@ Purge the FoodOnlines HTML/JS/CSS cache only if Cloudflare is proxying the front
 
 ### 17. Production smoke testing
 
-Admin/backend: verify sign-in, category list and all status tabs, original categories and Ice cream, name-only creation, editable generated slug, saves without images/SEO/aliases, neutral upload notice, selection after save, navigation/homepage placement normalization, Draft/Archived/Hidden/Catalog-only clearing placement, archive/restore, archived-only danger zone, exact-slug deletion confirmation, product/child deletion blocks, and safe errors with no raw framework, SQL, JSON, server path, or integration configuration.
+Admin/backend: verify sign-in, category list and all status tabs, original categories and Ice cream, name-only creation, editable generated slug, image selection before initial save, saves without images/SEO/aliases, selection after save, upload/replace/remove, navigation/homepage placement normalization, Draft/Archived/Hidden/Catalog-only clearing placement, archive/restore, archived-only Cancel/Delete confirmation modal with no typed input, product/child deletion blocks, and safe errors with no raw framework, SQL, JSON, server path, or integration configuration.
 
 Storefront: verify home and clean-route refreshes without a white page; desktop/tablet/mobile navigation; backend-created category appearance; archived/hidden/catalog-only/placement-disabled category removal; empty homepage-enabled tile; “Products are coming soon” category page; missing/broken-image fallback; long/multilingual names; existing product/detail/cart/account/auth/search flows; and continued `public_html/api` availability.
 

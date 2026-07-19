@@ -127,11 +127,8 @@ class CategoryService
         });
     }
 
-    public function permanentlyDelete(Category $category, string $confirmation): void
+    public function permanentlyDelete(Category $category): void
     {
-        if (! hash_equals($category->slug, $confirmation)) {
-            throw ValidationException::withMessages(['confirm_slug' => ['The confirmation slug does not match the category.']]);
-        }
         if ($category->status !== 'archived') {
             throw ValidationException::withMessages(['category' => ['Archive the category before permanently deleting it.']]);
         }

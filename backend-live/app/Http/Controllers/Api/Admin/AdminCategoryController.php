@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Category\DeleteCategoryRequest;
 use App\Http\Requests\Admin\Category\ReorderCategoriesRequest;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
@@ -61,9 +60,9 @@ class AdminCategoryController extends Controller
         return new AdminCategoryResource($this->categories->update($category, $request->validated(), $request->user())->load(['parent', 'aliases']));
     }
 
-    public function destroy(DeleteCategoryRequest $request, Category $category): JsonResponse
+    public function destroy(Category $category): JsonResponse
     {
-        $this->categories->permanentlyDelete($category, (string) $request->validated('confirm_slug'));
+        $this->categories->permanentlyDelete($category);
         return response()->json(null, 204);
     }
 

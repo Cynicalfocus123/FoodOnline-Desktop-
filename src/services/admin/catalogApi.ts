@@ -55,11 +55,10 @@ export const catalogApi = {
       method: "POST",
       token,
     }).then(data),
-  deleteCategory: (token: string, id: string, confirmSlug: string) =>
+  deleteCategory: (token: string, id: string) =>
     apiRequest(`/admin/categories/${id}`, {
       method: "DELETE",
       token,
-      body: { confirm_slug: confirmSlug },
     }),
   addAlias: (token: string, id: string, body: unknown) =>
     apiRequest(`/admin/categories/${id}/aliases`, {

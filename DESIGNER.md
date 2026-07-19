@@ -1,5 +1,11 @@
 # FoodOnlines Interface Rules
 
+## CMS deletion and pre-save media rule (2026-07-18)
+
+Permanent item deletion uses the existing FoodOnlines visual language and a simple modal containing “Are you sure you want to permanently delete this item?” with only Cancel and Delete actions. Never require a name, slug, keyword, or danger input. Backend relationship and lifecycle safeguards remain authoritative.
+
+Category, brand, and product editors must accept image selection before initial save. Show the local preview in the existing media card, allow replacement/removal, and upload automatically after the parent save succeeds. Do not expose temporary storage mechanics, add a save-first warning, alter the theme, or invent media fields for record types that do not have a supported media contract.
+
 ## Managed media rule (2026-07-18)
 
 Image availability is never a prerequisite for saving normal records. Use the shared managed-media control and neutral wording; never reveal provider names, credentials, buckets, disks, endpoints, server directories, signed URLs, or upload strategy. Preview returned persistent URLs, provide replace/remove actions, retain form state after failure, and use generic missing/broken-image artwork.

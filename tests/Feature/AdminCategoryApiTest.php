@@ -65,18 +65,16 @@ class AdminCategoryApiTest extends TestCase
         $this->assertSame(0, CategoryAlias::query()->count());
     }
 
-    public function test_permanent_delete_requires_archive_confirmation_and_no_children(): void
+    public function test_permanent_delete_requires_archive_state_and_no_children_without_typed_confirmation(): void
     {
         [, $token] = $this->adminToken();
         $root = Category::factory()->archived()->create(['slug' => 'root', 'path' => 'root']);
         Category::factory()->childOf($root)->create(['slug' => 'child', 'path' => 'root/child']);
 
-        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$root->id, ['confirm_slug' => 'root'])
+        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$root->id)
             ->assertUnprocessable()->assertJsonValidationErrors('category');
         Category::withTrashed()->where('parent_id', $root->id)->firstOrFail()->forceDelete();
-        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$root->id, ['confirm_slug' => 'wrong'])
-            ->assertUnprocessable()->assertJsonValidationErrors('confirm_slug');
-        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$root->id, ['confirm_slug' => 'root'])->assertNoContent();
+        $this->withToken($token)->deleteJson('/api/v1/admin/categories/'.$root->id)->assertNoContent();
         $this->assertDatabaseMissing('categories', ['id' => $root->id]);
     }
 }

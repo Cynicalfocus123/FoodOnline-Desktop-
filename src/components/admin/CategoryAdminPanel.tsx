@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getPublicRouteHref } from "../../lib/routes";
 import { adminError, catalogApi, uploadManagedImage } from "../../services/admin/catalogApi";
 import type { AdminCategory, MediaPurpose, MediaStorageState } from "../../types/adminCatalog";
-import { ActionButton, CheckField, Field, Notice, PanelHeader, TextField, inputClass } from "./CatalogCommon";
+import { ActionButton, CheckField, ConfirmationModal, Field, Notice, PanelHeader, TextField, inputClass } from "./CatalogCommon";
 import { ManagedMediaControl } from "./ManagedMediaControl";
 import { slugifyCategoryName, updateCategoryPlacement } from "./categoryAdminLogic";
 
@@ -14,6 +14,7 @@ const empty = {
 };
 type Form = typeof empty;
 type StatusFilter = "all" | AdminCategory["status"];
+type PendingCategoryMedia = Partial<Record<MediaPurpose, { file: File; previewUrl: string }>>;
 const categoryMedia = [
   { purpose: "category_image", field: "image_path", url: "image_url", label: "Category tile" },
   { purpose: "category_icon", field: "icon_path", url: "icon_url", label: "Icon" },
@@ -50,7 +51,16 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
   const [aliasError, setAliasError] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState("");
-  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [pendingMedia, setPendingMedia] = useState<PendingCategoryMedia>({});
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  function clearPendingMedia() {
+    setPendingMedia((current) => {
+      Object.values(current).forEach((item) => item && URL.revokeObjectURL(item.previewUrl));
+      return {};
+    });
+  }
 
   async function load(preferredId?: string) {
     setLoading(true);
@@ -77,7 +87,7 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
       setSelected(detail);
       setForm(formFromCategory(detail));
       setSlugEdited(true);
-      setErrors({}); setMessage(""); setAliasError(""); setDeleteConfirmation(""); setUploadError("");
+      clearPendingMedia(); setErrors({}); setMessage(""); setAliasError(""); setDeleteOpen(false); setUploadError("");
     } catch (error) {
       setMessage(adminError(error).message); setMessageTone("error");
     }
@@ -85,7 +95,7 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
 
   function startNew() {
     setSelected(null); setForm(empty); setSlugEdited(false); setErrors({}); setMessage(""); setAlias("");
-    setAliasError(""); setDeleteConfirmation(""); setUploadError("");
+    clearPendingMedia(); setAliasError(""); setDeleteOpen(false); setUploadError("");
   }
 
   function setField<K extends keyof Form>(key: K, value: Form[K]) {
@@ -109,25 +119,66 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
         meta_title: form.meta_title || null, meta_description: form.meta_description || null, canonical_url: form.canonical_url || null,
       };
       const result = await catalogApi.saveCategory(token, selected?.id ?? null, body);
-      setSelected(result); setForm(formFromCategory(result)); setSlugEdited(true);
+      const queued = Object.entries(pendingMedia) as Array<[MediaPurpose, { file: File; previewUrl: string }]>;
+      const uploaded: MediaPurpose[] = [];
+      const uploadFailures: string[] = [];
+      for (const [purpose, pending] of queued) {
+        setProgress(0);
+        try {
+          await uploadManagedImage({ token, purpose, targetUuid: result.uuid, file: pending.file, onProgress: setProgress });
+          uploaded.push(purpose);
+          URL.revokeObjectURL(pending.previewUrl);
+        } catch (error) {
+          uploadFailures.push(adminError(error).message);
+        }
+      }
+      if (uploaded.length) {
+        setPendingMedia((current) => Object.fromEntries(Object.entries(current).filter(([purpose]) => !uploaded.includes(purpose as MediaPurpose))) as PendingCategoryMedia);
+      }
+      const detail = queued.length ? await catalogApi.category(token, result.id) : result;
+      setSelected(detail); setForm(formFromCategory(detail)); setSlugEdited(true);
       await load(result.id);
-      setMessage("Category saved."); setMessageTone("success");
+      setUploadError(uploadFailures[0] ?? "");
+      setMessage(uploadFailures.length ? "Category saved. Some selected images could not be uploaded; retry when ready." : queued.length ? "Category and selected images saved." : "Category saved.");
+      setMessageTone(uploadFailures.length ? "neutral" : "success");
     } catch (error) {
       const clean = adminError(error); setMessage(clean.message); setMessageTone("error"); setErrors(clean.fields);
-    } finally { setSaving(false); }
+    } finally { setProgress(null); setSaving(false); }
   }
 
   async function mediaUpload(purpose: MediaPurpose, file: File) {
-    if (!selected) return;
+    if (!selected) {
+      const previewUrl = URL.createObjectURL(file);
+      setPendingMedia((current) => {
+        const previous = current[purpose];
+        if (previous) URL.revokeObjectURL(previous.previewUrl);
+        return { ...current, [purpose]: { file, previewUrl } };
+      });
+      setUploadError("");
+      setMessage("Image selected. It will upload automatically when you save the category."); setMessageTone("neutral");
+      return;
+    }
     setProgress(0); setUploadError("");
     try {
       await uploadManagedImage({ token, purpose, targetUuid: selected.uuid, file, onProgress: setProgress });
+      const queued = pendingMedia[purpose];
+      if (queued) {
+        URL.revokeObjectURL(queued.previewUrl);
+        setPendingMedia((current) => Object.fromEntries(Object.entries(current).filter(([key]) => key !== purpose)) as PendingCategoryMedia);
+      }
       const detail = await catalogApi.category(token, selected.id);
       setSelected(detail); setForm(formFromCategory(detail)); setMessage("Category image uploaded."); setMessageTone("success");
     } catch (error) { setUploadError(adminError(error).message); } finally { setProgress(null); }
   }
 
   async function removeMedia(purpose: string) {
+    const pending = pendingMedia[purpose as MediaPurpose];
+    if (pending) {
+      URL.revokeObjectURL(pending.previewUrl);
+      setPendingMedia((current) => Object.fromEntries(Object.entries(current).filter(([key]) => key !== purpose)) as PendingCategoryMedia);
+      setMessage("Selected image removed."); setMessageTone("neutral");
+      return;
+    }
     if (!selected) return;
     const definition = categoryMedia.find((item) => item.purpose === purpose);
     if (!definition) return;
@@ -163,11 +214,13 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
   }
 
   async function permanentlyDelete() {
-    if (!selected || deleteConfirmation !== selected.slug) return;
+    if (!selected) return;
+    setDeleting(true);
     try {
-      await catalogApi.deleteCategory(token, selected.id, deleteConfirmation);
-      startNew(); await load(); setMessage("Category permanently deleted."); setMessageTone("success");
+      await catalogApi.deleteCategory(token, selected.id);
+      setDeleteOpen(false); startNew(); await load(); setMessage("Category permanently deleted."); setMessageTone("success");
     } catch (error) { const clean = adminError(error); setMessage(clean.fields.category?.[0] ?? clean.message); setMessageTone("error"); }
+    finally { setDeleting(false); }
   }
 
   const storefrontReasons = selected ? [
@@ -212,13 +265,14 @@ export function CategoryAdminPanel({ token, storage }: { token: string; storage:
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><CheckField checked={form.is_featured} label="Featured" onChange={(value) => setField("is_featured", value)} /><CheckField checked={form.show_in_navigation} label="Show in navigation" onChange={(value) => setField("show_in_navigation", value)} /><CheckField checked={form.show_on_homepage} label="Show on homepage" onChange={(value) => setField("show_on_homepage", value)} /></div>
         <Notice>Public placement automatically uses Published + Public. Draft, Archived, Hidden, and Catalog only categories stay out of navigation and homepage placement.</Notice>
 
-        <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">Images — Optional</summary><div className="mt-4"><ManagedMediaControl entityId={selected?.uuid ?? null} entityType="category" error={uploadError} items={categoryMedia.map((item) => ({ id: selected?.uuid ?? "new", purpose: item.purpose, label: item.label, url: selected?.media[item.url] }))} onRemove={(item) => void removeMedia(item.purpose)} onUpload={(purpose, file) => void mediaUpload(purpose as MediaPurpose, file)} progress={progress} storage={storage} /></div></details>
+        <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">Images — Optional</summary><div className="mt-4"><ManagedMediaControl entityId={selected?.uuid ?? null} entityType="category" error={uploadError} items={categoryMedia.map((item) => ({ id: selected?.uuid ?? "new", purpose: item.purpose, label: item.label, url: pendingMedia[item.purpose]?.previewUrl ?? selected?.media[item.url] }))} onRemove={(item) => void removeMedia(item.purpose)} onUpload={(purpose, file) => void mediaUpload(purpose as MediaPurpose, file)} progress={progress} storage={storage} /></div></details>
 
         <details className="rounded-2xl border border-neutral-200 p-4"><summary className="cursor-pointer text-lg font-black">SEO &amp; Redirects — Optional</summary><div className="mt-4 grid gap-4 md:grid-cols-2"><TextField error={errors.meta_title?.[0]} label="Meta title" onChange={(value) => setField("meta_title", value)} value={form.meta_title} /><TextField error={errors.canonical_url?.[0]} label="Canonical URL" onChange={(value) => setField("canonical_url", value)} value={form.canonical_url} /><TextField error={errors.meta_description?.[0]} label="Meta description" multiline onChange={(value) => setField("meta_description", value)} value={form.meta_description} /><div className="grid gap-3"><CheckField checked={form.robots_index} label="Allow search indexing" onChange={(value) => setField("robots_index", value)} /><CheckField checked={form.robots_follow} label="Allow link following" onChange={(value) => setField("robots_follow", value)} /></div></div>{selected ? <div className="mt-5"><h3 className="font-black">Aliases / Redirects</h3><div className="mt-3 flex flex-col gap-2 sm:flex-row"><input className={inputClass} onChange={(e) => setAlias(e.target.value)} placeholder="old-category-slug" value={alias} /><ActionButton onClick={() => void addAlias()}>Add</ActionButton></div>{aliasError ? <p className="mt-2 text-sm font-semibold text-rose-700">{aliasError}</p> : null}<div className="mt-3 grid gap-2">{selected.aliases.map((item) => <div className="flex items-center justify-between rounded-xl bg-neutral-50 p-3" key={item.id}><span className="break-all text-sm font-bold">/{item.alias_slug} · {item.redirect_code}</span><ActionButton onClick={() => void removeAlias(item.id)} tone="danger">Remove</ActionButton></div>)}</div></div> : <Notice>Save the category before adding an alias.</Notice>}</details>
 
-        {selected?.status === "archived" ? <div className="grid gap-3 rounded-2xl border border-rose-200 bg-rose-50/50 p-5"><h3 className="text-lg font-black text-rose-900">Danger Zone</h3><p className="text-sm text-rose-800">Permanent deletion is available only when this category has no products or child categories. Type <strong>{selected.slug}</strong> exactly.</p><input aria-label="Confirm category slug" className={inputClass} onChange={(e) => setDeleteConfirmation(e.target.value)} value={deleteConfirmation} /><div><ActionButton disabled={deleteConfirmation !== selected.slug} onClick={() => void permanentlyDelete()} tone="danger">Permanently delete</ActionButton></div></div> : null}
+        {selected?.status === "archived" ? <div className="grid gap-3 rounded-2xl border border-rose-200 bg-rose-50/50 p-5"><h3 className="text-lg font-black text-rose-900">Danger Zone</h3><p className="text-sm text-rose-800">Permanent deletion is available only when this category has no products or child categories.</p><div><ActionButton onClick={() => setDeleteOpen(true)} tone="danger">Delete</ActionButton></div></div> : null}
         <div className="flex justify-end border-t border-neutral-200 pt-5"><ActionButton disabled={saving} type="submit">{saving ? "Saving…" : "Save category"}</ActionButton></div>
       </form>
+      <ConfirmationModal busy={deleting} onCancel={() => setDeleteOpen(false)} onConfirm={() => void permanentlyDelete()} open={deleteOpen} />
     </section>
   );
 }

@@ -179,3 +179,46 @@ export function ActionButton({
     </button>
   );
 }
+
+export function ConfirmationModal({
+  open,
+  busy = false,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean;
+  busy?: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      aria-labelledby="delete-confirmation-title"
+      aria-modal="true"
+      className="fixed inset-0 z-50 grid place-items-center bg-neutral-950/50 p-4"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !busy) onCancel();
+      }}
+      role="dialog"
+    >
+      <div className="w-full max-w-md rounded-[28px] border border-neutral-200 bg-white p-6 shadow-2xl sm:p-7">
+        <h2 className="text-xl font-black text-ink" id="delete-confirmation-title">
+          Delete item
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-neutral-600">
+          Are you sure you want to permanently delete this item?
+        </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <ActionButton disabled={busy} onClick={onCancel} tone="secondary">
+            Cancel
+          </ActionButton>
+          <ActionButton disabled={busy} onClick={onConfirm} tone="danger">
+            {busy ? "Deleting…" : "Delete"}
+          </ActionButton>
+        </div>
+      </div>
+    </div>
+  );
+}

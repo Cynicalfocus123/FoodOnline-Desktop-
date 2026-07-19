@@ -2,9 +2,9 @@
 
 ## Production category lifecycle repair (2026-07-18)
 
-Category creation now requires only a name; the request layer generates an editable canonical slug, normalizes empty optional strings to null, and the service supplies draft/public/ordering/robots defaults. Enabling navigation or homepage placement atomically normalizes to Published + Public, while Draft, Archived, Hidden, and Catalog only clear both placement flags. Archive and restore are R2-independent; restore returns to Draft. Permanent deletion requires archived state and the exact slug and rejects categories with products or children before scheduling best-effort managed-media cleanup.
+Category creation now requires only a name; the request layer generates an editable canonical slug, normalizes empty optional strings to null, and the service supplies draft/public/ordering/robots defaults. Enabling navigation or homepage placement atomically normalizes to Published + Public, while Draft, Archived, Hidden, and Catalog only clear both placement flags. Archive and restore are media-independent; restore returns to Draft. Permanent deletion requires archived state and a normal Cancel/Delete modal with no typed value; it rejects categories with products or children before scheduling best-effort managed-media cleanup.
 
-`LegacyCategoryBackfill` is the shared missing-only implementation used by `CategorySeeder`, fresh `DatabaseSeeder` runs, and `php artisan catalog:backfill-categories`. Existing canonical slugs—including Ice cream—are never updated. The original 16 categories and the missing-only `baby-care` alias can therefore be added safely to an existing database. Every lifecycle and alias write invalidates the shared versioned public-category cache.
+`LegacyCategoryBackfill` is shared by `CategorySeeder`, fresh `DatabaseSeeder` runs, and `php artisan catalog:backfill-categories`. It restores soft-deleted category rows in place before inserting genuinely missing originals, preserving IDs and every existing field. Active canonical slugs—including Ice cream—are never updated. The original 16 categories and missing `baby-care` alias can therefore be restored or added safely. Every lifecycle and alias write invalidates the shared versioned public-category cache.
 
 ## Phase 7 compatibility note (2026-07-15)
 
@@ -39,7 +39,7 @@ Visible frontend categories remain roots to preserve current slugs. The adjacenc
 
 Statuses are `draft`, `published`, and `archived`. Visibilities are `public`, `hidden`, and `catalog_only`. Public lists/tree contain only published, non-deleted, public records. `catalog_only` is available by direct canonical or alias lookup; hidden records are admin-only.
 
-Normal removal archives a category and clears publication/navigation/homepage exposure. Restore returns it to `draft`, never directly to published. Permanent deletion requires an archived category, exact `confirm_slug`, and no active or soft-deleted children; aliases are deleted in the same transaction. Future product/navigation foreign keys must retain restrictive deletion behavior.
+Normal removal archives a category and clears publication/navigation/homepage exposure. Restore returns it to `draft`, never directly to published. Permanent deletion uses a standard Cancel/Delete confirmation and requires an archived category with no active or soft-deleted children; aliases are deleted in the same transaction. Future product/navigation foreign keys must retain restrictive deletion behavior.
 
 ## Media, SEO, aliases, and cache
 

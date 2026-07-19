@@ -9,10 +9,11 @@ use Illuminate\Support\Str;
 
 class LegacyCategoryBackfill
 {
-    /** @return array{categories_created:int, aliases_created:int} */
+    /** @return array{categories_restored:int, categories_created:int, aliases_created:int} */
     public function run(): array
     {
         return DB::transaction(function (): array {
+            $restored = Category::onlyTrashed()->restore();
             $created = 0;
             foreach ($this->categories() as $order => [$name, $slug, $image]) {
                 if (Category::withTrashed()->where('slug', $slug)->exists()) {
@@ -57,7 +58,7 @@ class LegacyCategoryBackfill
 
             app(CategoryCache::class)->invalidate();
 
-            return ['categories_created' => $created, 'aliases_created' => $aliasesCreated];
+            return ['categories_restored' => $restored, 'categories_created' => $created, 'aliases_created' => $aliasesCreated];
         });
     }
 

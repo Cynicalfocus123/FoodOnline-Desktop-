@@ -38,12 +38,11 @@ export function ManagedMediaControl({
   onMove?: (index: number, direction: -1 | 1) => void;
   onMakePrimary?: (item: ManagedMediaItem) => void;
 }) {
-  if (!entityId) return <Notice>Save this record before adding optional images.</Notice>;
-
   const capability = mediaCapabilityMessage(storage);
 
   return (
     <div className="grid gap-3" data-entity-type={entityType}>
+      {!entityId ? <Notice>Selected images will upload automatically with this record when you save.</Notice> : null}
       {storage.phase !== "available" ? <Notice>{capability}</Notice> : null}
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map((item, index) => (
@@ -54,7 +53,7 @@ export function ManagedMediaControl({
             </div>
             <ManagedMediaPreview alt={`${item.label} preview`} className="h-32 w-full rounded-lg bg-neutral-50 object-contain" url={item.url} />
             <div className="flex flex-wrap gap-2">
-              {storage.phase === "available" && (!item.url || allowReplace) ? (
+              {!item.url || allowReplace ? (
                 <label className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border border-neutral-200 px-4 text-sm font-black">
                   {item.url ? "Replace" : "Upload"}
                   <input accept="image/jpeg,image/png,image/webp" className="sr-only" multiple={multiple} onChange={(event) => Array.from(event.target.files ?? []).forEach((file) => onUpload(item.purpose, file, item.id))} type="file" />

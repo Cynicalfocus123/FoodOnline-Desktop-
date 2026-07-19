@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## 2026-07-18 CMS regression restoration
+
+- No raster, video, font, route, migration, dependency, authentication, product-data, or theme weight was added. The change is limited to category restoration/deletion behavior, browser-held pre-save media state, focused tests, and documentation.
+- Validation passed 36 Node tests and 77 Laravel tests / 619 assertions plus TypeScript, changed-PHP syntax, cache compilation, and repeatable isolated category backfill (16/1 then 0/0 on a fresh database). The production build transformed 119 modules.
+- The production audit passed 27 routes, 21 lazy chunk families, 27 JavaScript files, zero missing local references, and zero placeholder links. `dist/` and `frontend-upload/` each contain 1,033 files totaling 91,774,168 bytes.
+
 ## 2026-07-18 Hostinger local managed media
 
 - Added provider-neutral local multipart upload, managed public delivery, safe cleanup, catalog/customer media lifecycle coverage, shared administrator controls, and generic product fallbacks without adding raster, video, font, or provider-specific visual assets.

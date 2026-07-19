@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
 import {
   adminError,
   catalogApi,
@@ -27,6 +27,7 @@ import {
 import { ManagedMediaPreview } from "./ManagedMediaControl";
 
 type Tab = "basics" | "variants" | "media" | "nutrition" | "publication";
+type PendingProductImage = { id: string; file: File; previewUrl: string };
 const blankProduct = {
   category_id: "",
   brand_id: "",
@@ -95,6 +96,11 @@ export function ProductAdminPanel({
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [progress, setProgress] = useState<number | null>(null);
+  const [pendingMedia, setPendingMedia] = useState<PendingProductImage[]>([]);
+  const clearPendingMedia = () => setPendingMedia((current) => {
+    current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+    return [];
+  });
   const query = useMemo(
     () =>
       `${search ? `&search=${encodeURIComponent(search)}` : ""}${status ? `&status=${status}` : ""}${categoryFilter ? `&category_id=${categoryFilter}` : ""}${brandFilter ? `&brand_id=${brandFilter}` : ""}${availability ? `&availability_status=${availability}` : ""}${countryFilter ? `&country_of_origin_code=${countryFilter}` : ""}${storageFilter ? `&storage_type=${storageFilter}` : ""}${featuredFilter ? `&is_featured=${featuredFilter}` : ""}${minPrice ? `&min_price=${minPrice}` : ""}${maxPrice ? `&max_price=${maxPrice}` : ""}`,
@@ -126,8 +132,8 @@ export function ProductAdminPanel({
       })
       .catch((error) => setMessage(adminError(error).message));
   }, [token]);
-  const choose = async (item: AdminProduct) => {
-    const detail = await catalogApi.product(token, item.uuid);
+  const applyProduct = (detail: AdminProduct, discardPending = true) => {
+    if (discardPending) clearPendingMedia();
     setSelected(detail);
     setForm({
       category_id: detail.category_id,
@@ -147,8 +153,15 @@ export function ProductAdminPanel({
     setErrors({});
     setMessage("");
   };
+  const choose = async (item: AdminProduct) => {
+    const detail = await catalogApi.product(token, item.uuid);
+    applyProduct(detail);
+  };
   const refresh = async () => {
-    if (selected) await choose(selected);
+    if (selected) {
+      const detail = await catalogApi.product(token, selected.uuid);
+      applyProduct(detail, false);
+    }
     await load();
   };
   async function save(event: FormEvent) {
@@ -171,18 +184,38 @@ export function ProductAdminPanel({
         selected?.uuid ?? null,
         body,
       );
+      const uploaded: string[] = [];
+      const uploadFailures: string[] = [];
+      for (const pending of pendingMedia) {
+        setProgress(0);
+        try {
+          await uploadManagedImage({ token, purpose: "product_image", targetUuid: saved.uuid, file: pending.file, onProgress: setProgress, metadata: { image_fit: "contain" } });
+          uploaded.push(pending.id);
+          URL.revokeObjectURL(pending.previewUrl);
+        } catch (error) {
+          uploadFailures.push(adminError(error).message);
+        }
+      }
+      if (uploaded.length) setPendingMedia((current) => current.filter((item) => !uploaded.includes(item.id)));
       await load();
-      await choose(saved);
+      const detail = await catalogApi.product(token, saved.uuid);
+      applyProduct(detail, false);
       setMessage(
-        selected
+        uploadFailures.length
+          ? "Product saved. Some selected images could not be uploaded; retry from Media."
+          : pendingMedia.length
+            ? "Product and selected images saved."
+            : selected
           ? "Product saved."
           : "Draft product created. Add at least one active default variant and one image before publishing.",
       );
-      if (!selected) setTab("variants");
+      if (!selected) setTab(uploadFailures.length ? "media" : "variants");
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
       setErrors(clean.fields);
+    } finally {
+      setProgress(null);
     }
   }
   async function action(next: "publish" | "restore" | "archive") {
@@ -329,6 +362,7 @@ export function ProductAdminPanel({
           actions={
             <ActionButton
               onClick={() => {
+                clearPendingMedia();
                 setSelected(null);
                 setForm(blankProduct);
                 setTab("basics");
@@ -550,10 +584,12 @@ export function ProductAdminPanel({
         ) : null}
         {tab === "media" ? (
           <MediaEditor
+            pendingMedia={pendingMedia}
             product={selected}
             progress={progress}
             refresh={refresh}
             setMessage={setMessage}
+            setPendingMedia={setPendingMedia}
             setProgress={setProgress}
             storage={storage}
             token={token}
@@ -843,30 +879,34 @@ function VariantEditor({
 
 function MediaEditor({
   product,
+  pendingMedia,
   token,
   storage,
   progress,
   setProgress,
   setMessage,
+  setPendingMedia,
   refresh,
 }: {
   product: AdminProduct | null;
+  pendingMedia: PendingProductImage[];
   token: string;
   storage: MediaStorageState;
   progress: number | null;
   setProgress: (n: number | null) => void;
   setMessage: (s: string) => void;
+  setPendingMedia: Dispatch<SetStateAction<PendingProductImage[]>>;
   refresh: () => Promise<void>;
 }) {
-  if (!product)
-    return (
-      <div className="mt-5">
-        <Notice>Save the draft product before uploading images.</Notice>
-      </div>
-    );
-  const productUuid = product.uuid;
-  const mediaItems = product.media;
+  const productUuid = product?.uuid ?? null;
+  const mediaItems = product?.media ?? [];
   async function upload(file: File, id?: string) {
+    if (!productUuid) {
+      const pending = { id: crypto.randomUUID(), file, previewUrl: URL.createObjectURL(file) };
+      setPendingMedia((current) => [...current, pending].slice(0, 12));
+      setMessage("Image selected. It will upload automatically when you save the product.");
+      return;
+    }
     setProgress(0);
     try {
       await uploadManagedImage({
@@ -891,6 +931,7 @@ function MediaEditor({
     }
   }
   async function move(index: number, delta: number) {
+    if (!productUuid) return;
     const reordered = [...mediaItems];
     const target = index + delta;
     if (target < 0 || target >= reordered.length) return;
@@ -907,11 +948,13 @@ function MediaEditor({
   }
   return (
     <div className="mt-5 grid gap-4">
+      {!productUuid ? <Notice>Selected images will upload automatically with this product when you save.</Notice> : null}
       {storage.phase !== "available" ? (
         <Notice>
           {storage.phase === "checking" ? "Checking image-upload availability… You can still save this product." : "Image uploads are temporarily unavailable. You can still save this product and add images later."}
         </Notice>
-      ) : mediaItems.length >= 12 ? (
+      ) : null}
+      {mediaItems.length + pendingMedia.length >= 12 ? (
         <Notice>Maximum of 12 images reached.</Notice>
       ) : (
         <label className="rounded-xl border border-dashed p-4 text-sm font-black">
@@ -922,7 +965,7 @@ function MediaEditor({
             multiple
             onChange={(e) =>
               Array.from(e.target.files ?? [])
-                .slice(0, 12 - mediaItems.length)
+                .slice(0, 12 - mediaItems.length - pendingMedia.length)
                 .reduce(
                   (chain, file) => chain.then(() => upload(file)),
                   Promise.resolve(),
@@ -936,6 +979,18 @@ function MediaEditor({
         <Notice>Uploading… {progress}%</Notice>
       ) : null}
       <div className="grid gap-4 md:grid-cols-2">
+        {pendingMedia.map((media) => (
+          <article className="grid gap-3 rounded-2xl border p-4" key={media.id}>
+            <div className="aspect-square rounded-xl bg-neutral-50">
+              <ManagedMediaPreview alt="Selected product image preview" className="h-full w-full rounded-xl object-contain" url={media.previewUrl} />
+            </div>
+            <Notice>Ready to upload when this product is saved.</Notice>
+            <ActionButton onClick={() => {
+              URL.revokeObjectURL(media.previewUrl);
+              setPendingMedia((current) => current.filter((item) => item.id !== media.id));
+            }} tone="danger">Remove</ActionButton>
+          </article>
+        ))}
         {mediaItems.map((media, index) => (
           <MediaCard
             index={index}

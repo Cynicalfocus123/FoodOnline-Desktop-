@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## CMS Regression Restoration Design (2026-07-18)
+
+- Permanent category deletion keeps the archived-only danger zone and relationship safeguards but replaces typed-slug confirmation with the shared FoodOnlines modal, fixed confirmation sentence, and Cancel/Delete buttons.
+- Category, brand, and product media cards stay visually unchanged while accepting local pre-save previews. Pending files can be replaced or removed and are automatically associated after the unchanged parent Save completes.
+- Restored categories reuse their existing IDs, lifecycle fields, placement flags, media, SEO, hierarchy, navigation, homepage tiles, and generic fallbacks. No category-specific layout, styling, route, authentication, product-data, or theme change was introduced.
+
 ## Provider-neutral managed media design (2026-07-18)
 
 - Media is optional content enhancement. Save, publish, archive, restore, and delete controls remain usable while upload capability checks or is unavailable.
@@ -10,7 +16,7 @@
 ## Dynamic Category Administration and Storefront Design (2026-07-18)
 
 - Category creation begins with Name and an editable generated slug. Optional Images and SEO & Redirects use collapsed sections; aliases appear only for saved records. Placement controls explain and immediately reflect Published + Public.
-- The admin list uses complete paginated data, lifecycle filters, hierarchy indentation, visible state, stable selection, and safe loading/empty/error states. Permanent deletion appears only after archive and requires the exact slug.
+- The admin list uses complete paginated data, lifecycle filters, hierarchy indentation, visible state, stable selection, and safe loading/empty/error states. Permanent deletion appears only after archive and uses the shared Cancel/Delete confirmation modal.
 - Media connectivity is neutral operational information and never disables database Save. Only an attempted upload failure receives error styling.
 - Products navigation uses a scrollable backend-driven dropdown and mobile category list. Homepage tiles use a responsive 2/3/4/5/6-column progression. Long/multilingual names wrap and one neutral initial-based fallback handles missing or broken images.
 - Empty homepage-enabled categories retain their tile and route; their page says “Products are coming soon,” while product carousels render only with items. Existing FoodOnlines visual language remains intact.

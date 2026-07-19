@@ -38,6 +38,11 @@ export function BrandAdminPanel({
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [search, setSearch] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
+  const [pendingLogo, setPendingLogo] = useState<{ file: File; previewUrl: string } | null>(null);
+  const clearPendingLogo = () => setPendingLogo((current) => {
+    if (current) URL.revokeObjectURL(current.previewUrl);
+    return null;
+  });
   const load = async () =>
     setItems(
       (
@@ -51,6 +56,7 @@ export function BrandAdminPanel({
     void load().catch((error) => setMessage(adminError(error).message));
   }, [token]);
   const choose = (item: AdminBrand) => {
+    clearPendingLogo();
     setSelected(item);
     setForm({
       name: item.name,
@@ -72,9 +78,26 @@ export function BrandAdminPanel({
         logo_path: form.logo_path || null,
         sort_order: Number(form.sort_order),
       });
+      let finalItem = item;
+      let uploadFailed = false;
+      if (pendingLogo) {
+        setProgress(0);
+        try {
+          await uploadManagedImage({ token, purpose: "brand_logo", targetUuid: item.uuid, file: pendingLogo.file, onProgress: setProgress });
+          const refreshed = (await catalogApi.brands(token, `&search=${encodeURIComponent(item.slug)}`)).data.find((candidate) => candidate.uuid === item.uuid);
+          if (refreshed) finalItem = refreshed;
+          clearPendingLogo();
+        } catch (error) {
+          uploadFailed = true;
+          setMessage(`Brand saved. ${adminError(error).message}`);
+        } finally {
+          setProgress(null);
+        }
+      }
       await load();
-      choose(item);
-      setMessage("Brand saved.");
+      setSelected(finalItem);
+      setForm({ name: finalItem.name, slug: finalItem.slug, country_code: finalItem.country_code ?? "", logo_path: finalItem.logo_path ?? "", is_active: finalItem.is_active, sort_order: String(finalItem.sort_order) });
+      if (!uploadFailed) setMessage(pendingLogo ? "Brand and selected image saved." : "Brand saved.");
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
@@ -82,7 +105,15 @@ export function BrandAdminPanel({
     }
   }
   async function upload(file: File) {
-    if (!selected) return;
+    if (!selected) {
+      const previewUrl = URL.createObjectURL(file);
+      setPendingLogo((current) => {
+        if (current) URL.revokeObjectURL(current.previewUrl);
+        return { file, previewUrl };
+      });
+      setMessage("Image selected. It will upload automatically when you save the brand.");
+      return;
+    }
     setProgress(0);
     try {
       await uploadManagedImage({
@@ -99,6 +130,7 @@ export function BrandAdminPanel({
         )
       ).data.find((item) => item.uuid === selected.uuid);
       if (refreshed) choose(refreshed);
+      else clearPendingLogo();
       setMessage("Image uploaded.");
     } catch (error) {
       setMessage(adminError(error).message);
@@ -107,6 +139,11 @@ export function BrandAdminPanel({
     }
   }
   async function removeLogo() {
+    if (pendingLogo) {
+      clearPendingLogo();
+      setMessage("Selected image removed.");
+      return;
+    }
     if (!selected) return;
     try {
       const updated = await catalogApi.saveBrand(token, selected.uuid, { logo_path: null });
@@ -126,6 +163,7 @@ export function BrandAdminPanel({
           actions={
             <ActionButton
               onClick={() => {
+                clearPendingLogo();
                 setSelected(null);
                 setForm(blank);
               }}
@@ -211,7 +249,7 @@ export function BrandAdminPanel({
           <ManagedMediaControl
             entityId={selected?.uuid ?? null}
             entityType="brand"
-            items={[{ id: selected?.uuid ?? "new", purpose: "brand_logo", label: "Brand logo", url: selected?.logo_url }]}
+            items={[{ id: selected?.uuid ?? "new", purpose: "brand_logo", label: "Brand logo", url: pendingLogo?.previewUrl ?? selected?.logo_url }]}
             onRemove={() => void removeLogo()}
             onUpload={(_purpose, file) => void upload(file)}
             progress={progress}
