@@ -72,15 +72,43 @@ export const catalogApi = {
     apiRequest<Paginated<AdminBrand>>(`/admin/brands?per_page=100${query}`, {
       token,
     }),
+  allBrands: async (token: string, query = "") => {
+    const items: AdminBrand[] = [];
+    let page = 1;
+    let lastPage = 1;
+    do {
+      const response = await apiRequest<Paginated<AdminBrand>>(`/admin/brands?per_page=100&page=${page}${query}`, { token });
+      items.push(...response.data);
+      lastPage = Math.max(1, response.meta?.last_page ?? 1);
+      page++;
+    } while (page <= lastPage);
+    return items;
+  },
+  brand: (token: string, uuid: string) =>
+    apiRequest<{ data: AdminBrand }>(`/admin/brands/${uuid}`, { token }).then(data),
   saveBrand: (token: string, uuid: string | null, body: unknown) =>
     apiRequest<{ data: AdminBrand }>(
       uuid ? `/admin/brands/${uuid}` : "/admin/brands",
       { method: uuid ? "PATCH" : "POST", token, body },
     ).then(data),
+  deleteBrand: (token: string, uuid: string) =>
+    apiRequest(`/admin/brands/${uuid}`, { method: "DELETE", token }),
   products: (token: string, query = "") =>
     apiRequest<Paginated<AdminProduct>>(`/admin/products?per_page=50${query}`, {
       token,
     }),
+  allProducts: async (token: string, query = "") => {
+    const items: AdminProduct[] = [];
+    let page = 1;
+    let lastPage = 1;
+    do {
+      const response = await apiRequest<Paginated<AdminProduct>>(`/admin/products?per_page=100&page=${page}${query}`, { token });
+      items.push(...response.data);
+      lastPage = Math.max(1, response.meta?.last_page ?? 1);
+      page++;
+    } while (page <= lastPage);
+    return items;
+  },
   product: (token: string, uuid: string) =>
     apiRequest<{ data: AdminProduct }>(`/admin/products/${uuid}`, {
       token,

@@ -1,5 +1,13 @@
 # FoodOnlines Interface Rules
 
+## Enterprise CMS page workflow (2026-07-18)
+
+Keep the existing sidebar labels, order, dark-green surface, and orange active state exactly as the navigation foundation. Each content module opens a dedicated list workspace with title, count, search, advanced filters, sort, selection, bulk actions, export, responsive table, and pagination. A list page never renders a create or edit form beside its records.
+
+Supported authoring modules open full-width `/create` and `/{id}/edit` pages. Forms use white rounded section cards, large desktop spacing, one-column mobile flow, 16px inputs, touch-safe actions, orange primary buttons, Save, Save & Continue, and lifecycle-safe Delete/Archive controls. Product Variants remain inside Product Edit. Category, brand, and product media remains selectable before first save and uses the same neutral provider-free uploader language.
+
+Orders, returns, reviews, and support are created by their existing customer/commerce workflows, so admin supplies list and dedicated edit/operations pages without inventing fake Create screens. Tables scroll only inside their own responsive container; page-level horizontal overflow is prohibited. Nested admin routes must survive hard refresh without a white page.
+
 ## Brand country selector rule (2026-07-18)
 
 Brand origin is selected through the existing form styling with a searchable country-name combobox. Show alphabetically ordered names in both the selector and brand list, support typing plus arrow/Enter/Escape keyboard interaction, and keep the two-letter ISO code internal. Do not expose a manual ISO-code field or change existing brand values.

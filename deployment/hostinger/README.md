@@ -1,5 +1,7 @@
 # Hostinger File Manager Deployment
 
+> Enterprise CMS release (2026-07-18): nested `/admin/...` routes require the current frontend `.htaccess` and hashed assets. Deploy the regenerated backend/frontend mirrors together, preserve `.env`, `vendor`, database, storage/media, permissions, and `public_html/api`, then run the root `DEPLOYMENT.md` migration/backfill/cache sequence. Explicitly requested ZIPs mirror those folders at archive root.
+
 > Local managed-media release (2026-07-18): Hostinger Laravel storage is the current production provider. Set `MEDIA_DISK=local`, `MEDIA_UPLOADS_ENABLED=true`, and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media`. Back up and preserve the private application's complete `storage/app/public/media/` directory across every update; it is intentionally absent from `backend-live/`.
 
 The built-in `/api/media` route is recommended for a split `public_html/api` entry and needs no symlink. If the API domain maps directly to Laravel `public/`, `php artisan storage:link` with `MEDIA_PUBLIC_URL=https://api.foodonlines.com/storage` is also supported. File Manager deployments must upload private code in place while skipping the live `.env`, `vendor/`, and `storage/` directories. SSH deployments should run `php artisan media:diagnose` and `php artisan media:cleanup --limit=100` after migration/cache commands. Existing `local://media/...` files remain required even if `MEDIA_DISK=r2` is selected later.

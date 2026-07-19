@@ -1,5 +1,16 @@
 # Agent Notes
 
+## Enterprise Admin CMS Workflow (2026-07-18)
+
+- The unchanged dark-green FoodOnlines sidebar now drives history-aware admin routes. List workspaces use `/admin/{module}`, creation uses `/admin/{module}/create`, and editing uses `/admin/{module}/{id}/edit`; the production rewrite serves every nested admin route from `admin.html` on direct entry and refresh.
+- Categories, Brands, Products, Customers, Suppliers, Partners, Promo Codes, Orders, Returns, Reviews, and Support no longer place a record list beside an editor/detail form. CMS list pages provide record counts, search, advanced filters, sort, bulk selection/actions, CSV export, responsive tables, and pagination. Supported authoring modules have top-right Create actions and full-width Create/Edit forms with Save, Save & Continue, and lifecycle-safe Delete/Archive behavior.
+- Product variants remain inside the dedicated Product Edit route. Category, brand, and product media still accepts local selection and preview before the first parent save, then uploads automatically. Existing managed media, category rows, category restoration behavior, storefront placement, and database identifiers are preserved.
+- Customers, suppliers, and partners now have protected administrator create/show/update/archive endpoints. Archive sets `status=disabled`, revokes active public tokens, and preserves the user row and commerce history; admin accounts are excluded. Existing role/account-type schema compatibility is retained.
+- Operational records remain source-owned: orders come from checkout, returns/reviews/support from their customer workflows. Their admin list and edit routes are separated, but no fake administrator creation path is introduced. All scalable list clients traverse every backend page rather than stopping at the first 50/100 rows.
+- Explicit delivery for this task includes regenerated `backend-live/`, `frontend-upload/`, and the requested production archives `FoodOnlines_Backend_Live.zip` and `FoodOnlines_Frontend_Live.zip`. ZIP roots mirror the corresponding production folder and exclude live `.env`, `vendor`, database, runtime storage/media, secrets, tests, and the frontend `api/` path.
+- Verification passes 40 Node tests, 79 Laravel tests / 636 assertions, TypeScript, a 125-module production build, and the 27-route production audit. `dist/` and `frontend-upload/` contain 1,033 files / 91,808,185 bytes with zero missing references or placeholder links.
+- Archive verification: backend ZIP is 269,413 bytes / 274 files / SHA-256 `9df11a2e37990b6abe83fcadc317a717d0f4a8cfa419c34b1ebd4ee879088d99`; frontend ZIP is 90,945,935 bytes / 1,033 files / SHA-256 `acceb5a59bdc038a06ba3bb5895fe96af9df9cbb990ed39e251b761bae68028d`. Both have zero missing, extra, size-mismatched, unsafe, or forbidden paths.
+
 ## Complete Brand Country Selector (2026-07-18)
 
 - Admin Brands uses a searchable, keyboard-operable country-name combobox backed by all 249 assigned ISO 3166-1 alpha-2 entries. Options and existing brand summaries show alphabetically sorted country names rather than codes; Hong Kong, Macau, Myanmar, Palestine, and Turkey use the requested familiar English names.

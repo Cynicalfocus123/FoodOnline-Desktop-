@@ -99,7 +99,7 @@ for (const [name, html] of [["index.html", indexHtml], ["admin.html", adminHtml]
 }
 
 const htaccess = readFileSync(join(distRoot, ".htaccess"), "utf8");
-if (!htaccess.includes("[R=404,L]") || !htaccess.includes("RewriteRule . index.html")) {
+if (!htaccess.includes("[R=404,L]") || !htaccess.includes("RewriteRule . index.html") || !htaccess.includes("RewriteRule ^admin(?:/.*)?$ admin.html [L]")) {
   failures.push(".htaccess does not separate missing static files from SPA routes");
 }
 

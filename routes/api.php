@@ -152,6 +152,10 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/logout', [AdminAuthController::class, 'logout'])->name('api.v1.admin.logout');
             Route::get('/me', [AdminAuthController::class, 'me'])->name('api.v1.admin.me');
             Route::get('/users', [AdminUsersController::class, 'index'])->name('api.v1.admin.users');
+            Route::post('/users', [AdminUsersController::class, 'store'])->name('api.v1.admin.users.store');
+            Route::get('/users/{user}', [AdminUsersController::class, 'show'])->name('api.v1.admin.users.show');
+            Route::patch('/users/{user}', [AdminUsersController::class, 'update'])->name('api.v1.admin.users.update');
+            Route::delete('/users/{user}', [AdminUsersController::class, 'destroy'])->name('api.v1.admin.users.destroy');
             Route::put('/settings', [AdminSettingsController::class, 'update'])->name('api.v1.admin.settings');
             Route::get('/dashboard-stats', [AdminDashboardController::class, 'stats'])->name('api.v1.admin.dashboard-stats');
             Route::get('/dashboard', [AdminDashboardController::class, 'stats'])->name('api.v1.admin.dashboard');

@@ -11,12 +11,16 @@ import { SignupRoleKey } from "../lib/registerSchema";
 import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 import { catalogApi } from "../services/admin/catalogApi";
+import { adminPath, readAdminRoute, type AdminRoute } from "../lib/adminRouting";
 import type { MediaStorageState } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
 import { ProductAdminPanel } from "./admin/ProductAdminPanel";
-import { AuditAdminPanel, CommerceSettingsPanel, InventoryAdminPanel, OrdersAdminPanel, PromotionsAdminPanel } from "./admin/CommerceAdminPanels";
-import { ReturnsAdminPanel, ReviewsAdminPanel, ReportsAdminPanel, StaffAdminPanel, OperationsAdminPanel, SupportAdminPanel } from "./admin/OperationalAdminPanels";
+import { AuditAdminPanel, CommerceSettingsPanel, InventoryAdminPanel } from "./admin/CommerceAdminPanels";
+import { ReportsAdminPanel, StaffAdminPanel, OperationsAdminPanel } from "./admin/OperationalAdminPanels";
+import { EnterpriseOrdersAdminPanel, EnterprisePromotionsAdminPanel } from "./admin/EnterpriseCommercePanels";
+import { EnterpriseReturnsAdminPanel, EnterpriseReviewsAdminPanel, EnterpriseSupportAdminPanel } from "./admin/EnterpriseOperationalPanels";
+import { EnterpriseUsersAdminPanel } from "./admin/EnterpriseUsersAdminPanel";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -128,9 +132,10 @@ function AdminDashboard() {
   const lastLoginAt = useAdminStore((state) => state.lastLoginAt);
   const users = useAdminStore((state) => state.users);
   const auditLog = useAdminStore((state) => state.auditLog);
-  const activeSidebarKey = useAdminStore((state) => state.activeSidebarKey);
+  const storedSidebarKey = useAdminStore((state) => state.activeSidebarKey);
   const activeUsersTab = useAdminStore((state) => state.activeUsersTab);
   const isLoadingUsers = useAdminStore((state) => state.isLoadingUsers);
+  const fetchUsers = useAdminStore((state) => state.fetchUsers);
   const stats = useAdminStore((state) => state.stats);
   const setActiveSidebarKey = useAdminStore((state) => state.setActiveSidebarKey);
   const setActiveUsersTab = useAdminStore((state) => state.setActiveUsersTab);
@@ -141,6 +146,35 @@ function AdminDashboard() {
   const updateDeleteAccountRequestStatus = useAdminStore((state) => state.updateDeleteAccountRequestStatus);
   const token = useAdminStore((state) => state.token);
   const [mediaStorage, setMediaStorage] = useState<MediaStorageState>({ phase: "checking", status: null });
+  const [route, setRoute] = useState<AdminRoute>(() => readAdminRoute());
+  const activeSidebarKey = route.sidebarKey;
+
+  const navigate = (path: string, replace = false) => {
+    if (replace) window.history.replaceState({}, "", path);
+    else window.history.pushState({}, "", path);
+    const next = readAdminRoute(path);
+    setRoute(next);
+    setActiveSidebarKey(next.sidebarKey);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      const next = readAdminRoute();
+      setRoute(next);
+      setActiveSidebarKey(next.sidebarKey);
+    };
+    window.addEventListener("popstate", onPopState);
+    const initial = readAdminRoute();
+    setRoute(initial);
+    if (storedSidebarKey !== initial.sidebarKey) setActiveSidebarKey(initial.sidebarKey);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [setActiveSidebarKey]);
+
+  useEffect(() => {
+    const role = route.module === "customers" ? "customer" : route.module === "suppliers" ? "supplier" : route.module === "partners" ? "partner" : null;
+    if (role && role !== activeUsersTab) setActiveUsersTab(role);
+  }, [route.module, activeUsersTab, setActiveUsersTab]);
 
   useEffect(() => {
     if (activeSidebarKey === "deleteAccount") {
@@ -183,7 +217,7 @@ function AdminDashboard() {
                       : "border-white/10 bg-white/5 text-emerald-50 hover:border-emerald-300/40 hover:bg-white/10"
                   }`}
                   key={item.key}
-                  onClick={() => setActiveSidebarKey(item.key)}
+                  onClick={() => navigate(adminPath(item.key))}
                   type="button"
                 >
                   <p className="text-sm font-black">{item.label}</p>
@@ -221,7 +255,7 @@ function AdminDashboard() {
         </aside>
 
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {activeSidebarKey === "overview" ? <><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="All signup records" value={String(stats.total_users)} light />
             <MetricCard label="Customers" value={String(stats.customers)} light />
             <MetricCard label="Suppliers" value={String(stats.suppliers)} light />
@@ -240,16 +274,24 @@ function AdminDashboard() {
             <MetricCard label="Pending orders" value={String(stats.pending_orders)} light />
             <MetricCard label="COD pending" value={String(stats.cod_pending_collection)} light />
             <MetricCard label="Low stock" value={String(stats.low_stock_variants)} light />
-          </div>
+          </div></> : null}
 
           <div className="mt-6">
             {activeSidebarKey === "overview" ? <OverviewPanel auditLog={auditLog} /> : null}
-            {activeSidebarKey === "users" ? (
-              <UsersPanel
-                activeUsersTab={activeUsersTab}
-                filteredUsers={filteredUsers}
-                isLoadingUsers={isLoadingUsers}
-                onChangeTab={setActiveUsersTab}
+            {activeSidebarKey === "users" && token ? (
+              <EnterpriseUsersAdminPanel
+                loading={isLoadingUsers}
+                mode={route.mode}
+                onChangeRole={(tab) => {
+                  setActiveUsersTab(tab);
+                  navigate(`/admin/${tab === "customer" ? "customers" : tab === "supplier" ? "suppliers" : "partners"}`);
+                }}
+                onNavigate={navigate}
+                onReload={() => fetchUsers(activeUsersTab)}
+                recordId={route.recordId}
+                role={activeUsersTab}
+                token={token}
+                users={filteredUsers}
               />
             ) : null}
             {activeSidebarKey === "deleteAccount" ? (
@@ -260,16 +302,16 @@ function AdminDashboard() {
               />
             ) : null}
             {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
-            {activeSidebarKey === "categories" && token ? <CategoryAdminPanel storage={mediaStorage} token={token} /> : null}
-            {activeSidebarKey === "brands" && token ? <BrandAdminPanel storage={mediaStorage} token={token} /> : null}
-            {activeSidebarKey === "products" && token ? <ProductAdminPanel storage={mediaStorage} token={token} /> : null}
-            {activeSidebarKey === "orders" && token ? <OrdersAdminPanel token={token} /> : null}
+            {activeSidebarKey === "categories" && token ? <CategoryAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "brands" && token ? <BrandAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "products" && token ? <ProductAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "orders" && token ? <EnterpriseOrdersAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} token={token} /> : null}
             {activeSidebarKey === "inventory" && token ? <InventoryAdminPanel token={token} /> : null}
-            {activeSidebarKey === "promotions" && token ? <PromotionsAdminPanel token={token} /> : null}
+            {activeSidebarKey === "promotions" && token ? <EnterprisePromotionsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} token={token} /> : null}
             {activeSidebarKey === "audit" && token ? <AuditAdminPanel token={token} /> : null}
-            {activeSidebarKey === "returns" && token ? <ReturnsAdminPanel storage={mediaStorage} token={token} /> : null}
-            {activeSidebarKey === "reviews" && token ? <ReviewsAdminPanel storage={mediaStorage} token={token} /> : null}
-            {activeSidebarKey === "support" && token ? <SupportAdminPanel storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "returns" && token ? <EnterpriseReturnsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "reviews" && token ? <EnterpriseReviewsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
+            {activeSidebarKey === "support" && token ? <EnterpriseSupportAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "reports" && token ? <ReportsAdminPanel token={token} /> : null}
             {activeSidebarKey === "staff" && token ? <StaffAdminPanel token={token} /> : null}
             {activeSidebarKey === "operations" && token ? <OperationsAdminPanel token={token} /> : null}

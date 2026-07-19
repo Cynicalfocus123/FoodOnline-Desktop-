@@ -1,5 +1,13 @@
 # FoodOnlines Desktop Home Design
 
+## Enterprise Admin CMS Layout (2026-07-18)
+
+- Preserve the approved dark-green sidebar, its labels/order/descriptions, orange active treatment, white rounded workspaces, typography, and FoodOnlines spacing. Overview metrics remain on Overview instead of consuming every module page.
+- List routes are spacious management surfaces with title/count, search, advanced filters, sorting, checkbox selection, bulk actions, CSV export, a responsive table, and pagination. Categories, Brands, Products, Customers, Suppliers, Partners, Promo Codes, Orders, Returns, Reviews, and Support never show an editor beside the list.
+- Authoring routes are full-width: `/admin/categories|brands|products|customers|suppliers|partners|promotions/create` and matching `/{id}/edit` routes. Editors use section cards and clear top actions for Save, Save & Continue, and lifecycle-safe Delete/Archive. Product Variants, Media, Nutrition, and Publication remain inside Product Edit.
+- Category, brand, and product images can be selected, previewed, replaced, or removed on Create before a parent exists; they associate automatically after successful creation. Operational attachments remain on already-created return/review/support edit routes because those records originate from customer workflows.
+- Desktop uses the available wide canvas without a competing side list. Tablet collapses toolbars and action groups cleanly. Mobile stacks headers/forms, keeps 16px fields and touch-safe controls, and confines horizontal scrolling to intentionally wide tables. Nested admin direct entries and refreshes resolve to `admin.html` to prevent blank pages.
+
 ## Brand Country Selection Correction (2026-07-18)
 
 - Replace visible ISO-code entry with the existing-theme searchable country-name combobox. The field supports mouse, typing, Arrow Up/Down, Enter, Escape, and an explicit no-results state without adding a third-party visual system.

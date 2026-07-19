@@ -1,5 +1,16 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Enterprise CMS workflow release (2026-07-18)
+
+Deploy `backend-live/` and `frontend-upload/` from the same commit. This release adds protected managed-user CRUD routes and nested admin frontend routes but no database migration. Preserve the live `.env`, `vendor/`, database, complete `storage/` tree and managed media, permissions, and `public_html/api`.
+
+The frontend `.htaccess` now maps `/admin`, `/admin/{module}`, `/admin/{module}/create`, and `/admin/{module}/{id}/edit` to `admin.html`. Upload it with the current hashed assets so direct entries and refreshes do not become white pages. Never extract `FoodOnlines_Frontend_Live.zip` over or delete `public_html/api`.
+
+After backend upload and backup, run `php artisan migrate --force`, `php artisan catalog:backfill-categories`, `php artisan optimize:clear`, `php artisan config:cache`, `php artisan route:cache`, and `php artisan view:cache`. Verify all restored categories, existing media, list/create/edit routes, managed-user archive preservation, product variants inside Product Edit, and mobile/tablet/desktop admin layouts.
+
+The explicitly requested archives are generated outside the repository from the final mirrors with their contents at ZIP root. Backend excludes environment/dependency/runtime data; frontend contains no `api/` path.
+
+
 ## CMS regression restoration (2026-07-18)
 
 This release changes no API route or database schema. Deploy the synchronized backend source and frontend mirror only; do not create or use a deployment ZIP. Preserve the live `.env`, `vendor/`, database, complete `storage/` tree and managed uploads, permissions, and `public_html/api`.

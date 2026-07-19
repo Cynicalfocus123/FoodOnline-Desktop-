@@ -25,6 +25,7 @@ import {
   inputClass,
 } from "./CatalogCommon";
 import { ManagedMediaPreview } from "./ManagedMediaControl";
+import { AdminListPage, exportCsv } from "./AdminListPage";
 
 type Tab = "basics" | "variants" | "media" | "nutrition" | "publication";
 type PendingProductImage = { id: string; file: File; previewUrl: string };
@@ -73,9 +74,15 @@ const blankNutrition = {
 export function ProductAdminPanel({
   token,
   storage,
+  mode = "list",
+  recordId,
+  onNavigate = () => undefined,
 }: {
   token: string;
   storage: MediaStorageState;
+  mode?: "list" | "create" | "edit";
+  recordId?: string | null;
+  onNavigate?: (path: string, replace?: boolean) => void;
 }) {
   const [items, setItems] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminCategory[]>([]);
@@ -97,6 +104,9 @@ export function ProductAdminPanel({
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [progress, setProgress] = useState<number | null>(null);
   const [pendingMedia, setPendingMedia] = useState<PendingProductImage[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState("updated");
   const clearPendingMedia = () => setPendingMedia((current) => {
     current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
     return [];
@@ -117,18 +127,17 @@ export function ProductAdminPanel({
       maxPrice,
     ],
   );
-  const load = async () =>
-    setItems((await catalogApi.products(token, query)).data);
+  const load = async () => setItems(await catalogApi.allProducts(token, query));
   useEffect(() => {
     void Promise.all([
-      catalogApi.categories(token),
-      catalogApi.brands(token),
-      catalogApi.products(token),
+      catalogApi.allCategories(token),
+      catalogApi.allBrands(token),
+      catalogApi.allProducts(token),
     ])
       .then(([c, b, p]) => {
-        setCategories(c.data);
-        setBrands(b.data);
-        setItems(p.data);
+        setCategories(c);
+        setBrands(b);
+        setItems(p);
       })
       .catch((error) => setMessage(adminError(error).message));
   }, [token]);
@@ -157,6 +166,10 @@ export function ProductAdminPanel({
     const detail = await catalogApi.product(token, item.uuid);
     applyProduct(detail);
   };
+  useEffect(() => {
+    if (mode === "create") { clearPendingMedia(); setSelected(null); setForm(blankProduct); setTab("basics"); setErrors({}); setMessage(""); }
+    if (mode === "edit" && recordId) void catalogApi.product(token, recordId).then(applyProduct).catch((error) => setMessage(adminError(error).message));
+  }, [mode, recordId, token]);
   const refresh = async () => {
     if (selected) {
       const detail = await catalogApi.product(token, selected.uuid);
@@ -168,6 +181,7 @@ export function ProductAdminPanel({
     event.preventDefault();
     setErrors({});
     try {
+      const wasNew = !selected;
       const body = {
         ...form,
         category_id: Number(form.category_id),
@@ -210,6 +224,7 @@ export function ProductAdminPanel({
           : "Draft product created. Add at least one active default variant and one image before publishing.",
       );
       if (!selected) setTab(uploadFailures.length ? "media" : "variants");
+      if (wasNew) onNavigate(`/admin/products/${detail.uuid}/edit`, true);
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
@@ -244,13 +259,13 @@ export function ProductAdminPanel({
   const storefrontUrl = selected ? getPublicRouteHref(`product/${selected.slug}`) : null;
   const filters = (
     <div className="mt-5 grid gap-2 sm:grid-cols-2">
-      <input
+      {false ? <input
         aria-label="Search products"
         className={inputClass}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Name, brand, SKU, GTIN"
         value={search}
-      />
+      /> : null}
       <select
         aria-label="Status filter"
         className={inputClass}
@@ -353,9 +368,22 @@ export function ProductAdminPanel({
       </ActionButton>
     </div>
   );
+  const sortedItems = [...items].sort((left, right) => sort === "name" ? left.name.localeCompare(right.name) : sort === "price" ? Number(left.price ?? Number.MAX_VALUE) - Number(right.price ?? Number.MAX_VALUE) : String(right.updated_at ?? "").localeCompare(String(left.updated_at ?? "")));
+  const pageSize = 20;
+  const pageItems = sortedItems.slice((page - 1) * pageSize, page * pageSize);
+  const allPageSelected = pageItems.length > 0 && pageItems.every((item) => selectedIds.has(item.uuid));
+  async function bulkProduct(actionName: "publish" | "archive" | "delete") {
+    const targets = items.filter((item) => selectedIds.has(item.uuid));
+    if (!targets.length || !window.confirm(`${actionName[0].toUpperCase() + actionName.slice(1)} ${targets.length} selected products?`)) return;
+    try {
+      for (const item of targets) await catalogApi.productAction(token, item.uuid, actionName === "publish" ? "publish" : "archive");
+      setSelectedIds(new Set()); await load(); setMessage(`${targets.length} products updated.`);
+    } catch (error) { setMessage(adminError(error).message); }
+  }
+  if (mode === "list") return <AdminListPage bulkActions={[{ label: "Bulk delete", tone: "danger", onClick: () => void bulkProduct("delete") }, { label: "Bulk publish", onClick: () => void bulkProduct("publish") }, { label: "Bulk archive", onClick: () => void bulkProduct("archive") }]} count={items.length} createLabel="Create Product" description="Manage products at scale. Variants remain inside each product's dedicated edit page." filters={filters} onCreate={() => onNavigate("/admin/products/create")} onExport={() => exportCsv("products.csv", sortedItems.map((item) => ({ name: item.name, slug: item.slug, category: item.category_name, brand: item.brand, sku: item.sku, price: item.price, currency: item.currency_code, availability: item.availability_status, status: item.status })))} onPage={setPage} onSearch={setSearch} onSubmitSearch={() => { setPage(1); void load(); }} onSort={setSort} page={page} pageSize={pageSize} search={search} selectedCount={selectedIds.size} sort={sort} sortOptions={[{ value: "updated", label: "Sort: Recently updated" }, { value: "name", label: "Sort: Name" }, { value: "price", label: "Sort: Price" }]} title="Products" total={items.length}><table className="min-w-[1050px] w-full text-left text-sm"><thead className="bg-neutral-50"><tr>{["", "Product", "Category", "Brand", "SKU", "Price", "Availability", "Status", "Updated", ""].map((header, index) => <th className="px-4 py-4 text-xs font-black uppercase tracking-[0.14em] text-neutral-500" key={`${header}-${index}`}>{index === 0 ? <input aria-label="Select page" checked={allPageSelected} onChange={() => setSelectedIds((current) => { const next = new Set(current); pageItems.forEach((item) => allPageSelected ? next.delete(item.uuid) : next.add(item.uuid)); return next; })} type="checkbox" /> : header}</th>)}</tr></thead><tbody>{pageItems.map((item) => <tr className="border-t border-neutral-100 hover:bg-orange-50/30" key={item.uuid}><td className="px-4 py-4"><input aria-label={`Select ${item.name}`} checked={selectedIds.has(item.uuid)} onChange={() => setSelectedIds((current) => { const next = new Set(current); next.has(item.uuid) ? next.delete(item.uuid) : next.add(item.uuid); return next; })} type="checkbox" /></td><td className="px-4 py-4"><button className="flex items-center gap-3 text-left font-black hover:text-citrus-600" onClick={() => onNavigate(`/admin/products/${item.uuid}/edit`)} type="button"><ManagedMediaPreview alt="" className="h-11 w-11 rounded-xl bg-neutral-50 object-contain" url={item.primary_image} /><span>{item.name}</span></button></td><td className="px-4 py-4">{item.category_name ?? "—"}</td><td className="px-4 py-4">{item.brand ?? "—"}</td><td className="px-4 py-4 font-semibold">{item.sku ?? "—"}</td><td className="px-4 py-4">{item.price ? `${item.currency_code ?? ""} ${item.price}` : "—"}</td><td className="px-4 py-4 capitalize">{item.availability_status?.replaceAll("_", " ") ?? "No variant"}</td><td className="px-4 py-4 capitalize">{item.status}</td><td className="px-4 py-4">{item.updated_at?.slice(0, 10) ?? "—"}</td><td className="px-4 py-4"><button className="font-black text-leaf-700" onClick={() => onNavigate(`/admin/products/${item.uuid}/edit`)} type="button">Edit</button></td></tr>)}</tbody></table></AdminListPage>;
   return (
-    <section className="grid gap-6 xl:grid-cols-[390px_minmax(0,1fr)]">
-      <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft">
+    <section className="grid gap-6">
+      {false ? <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft">
         <PanelHeader
           eyebrow="Catalog"
           title="Products"
@@ -402,8 +430,9 @@ export function ProductAdminPanel({
             </button>
           ))}
         </div>
-      </div>
+      </div> : null}
       <div className="min-w-0 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft sm:p-7">
+        <button className="mb-4 text-sm font-black text-leaf-700" onClick={() => onNavigate("/admin/products")} type="button">← Products</button>
         <PanelHeader
           eyebrow={selected ? `Product / ${selected.status}` : "New draft"}
           title={selected?.name ?? "Create product"}
@@ -435,6 +464,13 @@ export function ProductAdminPanel({
               >
                 Save
               </ActionButton>
+              <ActionButton
+                onClick={() => document.getElementById("product-basics-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }))}
+                tone="secondary"
+              >
+                Save &amp; Continue
+              </ActionButton>
+              {selected ? <ActionButton onClick={() => { if (window.confirm("Delete this product? Existing order history will be preserved.")) void catalogApi.productAction(token, selected.uuid, "archive").then(() => onNavigate("/admin/products")); }} tone="danger">Delete</ActionButton> : null}
             </div>
           }
         />

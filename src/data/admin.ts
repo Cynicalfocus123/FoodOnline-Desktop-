@@ -56,7 +56,7 @@ export const adminRoleTabs = signupRoles.map((role) => ({
   description: role.description,
 }));
 
-export type AdminRequestStatus = "approved" | "in_review";
+export type AdminRequestStatus = "approved" | "in_review" | "disabled";
 
 export type AdminUserRecord = {
   id: string;
@@ -95,6 +95,10 @@ export const adminRequestStatusMeta: Record<
   approved: {
     label: "Approved",
     classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  },
+  disabled: {
+    label: "Archived",
+    classes: "border-neutral-200 bg-neutral-100 text-neutral-700",
   },
 };
 

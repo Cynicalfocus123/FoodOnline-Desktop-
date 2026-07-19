@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Enterprise CMS release (2026-07-18)
+
+- The admin entry adds route/list/editor orchestration without new runtime dependencies or public storefront media. Production Vite transforms 125 modules; the final admin entry is 143.85 kB raw / 36.31 kB gzip.
+- Nested `/admin/...` routes reuse the existing standalone `admin.html` entry and hashed admin bundle. No duplicate admin shell, image set, source map, backend source, or runtime upload is added to the frontend payload.
+- Final audited frontend output is 91,808,185 bytes across 1,033 files with zero missing local references and exact `dist/` to `frontend-upload/` synchronization.
+
 ## 2026-07-18 Brand country selector
 
 - Scope: frontend-only correction of Brand country selection and display.

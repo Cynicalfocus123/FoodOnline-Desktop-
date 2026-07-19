@@ -8,12 +8,23 @@ export type CommerceSettings = { store_currency: string; shipping_enabled: boole
 
 export const adminCommerceApi = {
   orders: (token: string, search = "") => apiRequest<{ data: AdminOrder[] }>(`/admin/orders?per_page=100&search=${encodeURIComponent(search)}`, { token }),
+  allOrders: async (token: string, search = "") => {
+    const orders: AdminOrder[] = []; let page = 1; let lastPage = 1;
+    do { const response = await apiRequest<{ data: AdminOrder[]; meta: { last_page: number } }>(`/admin/orders?per_page=100&page=${page}&search=${encodeURIComponent(search)}`, { token }); orders.push(...response.data); lastPage = Math.max(1, response.meta?.last_page ?? 1); page++; } while (page <= lastPage);
+    return { data: orders };
+  },
   order: (token: string, uuid: string) => apiRequest<{ order: AdminOrder }>(`/admin/orders/${uuid}`, { token }),
   orderAction: (token: string, uuid: string, body: Record<string, unknown>) => apiRequest<{ order: AdminOrder }>(`/admin/orders/${uuid}/actions`, { method: "POST", token, body }),
   inventory: (token: string, search = "") => apiRequest<{ data: InventoryRow[] }>(`/admin/inventory?per_page=100&search=${encodeURIComponent(search)}`, { token }),
   adjustInventory: (token: string, uuid: string, body: Record<string, unknown>) => apiRequest<{ inventory: InventoryRow }>(`/admin/inventory/${uuid}/adjust`, { method: "POST", token, body }),
   movements: (token: string, uuid: string) => apiRequest<{ data: Array<Record<string, unknown>> }>(`/admin/inventory/${uuid}/movements`, { token }),
   promotions: (token: string) => apiRequest<{ data: Promotion[] }>("/admin/promo-codes?per_page=100", { token }),
+  allPromotions: async (token: string) => {
+    const promotions: Promotion[] = []; let page = 1; let lastPage = 1;
+    do { const response = await apiRequest<{ data: Promotion[]; meta: { last_page: number } }>(`/admin/promo-codes?per_page=100&page=${page}`, { token }); promotions.push(...response.data); lastPage = Math.max(1, response.meta?.last_page ?? 1); page++; } while (page <= lastPage);
+    return { data: promotions };
+  },
+  promotion: (token: string, uuid: string) => apiRequest<{ promotion: Promotion }>(`/admin/promo-codes/${uuid}`, { token }),
   savePromotion: (token: string, uuid: string | null, body: Record<string, unknown>) => apiRequest<{ promotion: Promotion }>(uuid ? `/admin/promo-codes/${uuid}` : "/admin/promo-codes", { method: uuid ? "PATCH" : "POST", token, body }),
   archivePromotion: (token: string, uuid: string) => apiRequest<{ promotion: Promotion }>(`/admin/promo-codes/${uuid}/archive`, { method: "POST", token }),
   settings: (token: string) => apiRequest<{ settings: CommerceSettings }>("/admin/commerce-settings", { token }),

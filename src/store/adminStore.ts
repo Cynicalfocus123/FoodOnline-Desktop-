@@ -154,7 +154,7 @@ function toAdminUserRecord(user: ApiManagedUser): AdminUserRecord {
     contactNumber: user.contact_number ?? "",
     lineId: user.line_id ?? "",
     companyName: user.company_name ?? "",
-    requestStatus: user.status === "active" ? "approved" : "in_review",
+    requestStatus: user.status === "active" ? "approved" : user.status === "disabled" ? "disabled" : "in_review",
     sourceLabel: user.registered_from ? "Online signup" : "Account",
     createdTimestamp: user.created_at ?? new Date().toISOString(),
     reviewedAt: user.updated_at,

@@ -16,6 +16,7 @@ import {
   inputClass,
 } from "./CatalogCommon";
 import { ManagedMediaControl } from "./ManagedMediaControl";
+import { AdminListPage, exportCsv } from "./AdminListPage";
 
 const blank = {
   name: "",
@@ -28,9 +29,15 @@ const blank = {
 export function BrandAdminPanel({
   token,
   storage,
+  mode = "list",
+  recordId,
+  onNavigate = () => undefined,
 }: {
   token: string;
   storage: MediaStorageState;
+  mode?: "list" | "create" | "edit";
+  recordId?: string | null;
+  onNavigate?: (path: string, replace?: boolean) => void;
 }) {
   const [items, setItems] = useState<AdminBrand[]>([]);
   const [selected, setSelected] = useState<AdminBrand | null>(null);
@@ -40,22 +47,22 @@ export function BrandAdminPanel({
   const [search, setSearch] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
   const [pendingLogo, setPendingLogo] = useState<{ file: File; previewUrl: string } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState("sort_order");
   const clearPendingLogo = () => setPendingLogo((current) => {
     if (current) URL.revokeObjectURL(current.previewUrl);
     return null;
   });
   const load = async () =>
-    setItems(
-      (
-        await catalogApi.brands(
-          token,
-          search ? `&search=${encodeURIComponent(search)}` : "",
-        )
-      ).data,
-    );
+    setItems(await catalogApi.allBrands(token, search ? `&search=${encodeURIComponent(search)}` : ""));
   useEffect(() => {
     void load().catch((error) => setMessage(adminError(error).message));
   }, [token]);
+  useEffect(() => {
+    if (mode === "create") { clearPendingLogo(); setSelected(null); setForm(blank); setErrors({}); setMessage(""); }
+    if (mode === "edit" && recordId) void catalogApi.brand(token, recordId).then(choose).catch((error) => setMessage(adminError(error).message));
+  }, [mode, recordId, token]);
   const choose = (item: AdminBrand) => {
     clearPendingLogo();
     setSelected(item);
@@ -73,6 +80,7 @@ export function BrandAdminPanel({
     event.preventDefault();
     setErrors({});
     try {
+      const wasNew = !selected;
       const item = await catalogApi.saveBrand(token, selected?.uuid ?? null, {
         ...form,
         country_code: form.country_code || null,
@@ -99,6 +107,7 @@ export function BrandAdminPanel({
       setSelected(finalItem);
       setForm({ name: finalItem.name, slug: finalItem.slug, country_code: finalItem.country_code ?? "", logo_path: finalItem.logo_path ?? "", is_active: finalItem.is_active, sort_order: String(finalItem.sort_order) });
       if (!uploadFailed) setMessage(pendingLogo ? "Brand and selected image saved." : "Brand saved.");
+      if (wasNew) onNavigate(`/admin/brands/${finalItem.uuid}/edit`, true);
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
@@ -155,9 +164,22 @@ export function BrandAdminPanel({
       setMessage(adminError(error).message);
     }
   }
+  const sortedItems = [...items].sort((left, right) => sort === "name" ? left.name.localeCompare(right.name) : sort === "country" ? countryNameFromCode(left.country_code).localeCompare(countryNameFromCode(right.country_code)) : left.sort_order - right.sort_order || left.name.localeCompare(right.name));
+  const pageSize = 20;
+  const pageItems = sortedItems.slice((page - 1) * pageSize, page * pageSize);
+  const allPageSelected = pageItems.length > 0 && pageItems.every((item) => selectedIds.has(item.uuid));
+  async function bulk(action: "publish" | "archive" | "delete") {
+    const targets = items.filter((item) => selectedIds.has(item.uuid));
+    if (!targets.length || !window.confirm(`${action[0].toUpperCase() + action.slice(1)} ${targets.length} selected brands?`)) return;
+    try {
+      for (const item of targets) action === "delete" ? await catalogApi.deleteBrand(token, item.uuid) : await catalogApi.saveBrand(token, item.uuid, { is_active: action === "publish" });
+      setSelectedIds(new Set()); await load(); setMessage(`${targets.length} brands updated.`);
+    } catch (error) { setMessage(adminError(error).message); }
+  }
+  if (mode === "list") return <AdminListPage bulkActions={[{ label: "Bulk delete", tone: "danger", onClick: () => void bulk("delete") }, { label: "Bulk publish", onClick: () => void bulk("publish") }, { label: "Bulk archive", onClick: () => void bulk("archive") }]} count={items.length} createLabel="Create Brand" description="Manage brand identity, origin, visibility, and logos." filters={<div className="flex flex-wrap gap-2"><button className="min-h-10 rounded-full bg-emerald-700 px-4 text-xs font-black text-white" type="button">All {items.length}</button><button className="min-h-10 rounded-full bg-neutral-100 px-4 text-xs font-black text-neutral-700" type="button">Published {items.filter((item) => item.is_active).length}</button><button className="min-h-10 rounded-full bg-neutral-100 px-4 text-xs font-black text-neutral-700" type="button">Archived {items.filter((item) => !item.is_active).length}</button></div>} onCreate={() => onNavigate("/admin/brands/create")} onExport={() => exportCsv("brands.csv", sortedItems.map((item) => ({ name: item.name, slug: item.slug, country: countryNameFromCode(item.country_code), status: item.is_active ? "published" : "archived", sort_order: item.sort_order })))} onPage={setPage} onSearch={setSearch} onSubmitSearch={() => { setPage(1); void load(); }} onSort={setSort} page={page} pageSize={pageSize} search={search} selectedCount={selectedIds.size} sort={sort} sortOptions={[{ value: "sort_order", label: "Sort: Display order" }, { value: "name", label: "Sort: Name" }, { value: "country", label: "Sort: Country" }]} title="Brands" total={items.length}><table className="min-w-[820px] w-full text-left text-sm"><thead className="bg-neutral-50"><tr>{["", "Brand", "Country", "Status", "Order", ""].map((header, index) => <th className="px-4 py-4 text-xs font-black uppercase tracking-[0.14em] text-neutral-500" key={`${header}-${index}`}>{index === 0 ? <input aria-label="Select page" checked={allPageSelected} onChange={() => setSelectedIds((current) => { const next = new Set(current); pageItems.forEach((item) => allPageSelected ? next.delete(item.uuid) : next.add(item.uuid)); return next; })} type="checkbox" /> : header}</th>)}</tr></thead><tbody>{pageItems.map((item) => <tr className="border-t border-neutral-100 hover:bg-orange-50/30" key={item.uuid}><td className="px-4 py-4"><input aria-label={`Select ${item.name}`} checked={selectedIds.has(item.uuid)} onChange={() => setSelectedIds((current) => { const next = new Set(current); next.has(item.uuid) ? next.delete(item.uuid) : next.add(item.uuid); return next; })} type="checkbox" /></td><td className="px-4 py-4"><button className="font-black hover:text-citrus-600" onClick={() => onNavigate(`/admin/brands/${item.uuid}/edit`)} type="button">{item.name}</button><p className="mt-1 text-xs text-neutral-500">/{item.slug}</p></td><td className="px-4 py-4">{countryNameFromCode(item.country_code) || "Not set"}</td><td className="px-4 py-4">{item.is_active ? "Published" : "Archived"}</td><td className="px-4 py-4">{item.sort_order}</td><td className="px-4 py-4"><button className="font-black text-leaf-700" onClick={() => onNavigate(`/admin/brands/${item.uuid}/edit`)} type="button">Edit</button></td></tr>)}</tbody></table></AdminListPage>;
   return (
-    <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft">
+    <section className="grid gap-6">
+      {false ? <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft">
         <PanelHeader
           eyebrow="Catalog"
           title="Brands"
@@ -201,15 +223,16 @@ export function BrandAdminPanel({
             </button>
           ))}
         </div>
-      </div>
+      </div> : null}
       <form
         className="grid gap-5 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft sm:p-7"
         onSubmit={save}
       >
+        <button className="w-fit text-sm font-black text-leaf-700" onClick={() => onNavigate("/admin/brands")} type="button">← Brands</button>
         <PanelHeader
           eyebrow={selected ? "Edit brand" : "New brand"}
           title={selected?.name ?? "Create brand"}
-          actions={<ActionButton type="submit">Save</ActionButton>}
+          actions={<div className="flex flex-wrap gap-2"><ActionButton type="submit">Save</ActionButton><ActionButton tone="secondary" type="submit">Save &amp; Continue</ActionButton>{selected ? <ActionButton onClick={() => void catalogApi.deleteBrand(token, selected.uuid).then(() => onNavigate("/admin/brands"))} tone="danger">Delete</ActionButton> : null}</div>}
         />
         {message ? (
           <Notice tone={Object.keys(errors).length ? "error" : "neutral"}>

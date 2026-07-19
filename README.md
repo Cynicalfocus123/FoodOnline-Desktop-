@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> Enterprise CMS workflow (2026-07-18): the unchanged admin sidebar now opens dedicated scalable list pages and full-width create/edit routes for content and user modules. Product variants remain inside Product Edit, nested admin routes refresh through `admin.html`, and requested production ZIPs are generated from the final backend/frontend mirrors. See `AGENT.md`, `DESIGNER.md`, `design.md`, and `DEPLOYMENT.md`.
+
 > Brand country selector update (2026-07-18): Admin Brands now uses a searchable, keyboard-accessible list of all 249 assigned ISO 3166-1 alpha-2 entries, displays country names for existing records, and continues storing the unchanged two-letter code. No backend, schema, route, theme, or brand-data migration is involved.
 
 > Hostinger local media release (2026-07-18): Laravel-managed Hostinger storage is now the default upload provider for catalog and customer-operational media. New uploads use stable `local://media/...` references and the public `/api/media` resolver; administrator Reviews, Returns, and Support panels can append/remove persisted attachments; optional direct upload and existing references remain compatible. See `DEPLOYMENT.md` and `docs/admin-catalog-and-r2.md`.

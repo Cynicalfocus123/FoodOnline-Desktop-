@@ -1,5 +1,7 @@
 # Admin Catalog Portal and Cloudflare R2 Media
 
+> Enterprise CMS update (2026-07-18): Categories, Brands, and Products now use dedicated list/create/edit routes. Product variants, media, nutrition, and publication remain inside Product Edit, while category/brand/product media selection still works before first save. The provider-neutral media contract below is unchanged.
+
 ## Current provider-neutral media architecture (2026-07-18)
 
 The filename records the original Phase 4 implementation; it no longer means R2 is required. Hostinger local Laravel storage is the current production provider, and the existing direct-upload provider is an optional future selection.

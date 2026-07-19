@@ -1,5 +1,14 @@
 # FoodOnlines Project State
 
+## Enterprise CMS workflow (2026-07-18)
+
+- Admin modules now use dedicated list, create, and edit URLs while preserving the existing sidebar and FoodOnlines visual language.
+- Categories, Brands, Products, Customers, Suppliers, Partners, Promo Codes, Orders, Returns, Reviews, and Support have scalable list workspaces with search/filter/sort/export/bulk/pagination controls; editors and operational details occupy separate full-width routes.
+- Product variants remain inside Product Edit. Category/brand/product images continue working before first save. Existing records, category restoration, managed media, and storefront data contracts are preserved.
+- Managed public users now support protected admin create/edit/archive without hard deletion. Operational records keep their existing customer/commerce creation sources.
+- Verification passes 40 Node tests and 79 Laravel tests / 636 assertions, TypeScript, a 125-module production build, and the 27-route audit. Final frontend output contains 1,033 files / 91,808,185 bytes with zero missing references or placeholder links.
+- Requested release archives are verified at 274 backend files (269,413 bytes) and 1,033 frontend files (90,945,935 bytes), with exact source/archive path and size parity and no forbidden paths.
+
 ## Complete brand countries (2026-07-18)
 
 - Admin Brands now presents all 249 assigned ISO 3166-1 countries and territories as unique alphabetically sorted names in a searchable, keyboard-accessible selector.
