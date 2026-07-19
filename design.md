@@ -1,5 +1,13 @@
 # FoodOnlines Desktop Home Design
 
+## Original Catalog Database Restoration (2026-07-19)
+
+- This is data restoration only. The approved storefront, admin layout, routes, responsive behavior, cards, filters, product detail, media UI, and authentication remain unchanged.
+- Laravel/MySQL becomes the real identity and relationship source for 16 original categories, 240 canonical products, 9 required brands, and 720 exact source variants. Presentation-only listing clones remain local compatibility records and are not database products.
+- Category placement restores published/public homepage and navigation behavior. Product sections and category pages resolve through canonical category slugs and published products with one active USD default variant.
+- Only durable deployed category/product asset URLs are stored. Generated data-URI galleries and explicitly sample nutrition/ingredient values are omitted so the database does not claim temporary artwork or invented product facts.
+- Hybrid presentation compatibility remains available, but restored database UUIDs, slugs, category/brand relationships, SKUs, prices, availability, publication state, and accepted media lead the existing merge contract.
+
 ## Enterprise Admin CMS Layout (2026-07-18)
 
 - Preserve the approved dark-green sidebar, its labels/order/descriptions, orange active treatment, white rounded workspaces, typography, and FoodOnlines spacing. Overview metrics remain on Overview instead of consuming every module page.

@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Original catalog SQL restoration (2026-07-19)
+
+- Added one 253,213-byte SQL restoration artifact and two text guides; no frontend/backend runtime code, dependency, route, migration, raster, video, font, deployment mirror, or ZIP weight changed.
+- Catalog payload: 16 categories, 1 alias, 9 brands, 240 canonical products, 720 variants, 225 accepted product-media references, and 0 nutrition rows. Excluded payload: 720 display clones, 735 data-URI media references, and 240 sample nutrition blocks.
+- Local validation parsed the exact SQL payload, found zero forbidden destructive statements or unsafe media paths, inserted 16/1/9/240/720/225/0 in the first in-memory relational pass, inserted zero in the second, and preserved all live-like/unrelated sentinels. Focused Laravel catalog/API suites passed 18 tests / 125 assertions. Real MySQL/phpMyAdmin and external deployment remain unrun.
+
 ## Enterprise CMS release (2026-07-18)
 
 - The admin entry adds route/list/editor orchestration without new runtime dependencies or public storefront media. Production Vite transforms 125 modules; the final admin entry is 143.85 kB raw / 36.31 kB gzip.

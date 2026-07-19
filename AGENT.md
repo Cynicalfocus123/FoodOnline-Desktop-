@@ -1,5 +1,12 @@
 # Agent Notes
 
+## Original Catalog SQL Restoration (2026-07-19)
+
+- Database-only delivery is `FoodOnlines_Restore_Original_Catalog.sql`, `PHPMYADMIN-CATALOG-RESTORE.md`, and `CATALOG-RESTORE-VALIDATION.md`. No application code, UI, authentication, unrelated table, deployment mirror, ZIP, localhost server, or external deployment belongs to this release.
+- Authoritative source is `src/data/home.ts` plus the current Laravel catalog schema: 16 categories, 1 verified alias, 9 required brands, 240 canonical products, 720 explicit variants, 225 accepted static product-media references, and 0 restored nutrition rows. The 720 listing clones, 735 generated `data:` images, and 240 explicitly sample nutrition blocks are excluded.
+- SQL is phpMyAdmin/MySQL 8+ oriented, transaction-wrapped, missing-only, stable-key idempotent, and relationship guarded. It never updates/deletes live rows, never touches `dried-food`, and never disables foreign keys. Deterministic UUIDs plus category/brand/product slugs, variant SKUs, alias slug, and `(product_id,path)` media identity prevent duplication.
+- Local evidence: exact SQL dataset parsing and static safety passed; in-memory relational first import inserted 16/1/9/240/720/225/0 and the second inserted zero; live-like sentinels remained unchanged; integrity findings were zero. Focused Laravel catalog/API validation passed 18 tests / 125 assertions. Genuine MySQL and live phpMyAdmin execution remain unavailable and unclaimed.
+
 ## Enterprise Admin CMS Workflow (2026-07-18)
 
 - The unchanged dark-green FoodOnlines sidebar now drives history-aware admin routes. List workspaces use `/admin/{module}`, creation uses `/admin/{module}/create`, and editing uses `/admin/{module}/{id}/edit`; the production rewrite serves every nested admin route from `admin.html` on direct entry and refresh.
