@@ -15,8 +15,8 @@ const emailFormFields: Array<{
   { field: "firstName", label: "First name", type: "text" },
   { field: "lastName", label: "Last name", type: "text" },
   { field: "contactNumber", label: "Contact number", type: "tel" },
-  { field: "lineId", label: "Line ID optional", type: "text", optional: true },
-  { field: "companyName", label: "Company name", type: "text" },
+  { field: "lineId", label: "LINE ID (optional)", type: "text", optional: true },
+  { field: "companyName", label: "Company name (optional)", type: "text", optional: true },
   { field: "password", label: "Password", type: "password" },
   { field: "confirmPassword", label: "Confirm password", type: "password" },
 ];
@@ -30,13 +30,13 @@ const phoneFormFields: Array<{
   { field: "firstName", label: "First name", type: "text" },
   { field: "lastName", label: "Last name", type: "text" },
   { field: "contactNumber", label: "Contact number", type: "tel" },
-  { field: "lineId", label: "Line ID optional", type: "text", optional: true },
-  { field: "companyName", label: "Company name", type: "text" },
+  { field: "lineId", label: "LINE ID (optional)", type: "text", optional: true },
+  { field: "companyName", label: "Company name (optional)", type: "text", optional: true },
 ];
 
 type SignupMethod = "email" | "phone";
 type PhoneSignupStep = "form" | "otp";
-type PhoneSignupField = "firstName" | "lastName" | "contactNumber" | "companyName";
+type PhoneSignupField = "firstName" | "lastName" | "contactNumber" | "lineId" | "companyName";
 type PhoneSignupFieldErrors = Partial<Record<PhoneSignupField, string>>;
 
 export function SignupFlow() {
@@ -106,10 +106,6 @@ export function SignupFlow() {
       nextErrors.contactNumber = "Phone number is required.";
     } else if (formValues.contactNumber.replace(/\D/g, "").length < 7) {
       nextErrors.contactNumber = "Enter a valid phone number.";
-    }
-
-    if (!formValues.companyName.trim()) {
-      nextErrors.companyName = "Company name is required.";
     }
 
     setPhoneFieldErrors(nextErrors);

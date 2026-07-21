@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Promo, registration, and pre-save media corrections (2026-07-20)
+
+Deploy the synchronized `backend-live/` and `frontend-upload/` from the same commit. No migration is included. Preserve the live `.env`, database, `vendor/`, storage, and existing managed media. Verify the admin Promo Code form accepts blank minimum subtotal and maximum discount, customer/supplier/partner registration works with neither Company name nor LINE ID, and category/brand/product create forms can select media before the first save. Local media status is intentionally non-cacheable; configured local multipart uploads must report available without exposing provider details.
+
 ## Enterprise CMS workflow release (2026-07-18)
 
 Deploy `backend-live/` and `frontend-upload/` from the same commit. This release adds protected managed-user CRUD routes and nested admin frontend routes but no database migration. Preserve the live `.env`, `vendor/`, database, complete `storage/` tree and managed media, permissions, and `public_html/api`.
@@ -8,7 +12,7 @@ The frontend `.htaccess` now maps `/admin`, `/admin/{module}`, `/admin/{module}/
 
 After backend upload and backup, run `php artisan migrate --force`, `php artisan catalog:backfill-categories`, `php artisan optimize:clear`, `php artisan config:cache`, `php artisan route:cache`, and `php artisan view:cache`. Verify all restored categories, existing media, list/create/edit routes, managed-user archive preservation, product variants inside Product Edit, and mobile/tablet/desktop admin layouts.
 
-The explicitly requested archives are generated outside the repository from the final mirrors with their contents at ZIP root. Backend excludes environment/dependency/runtime data; frontend contains no `api/` path.
+The explicitly requested archives are generated outside the repository from the final mirrors with `npm run release:zips` and their contents at ZIP root. Every ZIP entry must use the portable `/` separator; a `\` in any archive entry is a release-blocking failure because Linux hosting panels otherwise extract it as a literal filename. The command verifies source/archive parity and performs a real extraction test before replacing either release file. Backend excludes environment/dependency/runtime data; frontend contains no `api/` path.
 
 
 ## CMS regression restoration (2026-07-18)

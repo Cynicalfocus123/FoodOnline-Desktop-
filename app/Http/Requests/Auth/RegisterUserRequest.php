@@ -39,7 +39,7 @@ class RegisterUserRequest extends FormRequest
                 Rule::in(config('foodonlines.supported_account_types', ['customer', 'supplier', 'partner'])),
             ],
             'company_name' => [
-                'required',
+                'nullable',
                 'string',
                 'max:120',
                 'regex:/^[\pL\pN][\pL\pN \'&.,()\/-]*$/u',
@@ -125,17 +125,14 @@ class RegisterUserRequest extends FormRequest
         return preg_replace('/\s+/', '', strip_tags($value)) ?? '';
     }
 
-    private function sanitizeTextValue(string $key): string
+    private function sanitizeTextValue(string $key): ?string
     {
         $value = (string) $this->input($key, '');
         $value = strip_tags($value);
         $value = str_replace(['<', '>', '`'], '', $value);
         $value = preg_replace('/\s+/u', ' ', trim($value)) ?? '';
 
-        return mb_substr($value, 0, match ($key) {
-            'company_name' => 120,
-            default => 60,
-        });
+        return $value !== '' ? $value : null;
     }
 
     private function sanitizeContactNumber(): string
@@ -153,8 +150,6 @@ class RegisterUserRequest extends FormRequest
         $value = (string) $this->input('line_id', '');
         $value = strip_tags($value);
         $value = preg_replace('/[^A-Za-z0-9._@-]/', '', $value) ?? '';
-        $value = mb_substr($value, 0, 40);
-
         return $value !== '' ? $value : null;
     }
 

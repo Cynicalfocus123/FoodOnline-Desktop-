@@ -30,6 +30,9 @@ class MediaUploadVerificationService
     /** @param array<string, mixed> $data @return array{type: string, target: mixed, upload: MediaUpload} */
     public function complete(MediaUpload $upload, array $data, User $admin): array
     {
+        if ($upload->status === 'finalized') {
+            return $this->finalizedResult($upload, $admin);
+        }
         $this->assertCompletable($upload, $admin);
         $disk = Storage::disk($upload->disk);
         if (! $disk->exists($upload->object_key)) {
@@ -122,5 +125,25 @@ class MediaUploadVerificationService
             $upload->forceFill(['status' => 'expired'])->save();
             throw ValidationException::withMessages(['upload' => ['This upload authorization has expired.']]);
         }
+    }
+
+    /** @return array{type: string, target: mixed, upload: MediaUpload} */
+    private function finalizedResult(MediaUpload $upload, User $admin): array
+    {
+        if ($upload->created_by !== $admin->id) {
+            throw ValidationException::withMessages(['upload' => ['This upload belongs to another administrator.']]);
+        }
+
+        [$type, $target] = match ($upload->target_type) {
+            'product' => ['product_media', ProductMedia::query()->findOrFail($upload->product_media_id)],
+            'brand' => ['brand', Brand::query()->findOrFail($upload->target_id)],
+            'category' => ['category', Category::query()->findOrFail($upload->target_id)],
+            'review' => ['review_media', ReviewMedia::query()->where('media_upload_id', $upload->id)->firstOrFail()],
+            'return' => ['return_media', ReturnMedia::query()->where('media_upload_id', $upload->id)->firstOrFail()],
+            'support' => ['support_media', SupportMedia::query()->where('media_upload_id', $upload->id)->firstOrFail()],
+            default => throw ValidationException::withMessages(['upload' => ['This upload cannot be completed.']]),
+        };
+
+        return ['type' => $type, 'target' => $target, 'upload' => $upload];
     }
 }

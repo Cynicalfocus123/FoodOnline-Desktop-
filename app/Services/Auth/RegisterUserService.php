@@ -23,7 +23,7 @@ class RegisterUserService
             $accountType = (string) $validated['role'];
 
             $attributes = [
-                'company_name' => trim((string) $validated['company_name']),
+                'company_name' => $this->nullableString($validated['company_name'] ?? null),
                 'email' => strtolower(trim((string) $validated['email'])),
                 'first_name' => $firstName,
                 'last_name' => $lastName,

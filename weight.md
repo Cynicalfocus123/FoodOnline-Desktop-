@@ -1,5 +1,10 @@
 # FoodOnlines Site Weight
 
+## Promo, registration, and pre-save media corrections (2026-07-20)
+
+- No new runtime dependency, raster asset, video, font, route family, or database migration was added. The changes are form-contract, validation, retry-safety, tests, and regenerated deployment mirrors only.
+- Production Vite transformed 125 modules. Frontend build/audit and the full Laravel suite passed. `dist/` and `frontend-upload/` each contain 1,033 files / 91,808,677 bytes with zero missing, extra, or SHA-256-mismatched files; `backend-live/` contains 273 source files plus `SHA256SUMS`, with zero missing or checksum mismatches.
+
 ## Original catalog SQL restoration (2026-07-19)
 
 - Added one 253,213-byte SQL restoration artifact and two text guides; no frontend/backend runtime code, dependency, route, migration, raster, video, font, deployment mirror, or ZIP weight changed.

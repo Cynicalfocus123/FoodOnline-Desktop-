@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
+
+- Keep the existing dark-green admin shell, orange active navigation, rounded white workspaces, mobile field sizing, and route layout. Promo Code itself is the visible admin label; the redundant Name input and column are absent.
+- Company name and LINE ID remain visible but explicitly optional in Customer, Supplier, and Partner signup and administrator forms. Empty values use neutral em-dash list/detail presentation rather than broken placeholders.
+- Product, brand, and category create media keeps the established cards and responsive grids. Files are selectable, previewable, removable, replaceable, and retained across product tabs before the first save; a single Save creates the record then associates pending media in order.
+
 ## Original Catalog Database Restoration (2026-07-19)
 
 - This is data restoration only. The approved storefront, admin layout, routes, responsive behavior, cards, filters, product detail, media UI, and authentication remain unchanged.

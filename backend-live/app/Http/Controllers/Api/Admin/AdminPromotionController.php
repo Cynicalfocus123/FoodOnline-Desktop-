@@ -16,7 +16,7 @@ class AdminPromotionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Promotion::query()->withCount('products')->withCount('categories')->latest();
-        if ($search = $request->query('search')) { $query->where(fn ($q) => $q->where('code', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")); }
+        if ($search = $request->query('search')) { $query->where('code', 'like', "%{$search}%"); }
         $page = $query->paginate(min(100, max(1, (int) $request->query('per_page', 25))));
         return response()->json(['data' => $page->getCollection()->map(fn ($promotion) => $this->payload($promotion)),
             'meta' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()]]);
@@ -34,9 +34,9 @@ class AdminPromotionController extends Controller
 
     private function save(Request $request, Promotion $promotion, int $status): JsonResponse
     {
-        $values = $request->validate(['code' => ['required', 'string', 'max:64'], 'name' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string'],
+        $values = $request->validate(['code' => ['required', 'string', 'max:64'], 'description' => ['nullable', 'string'],
             'discount_type' => ['required', Rule::in(['percentage', 'fixed'])], 'discount_value' => ['required', 'integer', 'min:1'],
-            'minimum_subtotal_minor' => ['nullable', 'integer', 'min:0'], 'maximum_discount_minor' => ['nullable', 'integer', 'min:1'],
+            'minimum_subtotal_minor' => ['nullable', 'integer', 'min:0'], 'maximum_discount_minor' => ['nullable', 'integer', 'min:0'],
             'currency_code' => ['nullable', 'string', 'size:3'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after:starts_at'],
             'total_usage_limit' => ['nullable', 'integer', 'min:0'], 'per_user_usage_limit' => ['nullable', 'integer', 'min:0'],
             'active' => ['required', 'boolean'], 'applies_to' => ['required', Rule::in(['all', 'products', 'categories'])],
@@ -52,7 +52,7 @@ class AdminPromotionController extends Controller
         DB::transaction(function () use ($promotion, $values, $code, $request): void {
             $attributes = [...$values, 'code' => $code, 'currency_code' => isset($values['currency_code']) ? strtoupper($values['currency_code']) : null,
                 'updated_by' => $request->user()->id];
-            if (! $promotion->exists) { $attributes['created_by'] = $request->user()->id; }
+            if (! $promotion->exists) { $attributes['created_by'] = $request->user()->id; $attributes['name'] = $code; }
             $promotion->fill($attributes)->save();
             $promotion->products()->sync($values['applies_to'] === 'products' ? ($values['product_ids'] ?? []) : []);
             $promotion->categories()->sync($values['applies_to'] === 'categories' ? ($values['category_ids'] ?? []) : []);
@@ -61,6 +61,6 @@ class AdminPromotionController extends Controller
         return response()->json(['promotion' => $this->payload($promotion->fresh()->load(['products:id,uuid,name', 'categories:id,uuid,name']))], $status);
     }
 
-    private function payload(Promotion $promotion): array { return [...$promotion->toArray(), 'status' => $promotion->archived_at ? 'archived' : (! $promotion->active ? 'inactive' : ($promotion->starts_at?->isFuture() ? 'scheduled' : ($promotion->ends_at?->isPast() ? 'expired' : (($promotion->total_usage_limit !== null && $promotion->usage_count >= $promotion->total_usage_limit) ? 'exhausted' : 'active'))))]; }
+    private function payload(Promotion $promotion): array { $payload = $promotion->toArray(); unset($payload['name']); return [...$payload, 'status' => $promotion->archived_at ? 'archived' : (! $promotion->active ? 'inactive' : ($promotion->starts_at?->isFuture() ? 'scheduled' : ($promotion->ends_at?->isPast() ? 'expired' : (($promotion->total_usage_limit !== null && $promotion->usage_count >= $promotion->total_usage_limit) ? 'exhausted' : 'active'))))]; }
     private function audit(Request $request, string $action, Promotion $promotion, ?array $before): void { AdminAuditLog::query()->create(['admin_user_id' => $request->user()->id, 'action' => $action, 'subject_type' => Promotion::class, 'subject_id' => $promotion->id, 'before_payload' => $before, 'after_payload' => $promotion->fresh()->toArray(), 'ip_address' => $request->ip(), 'user_agent' => substr((string) $request->userAgent(), 0, 1000)]); }
 }

@@ -67,6 +67,10 @@ export const initialSignupFormValues: SignupFormValues = {
   confirmPassword: "",
 };
 
+export function optionalRegistrationValue(value: string): string | null {
+  return value.trim() || null;
+}
+
 export function getSignupRoleMeta(roleKey: SignupRoleKey) {
   return signupRoles.find((role) => role.key === roleKey) ?? signupRoles[0];
 }

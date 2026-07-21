@@ -28,6 +28,10 @@ class MediaUploadCompletionTest extends TestCase
         $media = $product->media()->firstOrFail();
         $this->assertSame('r2://'.$upload->object_key, $media->path);
         $this->assertSame($media->id, $upload->fresh()->product_media_id);
+
+        $this->withToken($token)->postJson('/api/v1/admin/media-uploads/'.$upload->uuid.'/complete', ['alt_text' => 'Package front'])
+            ->assertOk()->assertJsonPath('upload.status', 'finalized')->assertJsonPath('data.id', (string) $media->id);
+        $this->assertSame(1, $product->fresh()->media()->count());
     }
 
     public function test_missing_expired_wrong_size_and_disguised_objects_are_rejected(): void

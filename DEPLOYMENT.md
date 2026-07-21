@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Promo, registration, and pre-save media corrections (2026-07-20)
+
+Deploy the synchronized `backend-live/` and `frontend-upload/` from the same commit. No migration is included. Preserve the live `.env`, database, `vendor/`, storage, and existing managed media. Verify the admin Promo Code form accepts blank minimum subtotal and maximum discount, customer/supplier/partner registration works with neither Company name nor LINE ID, and category/brand/product create forms can select media before the first save. Local media status is intentionally non-cacheable; configured local multipart uploads must report available without exposing provider details.
+
 ## Enterprise CMS workflow release (2026-07-18)
 
 Deploy `backend-live/` and `frontend-upload/` from the same commit. This release adds protected managed-user CRUD routes and nested admin frontend routes but no database migration. Preserve the live `.env`, `vendor/`, database, complete `storage/` tree and managed media, permissions, and `public_html/api`.

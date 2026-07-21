@@ -1,4 +1,4 @@
-import { SignupFormValues, SignupRoleKey } from "./registerSchema";
+import { SignupFormValues, SignupRoleKey, optionalRegistrationValue } from "./registerSchema";
 import { apiBaseUrl } from "./runtimeConfig";
 import { safeApiStatusMessage, sanitizeApiFieldErrors, type ApiFieldErrors } from "./userFacingError";
 
@@ -35,6 +35,7 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
   let response: Response;
   try {
     response = await fetch(endpointUrl, {
+      cache: "no-store",
       method,
       headers: {
         Accept: "application/json",
@@ -93,8 +94,8 @@ export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: Signu
     first_name: formValues.firstName,
     last_name: formValues.lastName,
     contact_number: formValues.contactNumber,
-    line_id: formValues.lineId || null,
-    company_name: formValues.companyName,
+    line_id: optionalRegistrationValue(formValues.lineId),
+    company_name: optionalRegistrationValue(formValues.companyName),
     password: formValues.password,
     registered_from: "main_public_frontend",
   };

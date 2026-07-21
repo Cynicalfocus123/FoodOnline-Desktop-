@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { mediaCapabilityMessage, mediaUploadTransport, parentSaveAllowed } from "../src/components/admin/managedMediaLogic.ts";
 
@@ -24,4 +25,20 @@ test("administrator capability messages never expose provider internals", () => 
   for (const internal of ["R2", "Cloudflare", "S3", "bucket", "disk", "endpoint", "presigned", "server path"]) {
     assert.equal(visible.toLowerCase().includes(internal.toLowerCase()), false);
   }
+});
+
+test("product, brand, and category create flows retain pre-save media until the parent save succeeds", () => {
+  const product = readFileSync("src/components/admin/ProductAdminPanel.tsx", "utf8");
+  const brand = readFileSync("src/components/admin/BrandAdminPanel.tsx", "utf8");
+  const category = readFileSync("src/components/admin/CategoryAdminPanel.tsx", "utf8");
+
+  assert.match(product, /if \(!productUuid\)/);
+  assert.match(product, /const saved = await catalogApi\.saveProduct/);
+  assert.ok(product.indexOf("const saved = await catalogApi.saveProduct") < product.indexOf("for (const pending of pendingMedia)"));
+  assert.match(product, /is_primary: pending\.id === pendingMedia\[0\]\?\.id/);
+  assert.match(product, /function movePending/);
+  assert.match(brand, /if \(!selected\)/);
+  assert.ok(brand.indexOf("const item = await catalogApi.saveBrand") < brand.indexOf("if (pendingLogo)"));
+  assert.match(category, /const queued = Object\.entries\(pendingMedia\)/);
+  assert.ok(category.indexOf("const result = await catalogApi.saveCategory") < category.indexOf("for (const [purpose, pending] of queued)"));
 });

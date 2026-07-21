@@ -28,7 +28,7 @@ class AdminMediaUploadController extends Controller
             'strategy' => $storage->strategy(),
             'accepted_types' => config('foodonlines.media.allowed_mime_types'),
             'maximum_size_bytes' => config('foodonlines.media.max_size_bytes'),
-        ]]);
+        ]])->header('Cache-Control', 'no-store');
     }
 
     public function store(CreateMediaUploadRequest $request, MediaUploadAuthorizationService $authorization): JsonResponse

@@ -61,7 +61,7 @@ class PromotionService
             : min($eligibleSubtotal, $promotion->discount_value);
         if ($promotion->maximum_discount_minor !== null) { $discount = min($discount, $promotion->maximum_discount_minor); }
         $discount = min($subtotalMinor, max(0, $discount));
-        $snapshot = ['uuid' => $promotion->uuid, 'code' => $promotion->code, 'name' => $promotion->name,
+        $snapshot = ['uuid' => $promotion->uuid, 'code' => $promotion->code, 'name' => $promotion->code,
             'discount_type' => $promotion->discount_type, 'discount_value' => $promotion->discount_value,
             'discount_applied_minor' => $discount, 'currency_code' => $currency, 'applies_to' => $promotion->applies_to];
 

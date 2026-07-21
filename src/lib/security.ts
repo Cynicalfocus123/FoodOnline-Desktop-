@@ -168,7 +168,9 @@ export function sanitizeAndValidateSignupFormValues(
   const fieldErrors: SignupFieldErrors = {};
 
   (Object.keys(cleanedValues) as Array<keyof SignupFormValues>).forEach((field) => {
-    const requireValue = requireAllFields ? field !== "lineId" : false;
+    const requireValue = requireAllFields
+      ? field !== "lineId" && field !== "companyName"
+      : false;
     const error = validateSignupField(field, cleanedValues[field], requireValue, cleanedValues);
     if (error) {
       fieldErrors[field] = error;

@@ -89,6 +89,12 @@ class AdminUsersController extends Controller
     /** @return array<string, mixed> */
     private function validatedValues(Request $request, ?User $user): array
     {
+        foreach (['company_name', 'line_id'] as $field) {
+            if ($request->exists($field)) {
+                $value = trim((string) $request->input($field));
+                $request->merge([$field => $value !== '' ? $value : null]);
+            }
+        }
         $presence = $user ? 'sometimes' : 'required';
 
         return $request->validate([
@@ -97,8 +103,8 @@ class AdminUsersController extends Controller
             'first_name' => ['sometimes', 'nullable', 'string', 'max:100'],
             'last_name' => ['sometimes', 'nullable', 'string', 'max:100'],
             'contact_number' => ['sometimes', 'nullable', 'string', 'max:40'],
-            'line_id' => ['sometimes', 'nullable', 'string', 'max:100'],
-            'company_name' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'line_id' => ['sometimes', 'nullable', 'string', 'max:40', 'regex:/^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$/'],
+            'company_name' => ['sometimes', 'nullable', 'string', 'max:120', 'regex:/^[\pL\pN][\pL\pN \'&.,()\/-]*$/u'],
             'business_type' => ['sometimes', 'nullable', 'string', 'max:255'],
             'status' => ['sometimes', 'string', Rule::in(['active', 'in_review', 'disabled'])],
             'password' => [$presence, 'nullable', 'string', 'min:8', 'max:128'],

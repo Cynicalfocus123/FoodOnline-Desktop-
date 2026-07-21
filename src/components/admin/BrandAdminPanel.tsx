@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   adminError,
   catalogApi,
@@ -46,6 +46,8 @@ export function BrandAdminPanel({
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [search, setSearch] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const saveInFlight = useRef(false);
   const [pendingLogo, setPendingLogo] = useState<{ file: File; previewUrl: string } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
@@ -78,6 +80,9 @@ export function BrandAdminPanel({
   };
   async function save(event: FormEvent) {
     event.preventDefault();
+    if (saveInFlight.current) return;
+    saveInFlight.current = true;
+    setSaving(true);
     setErrors({});
     try {
       const wasNew = !selected;
@@ -112,6 +117,9 @@ export function BrandAdminPanel({
       const clean = adminError(error);
       setMessage(clean.message);
       setErrors(clean.fields);
+    } finally {
+      saveInFlight.current = false;
+      setSaving(false);
     }
   }
   async function upload(file: File) {
@@ -232,7 +240,7 @@ export function BrandAdminPanel({
         <PanelHeader
           eyebrow={selected ? "Edit brand" : "New brand"}
           title={selected?.name ?? "Create brand"}
-          actions={<div className="flex flex-wrap gap-2"><ActionButton type="submit">Save</ActionButton><ActionButton tone="secondary" type="submit">Save &amp; Continue</ActionButton>{selected ? <ActionButton onClick={() => void catalogApi.deleteBrand(token, selected.uuid).then(() => onNavigate("/admin/brands"))} tone="danger">Delete</ActionButton> : null}</div>}
+          actions={<div className="flex flex-wrap gap-2"><ActionButton disabled={saving} type="submit">{saving ? "Saving…" : "Save"}</ActionButton><ActionButton disabled={saving} tone="secondary" type="submit">{saving ? "Saving…" : "Save & Continue"}</ActionButton>{selected ? <ActionButton onClick={() => void catalogApi.deleteBrand(token, selected.uuid).then(() => onNavigate("/admin/brands"))} tone="danger">Delete</ActionButton> : null}</div>}
         />
         {message ? (
           <Notice tone={Object.keys(errors).length ? "error" : "neutral"}>

@@ -1,5 +1,13 @@
 # Agent Notes
 
+## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
+
+- Promo Code is now the sole administrator-facing promotion identifier. The legacy database `name` remains only for backwards-compatible storage of new records; it is neither required from clients nor returned as a separate admin field. Blank minimum subtotal and maximum discount normalize to `null`, negative amounts are rejected, and uncapped percentage/fixed calculations preserve their existing minor-unit and basis-point behavior.
+- Customer, supplier, and partner account registration treats Company name and LINE ID as optional for email, phone/OTP UI, Laravel registration, and administrator create/edit flows. Blank or whitespace-only values normalize to `null`; supplied values still use the established length and safe-character rules.
+- Category, brand, and product Create editors retain browser-held pre-save media, preview it, and upload it only after a successful parent save. Product selection order can be adjusted before first save, first media is primary, partial failures retain only retryable files, and save actions are guarded against duplicate parent creation. Managed-media status checks are non-cacheable and finalized upload completion is idempotent for safe retries.
+- Final local evidence: 44 Node tests and 92 Laravel tests / 758 assertions passed; TypeScript no-emit, production build (125 transformed modules), production audit, route/config/view cache compilation, changed-PHP syntax, frontend SHA-256 parity, and backend manifest verification passed.
+- No migration was added: authoritative migrations already define `users.company_name`, `users.line_id`, `promotions.minimum_subtotal_minor`, and `promotions.maximum_discount_minor` as nullable. A local inspection of the configured MySQL schema could not run because this environment lacks the PDO MySQL driver; no destructive schema action was attempted.
+
 ## Original Catalog SQL Restoration (2026-07-19)
 
 - Database-only delivery is `FoodOnlines_Restore_Original_Catalog.sql`, `PHPMYADMIN-CATALOG-RESTORE.md`, and `CATALOG-RESTORE-VALIDATION.md`. No application code, UI, authentication, unrelated table, deployment mirror, ZIP, localhost server, or external deployment belongs to this release.

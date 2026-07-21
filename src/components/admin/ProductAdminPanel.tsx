@@ -1,4 +1,4 @@
-import { FormEvent, type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
+import { FormEvent, type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import {
   adminError,
   catalogApi,
@@ -103,6 +103,8 @@ export function ProductAdminPanel({
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [progress, setProgress] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const saveInFlight = useRef(false);
   const [pendingMedia, setPendingMedia] = useState<PendingProductImage[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
@@ -179,6 +181,9 @@ export function ProductAdminPanel({
   };
   async function save(event: FormEvent) {
     event.preventDefault();
+    if (saveInFlight.current) return;
+    saveInFlight.current = true;
+    setSaving(true);
     setErrors({});
     try {
       const wasNew = !selected;
@@ -203,7 +208,7 @@ export function ProductAdminPanel({
       for (const pending of pendingMedia) {
         setProgress(0);
         try {
-          await uploadManagedImage({ token, purpose: "product_image", targetUuid: saved.uuid, file: pending.file, onProgress: setProgress, metadata: { image_fit: "contain" } });
+          await uploadManagedImage({ token, purpose: "product_image", targetUuid: saved.uuid, file: pending.file, onProgress: setProgress, metadata: { image_fit: "contain", is_primary: pending.id === pendingMedia[0]?.id } });
           uploaded.push(pending.id);
           URL.revokeObjectURL(pending.previewUrl);
         } catch (error) {
@@ -231,6 +236,8 @@ export function ProductAdminPanel({
       setErrors(clean.fields);
     } finally {
       setProgress(null);
+      saveInFlight.current = false;
+      setSaving(false);
     }
   }
   async function action(next: "publish" | "restore" | "archive") {
@@ -454,6 +461,7 @@ export function ProductAdminPanel({
                 </ActionButton>
               ) : null}
               <ActionButton
+                disabled={saving}
                 onClick={() =>
                   document
                     .getElementById("product-basics-form")
@@ -462,13 +470,14 @@ export function ProductAdminPanel({
                     )
                 }
               >
-                Save
+                {saving ? "Saving…" : "Save"}
               </ActionButton>
               <ActionButton
+                disabled={saving}
                 onClick={() => document.getElementById("product-basics-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }))}
                 tone="secondary"
               >
-                Save &amp; Continue
+                {saving ? "Saving…" : "Save & Continue"}
               </ActionButton>
               {selected ? <ActionButton onClick={() => { if (window.confirm("Delete this product? Existing order history will be preserved.")) void catalogApi.productAction(token, selected.uuid, "archive").then(() => onNavigate("/admin/products")); }} tone="danger">Delete</ActionButton> : null}
             </div>
@@ -982,6 +991,15 @@ function MediaEditor({
     );
     await refresh();
   }
+  function movePending(index: number, delta: number) {
+    setPendingMedia((current) => {
+      const target = index + delta;
+      if (target < 0 || target >= current.length) return current;
+      const next = [...current];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
   return (
     <div className="mt-5 grid gap-4">
       {!productUuid ? <Notice>Selected images will upload automatically with this product when you save.</Notice> : null}
@@ -1015,7 +1033,7 @@ function MediaEditor({
         <Notice>Uploading… {progress}%</Notice>
       ) : null}
       <div className="grid gap-4 md:grid-cols-2">
-        {pendingMedia.map((media) => (
+        {pendingMedia.map((media, index) => (
           <article className="grid gap-3 rounded-2xl border p-4" key={media.id}>
             <div className="aspect-square rounded-xl bg-neutral-50">
               <ManagedMediaPreview alt="Selected product image preview" className="h-full w-full rounded-xl object-contain" url={media.previewUrl} />
@@ -1025,6 +1043,10 @@ function MediaEditor({
               URL.revokeObjectURL(media.previewUrl);
               setPendingMedia((current) => current.filter((item) => item.id !== media.id));
             }} tone="danger">Remove</ActionButton>
+            <div className="flex flex-wrap gap-2">
+              <ActionButton disabled={index === 0} onClick={() => movePending(index, -1)} tone="secondary">Move earlier</ActionButton>
+              <ActionButton disabled={index === pendingMedia.length - 1} onClick={() => movePending(index, 1)} tone="secondary">Move later</ActionButton>
+            </div>
           </article>
         ))}
         {mediaItems.map((media, index) => (
