@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Production delivery packaging (2026-07-20)
+
+- Packaging changes no public or administrator visual, route, responsive, promotion, registration, or pre-save media behavior. The final frontend mirror keeps the current public registration, nested-admin routing, and pending-media interface exactly as approved.
+- Production delivery is two root-level ZIP payloads: the frontend belongs directly in the domain `public_html` while preserving `public_html/api`; the backend belongs only in the private Laravel application root while preserving all live runtime data. No migration, database, or design change belongs to this packaging release.
+- Verified delivery evidence: the 1,033-file frontend ZIP is 90,949,854 bytes and the 274-file backend ZIP is 277,406 bytes. Both portable archives passed separate extraction with zero content, SHA-256, path-safety, duplicate, secret, or forbidden-content findings; this validation changes no interface behavior.
+
 ## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
 
 - Keep the existing dark-green admin shell, orange active navigation, rounded white workspaces, mobile field sizing, and route layout. Promo Code itself is the visible admin label; the redundant Name input and column are absent.

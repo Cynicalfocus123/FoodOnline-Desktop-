@@ -1,5 +1,46 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Production ZIP deployment guide (2026-07-20)
+
+This no-migration release is delivered as `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`, generated only by `npm run release:zips` from the verified `frontend-upload/` and `backend-live/` mirrors. Each ZIP extracts its own mirror contents at archive root: it has no wrapper folder. The frontend ZIP is for the FoodOnlines domain `public_html`; the backend ZIP is for the private Laravel application directory. Do not interchange those destinations.
+
+### Frontend: `FoodOnlines_Frontend_Live.zip`
+
+1. Back up the existing domain `public_html`, including `.htaccess` and the current hashed assets.
+2. **Do not delete or overwrite the existing `public_html/api` directory when replacing frontend files.** It is the separately managed Laravel public entry point and is deliberately absent from the frontend ZIP.
+3. Upload `FoodOnlines_Frontend_Live.zip` to the FoodOnlines domain's `public_html` directory and extract it directly there. Do not create `public_html/frontend-upload` or any other wrapper folder.
+4. Replace only frontend files at the `public_html` root. Keep `public_html/api` entirely outside any cleanup/replacement selection.
+5. Purge Hostinger cache and, when active, Cloudflare cache. Test the homepage, registration, `/admin`, a nested `/admin/...` refresh, cart, and product pages.
+
+### Backend: `FoodOnlines_Backend_Live.zip`
+
+1. Back up the private Laravel directory, live `.env`, production database, `vendor/`, `storage/app/public/media/`, other user uploads, writable-directory permissions, and queue/runtime state where applicable.
+2. Upload `FoodOnlines_Backend_Live.zip` to the private Laravel application root. **Never extract it into the frontend `public_html` root.**
+3. Extract and replace only the packaged application source. Preserve the live `.env`, existing `vendor/`, production database, `storage/app/public/media/`, all user uploads, storage permissions, writable directories, and queue/runtime state. The package's empty writable directories must never be used to empty or replace live storage.
+4. Keep the existing `public_html/api` entry point unless deliberately updating only its controlled Laravel public-entry files. Retain a Hostinger-specific private-root bootstrap path when that is how the live API is configured.
+5. This release has **no new migration**. Do not run `migrate`, `migrate:fresh`, reset, seed, truncate, or replace the production database for this release.
+6. When the server supports Artisan, run from the private Laravel root:
+
+```bash
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+7. Test health, administrator login, registration, promo creation, product creation with images, brand creation with an image, and category creation with images.
+
+The release process verifies SHA-256 parity after separate temporary extraction, rejects unsafe/backslash/duplicate paths, source maps, secrets, frontend/backend cross-contamination, runtime media, and the frontend `api/` path before replacing either archive. The final archive evidence is recorded in the root release notes after packaging; no Hostinger upload is implied by local archive creation.
+
+### Release verification record
+
+| Archive | Deployment target | Files | ZIP bytes | SHA-256 |
+| --- | --- | ---: | ---: | --- |
+| `FoodOnlines_Frontend_Live.zip` | domain `public_html` root (preserve `public_html/api`) | 1,033 | 90,949,854 | `8be93d0f713129bc8ba72fdad1558a54946f9cf19b82420ccde7d941de68f44b` |
+| `FoodOnlines_Backend_Live.zip` | private Laravel application root only | 274 | 277,406 | `7831c088f8818eb36c1dc17c3a33808d6b225be81f294db2e1450e748dfdee8a` |
+
+Before packaging, `dist/` and `frontend-upload/` matched at 1,033 files / 91,808,677 bytes with 0 missing, extra, size, or SHA-256 mismatches. `backend-live/` verified 273 source files plus `SHA256SUMS` (274 files total) with 0 missing, stale, checksum, secret, frontend, or ZIP findings. Separate temporary extraction of each delivered archive then reported 0 missing, extra, size-mismatch, SHA-256-mismatch, unsafe-path, backslash-path, duplicate-entry, secret, and forbidden-path findings. Backend includes 62 safe empty-directory records for writable runtime structure; it contains no live `.env`, vendor, database, logs, or runtime media. Neither archive has a wrapper directory. No Hostinger or Cloudflare deployment was performed.
+
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 
 Deploy the synchronized `backend-live/` and `frontend-upload/` from the same commit. No migration is included. Preserve the live `.env`, database, `vendor/`, storage, and existing managed media. Verify the admin Promo Code form accepts blank minimum subtotal and maximum discount, customer/supplier/partner registration works with neither Company name nor LINE ID, and category/brand/product create forms can select media before the first save. Local media status is intentionally non-cacheable; configured local multipart uploads must report available without exposing provider details.
