@@ -34,12 +34,7 @@ The release process verifies SHA-256 parity after separate temporary extraction,
 
 ### Release verification record
 
-| Archive | Deployment target | Files | ZIP bytes | SHA-256 |
-| --- | --- | ---: | ---: | --- |
-| `FoodOnlines_Frontend_Live.zip` | domain `public_html` root (preserve `public_html/api`) | 1,033 | 90,949,854 | `8be93d0f713129bc8ba72fdad1558a54946f9cf19b82420ccde7d941de68f44b` |
-| `FoodOnlines_Backend_Live.zip` | private Laravel application root only | 274 | 277,406 | `7831c088f8818eb36c1dc17c3a33808d6b225be81f294db2e1450e748dfdee8a` |
-
-Before packaging, `dist/` and `frontend-upload/` matched at 1,033 files / 91,808,677 bytes with 0 missing, extra, size, or SHA-256 mismatches. `backend-live/` verified 273 source files plus `SHA256SUMS` (274 files total) with 0 missing, stale, checksum, secret, frontend, or ZIP findings. Separate temporary extraction of each delivered archive then reported 0 missing, extra, size-mismatch, SHA-256-mismatch, unsafe-path, backslash-path, duplicate-entry, secret, and forbidden-path findings. Backend includes 62 safe empty-directory records for writable runtime structure; it contains no live `.env`, vendor, database, logs, or runtime media. Neither archive has a wrapper directory. No Hostinger or Cloudflare deployment was performed.
+The current archive names, counts, bytes, SHA-256 values, mirror parity, and separate-extraction results are recorded in the root release notes after each successful package run. They are deliberately not embedded in this backend payload: a ZIP cannot reliably contain the final fingerprint of itself. The portable release command rejects source maps, secrets, private environment files, runtime media, duplicate or unsafe paths, frontend/backend cross-contamination, and the frontend `api/` path before either archive replaces a prior release artifact. Backend includes only safe empty-directory entries for writable runtime structure; it contains no live `.env`, vendor, database, logs, or runtime media. No Hostinger or Cloudflare deployment is implied by local archive creation.
 
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 

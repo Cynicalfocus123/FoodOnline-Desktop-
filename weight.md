@@ -1,9 +1,9 @@
 # FoodOnlines Site Weight
 
-## Production ZIP packaging (2026-07-20)
+## Production ZIP packaging (2026-07-21)
 
 - Packaging adds no application dependency, raster asset, video, font, source map, route, database migration, or runtime media. The two release archives are generated from verified mirrors outside both deployment mirrors; exact final file counts, ZIP sizes, SHA-256 values, and extraction-parity results are recorded after the portable release command completes.
-- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,949,854 bytes / SHA-256 `8be93d0f713129bc8ba72fdad1558a54946f9cf19b82420ccde7d941de68f44b`; `FoodOnlines_Backend_Live.zip` is 274 files / 277,406 bytes / SHA-256 `7831c088f8818eb36c1dc17c3a33808d6b225be81f294db2e1450e748dfdee8a`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
+- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,949,854 bytes / SHA-256 `c725f3b8cdac9472232244d2ced52be3ea9f6aebad0bde89bbeb55b155274014`; `FoodOnlines_Backend_Live.zip` is 274 files / 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
 
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 

@@ -1,11 +1,11 @@
 # Agent Notes
 
-## Production ZIP packaging (2026-07-20)
+## Production ZIP packaging (2026-07-21)
 
 - The only approved production archive command is `npm run release:zips`. It builds `FoodOnlines_Frontend_Live.zip` from the verified `frontend-upload/` mirror and `FoodOnlines_Backend_Live.zip` from the verified `backend-live/` mirror, with each payload at ZIP root and no wrapper directory.
 - The packaging verifier checks required root files, source/archive/extraction file and SHA-256 parity, portable `/` paths, no unsafe or duplicate entries, source maps, secret patterns, forbidden frontend/backend paths, runtime media, and the backend `SHA256SUMS` manifest before either archive replaces a prior release artifact. Empty writable runtime directory entries are retained in the backend archive but never contain live data.
 - Deployment is manual and external: the frontend must never delete or overwrite `public_html/api`; backend extraction targets only the private Laravel root and preserves the live `.env`, vendor, production database, storage/media, user uploads, permissions, writable directories, and queue/runtime state. This release has no new migration.
-- Final package evidence: `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines_Frontend_Live.zip` is 90,949,854 bytes / 1,033 files / SHA-256 `8be93d0f713129bc8ba72fdad1558a54946f9cf19b82420ccde7d941de68f44b`; `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines_Backend_Live.zip` is 277,406 bytes / 274 files / SHA-256 `7831c088f8818eb36c1dc17c3a33808d6b225be81f294db2e1450e748dfdee8a`. Both have 0 missing, extra, size-mismatch, SHA-256-mismatch, unsafe, backslash, duplicate, secret, and forbidden findings after separate extraction. The backend manifest passed; frontend contains no `api/`; backend contains no live `.env`, vendor, database, logs, or runtime media. No external deployment occurred.
+- Final package evidence: `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines_Frontend_Live.zip` is 90,949,854 bytes / 1,033 files / SHA-256 `c725f3b8cdac9472232244d2ced52be3ea9f6aebad0bde89bbeb55b155274014`; `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines_Backend_Live.zip` is 277,622 bytes / 274 files / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Both have 0 missing, extra, size-mismatch, SHA-256-mismatch, unsafe, backslash, duplicate, secret, and forbidden findings after separate extraction. The backend manifest passed; frontend contains no `api/`; backend contains no live `.env`, vendor, database, logs, or runtime media. Neither archive has a wrapper directory or Windows path separator. No external deployment occurred.
 
 ## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
 

@@ -32,6 +32,10 @@ php artisan view:cache
 
 The release process verifies SHA-256 parity after separate temporary extraction, rejects unsafe/backslash/duplicate paths, source maps, secrets, frontend/backend cross-contamination, runtime media, and the frontend `api/` path before replacing either archive. The final archive evidence is recorded in the root release notes after packaging; no Hostinger upload is implied by local archive creation.
 
+### Release verification record
+
+The current archive names, counts, bytes, SHA-256 values, mirror parity, and separate-extraction results are recorded in the root release notes after each successful package run. They are deliberately not embedded in this backend payload: a ZIP cannot reliably contain the final fingerprint of itself. The portable release command rejects source maps, secrets, private environment files, runtime media, duplicate or unsafe paths, frontend/backend cross-contamination, and the frontend `api/` path before either archive replaces a prior release artifact. Backend includes only safe empty-directory entries for writable runtime structure; it contains no live `.env`, vendor, database, logs, or runtime media. No Hostinger or Cloudflare deployment is implied by local archive creation.
+
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 
 Deploy the synchronized `backend-live/` and `frontend-upload/` from the same commit. No migration is included. Preserve the live `.env`, database, `vendor/`, storage, and existing managed media. Verify the admin Promo Code form accepts blank minimum subtotal and maximum discount, customer/supplier/partner registration works with neither Company name nor LINE ID, and category/brand/product create forms can select media before the first save. Local media status is intentionally non-cacheable; configured local multipart uploads must report available without exposing provider details.
