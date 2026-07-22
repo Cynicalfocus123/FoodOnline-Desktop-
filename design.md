@@ -4,6 +4,7 @@
 
 - This is a release-governance change only: it does not alter the approved public/admin interface, responsive behavior, brand styling, route behavior, feature set, or production assets.
 - Every future production-delivery pass regenerates both the frontend and backend clean Hostinger archives from current verified mirrors. Historical `no ZIP`, single-archive, or unchanged-counterpart delivery notes no longer control the release workflow.
+- After verification, both clean staging folders and every noncanonical ZIP are removed. The external release directory presents exactly the latest frontend ZIP and backend ZIP, with no intermediate folders or legacy archives.
 - The adoption release rebuilt the unchanged 1,035-file frontend output and the synchronized 289-file backend payload as the verified standard Deflate ZIP32 pair. Both passed the established extraction and SHA-256 parity gates; external Hostinger deployment remains separate and unclaimed.
 
 ## Administrator customer saved-data visibility (2026-07-22)

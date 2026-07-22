@@ -2,7 +2,7 @@
 
 ## Priority paired Hostinger archive contract
 
-Every production-delivery task creates and verifies both clean Hostinger archives from the current frontend and backend mirrors. The paired ZIP contract in `AGENTS.md` and `DEPLOYMENT.md` supersedes every historical delivery note below that says not to create a ZIP, requests a single ZIP, or leaves either archive unchanged.
+Every production-delivery task creates and verifies both clean Hostinger archives from the current frontend and backend mirrors. After verification, temporary staging folders and noncanonical ZIPs are removed so the external release directory contains exactly the latest frontend/backend pair. The paired ZIP contract in `AGENTS.md` and `DEPLOYMENT.md` supersedes every historical delivery note below that says not to create a ZIP, requests a single ZIP, or leaves either archive unchanged.
 
 ## Administrator customer-detail data contract
 
