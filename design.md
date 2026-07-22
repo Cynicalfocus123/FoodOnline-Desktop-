@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Complete current-site production package (2026-07-22)
+
+- This packaging-only release preserves the approved public, account, checkout, invitation, and administrator interfaces, including the desktop/mobile account Log out row, LINE ID contact presentation, country-specific Address Book fields, shared Saved Items, and Refer & Earn surfaces.
+- The fresh deployable frontend is the verified `frontend-upload/` mirror (1,035 files / 91,847,187 bytes), and its root-level archive is 1,035 files / 90,959,455 bytes / SHA-256 `d92375c5be0d3435a0a9569d2f107183a25cec181814c52c4cff6447202209e6`.
+- The complete backend mirror has 287 source files plus its manifest; its root-level archive has 288 files / 295,826 bytes / SHA-256 `e701ea44ad8757a157b1b5f52aeb1c13452466d1dc6b5bc1999d5762a35b5689`. Both archives passed independent no-wrapper, portable-path, parity, and forbidden-content checks. No external deployment is evidenced.
+
 ## Header account logout and administrator contact LINE ID (2026-07-21)
 
 - The signed-in desktop/tablet header account dropdown retains its white, bordered, rounded menu and current seven navigation rows, then shows a subtle divider and one final Log out button with a left sign-out icon and no chevron. It has matching row rhythm, keyboard focus, a processing state, and internal scrolling on short viewports so the action remains reachable.

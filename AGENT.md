@@ -1,5 +1,12 @@
 # Agent Notes
 
+## Complete current-site production packaging (2026-07-22)
+
+- Verified the authoritative source contains account-menu/public-session logout, nullable administrator LINE ID display/search/export, Laravel-authoritative all-country address records, shared UUID-backed Favorites/Saved Items, and the complete Refer & Earn frontend, API, migration, reward, notification, audit, and `referrals:backfill-codes` implementation.
+- Fresh production build/audit and mirror generation completed from current source. `frontend-upload/` exactly matches `dist/`: 1,035 files / 91,847,187 bytes. `backend-live/` contains 287 source files plus `SHA256SUMS` (288 files / 962,125 bytes); its manifest has zero missing, stale, checksum, secret, frontend, or ZIP findings.
+- `npm run release:zips` generated the complete root-level archives only from those verified mirrors: `FoodOnlines_Frontend_Live.zip` is 1,035 files / 90,959,455 bytes / SHA-256 `d92375c5be0d3435a0a9569d2f107183a25cec181814c52c4cff6447202209e6`; `FoodOnlines_Backend_Live.zip` is 288 files / 295,826 bytes / SHA-256 `e701ea44ad8757a157b1b5f52aeb1c13452466d1dc6b5bc1999d5762a35b5689`.
+- Both archives passed separate extraction/source parity with zero missing, extra, size, hash, unsafe-path, backslash, duplicate, secret, and forbidden-content findings; neither has a wrapper directory. Backend manifest verification passed; frontend has no `api/` path. No Hostinger upload, production migration, referral backfill, cache rebuild, or live smoke test was performed from this workspace.
+
 ## Account-menu logout and administrator LINE ID (2026-07-21)
 
 - The signed-in header now ends its desktop/tablet account dropdown with a real `Log out` button after a subtle divider; the same one-action mobile account navigation includes a touch-safe logout row and safe-area-aware scrolling. Existing account order, hover/outside/Escape behavior, identity control, dropdown presentation, and full My Account logout action remain intact.
