@@ -1,5 +1,15 @@
 # Hostinger File Manager Deployment
 
+## Split `public_html/api` entry requirement (2026-07-22)
+
+The current backend ZIP deploys the Laravel application to its private root. After extraction, copy `public/index.php` and `public/.htaccess` from that private root into the existing `public_html/api/` directory. Copy `public/backend-path.php.example` to `public_html/api/backend-path.php` and set its returned string to the real absolute private Laravel root, for example `/home/ACCOUNT_USERNAME/foodonlines-backend`. Keep `backend-path.php` server-only and preserve it across future updates.
+
+The API entry returns a safe configuration error instead of a PHP fatal when the root cannot be found. A remaining 500 means inspect `storage/logs/laravel.log` and Hostinger's PHP error log; confirm PHP 8.2+, PDO MySQL, and the preserved `vendor/` directory. Do not extract the backend ZIP into `public_html` and never replace live `.env`, vendor, database, storage, or media.
+
+## Frontend Hostinger 500 prevention (2026-07-22)
+
+The current frontend ZIP has a minimal `.htaccess` with an explicit `/api` bypass. Extract its contents directly into `public_html`, preserving the complete `public_html/api` directory. It intentionally avoids `Options` and header directives that can produce a shared-hosting 500 when the host restricts overrides.
+
 > Enterprise CMS release (2026-07-18): nested `/admin/...` routes require the current frontend `.htaccess` and hashed assets. Deploy the regenerated backend/frontend mirrors together, preserve `.env`, `vendor`, database, storage/media, permissions, and `public_html/api`, then run the root `DEPLOYMENT.md` migration/backfill/cache sequence. Explicitly requested ZIPs mirror those folders at archive root.
 
 > Local managed-media release (2026-07-18): Hostinger Laravel storage is the current production provider. Set `MEDIA_DISK=local`, `MEDIA_UPLOADS_ENABLED=true`, and `MEDIA_PUBLIC_URL=https://api.foodonlines.com/api/media`. Back up and preserve the private application's complete `storage/app/public/media/` directory across every update; it is intentionally absent from `backend-live/`.

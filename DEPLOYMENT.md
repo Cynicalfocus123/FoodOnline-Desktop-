@@ -1,8 +1,18 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Hostinger 500 repair: split public API entry (2026-07-22)
+
+The backend archive's `public/index.php` is a controlled API entry file, but in the Hostinger split layout it must be copied to the existing `public_html/api/index.php`; it must not remain only under the private application's `public/` directory. The entry now supports a non-versioned path file so it can locate the private Laravel root safely instead of assuming `public_html` itself is the application.
+
+After extracting the backend ZIP into the private Laravel root, copy `public/backend-path.php.example` to `public_html/api/backend-path.php`, replace `ACCOUNT_USERNAME/foodonlines-backend` with the actual absolute private application path, then copy `public/index.php` and `public/.htaccess` to `public_html/api/`. Preserve `backend-path.php`, the live `.env`, `vendor/`, database, storage/media, uploads, permissions, and runtime state on future updates. The server must use PHP 8.2+ with the required Laravel/PDO MySQL extensions and an installed production `vendor/` directory; the backend ZIP intentionally does not replace dependencies.
+
+If a 500 remains after those files are in place, inspect the private Laravel `storage/logs/laravel.log` and Hostinger PHP error log for the timestamped exception before changing source or database data. Do not extract the backend ZIP into `public_html`.
+
+The frontend ZIP is also Hostinger-safe: its minimal `.htaccess` uses only conditional rewrite rules, has no `Options` or header directives that can be rejected by restricted shared-hosting overrides, and explicitly bypasses `public_html/api`. Extract frontend files directly into `public_html`, preserving the complete `api` directory.
+
 ## Complete current-site ZIP package (2026-07-22)
 
-The complete current frontend and backend mirrors were rebuilt and packaged together after validating the active logout, LINE ID, all-country address, shared Saved Items, and Refer & Earn implementations. Each archive has root-level payload entries, no wrapper directory, and passed separate extraction/source SHA-256 parity. The frontend mirror has 1,035 files / 91,847,187 bytes; the backend mirror has 287 source files plus `SHA256SUMS`, and its manifest passed. The exact final archive count, bytes, and SHA-256 are recorded in the root release notes after packaging, rather than inside this backend payload, because embedding a ZIP's own fingerprint would alter that ZIP.
+The complete current frontend and backend mirrors were rebuilt and packaged together after validating the active logout, LINE ID, all-country address, shared Saved Items, and Refer & Earn implementations. Each archive has root-level payload entries, no wrapper directory, and passed separate extraction/source SHA-256 parity. The frontend mirror has 1,035 files / 91,847,187 bytes; the backend mirror contains the complete controlled Laravel source plus `SHA256SUMS`, and its manifest passed. The exact final archive count, bytes, and SHA-256 are recorded in the root release notes after packaging, rather than inside this backend payload, because embedding a ZIP's own fingerprint would alter that ZIP.
 
 Extract frontend contents directly into `public_html` while preserving `public_html/api`. Extract backend contents only into the private Laravel root while preserving the live `.env`, `vendor/`, database, complete storage/media, uploads, permissions, and runtime state. Because this current package includes the Refer & Earn migration, after a production database backup and backend upload run from the private root:
 

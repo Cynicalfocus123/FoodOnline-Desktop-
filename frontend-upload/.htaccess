@@ -1,6 +1,9 @@
 <IfModule mod_rewrite.c>
-  Options -MultiViews -Indexes
   RewriteEngine On
+
+  # The Laravel API is a separately managed Hostinger directory. Keep it out
+  # of SPA routing even when the host does not report it as a normal directory.
+  RewriteRule ^api(?:/|$) - [L]
 
   # Never turn a missing production asset into HTML. Module and media requests
   # must fail as real 404 responses so browsers do not cache index.html as a file.
@@ -15,13 +18,4 @@
 
   RewriteRule ^admin(?:/.*)?$ admin.html [L]
   RewriteRule . index.html [L]
-</IfModule>
-
-<IfModule mod_headers.c>
-  <FilesMatch "^(?:index|admin|404)\.html$">
-    Header always set Cache-Control "no-cache, no-store, must-revalidate"
-  </FilesMatch>
-  <FilesMatch "\.(?:js|css)$">
-    Header always set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
 </IfModule>

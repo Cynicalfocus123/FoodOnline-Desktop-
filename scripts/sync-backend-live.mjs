@@ -9,7 +9,7 @@ const manifestName = "SHA256SUMS";
 const rootFiles = ["artisan", "composer.json", "composer.lock", "DEPLOYMENT.md"];
 const sourceDirectories = ["app", "config", "database", "routes", "resources"];
 const publicSource = path.join(root, "deployment", "hostinger", "backend-public");
-const publicFiles = [".htaccess", "index.php"];
+const publicFiles = [".htaccess", "index.php", "backend-path.php.example"];
 
 const normalize = (value) => value.split(path.sep).join("/");
 const insideRoot = (candidate) => candidate === root || candidate.startsWith(`${root}${path.sep}`);

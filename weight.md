@@ -2,8 +2,8 @@
 
 ## Complete current-site production packaging (2026-07-22)
 
-- The final audited `dist/` and `frontend-upload/` each contain 1,035 files / 91,847,187 bytes. The frontend release archive is 1,035 files / 90,959,455 bytes / SHA-256 `d92375c5be0d3435a0a9569d2f107183a25cec181814c52c4cff6447202209e6`.
-- `backend-live/` is the complete controlled Laravel mirror: 287 source files plus `SHA256SUMS`, 288 files / 962,125 bytes. The backend release archive is 288 files / 295,826 bytes / SHA-256 `e701ea44ad8757a157b1b5f52aeb1c13452466d1dc6b5bc1999d5762a35b5689`.
+- The final audited `dist/` and `frontend-upload/` each contain 1,035 files / 91,847,052 bytes. The frontend release archive is 1,035 files / 90,959,405 bytes / SHA-256 `5ad4aa03c5076c24e5bf3f9408a21c24603ae88f825b3a58bd3f456b30b928bc`.
+- `backend-live/` is the complete controlled Laravel mirror: 288 source files plus `SHA256SUMS`, 289 files / 966,169 bytes. The backend release archive is 289 files / 297,499 bytes / SHA-256 `26e54fdf3c869124ad887c03973214a247a1bab1cd60fbccd8adceb7de09fc81`.
 - Packaging adds no runtime dependency, media, font, source map, database, secret, or live data. Independent archive extraction found zero parity, unsafe-path, duplicate, separator, secret, and forbidden-content findings.
 
 ## Account-menu logout and administrator LINE ID (2026-07-21)

@@ -1,10 +1,16 @@
 # Agent Notes
 
+## Hostinger split-public API entry repair (2026-07-22)
+
+- The backend release public adapter no longer assumes `public/index.php` is nested directly below the Laravel private root. It first accepts a non-versioned `public_html/api/backend-path.php` configuration, then an explicit environment value, then safe nearby Laravel-root discovery; this supports the documented split `public_html/api` Hostinger layout without exposing a server path in API responses.
+- `backend-path.php.example` ships in `backend-live/public/` as a template only. On Hostinger, copy it to the existing `public_html/api/backend-path.php`, set the real private Laravel absolute path, and preserve that configured file through future backend ZIP deployments. The backend archive still deliberately excludes live `.env`, `vendor/`, database, storage/media, and runtime data; a missing preserved `vendor/` is a server deployment error, not a safe archive payload.
+- The frontend production rewrite is reduced to portable conditional rules and explicitly leaves `/api` untouched. It no longer relies on `Options` or header directives that restrictive Hostinger `.htaccess` settings can reject with a 500.
+
 ## Complete current-site production packaging (2026-07-22)
 
 - Verified the authoritative source contains account-menu/public-session logout, nullable administrator LINE ID display/search/export, Laravel-authoritative all-country address records, shared UUID-backed Favorites/Saved Items, and the complete Refer & Earn frontend, API, migration, reward, notification, audit, and `referrals:backfill-codes` implementation.
-- Fresh production build/audit and mirror generation completed from current source. `frontend-upload/` exactly matches `dist/`: 1,035 files / 91,847,187 bytes. `backend-live/` contains 287 source files plus `SHA256SUMS` (288 files / 962,125 bytes); its manifest has zero missing, stale, checksum, secret, frontend, or ZIP findings.
-- `npm run release:zips` generated the complete root-level archives only from those verified mirrors: `FoodOnlines_Frontend_Live.zip` is 1,035 files / 90,959,455 bytes / SHA-256 `d92375c5be0d3435a0a9569d2f107183a25cec181814c52c4cff6447202209e6`; `FoodOnlines_Backend_Live.zip` is 288 files / 295,826 bytes / SHA-256 `e701ea44ad8757a157b1b5f52aeb1c13452466d1dc6b5bc1999d5762a35b5689`.
+- Fresh production build/audit and mirror generation completed from current source. `frontend-upload/` exactly matches `dist/`: 1,035 files / 91,847,052 bytes. `backend-live/` contains 288 source files plus `SHA256SUMS` (289 files / 966,169 bytes); its manifest has zero missing, stale, checksum, secret, frontend, or ZIP findings.
+- `npm run release:zips` generated the complete root-level archives only from those verified mirrors: `FoodOnlines_Frontend_Live.zip` is 1,035 files / 90,959,405 bytes / SHA-256 `5ad4aa03c5076c24e5bf3f9408a21c24603ae88f825b3a58bd3f456b30b928bc`; `FoodOnlines_Backend_Live.zip` is 289 files / 297,499 bytes / SHA-256 `26e54fdf3c869124ad887c03973214a247a1bab1cd60fbccd8adceb7de09fc81`.
 - Both archives passed separate extraction/source parity with zero missing, extra, size, hash, unsafe-path, backslash, duplicate, secret, and forbidden-content findings; neither has a wrapper directory. Backend manifest verification passed; frontend has no `api/` path. No Hostinger upload, production migration, referral backfill, cache rebuild, or live smoke test was performed from this workspace.
 
 ## Account-menu logout and administrator LINE ID (2026-07-21)
