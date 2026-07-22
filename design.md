@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Clean Hostinger frontend and backend rebuild (2026-07-22)
+
+- This deployment-only rebuild makes no visual, public/admin layout, brand, route, or feature change. The fresh audited storefront output remains 1,035 files / 91,847,052 bytes and includes the current account logout, persisted Address Book, Favorites/Saved Items, Refer & Earn, invitation page, and full catalog/admin flows.
+- The clean frontend staging root is `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Frontend-Clean`; it exactly matches the final `dist/` tree by relative path, byte size, and SHA-256. The clean backend staging root is `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Backend-Clean`; it is a fresh Laravel whitelist mirror with referral migrations/commands, split API adapter files, and a verified manifest.
+- The new Hostinger archives use standard PHP `ZipArchive` Deflate payloads at ZIP root (0 wrapper folders and 0 explicit directories). `FoodOnlines_Frontend_Hostinger_Clean.zip` is 90,944,892 bytes / SHA-256 `2817ff56a648958445f9c6c84b81db051e41ee9d9f12aa349c4ced01836039ea`; `FoodOnlines_Backend_Hostinger_Clean.zip` is 289,488 bytes / SHA-256 `3fc7dc8b9a2fbc71277302260c76d440feed0b432007a99eb60516dedc2f45b4`. Both pass independent extraction/parity checks; external Hostinger extraction remains unconfirmed.
+
 ## Hostinger classic backend archive delivery (2026-07-22)
 
 - This packaging-only compatibility correction does not change the approved interface, layout, responsive behavior, routes, or feature set. The backend archive now contains regular root-level Laravel files only; it has no explicit empty-directory records that some hosting-panel extractors reject.

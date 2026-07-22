@@ -1,5 +1,14 @@
 # Agent Notes
 
+## Clean Hostinger frontend and backend rebuild (2026-07-22)
+
+- Clean external staging folders were created from authoritative source only: `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Frontend-Clean` from the new audited `dist/`, and `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Backend-Clean` from a newly generated `backend-live/` whitelist mirror. No prior ZIP, extraction, release folder, or stale mirror was used as a package source.
+- Fresh frontend checks passed: TypeScript no-emit, 72 Node tests, a 139-module production build, and the 28-route production/missing-reference audit. The frontend clean folder is 1,035 files / 91,847,052 bytes with zero missing, extra, size, or SHA-256 findings against `dist/`. The backend clean folder is 289 files / 970,541 bytes; its `SHA256SUMS` covers all 288 payload files with zero missing, stale, checksum, secret, frontend, runtime-media, or ZIP findings.
+- `FoodOnlines_Frontend_Hostinger_Clean.zip` is 1,035 files / 90,944,892 bytes / SHA-256 `2817ff56a648958445f9c6c84b81db051e41ee9d9f12aa349c4ced01836039ea`. `FoodOnlines_Backend_Hostinger_Clean.zip` is 289 files / 289,488 bytes / SHA-256 `3fc7dc8b9a2fbc71277302260c76d440feed0b432007a99eb60516dedc2f45b4`.
+- Both clean archives were written by PHP `ZipArchive` as standard Deflate ZIP32 payloads, with 0 wrapper folders and 0 explicit-directory entries. They contain hidden `.htaccess` files, no ZIP64 records, passwords, encryption, symbolic links, NTFS metadata, unsafe/duplicate/backslash paths, or forbidden files. The rejected custom backend writer was not used. The old historical .NET writer has no recorded successful Hostinger extraction, and 7-Zip is unavailable in this workspace.
+- Independent evidence passed for both archives: Python `zipfile` listing and CRC test, Windows `Expand-Archive` extraction plus full SHA-256 parity, PHP `ZipArchive` extraction plus full SHA-256 parity, and Windows `tar` listing. Backend extracted-manifest verification passed. Hostinger File Manager extraction has not yet been confirmed externally.
+- The failed backend archive hashes `26e54fdf3c869124ad887c03973214a247a1bab1cd60fbccd8adceb7de09fc81` and `5c1e8ad82fbf649dc184a3b30554535b693cf6cd99d46f7d69aa509a0e412f2b` are superseded and must not be presented as current deployment packages.
+
 ## Hostinger classic backend ZIP compatibility (2026-07-22)
 
 - Hostinger File Manager returned a server-side 500 while extracting the prior backend archive, despite its local parity test passing. The prior result is not treated as Hostinger extraction evidence.

@@ -1,5 +1,15 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Clean Hostinger frontend and backend rebuild (2026-07-22)
+
+The current clean deployment staging roots are `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Frontend-Clean` and `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Backend-Clean`. They are created only from a fresh audited `dist/` build and a newly synchronized `backend-live/` mirror, respectively; no old archive, release extraction, or existing staging content is a source.
+
+The clean archives are `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip`. They use PHP `ZipArchive` standard Deflate file entries at the ZIP root, with no explicit directory records, ZIP64, passwords, encryption, split parts, symbolic links, NTFS metadata, or backslash paths. The prior custom backend writer is not used. The historical .NET writer has no recorded successful Hostinger extraction, and 7-Zip is not installed in this workspace, so PHP `ZipArchive` is the available standard writer for this clean rebuild.
+
+Each archive is independently listed and CRC-tested by Python `zipfile`, extracted and SHA-256-compared by Windows `Expand-Archive` and PHP `ZipArchive`, and listed by Windows `tar`; the complete package ledger, including final filenames, sizes, hashes, clean-folder counts, manifest result, and superseded archive hashes, is recorded in the non-packaged root release notes. This guide is included in the backend payload, so embedding the backend ZIP's own final SHA-256 here would alter that archive and invalidate the recorded fingerprint.
+
+Extract the frontend contents only into `public_html` while preserving the complete `public_html/api` directory. Extract backend source only into the private Laravel root while preserving the real `.env`, `vendor/`, database, complete `storage/` and media tree, writable permissions, queue/session/runtime state, and `public_html/api/backend-path.php`. Local validation is not evidence that Hostinger File Manager has extracted either clean archive successfully.
+
 ## Hostinger File Manager ZIP32 staging workflow (2026-07-22)
 
 Hostinger File Manager returned a 500 while extracting a prior backend archive that passed local extraction. The current backend ZIP is therefore a conservative ZIP32 payload: standard Deflate level 6, no ZIP64, encryption, password, split data, symlink, hard-link, POSIX/NTFS metadata, Unicode/extended extra fields, or explicit empty-directory entries. It contains every verified regular file from `backend-live/` at archive root; it does not contain runtime data or rely on ZIP directory records.

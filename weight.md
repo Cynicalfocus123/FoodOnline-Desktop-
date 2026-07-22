@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Clean Hostinger frontend and backend rebuild (2026-07-22)
+
+- Fresh production output and the clean frontend staging folder each contain 1,035 files / 91,847,052 bytes. The frontend clean Hostinger archive contains the same 1,035 regular files and is 90,944,892 bytes / SHA-256 `2817ff56a648958445f9c6c84b81db051e41ee9d9f12aa349c4ced01836039ea`.
+- The fresh backend whitelist mirror and clean backend staging folder contain 289 files / 970,541 bytes, including `SHA256SUMS` for 288 deployable source files. The backend clean Hostinger archive contains 289 regular files and is 289,488 bytes / SHA-256 `3fc7dc8b9a2fbc71277302260c76d440feed0b432007a99eb60516dedc2f45b4`.
+- PHP `ZipArchive` wrote both standard Deflate ZIP32 artifacts with 0 wrapper folders and 0 explicit directory entries. Python CRC/listing, Windows `Expand-Archive` SHA-256 parity, PHP `ZipArchive` SHA-256 parity, and Windows `tar` listing passed; 7-Zip is unavailable. The archives carry no runtime media, source maps, secrets, frontend/backend cross-contamination, encryption, ZIP64, symlinks, NTFS metadata, or unsafe/duplicate/backslash entries. Hostinger extraction remains externally unconfirmed.
+
 ## Hostinger classic backend ZIP compatibility (2026-07-22)
 
 - The backend archive is rebuilt as regular Deflate-compressed ZIP32 files without explicit directory entries, ZIP64 data, runtime data, symlinks, or platform-specific file metadata. This does not add a runtime dependency, asset, route, database change, or frontend payload change.
