@@ -12,8 +12,8 @@ The 2026-07-22 paired-live verification recorded:
 | `dist/` | 1,036 files / 91,852,257 bytes |
 | `frontend-upload/` | 1,036 files / 91,852,257 bytes; exact SHA-256 parity with `dist/` |
 | `backend-live/` | 290 payload files plus `SHA256SUMS`; 291 files / 975,454 bytes |
-| Frontend archive | 1,036 files / 90,946,526 bytes / SHA-256 `56274d0ac50fc3702d009158f2dd62bf322ead28c0e829f4f26b6519b5ed69c7` |
-| Backend archive | 291 files / 291,413 bytes / SHA-256 `7801946f7dba2ccbf68c529357862e3116a0616447ac1a364e07740844bf492c` |
+| Frontend archive | `FoodOnlines_Frontend_Live.zip`: 1,036 files / 90,946,526 bytes |
+| Backend archive | `FoodOnlines_Backend_Live.zip`: 291 files / 291,413 bytes |
 
 Both `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` use standard Deflate ZIP32 entries at archive root and passed CRC/listing, Windows extraction parity, PHP extraction parity, path/metadata safety, forbidden-content checks, and backend-manifest verification. No external Hostinger deployment was performed or verified.
 
@@ -27,4 +27,4 @@ Both `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` use stan
 
 ## Required verification
 
-Run the relevant tests, TypeScript check, production build, and production audit; then verify frontend mirror parity, backend manifest/safety, and full archive extraction parity. Update the table above with exact, command-derived measurements only after a successful paired release. See `AGENT.md` for the mandatory sequence and deployment safety limits.
+Run the relevant tests, TypeScript check, production build, and production audit; then verify frontend mirror parity, backend manifest/safety, and full archive extraction parity. Update the table above with exact, command-derived measurements only after a successful paired release. Report each release command’s exact archive hashes with its release handoff rather than treating a rebuild-sensitive hash as a permanent documentation value. See `AGENT.md` for the mandatory sequence and deployment safety limits.
