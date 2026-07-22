@@ -186,6 +186,15 @@ function Remove-ObsoleteReleaseArchives([string[]]$KeepNames) {
     }
 }
 
+function Remove-CleanStage([string]$Path, [string]$ExpectedLeaf) {
+    if (-not (Test-Path -LiteralPath $Path)) { return }
+    $absolute = [IO.Path]::GetFullPath($Path).TrimEnd([char]92, [char]47)
+    if ((Split-Path -Parent $absolute) -ne $ReleaseDirectory -or (Split-Path -Leaf $absolute) -ne $ExpectedLeaf) {
+        throw "Refusing to remove an unexpected clean staging path: $absolute"
+    }
+    Remove-Item -LiteralPath $absolute -Force -Recurse
+}
+
 function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveName) {
     $files = Get-Inventory $Source
     if ($files.Count -eq 0) { throw "$Kind clean stage is empty." }
@@ -283,4 +292,6 @@ $backendArchiveName = "FoodOnlines_Backend_Hostinger_Clean.zip"
 $frontend = Invoke-CleanPackage "frontend" $FrontendDirectory $frontendArchiveName
 $backend = Invoke-CleanPackage "backend" $BackendDirectory $backendArchiveName
 Remove-ObsoleteReleaseArchives @($frontendArchiveName, $backendArchiveName)
+Remove-CleanStage $FrontendDirectory "FoodOnlines-Frontend-Clean"
+Remove-CleanStage $BackendDirectory "FoodOnlines-Backend-Clean"
 [pscustomobject]@{ frontend = $frontend; backend = $backend } | ConvertTo-Json -Depth 5

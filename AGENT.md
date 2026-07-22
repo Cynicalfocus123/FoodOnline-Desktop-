@@ -3,7 +3,7 @@
 ## PRIORITY RELEASE RULE — always build both clean Hostinger ZIPs
 
 - Every completed production-delivery task must generate `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` together from the current verified `dist`/`frontend-upload` and `backend-live` mirrors. Frontend-only, backend-only, migration, configuration, content, and mixed releases are all included; only a direct current user instruction may waive either archive.
-- After both archives pass verification, the dedicated external release directory must retain only those two canonical ZIP filenames. Delete every other root-level ZIP there on every packaging run so no legacy, alternate, timestamped, or superseded archive is presented as current.
+- After both archives pass verification, the dedicated external release directory must retain only those two canonical ZIP filenames. Delete every other root-level ZIP and both temporary clean staging folders there on every packaging run so no legacy, alternate, timestamped, superseded, or intermediate item is presented as current.
 - Use the clean Hostinger workflow and established standard Deflate ZIP32 root layout. Never reuse an old ZIP, extracted release, or stale staging folder. Both archives must pass CRC/listing, Windows and PHP extraction with full SHA-256 parity, path/metadata safety, forbidden-content checks, and backend manifest verification before the task is complete.
 - Report both archive paths, file counts, byte sizes, and SHA-256 hashes. This rule has precedence over all historical notes below that say `no ZIP`, request only one archive, or describe the other archive as unchanged.
 
