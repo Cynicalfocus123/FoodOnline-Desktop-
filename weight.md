@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Account-menu logout and administrator LINE ID (2026-07-21)
+
+- This correction adds a small shared public-session cleanup helper and focused Node/Laravel coverage. It adds no dependency, route, migration, font, raster asset, video, tracker, third-party request, or runtime media.
+- The existing administrator user resource and optional registration field are reused. The list only changes text layout, search/export data, and logout/session safety behavior; production payload growth is limited to the rebuilt application bundles.
+- Final production audit: 28 routes, 22 lazy chunks, 29 JavaScript files, 1,035 files, and 91,847,187 bytes with zero missing local references or placeholder links. The verified frontend archive is 90,959,455 bytes; no live runtime media is included.
+
 ## Account persistence update (2026-07-21)
 
 The address, customer-address, and Saved Items work reuses existing React, Zustand, account, and product-card surfaces. No dependency, asset, font, tracker, or third-party request was added.

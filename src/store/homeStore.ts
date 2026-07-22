@@ -418,6 +418,7 @@ type HomeState = {
   returnAfterAuth: () => void;
   syncRouteFromHash: (hash: string) => void;
   setSearchInputValue: (value: string) => void;
+  clearAuthenticatedData: () => void;
   setCartQuantity: (lineId: string, quantity: number) => void;
   hydrateCommerceCart: () => Promise<void>;
   mergeGuestCart: () => Promise<void>;
@@ -495,6 +496,11 @@ let cartMutationQueue: Promise<void> = Promise.resolve();
 let favoriteMutationQueue: Promise<void> = Promise.resolve();
 let favoriteMergeToken: string | null = null;
 let favoriteHydrationVersion = 0;
+let authenticatedSessionVersion = 0;
+
+function isActiveAuthenticatedSession(token: string | null, sessionVersion: number) {
+  return authenticatedSessionVersion === sessionVersion && usePublicAuthStore.getState().token === token;
+}
 
 function enqueueCartMutation<T>(work: () => Promise<T>): Promise<T> {
   const next = cartMutationQueue.then(work, work);
@@ -1171,19 +1177,57 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({
       searchInputValue: value,
     }),
+  clearAuthenticatedData: () => {
+    authenticatedSessionVersion += 1;
+    favoriteHydrationVersion += 1;
+    favoriteMergeToken = null;
+    cartMutationQueue = Promise.resolve();
+    favoriteMutationQueue = Promise.resolve();
+    set((state) => {
+      const localCartIds = Object.keys(state.cartQuantities).filter((id) => state.cartLineSources[id] === "local");
+      const localSavedIds = state.savedForLaterIds.filter((id) => state.savedLineSources[id] === "local");
+      const anonymousFavoriteIds = state.favoriteProductIds.filter((id) => state.favoriteProductSources[id] !== "persisted");
+
+      return {
+        cartQuantities: Object.fromEntries(localCartIds.map((id) => [id, state.cartQuantities[id]])),
+        cartLineProductIds: Object.fromEntries(localCartIds.map((id) => [id, state.cartLineProductIds[id] ?? id])),
+        cartItemIds: {},
+        cartLineStatuses: {},
+        cartLineSources: Object.fromEntries(localCartIds.map((id) => [id, "local" as const])),
+        cartVariantAliases: {},
+        cartSyncStatus: "idle",
+        cartSyncMessage: null,
+        savedForLaterIds: localSavedIds,
+        savedLineProductIds: Object.fromEntries(localSavedIds.map((id) => [id, state.savedLineProductIds[id] ?? id])),
+        savedLineSources: Object.fromEntries(localSavedIds.map((id) => [id, "local" as const])),
+        selectedCartIds: state.selectedCartIds.filter((id) => localCartIds.includes(id)),
+        favoriteProductIds: anonymousFavoriteIds,
+        favoriteProductSources: Object.fromEntries(anonymousFavoriteIds.map((id) => [id, state.favoriteProductSources[id]])),
+        favoriteRecords: {},
+        favoriteSyncStatus: "auth-pending",
+        favoriteSyncMessage: null,
+        favoriteMutationVersions: {},
+      };
+    });
+  },
   hydrateCommerceCart: async () => {
     if (get().cartSyncStatus === "loading") return;
+    const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     const localLines = Object.entries(get().cartQuantities).filter(([lineId]) => get().cartLineSources[lineId] !== "local");
     set({ cartSyncStatus: "loading", cartSyncMessage: null });
     try {
-      const token = usePublicAuthStore.getState().token;
       let cart = await commerceApi.getCart(token);
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       const remoteVariants = new Set(cart.lines.map((line) => line.variant_uuid));
       for (const [variantUuid, quantity] of localLines) {
         if (!remoteVariants.has(variantUuid) && quantity > 0) cart = await commerceApi.addItem(variantUuid, quantity, token);
+        if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       }
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
     } catch (error) {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       const message = error instanceof ApiError && error.status === 422
         ? "Some saved cart items could not be restored because their exact variants are no longer available. They remain visible until you remove them."
         : toUserFacingErrorMessage(error, "Unable to sync cart.");
@@ -1192,18 +1236,22 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   },
   mergeGuestCart: async () => {
     const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     if (!token) { await get().hydrateCommerceCart(); return; }
     set({ cartSyncStatus: "loading", cartSyncMessage: null });
     try {
       const cart = await commerceApi.mergeGuestCart(token);
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
     } catch (error) {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
       set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to merge cart.") });
     }
   },
   hydrateSavedData: async () => {
     const token = usePublicAuthStore.getState().token;
     const hydrationVersion = ++favoriteHydrationVersion;
+    const sessionVersion = authenticatedSessionVersion;
     if (!token) {
       favoriteMergeToken = null;
       set((state) => {
@@ -1229,7 +1277,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         : { merged: 0, skipped: [] as string[] };
       if (shouldMerge) favoriteMergeToken = token;
       const [favorites, saved] = await Promise.all([commerceApi.favorites(token), commerceApi.savedItems(token)]);
-      if (hydrationVersion !== favoriteHydrationVersion || usePublicAuthStore.getState().token !== token) return;
+      if (hydrationVersion !== favoriteHydrationVersion || !isActiveAuthenticatedSession(token, sessionVersion)) return;
       const remoteRecords = favoriteRecordMap(favorites.data);
       const remoteIds = new Set(Object.keys(remoteRecords));
       const skipped = new Set(mergeResult.skipped);
@@ -1256,7 +1304,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         savedLineSources: { ...Object.fromEntries(saved.data.map((item) => [item.variant_uuid, "api" as const])), ...Object.fromEntries(compatibilitySaved.map((id) => [id, "local" as const])) },
       }));
     } catch (error) {
-      if (hydrationVersion !== favoriteHydrationVersion || usePublicAuthStore.getState().token !== token) return;
+      if (hydrationVersion !== favoriteHydrationVersion || !isActiveAuthenticatedSession(token, sessionVersion)) return;
       set({ favoriteSyncStatus: "error", favoriteSyncMessage: toUserFacingErrorMessage(error, "Unable to restore saved items.") });
     }
   },
@@ -1295,14 +1343,21 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       return;
     }
     const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     const request = enqueueCartMutation(() => {
       const itemUuid = get().cartItemIds[lineId];
       return quantity <= 0 && itemUuid ? commerceApi.removeItem(itemUuid, token) : itemUuid
         ? commerceApi.updateItem(itemUuid, Math.max(1, quantity), token)
         : commerceApi.addItem(lineId, Math.max(1, quantity), token);
     });
-    void request.then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
-      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Cart update failed.") }); void get().hydrateCommerceCart(); });
+    void request.then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
+    }).catch((error) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Cart update failed.") });
+      void get().hydrateCommerceCart();
+    });
   },
   addToCart: (productId, variantId = productId, apiBacked = true, apiVariantIdentityReady = true) => {
     if (apiBacked && !apiVariantIdentityReady) {
@@ -1331,11 +1386,20 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       return;
     }
     const token = usePublicAuthStore.getState().token;
-    void commerceApi.addItem(variantId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null })))
-      .catch((error) => { set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to add this item.") }); void get().hydrateCommerceCart(); });
+    const sessionVersion = authenticatedSessionVersion;
+    void commerceApi.addItem(variantId, 1, token).then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set((state) => ({ ...cartState(cart, state), cartSyncStatus: "ready", cartSyncMessage: null }));
+    }).catch((error) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set({ cartSyncStatus: "error", cartSyncMessage: toUserFacingErrorMessage(error, "Unable to add this item.") });
+      void get().hydrateCommerceCart();
+    });
   },
   removeFromCart: (lineId) => {
     const itemUuid = get().cartItemIds[lineId];
+    const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     set((state) => {
       const nextCart = { ...state.cartQuantities };
       const nextProducts = { ...state.cartLineProductIds };
@@ -1351,11 +1415,18 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         selectedCartIds: state.selectedCartIds.filter((id) => id !== lineId),
       };
     });
-    if (itemUuid) void commerceApi.removeItem(itemUuid, usePublicAuthStore.getState().token).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart());
+    if (itemUuid) void commerceApi.removeItem(itemUuid, token).then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set((state) => ({ ...cartState(cart, state) }));
+    }).catch(() => {
+      if (isActiveAuthenticatedSession(token, sessionVersion)) void get().hydrateCommerceCart();
+    });
   },
   saveForLater: (lineId) => {
     const itemUuid = get().cartItemIds[lineId];
     const savedQuantity = get().cartQuantities[lineId] ?? 1;
+    const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     set((state) => {
       const nextCart = { ...state.cartQuantities };
       delete nextCart[lineId];
@@ -1370,9 +1441,17 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         savedLineSources: { ...state.savedLineSources, [lineId]: state.cartLineSources[lineId] ?? "api" },
       };
     });
-    if (itemUuid) { const token = usePublicAuthStore.getState().token; void commerceApi.removeItem(itemUuid, token).then((cart) => { if (token) void commerceApi.saveItem(lineId, savedQuantity, token); return cart; }).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart()); }
+    if (itemUuid) void commerceApi.removeItem(itemUuid, token).then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      if (token) void commerceApi.saveItem(lineId, savedQuantity, token);
+      set((state) => ({ ...cartState(cart, state) }));
+    }).catch(() => {
+      if (isActiveAuthenticatedSession(token, sessionVersion)) void get().hydrateCommerceCart();
+    });
   },
   moveSavedToCart: (lineId) => {
+    const token = usePublicAuthStore.getState().token;
+    const sessionVersion = authenticatedSessionVersion;
     set((state) => ({
       cartQuantities: {
         ...state.cartQuantities,
@@ -1389,9 +1468,18 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       set({ cartSyncStatus: "ready", cartSyncMessage: "This item is still being synchronized with our catalog and cannot be ordered yet." });
       return;
     }
-    const token = usePublicAuthStore.getState().token;
-    if (token) { void commerceApi.moveSavedItemToCart(lineId, token).then(() => commerceApi.getCart(token)).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart()); }
-    else void commerceApi.addItem(lineId, 1, token).then((cart) => set((state) => ({ ...cartState(cart, state) }))).catch(() => void get().hydrateCommerceCart());
+    if (token) void commerceApi.moveSavedItemToCart(lineId, token).then(() => commerceApi.getCart(token)).then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set((state) => ({ ...cartState(cart, state) }));
+    }).catch(() => {
+      if (isActiveAuthenticatedSession(token, sessionVersion)) void get().hydrateCommerceCart();
+    });
+    else void commerceApi.addItem(lineId, 1, token).then((cart) => {
+      if (!isActiveAuthenticatedSession(token, sessionVersion)) return;
+      set((state) => ({ ...cartState(cart, state) }));
+    }).catch(() => {
+      if (isActiveAuthenticatedSession(token, sessionVersion)) void get().hydrateCommerceCart();
+    });
   },
   toggleCartSelection: (productId) =>
     set((state) => ({

@@ -5,6 +5,7 @@ import { getNavigationCategories } from "../services/catalog";
 import type { Category } from "../types/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { logoutPublicSession } from "../services/logoutPublicSession";
 
 function LocationMarker() {
   return (
@@ -207,6 +208,16 @@ function SettingsIcon() {
   );
 }
 
+function LogoutIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10" />
+      <path d="m14 8 4 4-4 4" />
+      <path d="M9 12h9" />
+    </svg>
+  );
+}
+
 function CloseIcon() {
   return (
     <svg
@@ -243,11 +254,13 @@ export function Header() {
     Object.values(state.cartQuantities).reduce((sum, quantity) => sum + quantity, 0),
   );
   const currentUser = usePublicAuthStore((state) => state.currentUser);
+  const isAuthLoggingOut = usePublicAuthStore((state) => state.isLoggingOut);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isZipPanelOpen, setIsZipPanelOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(languageOptions[0].code);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isProductsMenuOpen, setIsProductsMenuOpen] = useState(false);
   const [navigationCategories, setNavigationCategories] = useState<Category[]>([]);
   const [draftZipCode, setDraftZipCode] = useState(selectedZipCode);
@@ -397,6 +410,20 @@ export function Header() {
   function handleDesktopAccountItem(section: "overview" | "orders" | "saved" | "refer" | "coupon" | "settings") {
     setIsAccountMenuOpen(false);
     openAccount(section);
+  }
+
+  async function handleAccountLogout() {
+    if (isLoggingOut || isAuthLoggingOut) return;
+    setIsLoggingOut(true);
+    setIsAccountMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    try {
+      await logoutPublicSession();
+      openLogin();
+      window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 0);
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   function openAccountMenu() {
@@ -568,7 +595,7 @@ export function Header() {
                   <ChevronIcon isOpen={isAccountMenuOpen} />
                 </button>
                 {isAccountMenuOpen ? (
-                  <div className="absolute right-0 top-full z-[1150] mt-1.5 min-w-[272px] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                  <div className="absolute right-0 top-full z-[1150] mt-1.5 max-h-[calc(100vh-6rem)] min-w-[272px] overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
                     <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("overview")} type="button">
                       <UserIcon />
                       <span className="flex-1">My Account</span>
@@ -604,6 +631,11 @@ export function Header() {
                       <SettingsIcon />
                       <span className="flex-1">Settings</span>
                       <RowChevronIcon />
+                    </button>
+                    <div aria-hidden="true" className="my-1 border-t border-neutral-200" />
+                    <button aria-label="Log out of your account" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf-600 disabled:cursor-not-allowed disabled:opacity-60" disabled={isLoggingOut || isAuthLoggingOut} onClick={() => void handleAccountLogout()} type="button">
+                      <LogoutIcon />
+                      <span className="flex-1">{isLoggingOut || isAuthLoggingOut ? "Logging out…" : "Log out"}</span>
                     </button>
                   </div>
                 ) : null}
@@ -771,7 +803,7 @@ export function Header() {
 
         {isMobileMenuOpen ? (
           <div
-            className="border-t border-neutral-100 bg-white px-4 pb-5 pt-3 shadow-lg shadow-neutral-950/5 lg:hidden"
+            className="max-h-[calc(100vh-56px)] overflow-y-auto border-t border-neutral-100 bg-white px-4 pb-[calc(20px+env(safe-area-inset-bottom))] pt-3 shadow-lg shadow-neutral-950/5 lg:hidden"
             id="mobile-navigation"
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-2">
@@ -805,16 +837,23 @@ export function Header() {
                   Login / Register
                 </a>
               ) : (
-                <button
-                  className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    openAccount("overview");
-                  }}
-                  type="button"
-                >
-                  My Account
-                </button>
+                <>
+                  <button
+                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openAccount("overview");
+                    }}
+                    type="button"
+                  >
+                    My Account
+                  </button>
+                  <div aria-hidden="true" className="my-1 border-t border-neutral-200" />
+                  <button aria-label="Log out of your account" className="flex min-h-12 w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 hover:text-leaf-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf-600 disabled:cursor-not-allowed disabled:opacity-60" disabled={isLoggingOut || isAuthLoggingOut} onClick={() => void handleAccountLogout()} type="button">
+                    <LogoutIcon />
+                    <span>{isLoggingOut || isAuthLoggingOut ? "Logging out…" : "Log out"}</span>
+                  </button>
+                </>
               )}
 
               <div className="mt-2 grid gap-2">

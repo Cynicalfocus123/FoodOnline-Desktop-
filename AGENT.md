@@ -1,5 +1,13 @@
 # Agent Notes
 
+## Account-menu logout and administrator LINE ID (2026-07-21)
+
+- The signed-in header now ends its desktop/tablet account dropdown with a real `Log out` button after a subtle divider; the same one-action mobile account navigation includes a touch-safe logout row and safe-area-aware scrolling. Existing account order, hover/outside/Escape behavior, identity control, dropdown presentation, and full My Account logout action remain intact.
+- Public logout is centralized through `logoutPublicSession`: it immediately clears the bearer session and account-owned cart, saved-item, favorite, and cached-record state before revoking the current token. Guest/local cart and anonymous/unresolved favorite state remain, while request/session versions prevent late Customer A responses from repopulating Customer B's session.
+- The administrator user API already returns nullable `line_id`; Customer, Supplier, and Partner list Contact cells now render a supplied LINE ID directly below the primary contact number, omit absent values, include it in search/CSV export, and retain the existing responsive table shell. No migration or registration-contract change is required.
+- Final local evidence: 68 Node tests, TypeScript no-emit, a 139-module production build, and the 28-route audit passed. Fresh focused Laravel auth and managed-user groups passed 5 tests / 45 assertions. The full Laravel suite was attempted but has 53 pre-existing environment/rate-limit/media failures after 43 passes, so it is not claimed as passing.
+- `frontend-upload/` is synchronized from the 1,035-file / 91,847,187-byte `dist/`; `backend-live/` contains 287 source files plus its verified manifest. Portable archives pass source/extraction parity: frontend is 1,035 files / 90,959,455 bytes / SHA-256 `a17469790c3c2a7ca32d1c4ea309c3866685beef5fb8f3e0c7058de6ef3100b0`; backend is 288 files / 295,452 bytes / SHA-256 `4e815a52d6f4ed02006f7ad1671772cb12985e6ef2a54d53823cf40226cd8aff`. No external Hostinger deployment is evidenced.
+
 ## Account addresses and saved items persistence (2026-07-21)
 
 - Authenticated Address Book and checkout saves are Laravel-authoritative: browser-only addresses are never shown as saved, used as persisted checkout records, or exposed to administrators.

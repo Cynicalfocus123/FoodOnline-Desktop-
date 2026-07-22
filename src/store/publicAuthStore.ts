@@ -36,6 +36,7 @@ type PublicAuthState = {
   authError: string | null;
   currentUser: PublicSessionUser | null;
   hasHydratedSession: boolean;
+  isLoggingOut: boolean;
   isSubmittingLogin: boolean;
   isValidatingSession: boolean;
   token: string | null;
@@ -109,6 +110,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
       authError: null,
       currentUser: null,
       hasHydratedSession: false,
+      isLoggingOut: false,
       isSubmittingLogin: false,
       isValidatingSession: false,
       token: null,
@@ -139,6 +141,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
           authError: null,
           currentUser: toMockPhoneSession(trimmedIdentifier, profile),
           hasHydratedSession: true,
+          isLoggingOut: false,
           isSubmittingLogin: false,
           token: null,
         });
@@ -152,6 +155,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
             authError: null,
             currentUser: null,
             hasHydratedSession: true,
+            isLoggingOut: false,
             isValidatingSession: false,
           });
           return;
@@ -165,6 +169,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
             authError: null,
             currentUser: toPublicSessionUser(response.user),
             hasHydratedSession: true,
+            isLoggingOut: false,
             isValidatingSession: false,
           });
         } catch {
@@ -172,6 +177,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
             authError: null,
             currentUser: null,
             hasHydratedSession: true,
+            isLoggingOut: false,
             isValidatingSession: false,
             token: null,
           });
@@ -193,6 +199,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
             authError: null,
             currentUser: toPublicSessionUser(response.user),
             hasHydratedSession: true,
+            isLoggingOut: false,
             isSubmittingLogin: false,
             token: response.token,
           });
@@ -206,12 +213,8 @@ export const usePublicAuthStore = create<PublicAuthState>()(
         }
       },
       logoutUser: async () => {
+        if (get().isLoggingOut) return;
         const token = get().token;
-
-        if (token) {
-          await apiRequest("/auth/logout", { method: "POST", token }).catch(() => undefined);
-        }
-
         set({
           authError: null,
           currentUser: null,
@@ -219,13 +222,22 @@ export const usePublicAuthStore = create<PublicAuthState>()(
           isSubmittingLogin: false,
           isValidatingSession: false,
           token: null,
+          isLoggingOut: true,
         });
+        try {
+          if (token) {
+            await apiRequest("/auth/logout", { method: "POST", token }).catch(() => undefined);
+          }
+        } finally {
+          set({ isLoggingOut: false });
+        }
       },
       setAuthenticatedSession: (user, token) => {
         set({
           authError: null,
           currentUser: toPublicSessionUser(user),
           hasHydratedSession: true,
+          isLoggingOut: false,
           isSubmittingLogin: false,
           isValidatingSession: false,
           token,
@@ -244,6 +256,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
         ...(persistedState as Partial<PublicAuthState>),
         authError: null,
         hasHydratedSession: false,
+        isLoggingOut: false,
         isSubmittingLogin: false,
         isValidatingSession: false,
       }),

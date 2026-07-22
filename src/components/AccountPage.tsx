@@ -14,6 +14,7 @@ import {
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { AccountSection, useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
+import { logoutPublicSession } from "../services/logoutPublicSession";
 import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
 import { ProductCard } from "./ProductCard";
@@ -234,7 +235,7 @@ export function AccountPage() {
 
   const currentUser = usePublicAuthStore((state) => state.currentUser);
   const token = usePublicAuthStore((state) => state.token);
-  const logoutUser = usePublicAuthStore((state) => state.logoutUser);
+  const isLoggingOut = usePublicAuthStore((state) => state.isLoggingOut);
 
   const [statusFilter, setStatusFilter] = useState<(typeof statusShortcuts)[number]["key"]>("pending");
   const [couponCount] = useState(1);
@@ -342,7 +343,7 @@ export function AccountPage() {
   }
 
   async function handleAccountLogout() {
-    await logoutUser();
+    await logoutPublicSession();
     openLogin();
     window.setTimeout(() => {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -643,7 +644,7 @@ export function AccountPage() {
         body: { reason: deleteReason, other_reason: deleteReason === "other" ? deleteOtherReason.trim() : null },
       });
       setDeleteMessage(response.message || "Your account deletion request has been submitted.");
-      await logoutUser();
+      await logoutPublicSession();
       backToHome();
     } catch (error) {
       setDeleteError(toErrorMessage(error, "Unable to submit delete request."));
@@ -729,11 +730,13 @@ export function AccountPage() {
                 </div>
 
                 <button
-                  className="mx-auto mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-8 text-lg font-semibold text-neutral-950 transition hover:bg-neutral-100"
+                  aria-label="Log out of your account"
+                  className="mx-auto mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-8 text-lg font-semibold text-neutral-950 transition hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isLoggingOut}
                   onClick={() => void handleAccountLogout()}
                   type="button"
                 >
-                  Log out
+                  {isLoggingOut ? "Logging out…" : "Log out"}
                 </button>
               </div>
             ) : null}

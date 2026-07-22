@@ -26,17 +26,23 @@ class AdminManagedUserCrudTest extends TestCase
             'email' => 'supplier@example.com',
             'first_name' => 'Suda',
             'last_name' => 'Foods',
+            'line_id' => 'suda.foods',
             'company_name' => 'Suda Foods',
             'status' => 'active',
             'password' => 'Strongpass123',
         ])->assertCreated()
             ->assertJsonPath('user.account_type', 'supplier')
+            ->assertJsonPath('user.line_id', 'suda.foods')
             ->assertJsonPath('user.company_name', 'Suda Foods');
 
         $id = (string) $created->json('user.id');
         $this->withToken($token)->getJson('/api/v1/admin/users/'.$id)
             ->assertOk()
             ->assertJsonPath('user.email', 'supplier@example.com');
+
+        $this->withToken($token)->getJson('/api/v1/admin/users?account_type=supplier')
+            ->assertOk()
+            ->assertJsonPath('users.0.line_id', 'suda.foods');
 
         $this->withToken($token)->patchJson('/api/v1/admin/users/'.$id, [
             'company_name' => 'Suda Global Foods',

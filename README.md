@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> Account-menu logout and administrator LINE ID (2026-07-21): signed-in desktop/tablet and mobile account navigation now expose one accessible Log out action that clears account-owned frontend state before revoking the existing public token. Admin Customer, Supplier, and Partner lists show any supplied LINE ID directly below the primary contact number. No schema migration is required; the verified release contains a 1,035-file frontend mirror and 288-file backend archive. External Hostinger deployment remains a separate manual action.
+
 > Account persistence (2026-07-21): authenticated addresses are Laravel-authoritative and shared by Address Book and checkout. Administrator customer detail is strictly customer-scoped. Product hearts use canonical UUID favorites, and Saved Items is the shared persisted-favorites view.
 
 > Enterprise CMS workflow (2026-07-18): the unchanged admin sidebar now opens dedicated scalable list pages and full-width create/edit routes for content and user modules. Product variants remain inside Product Edit, nested admin routes refresh through `admin.html`, and requested production ZIPs are generated from the final backend/frontend mirrors. See `AGENT.md`, `DESIGNER.md`, `design.md`, and `DEPLOYMENT.md`.

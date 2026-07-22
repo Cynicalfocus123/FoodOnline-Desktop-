@@ -1,5 +1,11 @@
 # Operational Commerce and Production Readiness — Phase 7
 
+## Account-menu logout and administrator LINE ID follow-up (2026-07-21)
+
+The shared public-session logout path invalidates account-owned cart/saved/favorite state before token revocation and guards hydration responses by the active session, so a late authenticated response cannot expose prior-customer data after logout or a subsequent sign-in. Intentional guest cart and anonymous/unresolved favorite state remains. The existing nullable `users.line_id` resource field is rendered beneath the primary Contact value in Customer, Supplier, and Partner administrator lists only when supplied; this is a presentation/query/export correction, not a schema or registration-contract change.
+
+Local verification passed 68 focused Node tests, TypeScript no-emit, a 139-module build, the 28-route production audit, and fresh relevant Laravel auth/managed-user tests (5 tests / 45 assertions). The entire Laravel suite currently has unrelated rate-limit/media-environment failures and is not represented as a passing release gate.
+
 ## Address and favorites persistence follow-up (2026-07-21)
 
 Logged-in addresses are Laravel-authoritative: local browser recovery is never a completed save. Address Book and checkout use the same account rows, while the administrator user detail response returns the complete collection only for its selected customer. Favorites persist by canonical product UUID, use one shared state for every heart and Saved Items, preserve server data, and keep only explicitly unresolved compatibility products until an exact backend identity exists.

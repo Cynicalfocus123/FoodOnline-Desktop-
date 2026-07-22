@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Header account logout and administrator contact LINE ID (2026-07-21)
+
+- The signed-in desktop/tablet header account dropdown retains its white, bordered, rounded menu and current seven navigation rows, then shows a subtle divider and one final Log out button with a left sign-out icon and no chevron. It has matching row rhythm, keyboard focus, a processing state, and internal scrolling on short viewports so the action remains reachable.
+- Signed-in mobile navigation preserves the existing My Account path and adds one final touch-safe Log out row after its divider. The mobile navigation can scroll within the viewport and keeps safe-area bottom padding; the full My Account page keeps its existing logout action without duplicating it in any one visible menu.
+- Administrator Customer, Supplier, and Partner Contact cells show the phone number first and a supplied LINE ID in subdued text directly underneath. Blank optional LINE IDs remain absent rather than creating a placeholder or a separate list column; the dark-green sidebar and rounded list workspace are unchanged.
+
 ## Persistent addresses and shared Saved Items (2026-07-21)
 
 - The existing Address Book modal completes an authenticated save only after Laravel returns a real address ID. Failed requests retain the form and never display browser data as a completed save. Checkout uses the same records and includes every account country form.
