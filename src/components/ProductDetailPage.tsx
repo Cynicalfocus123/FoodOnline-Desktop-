@@ -254,7 +254,7 @@ export function ProductDetailPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const loadingProduct = useMemo(() => mapApiProduct({ uuid: "loading", slug: "loading", name: "Loading product", price: 0 }), []);
   const product = loadedProduct ?? loadingProduct;
-  const isFavorite = favoriteProductIds.includes(product.id);
+  const isFavorite = [product.id, product.uuid, ...(product.compatibility?.localProductIds ?? [])].some((id) => Boolean(id && favoriteProductIds.includes(id)));
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<DetailTabKey>("details");
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? "");
@@ -533,7 +533,7 @@ export function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <IconButton label={isFavorite ? "Remove from favorites" : "Save item"} onClick={() => toggleFavorite(product.id, Boolean(product.apiBacked))}>
+                  <IconButton label={isFavorite ? "Remove from saved items" : "Save item"} onClick={() => toggleFavorite(product)}>
                     <HeartIcon filled={isFavorite} />
                   </IconButton>
                   <IconButton label="Share product" onClick={handleShare}>

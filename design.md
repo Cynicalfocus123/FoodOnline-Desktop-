@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Persistent addresses and shared Saved Items (2026-07-21)
+
+- The existing Address Book modal completes an authenticated save only after Laravel returns a real address ID. Failed requests retain the form and never display browser data as a completed save. Checkout uses the same records and includes every account country form.
+- The administrator Customer editor keeps the existing shell while rendering every address and country-specific field for only the selected customer, with a default marker and safe zero-address state.
+- Hearts and Saved Items use one responsive shared state. Loading, ready, empty, error, unavailable, and unresolved states remain distinct; controls use `Save item` and `Remove from saved items` labels.
+
 ## Refer & Earn customer and admin experience (2026-07-21)
 
 - Keep Refer & Earn inside the existing Account page chrome. The customer sequence is a clear benefit/share area, server-computed stats, privacy-safe activity, and terms. The only sharing controls are Share, Copy link, and Copy invite code; no email-recipient form, QR display, or social-network-specific button is introduced.

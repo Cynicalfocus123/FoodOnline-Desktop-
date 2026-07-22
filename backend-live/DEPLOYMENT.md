@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Account-address and favorites release (2026-07-21)
+
+This no-migration release changes frontend and Laravel source together. Deploy synchronized `frontend-upload/` and `backend-live/` mirrors so authenticated address persistence, strict selected-customer address visibility, and UUID-backed Saved Items reach production atomically. Preserve `public_html/api`, live `.env`, vendor, database, writable storage, queues, and uploaded media. Local archive generation is not evidence of a Hostinger or Cloudflare deployment.
+
 ## Refer & Earn migration release (2026-07-21 — no ZIP)
 
 Deploy backend-live/ and frontend-upload/ generated from the same commit. Do not run the release-zips script and do not create, upload, or extract a ZIP for this release. Preserve the live .env, vendor/, database, complete storage/media tree, writable permissions, queue/runtime state, and the existing public_html/api entry point.

@@ -1,5 +1,9 @@
 # Operational Commerce and Production Readiness — Phase 7
 
+## Address and favorites persistence follow-up (2026-07-21)
+
+Logged-in addresses are Laravel-authoritative: local browser recovery is never a completed save. Address Book and checkout use the same account rows, while the administrator user detail response returns the complete collection only for its selected customer. Favorites persist by canonical product UUID, use one shared state for every heart and Saved Items, preserve server data, and keep only explicitly unresolved compatibility products until an exact backend identity exists.
+
 > 2026-07-18 managed-media update: review images, return evidence, and support attachments now use the shared provider-neutral workflow. Hostinger local Laravel storage is the production default, authenticated multipart upload is available without R2, persisted media includes safe public URLs, and customer ownership/removal is enforced. The older activation wording below is historical; optional direct upload remains backward compatible.
 
 ## Scope

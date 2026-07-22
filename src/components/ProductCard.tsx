@@ -29,7 +29,7 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
   const openProduct = useHomeStore((state) => state.openProduct);
   const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
   const toggleFavorite = useHomeStore((state) => state.toggleFavorite);
-  const isFavorite = favoriteProductIds.includes(product.id);
+  const isFavorite = [product.id, product.uuid, ...(product.compatibility?.localProductIds ?? [])].some((id) => Boolean(id && favoriteProductIds.includes(id)));
   const isGrid = layout === "grid";
   const imageFit = product.imageFit ?? "contain";
   const variantId = product.variants[0]?.id ?? product.id;
@@ -67,13 +67,13 @@ export function ProductCard({ product, layout = "carousel" }: ProductCardProps) 
     >
       <div className={`relative bg-neutral-50 ${isGrid ? "rounded-[18px] p-2" : "rounded-[18px] p-3"}`}>
         <button
-          aria-label={isFavorite ? "Remove favorite" : "Save favorite"}
+          aria-label={isFavorite ? "Remove from saved items" : "Save item"}
           className={`absolute inline-flex items-center justify-center rounded-full border border-white/80 bg-white/95 shadow-sm transition hover:bg-white ${
             isGrid ? "right-2.5 top-2.5 h-7 w-7" : "right-3 top-3 h-8 w-8"
           }`}
           onClick={(event) => {
             stopCardOpen(event);
-            toggleFavorite(product.id, Boolean(product.apiBacked));
+            toggleFavorite(product);
           }}
           type="button"
         >

@@ -34,6 +34,15 @@ export type CommerceCart = {
   updated_at: string;
 };
 
+export type FavoriteRecord = {
+  product_uuid: string;
+  product_slug: string | null;
+  product_name: string | null;
+  product_image_url: string | null;
+  available: boolean;
+  created_at: string | null;
+};
+
 type CartResponse = { cart: CommerceCart; guest_token: string | null };
 
 function guestToken() {
@@ -74,7 +83,7 @@ export const commerceApi = {
     return response.cart;
   },
   guestToken,
-  favorites: (token: string) => apiRequest<{ data: Array<{ product_uuid: string }> }>("/account/favorites", { token }),
+  favorites: (token: string) => apiRequest<{ data: FavoriteRecord[] }>("/account/favorites", { token }),
   saveFavorite: (productUuid: string, token: string) => apiRequest("/account/favorites", { method: "POST", token, body: { product_uuid: productUuid } }),
   removeFavorite: (productUuid: string, token: string) => apiRequest(`/account/favorites/${encodeURIComponent(productUuid)}`, { method: "DELETE", token }),
   mergeSavedData: (productUuids: string[], variantUuids: string[], token: string) => apiRequest<{ merged: number; skipped: string[] }>("/account/favorites/merge", { method: "POST", token, body: { product_uuids: productUuids, variant_uuids: variantUuids } }),

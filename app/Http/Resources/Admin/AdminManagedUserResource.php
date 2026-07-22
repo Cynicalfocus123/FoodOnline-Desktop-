@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Http\Resources\Account\UserAddressResource;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,6 +31,9 @@ class AdminManagedUserResource extends JsonResource
             'registered_from' => $this->resource->registered_from,
             'created_at' => $this->resource->created_at?->toIso8601String(),
             'updated_at' => $this->resource->updated_at?->toIso8601String(),
+            'addresses' => $this->when($this->resource->relationLoaded('addresses'), fn () => $this->resource->addresses
+                ->map(fn (UserAddress $address): array => (new UserAddressResource($address))->resolve())
+                ->values()),
             'referral_summary' => $this->when($this->resource->relationLoaded('referralCode'), fn () => [
                 'code' => $this->resource->referralCode?->code,
                 'code_status' => $this->resource->referralCode?->status,

@@ -58,7 +58,7 @@ export default function App() {
 
   useEffect(() => {
     if (!hasHydratedSession) return;
-    void Promise.all([token ? mergeGuestCart() : hydrateCommerceCart(), token ? hydrateSavedData() : Promise.resolve()]);
+    void Promise.all([token ? mergeGuestCart() : hydrateCommerceCart(), hydrateSavedData()]);
   }, [hasHydratedSession, hydrateCommerceCart, hydrateSavedData, mergeGuestCart, token]);
 
   useEffect(() => {

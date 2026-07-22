@@ -14,6 +14,15 @@ export type ManagedUser = {
   status: "active" | "in_review" | "disabled";
   created_at: string | null;
   updated_at: string | null;
+  addresses?: Array<{
+    id: number;
+    country_key: string;
+    address_values: Record<string, string>;
+    summary: string | null;
+    is_default: boolean;
+    created_at: string | null;
+    updated_at: string | null;
+  }>;
 };
 export const usersApi = {
   show: (token: string, id: string) => apiRequest<{ user: ManagedUser }>(`/admin/users/${id}`, { token }),

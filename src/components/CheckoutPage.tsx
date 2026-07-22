@@ -27,6 +27,8 @@ type CheckoutLineItem = {
 };
 
 type CountryKey =
+  | "usa"
+  | "uk"
   | "thailand"
   | "japan"
   | "singapore"
@@ -89,6 +91,8 @@ type CouponState = {
 } | null;
 
 const countryOrder: CountryKey[] = [
+  "usa",
+  "uk",
   "thailand",
   "japan",
   "singapore",
@@ -101,6 +105,34 @@ const countryOrder: CountryKey[] = [
 ];
 
 const addressConfigs: Record<CountryKey, AddressConfig> = {
+  usa: {
+    label: "United States",
+    deliveryHint: "State, city, postal code, and street number are required for delivery routing.",
+    fields: [
+      { key: "fullName", label: "Full name", type: "text", autoComplete: "shipping name", required: true, requiredMessage: "Full name is required." },
+      { key: "phoneNumber", label: "Phone number", type: "tel", autoComplete: "shipping tel", inputMode: "tel", required: true, requiredMessage: "Phone number is required." },
+      { key: "streetAddress", label: "Street / Building No.", autoComplete: "shipping address-line1", required: true, requiredMessage: "House or building number is required." },
+      { key: "unitFloorRoom", label: "Apt / Suite / Floor / Room", autoComplete: "shipping address-line2", required: false },
+      { key: "city", label: "City", autoComplete: "shipping address-level2", required: true, requiredMessage: "City is required." },
+      { key: "state", label: "State", autoComplete: "shipping address-level1", required: true, requiredMessage: "State is required." },
+      { key: "postalCode", label: "ZIP code", type: "postal", autoComplete: "shipping postal-code", inputMode: "numeric", required: true, requiredMessage: "Postal code is required." },
+      { key: "deliveryNote", label: "Delivery note", type: "textarea", autoComplete: "off", required: false, fullWidth: true },
+    ],
+  },
+  uk: {
+    label: "United Kingdom",
+    deliveryHint: "County/region, post code, and street number are required for local fulfillment.",
+    fields: [
+      { key: "fullName", label: "Full name", type: "text", autoComplete: "shipping name", required: true, requiredMessage: "Full name is required." },
+      { key: "phoneNumber", label: "Phone number", type: "tel", autoComplete: "shipping tel", inputMode: "tel", required: true, requiredMessage: "Phone number is required." },
+      { key: "houseBuilding", label: "House / Building No.", autoComplete: "shipping address-line1", required: true, requiredMessage: "House or building number is required." },
+      { key: "streetName", label: "Street Name", autoComplete: "shipping address-line2", required: true, requiredMessage: "Street name is required." },
+      { key: "locality", label: "Town / Locality", autoComplete: "shipping address-level2", required: true, requiredMessage: "Town or locality is required." },
+      { key: "countyRegion", label: "County / Region", autoComplete: "shipping address-level1", required: true, requiredMessage: "County or region is required." },
+      { key: "postalCode", label: "Postcode", type: "postal", autoComplete: "shipping postal-code", required: true, requiredMessage: "Postcode is required." },
+      { key: "deliveryNote", label: "Delivery note", type: "textarea", autoComplete: "off", required: false, fullWidth: true },
+    ],
+  },
   thailand: {
     label: "Thailand",
     deliveryHint: "Province, district, subdistrict, and postal code are used for local delivery routing.",
@@ -1081,7 +1113,7 @@ export function CheckoutPage() {
     }));
   }
 
-  function handleUseAddress() {
+  async function handleUseAddress() {
     const nextErrors = validateAddress(addressValues, activeAddressConfig);
     const touchedFields = activeAddressConfig.fields.reduce<TouchedFields>((fields, field) => {
       fields[field.key] = true;
@@ -1095,26 +1127,22 @@ export function CheckoutPage() {
       return false;
     }
 
-    const nextAddress: SavedAddress = {
+    let nextAddress: SavedAddress = {
       id: `checkout-address-${Date.now()}`,
       country: addressCountry,
       values: { ...addressValues },
       summary: createAddressSummary(addressCountry, addressValues),
     };
 
-    setCheckoutAddress(nextAddress);
-    setSelectedAddressId(nextAddress.id);
-    setIsAddressFormOpen(false);
-    setAddressFormRestoreAddress(null);
-    window.setTimeout(() => {
-      deliverySectionReference.current?.scrollIntoView({ behavior: "auto", block: "start" });
-    }, 0);
-
     if (currentUser && saveAddressForFuture) {
-      setSavedAddresses((current) => [nextAddress, ...current.filter((address) => address.summary !== nextAddress.summary)].slice(0, 4));
-
-      if (token) {
-        void apiRequest("/account/addresses", {
+      if (!token) {
+        setCheckoutNotice("We could not save this address. Please sign in with your account and try again.");
+        return false;
+      }
+      try {
+        const response = await apiRequest<{
+          address: { id: number; country_key: CountryKey; address_values: AddressValues; summary: string; is_default: boolean };
+        }>("/account/addresses", {
           method: "POST",
           token,
           body: {
@@ -1123,27 +1151,30 @@ export function CheckoutPage() {
             summary: nextAddress.summary,
             is_default: savedAddresses.length === 0,
           },
-        }).then(() =>
-          apiRequest<{
-            addresses: Array<{
-              id: number;
-              country_key: CountryKey;
-              address_values: AddressValues;
-              summary: string;
-              is_default: boolean;
-            }>;
-          }>("/account/addresses", { token }).then((response) => {
-            const nextSavedAddresses = (response.addresses ?? []).map((item) => ({
-              id: String(item.id),
-              country: item.country_key,
-              values: item.address_values ?? {},
-              summary: item.summary,
-            }));
-            setSavedAddresses(nextSavedAddresses);
-          }),
-        ).catch(() => undefined);
+        });
+        nextAddress = {
+          id: String(response.address.id),
+          country: response.address.country_key,
+          values: response.address.address_values ?? {},
+          summary: response.address.summary,
+        };
+        const listed = await apiRequest<{
+          addresses: Array<{ id: number; country_key: CountryKey; address_values: AddressValues; summary: string; is_default: boolean }>;
+        }>("/account/addresses", { token });
+        setSavedAddresses((listed.addresses ?? []).map((item) => ({ id: String(item.id), country: item.country_key, values: item.address_values ?? {}, summary: item.summary })));
+      } catch {
+        setCheckoutNotice("We could not save this address. Please try again.");
+        return false;
       }
     }
+
+    setCheckoutAddress(nextAddress);
+    setSelectedAddressId(nextAddress.id);
+    setIsAddressFormOpen(false);
+    setAddressFormRestoreAddress(null);
+    window.setTimeout(() => {
+      deliverySectionReference.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 0);
 
     return true;
   }
@@ -1216,7 +1247,7 @@ export function CheckoutPage() {
   async function handlePlaceOrder() {
     setCheckoutNotice(null);
 
-    if (!selectedAddress && !handleUseAddress()) {
+    if (!selectedAddress && !(await handleUseAddress())) {
       return;
     }
 
@@ -1344,7 +1375,7 @@ export function CheckoutPage() {
                       className="grid gap-5 rounded-[24px] border border-neutral-200 bg-neutral-50 p-4 sm:p-5"
                       onSubmit={(event) => {
                         event.preventDefault();
-                        handleUseAddress();
+                        void handleUseAddress();
                       }}
                     >
                       <label className="grid gap-2" htmlFor="checkout-country">

@@ -17,7 +17,7 @@ import {
 } from "../lib/security";
 import { ApiAuthenticatedUser, usePublicAuthStore } from "./publicAuthStore";
 import { getPublicRouteHref } from "../lib/routes";
-import { commerceApi, type CommerceCart } from "../services/commerceApi";
+import { commerceApi, type CommerceCart, type FavoriteRecord } from "../services/commerceApi";
 import { catalogRepository } from "../services/catalog/repository";
 import type { Product } from "../types/catalog";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
@@ -54,6 +54,8 @@ export type SiteView =
 export type SignupStep = "role" | "form" | "complete";
 export type CommerceLineStatus = { available: boolean; availableQuantity: number | null; unavailableReason: string | null };
 export type CatalogLineSource = "api" | "local";
+export type FavoriteSource = "anonymous" | "persisted" | "unresolved";
+export type FavoriteSyncStatus = "auth-pending" | "loading" | "ready" | "saving" | "error";
 
 function readProductReturnRoute(
   state: Pick<HomeState, "siteView" | "selectedCategorySlug" | "searchQuery" | "productReturnRoute">,
@@ -373,7 +375,11 @@ type HomeState = {
   savedLineSources: Record<string, CatalogLineSource>;
   selectedCartIds: string[];
   favoriteProductIds: string[];
-  favoriteProductSources: Record<string, CatalogLineSource>;
+  favoriteProductSources: Record<string, FavoriteSource>;
+  favoriteRecords: Record<string, FavoriteRecord>;
+  favoriteSyncStatus: FavoriteSyncStatus;
+  favoriteSyncMessage: string | null;
+  favoriteMutationVersions: Record<string, number>;
   selectedZipCode: string;
   searchInputValue: string;
   searchQuery: string;
@@ -416,13 +422,15 @@ type HomeState = {
   hydrateCommerceCart: () => Promise<void>;
   mergeGuestCart: () => Promise<void>;
   hydrateSavedData: () => Promise<void>;
+  retryFavorites: () => Promise<void>;
   addToCart: (productId: string, variantId?: string, apiBacked?: boolean, apiVariantIdentityReady?: boolean) => void;
   removeFromCart: (lineId: string) => void;
   saveForLater: (lineId: string) => void;
   moveSavedToCart: (lineId: string) => void;
   toggleCartSelection: (lineId: string) => void;
   setAllCartSelections: (lineIds: string[], isSelected: boolean) => void;
-  toggleFavorite: (productId: string, apiBacked?: boolean) => void;
+  toggleFavorite: (product: Product) => void;
+  removeFavorite: (favoriteId: string) => void;
   migrateCatalogIdentity: (product: Product) => void;
   setSelectedZipCode: (zipCode: string) => void;
   selectRole: (role: string) => void;
@@ -484,11 +492,36 @@ function cartState(cart: CommerceCart, state: Pick<HomeState, "cartQuantities" |
 }
 
 let cartMutationQueue: Promise<void> = Promise.resolve();
+let favoriteMutationQueue: Promise<void> = Promise.resolve();
+let favoriteMergeToken: string | null = null;
+let favoriteHydrationVersion = 0;
 
 function enqueueCartMutation<T>(work: () => Promise<T>): Promise<T> {
   const next = cartMutationQueue.then(work, work);
   cartMutationQueue = next.then(() => undefined, () => undefined);
   return next;
+}
+
+function enqueueFavoriteMutation<T>(work: () => Promise<T>): Promise<T> {
+  const next = favoriteMutationQueue.then(work, work);
+  favoriteMutationQueue = next.then(() => undefined, () => undefined);
+  return next;
+}
+
+function isCanonicalProductUuid(value: string | null | undefined) {
+  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value));
+}
+
+function favoriteIdsForProduct(product: Product) {
+  return [...new Set([
+    product.uuid,
+    product.id,
+    ...(product.compatibility?.localProductIds ?? []),
+  ].filter((value): value is string => Boolean(value)))];
+}
+
+function favoriteRecordMap(records: FavoriteRecord[]) {
+  return Object.fromEntries(records.filter((record) => isCanonicalProductUuid(record.product_uuid)).map((record) => [record.product_uuid, record]));
 }
 
 export const useHomeStore = create<HomeState>((set, get) => ({
@@ -511,6 +544,10 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   selectedCartIds: [],
   favoriteProductIds: [],
   favoriteProductSources: {},
+  favoriteRecords: {},
+  favoriteSyncStatus: "auth-pending",
+  favoriteSyncMessage: null,
+  favoriteMutationVersions: {},
   selectedZipCode: "91789",
   searchInputValue: "",
   searchQuery: "",
@@ -1166,24 +1203,66 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   },
   hydrateSavedData: async () => {
     const token = usePublicAuthStore.getState().token;
-    if (!token) return;
-    const localFavorites = get().favoriteProductIds.filter((id) => get().favoriteProductSources[id] !== "local");
+    const hydrationVersion = ++favoriteHydrationVersion;
+    if (!token) {
+      favoriteMergeToken = null;
+      set((state) => {
+        const retainedIds = state.favoriteProductIds.filter((id) => state.favoriteProductSources[id] !== "persisted");
+        return {
+          favoriteProductIds: retainedIds,
+          favoriteProductSources: Object.fromEntries(retainedIds.map((id) => [id, state.favoriteProductSources[id]])),
+          favoriteRecords: {},
+          favoriteSyncStatus: "ready",
+          favoriteSyncMessage: null,
+        };
+      });
+      return;
+    }
+    const localFavorites = get().favoriteProductIds.filter((id) => get().favoriteProductSources[id] === "anonymous" && isCanonicalProductUuid(id));
     const localSaved = get().savedForLaterIds.filter((id) => get().savedLineSources[id] !== "local");
-    const compatibilityFavorites = get().favoriteProductIds.filter((id) => get().favoriteProductSources[id] === "local");
     const compatibilitySaved = get().savedForLaterIds.filter((id) => get().savedLineSources[id] === "local");
+    set({ favoriteSyncStatus: "loading", favoriteSyncMessage: null });
     try {
-      await commerceApi.mergeSavedData(localFavorites, localSaved, token);
+      const shouldMerge = favoriteMergeToken !== token;
+      const mergeResult = shouldMerge
+        ? await commerceApi.mergeSavedData(localFavorites, localSaved, token)
+        : { merged: 0, skipped: [] as string[] };
+      if (shouldMerge) favoriteMergeToken = token;
       const [favorites, saved] = await Promise.all([commerceApi.favorites(token), commerceApi.savedItems(token)]);
+      if (hydrationVersion !== favoriteHydrationVersion || usePublicAuthStore.getState().token !== token) return;
+      const remoteRecords = favoriteRecordMap(favorites.data);
+      const remoteIds = new Set(Object.keys(remoteRecords));
+      const skipped = new Set(mergeResult.skipped);
       set((state) => ({
-        favoriteProductIds: [...new Set([...favorites.data.map((item) => item.product_uuid), ...compatibilityFavorites])],
-        favoriteProductSources: { ...Object.fromEntries(favorites.data.map((item) => [item.product_uuid, "api" as const])), ...Object.fromEntries(compatibilityFavorites.map((id) => [id, "local" as const])) },
+        favoriteProductIds: [...new Set([
+          ...remoteIds,
+          ...state.favoriteProductIds.filter((id) => {
+            const source = state.favoriteProductSources[id];
+            if (source === "persisted" || remoteIds.has(id)) return false;
+            return !(shouldMerge && source === "anonymous" && localFavorites.includes(id) && !skipped.has(id));
+          }),
+        ])],
+        favoriteProductSources: {
+          ...Object.fromEntries([...remoteIds].map((id) => [id, "persisted" as const])),
+          ...Object.fromEntries(state.favoriteProductIds
+            .filter((id) => !remoteIds.has(id) && !(shouldMerge && state.favoriteProductSources[id] === "anonymous" && localFavorites.includes(id) && !skipped.has(id)))
+            .map((id) => [id, skipped.has(id) ? "unresolved" as const : state.favoriteProductSources[id]])),
+        },
+        favoriteRecords: remoteRecords,
+        favoriteSyncStatus: "ready",
+        favoriteSyncMessage: null,
         savedForLaterIds: [...new Set([...saved.data.map((item) => item.variant_uuid), ...compatibilitySaved])],
         savedLineProductIds: { ...Object.fromEntries(saved.data.filter((item) => item.product_uuid).map((item) => [item.variant_uuid, item.product_uuid!])), ...Object.fromEntries(compatibilitySaved.map((id) => [id, state.savedLineProductIds[id] ?? id])) },
         savedLineSources: { ...Object.fromEntries(saved.data.map((item) => [item.variant_uuid, "api" as const])), ...Object.fromEntries(compatibilitySaved.map((id) => [id, "local" as const])) },
       }));
-    } catch {
-      // Anonymous compatibility state remains visible if the account sync is temporarily unavailable.
+    } catch (error) {
+      if (hydrationVersion !== favoriteHydrationVersion || usePublicAuthStore.getState().token !== token) return;
+      set({ favoriteSyncStatus: "error", favoriteSyncMessage: toUserFacingErrorMessage(error, "Unable to restore saved items.") });
     }
+  },
+  retryFavorites: async () => {
+    favoriteMergeToken = null;
+    await get().hydrateSavedData();
   },
   setCartQuantity: (lineId, quantity) => {
     const isLocalLine = get().cartLineSources[lineId] === "local";
@@ -1326,20 +1405,81 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         ? Array.from(new Set([...state.selectedCartIds.filter((id) => !productIds.includes(id)), ...productIds]))
         : state.selectedCartIds.filter((id) => !productIds.includes(id)),
     })),
-  toggleFavorite: (productId, apiBacked = true) => {
-    const token = usePublicAuthStore.getState().token; const removing = get().favoriteProductIds.includes(productId);
+  toggleFavorite: (product) => {
+    const token = usePublicAuthStore.getState().token;
+    const canonicalId = product.apiBacked && isCanonicalProductUuid(product.uuid) ? product.uuid : null;
+    const productIds = favoriteIdsForProduct(product);
+    const existingId = productIds.find((id) => get().favoriteProductIds.includes(id));
+    const favoriteId = canonicalId ?? existingId ?? product.id;
+    const removing = Boolean(existingId);
+    const mutationVersion = (get().favoriteMutationVersions[favoriteId] ?? 0) + 1;
+
     set((state) => ({
-      favoriteProductIds: state.favoriteProductIds.includes(productId)
-        ? state.favoriteProductIds.filter((id) => id !== productId)
-        : [...state.favoriteProductIds, productId],
-      favoriteProductSources: { ...state.favoriteProductSources, [productId]: apiBacked ? "api" : "local" },
+      favoriteProductIds: removing
+        ? state.favoriteProductIds.filter((id) => !productIds.includes(id))
+        : [...new Set([...state.favoriteProductIds.filter((id) => !productIds.includes(id)), favoriteId])],
+      favoriteProductSources: removing
+        ? Object.fromEntries(Object.entries(state.favoriteProductSources).filter(([id]) => !productIds.includes(id)))
+        : { ...Object.fromEntries(Object.entries(state.favoriteProductSources).filter(([id]) => !productIds.includes(id))), [favoriteId]: canonicalId ? "anonymous" : "unresolved" },
+      favoriteRecords: removing
+        ? Object.fromEntries(Object.entries(state.favoriteRecords).filter(([id]) => !productIds.includes(id)))
+        : state.favoriteRecords,
+      favoriteMutationVersions: { ...state.favoriteMutationVersions, [favoriteId]: mutationVersion },
     }));
-    if (token && apiBacked) void (removing ? commerceApi.removeFavorite(productId, token) : commerceApi.saveFavorite(productId, token)).catch(() => undefined);
+    if (!token || !canonicalId) {
+      set({ favoriteSyncStatus: "ready", favoriteSyncMessage: canonicalId ? null : "This item will be saved after its exact catalog record is available." });
+      return;
+    }
+
+    set({ favoriteSyncStatus: "saving", favoriteSyncMessage: null });
+    void enqueueFavoriteMutation(() => removing ? commerceApi.removeFavorite(canonicalId, token) : commerceApi.saveFavorite(canonicalId, token))
+      .then(() => {
+        if (get().favoriteMutationVersions[canonicalId] !== mutationVersion) return;
+        set((state) => ({
+          favoriteProductSources: removing ? state.favoriteProductSources : { ...state.favoriteProductSources, [canonicalId]: "persisted" },
+          favoriteSyncStatus: "ready",
+          favoriteSyncMessage: null,
+        }));
+      })
+      .catch((error) => {
+        if (get().favoriteMutationVersions[canonicalId] !== mutationVersion) return;
+        set((state) => ({
+          favoriteProductIds: removing ? [...new Set([...state.favoriteProductIds, canonicalId])] : state.favoriteProductIds.filter((id) => id !== canonicalId),
+          favoriteProductSources: removing ? { ...state.favoriteProductSources, [canonicalId]: "persisted" } : Object.fromEntries(Object.entries(state.favoriteProductSources).filter(([id]) => id !== canonicalId)),
+          favoriteSyncStatus: "error",
+          favoriteSyncMessage: toUserFacingErrorMessage(error, "Unable to update saved items."),
+        }));
+      });
+  },
+  removeFavorite: (favoriteId) => {
+    const token = usePublicAuthStore.getState().token;
+    const source = get().favoriteProductSources[favoriteId];
+    const mutationVersion = (get().favoriteMutationVersions[favoriteId] ?? 0) + 1;
+    set((state) => ({
+      favoriteProductIds: state.favoriteProductIds.filter((id) => id !== favoriteId),
+      favoriteProductSources: Object.fromEntries(Object.entries(state.favoriteProductSources).filter(([id]) => id !== favoriteId)),
+      favoriteRecords: Object.fromEntries(Object.entries(state.favoriteRecords).filter(([id]) => id !== favoriteId)),
+      favoriteMutationVersions: { ...state.favoriteMutationVersions, [favoriteId]: mutationVersion },
+    }));
+    if (!token || source !== "persisted" || !isCanonicalProductUuid(favoriteId)) return;
+    set({ favoriteSyncStatus: "saving", favoriteSyncMessage: null });
+    void enqueueFavoriteMutation(() => commerceApi.removeFavorite(favoriteId, token)).then(() => {
+      if (get().favoriteMutationVersions[favoriteId] === mutationVersion) set({ favoriteSyncStatus: "ready", favoriteSyncMessage: null });
+    }).catch((error) => {
+      if (get().favoriteMutationVersions[favoriteId] !== mutationVersion) return;
+      set((state) => ({
+        favoriteProductIds: [...new Set([...state.favoriteProductIds, favoriteId])],
+        favoriteProductSources: { ...state.favoriteProductSources, [favoriteId]: "persisted" },
+        favoriteSyncStatus: "error",
+        favoriteSyncMessage: toUserFacingErrorMessage(error, "Unable to update saved items."),
+      }));
+    });
   },
   migrateCatalogIdentity: (product) => {
     const compatibility = product.compatibility;
     if (!product.apiBacked || !compatibility?.localProductIds.length) return;
     let migrated = false;
+    const resolvedFavoriteIds: string[] = [];
     set((state) => {
       const next = {
         cartQuantities: { ...state.cartQuantities }, cartLineProductIds: { ...state.cartLineProductIds }, cartLineSources: { ...state.cartLineSources },
@@ -1362,12 +1502,27 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       for (const localProductId of compatibility.localProductIds) {
         if (next.favoriteProductIds.includes(localProductId)) {
           next.favoriteProductIds = [...new Set(next.favoriteProductIds.map((id) => id === localProductId ? product.id : id))];
-          next.favoriteProductSources[product.id] = "api"; delete next.favoriteProductSources[localProductId]; migrated = true;
+          next.favoriteProductSources[product.id] = next.favoriteProductSources[localProductId] === "persisted" ? "persisted" : "anonymous";
+          delete next.favoriteProductSources[localProductId];
+          resolvedFavoriteIds.push(product.id);
+          migrated = true;
         }
       }
       return next;
     });
-    if (migrated) { void get().hydrateCommerceCart(); void get().hydrateSavedData(); }
+    if (migrated) {
+      void get().hydrateCommerceCart();
+      const token = usePublicAuthStore.getState().token;
+      if (token && isCanonicalProductUuid(product.uuid)) {
+        for (const favoriteId of resolvedFavoriteIds) {
+          if (favoriteId !== product.uuid) continue;
+          void enqueueFavoriteMutation(() => commerceApi.saveFavorite(product.uuid!, token))
+            .then(() => set((state) => ({ favoriteProductSources: { ...state.favoriteProductSources, [product.uuid!]: "persisted" } })))
+            .catch(() => set((state) => ({ favoriteProductSources: { ...state.favoriteProductSources, [product.uuid!]: "unresolved" } })));
+        }
+      }
+      void get().hydrateSavedData();
+    }
   },
   setSelectedZipCode: (zipCode) =>
     set({

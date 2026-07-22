@@ -16,6 +16,9 @@ import { AccountSection, useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
+import { ProductCard } from "./ProductCard";
+import { useCatalogProducts } from "../services/catalog/useCatalogProducts";
+import type { Product } from "../types/catalog";
 
 type AccountAddress = {
   id: number;
@@ -65,7 +68,6 @@ type DeleteReasonKey =
   | "prefer_not_to_say"
   | "other";
 
-const LOCAL_ADDRESS_STORAGE_KEY = "foodonlines-account-addresses-v1";
 const LOCAL_NOTIFICATION_STORAGE_KEY = "foodonlines-notification-preferences-v1";
 const deleteReasons: Array<{ key: DeleteReasonKey; label: string }> = [
   { key: "bad_experience", label: "Bad experience with FoodOnlines" },
@@ -95,33 +97,6 @@ const defaultPreferences: NotificationPreferences = {
   sms_notifications: false,
   push_notifications: true,
 };
-
-function readLocalAddressBook(userKey: string): AccountAddress[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = window.localStorage.getItem(LOCAL_ADDRESS_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Record<string, AccountAddress[]>;
-    const values = parsed[userKey];
-    return Array.isArray(values) ? values : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeLocalAddressBook(userKey: string, addresses: AccountAddress[]) {
-  if (typeof window === "undefined") return;
-
-  try {
-    const raw = window.localStorage.getItem(LOCAL_ADDRESS_STORAGE_KEY);
-    const parsed = raw ? (JSON.parse(raw) as Record<string, AccountAddress[]>) : {};
-    parsed[userKey] = addresses;
-    window.localStorage.setItem(LOCAL_ADDRESS_STORAGE_KEY, JSON.stringify(parsed));
-  } catch {
-    // Local storage failures should not break account actions.
-  }
-}
 
 function readLocalNotificationPreferences(userKey: string): NotificationPreferences | null {
   if (typeof window === "undefined") return null;
@@ -186,6 +161,69 @@ function routeTitle(section: AccountSection) {
   return "My account";
 }
 
+function SavedItemsPanel() {
+  const favoriteProductIds = useHomeStore((state) => state.favoriteProductIds);
+  const favoriteRecords = useHomeStore((state) => state.favoriteRecords);
+  const favoriteSyncStatus = useHomeStore((state) => state.favoriteSyncStatus);
+  const favoriteSyncMessage = useHomeStore((state) => state.favoriteSyncMessage);
+  const retryFavorites = useHomeStore((state) => state.retryFavorites);
+  const removeFavorite = useHomeStore((state) => state.removeFavorite);
+  const { products, isLoading, error } = useCatalogProducts(favoriteProductIds);
+  const resolved = favoriteProductIds
+    .map((favoriteId) => products.get(favoriteId))
+    .filter((product): product is Product => Boolean(product));
+  const unresolvedIds = favoriteProductIds.filter((favoriteId) => !products.get(favoriteId));
+  const isRestoring = favoriteSyncStatus === "auth-pending" || favoriteSyncStatus === "loading" || isLoading;
+
+  return (
+    <section className="mt-2 rounded-[26px] border border-neutral-200 bg-white p-5 shadow-soft sm:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-black text-neutral-950">Saved items</h2>
+          <p className="mt-1 text-sm leading-6 text-neutral-600">Products saved with the heart are available across your account.</p>
+        </div>
+        <span aria-live="polite" className="text-sm font-semibold text-neutral-500" role="status">
+          {isRestoring ? "Restoring saved items…" : `${favoriteProductIds.length} saved`}
+        </span>
+      </div>
+
+      {favoriteSyncStatus === "error" || error ? (
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-semibold text-rose-800" role="alert">
+          <span>{favoriteSyncMessage ?? error ?? "We could not load saved items."}</span>
+          <button className="rounded-full border border-rose-200 bg-white px-4 py-2 text-xs font-black text-rose-700" onClick={() => void retryFavorites()} type="button">Retry</button>
+        </div>
+      ) : null}
+
+      {!isRestoring && !favoriteProductIds.length && favoriteSyncStatus === "ready" ? (
+        <p className="mt-6 rounded-2xl bg-neutral-50 p-5 text-sm leading-6 text-neutral-600">No saved items yet. Use a heart on any product to save it here.</p>
+      ) : null}
+
+      {resolved.length ? (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {resolved.map((product) => <ProductCard key={product.id} layout="grid" product={product} />)}
+        </div>
+      ) : null}
+
+      {unresolvedIds.length ? (
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          {unresolvedIds.map((favoriteId) => {
+            const record = favoriteRecords[favoriteId];
+            return (
+              <article className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4" key={favoriteId}>
+                <p className="font-black text-neutral-950">{record?.product_name ?? "Saved product"}</p>
+                <p className="mt-1 text-sm leading-6 text-neutral-600">
+                  {record ? (record.available ? "This item is temporarily unavailable in the catalog." : "This saved product is currently unavailable.") : "This item is waiting for its exact catalog record before it can be synced."}
+                </p>
+                <button aria-label="Remove from saved items" className="mt-4 rounded-full border border-neutral-300 bg-white px-4 py-2 text-xs font-black text-neutral-700" onClick={() => removeFavorite(favoriteId)} type="button">Remove</button>
+              </article>
+            );
+          })}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 export function AccountPage() {
   const accountSection = useHomeStore((state) => state.accountSection);
   const openAccount = useHomeStore((state) => state.openAccount);
@@ -210,7 +248,6 @@ export function AccountPage() {
   const [addressErrors, setAddressErrors] = useState<Record<string, string>>({});
   const [addressTouched, setAddressTouched] = useState<Record<string, boolean>>({});
   const [addressSaveAsDefault, setAddressSaveAsDefault] = useState(false);
-  const [saveAddressForFuture, setSaveAddressForFuture] = useState(true);
   const [addressState, setAddressState] = useState<SaveState>("idle");
   const [addressMessage, setAddressMessage] = useState<string | null>(null);
 
@@ -263,9 +300,14 @@ export function AccountPage() {
   const hasAnyModalOpen =
     isAddressModalOpen || isPaymentModalOpen || isNotificationsOpen || isPasswordOpen || isDeleteOpen;
   const accountPanelReference = useRef<HTMLDivElement | null>(null);
+  const addressRequestVersion = useRef(0);
 
   useEffect(() => {
-    if (!currentUser || !token) return;
+    if (!currentUser || !token) {
+      addressRequestVersion.current += 1;
+      setAddresses([]);
+      return;
+    }
     void loadAddresses(token);
     void loadPaymentMethods(token);
     void loadPreferences(token);
@@ -326,13 +368,18 @@ export function AccountPage() {
   }
 
   async function loadAddresses(nextToken: string) {
+    const requestVersion = ++addressRequestVersion.current;
     try {
       const response = await apiRequest<{ addresses: AccountAddress[] }>("/account/addresses", { token: nextToken });
+      if (requestVersion !== addressRequestVersion.current) return false;
       const next = response.addresses ?? [];
       setAddresses(next);
-      writeLocalAddressBook(userAddressCacheKey, next);
+      return true;
     } catch {
-      setAddresses(readLocalAddressBook(userAddressCacheKey));
+      if (requestVersion === addressRequestVersion.current) {
+        setAddressMessage("We could not load your saved addresses. Please try again.");
+      }
+      return false;
     }
   }
 
@@ -367,7 +414,6 @@ export function AccountPage() {
     setAddressErrors({});
     setAddressTouched({});
     setAddressSaveAsDefault(addresses.length === 0);
-    setSaveAddressForFuture(true);
     setAddressMessage(null);
   }
 
@@ -379,7 +425,6 @@ export function AccountPage() {
     setAddressErrors({});
     setAddressTouched({});
     setAddressSaveAsDefault(address.is_default);
-    setSaveAddressForFuture(true);
     setAddressMessage(null);
   }
 
@@ -415,22 +460,9 @@ export function AccountPage() {
     return Object.keys(nextErrors).length === 0;
   }
 
-  function withLocalDefaultState(nextAddresses: AccountAddress[]) {
-    if (!nextAddresses.some((address) => address.is_default) && nextAddresses.length > 0) {
-      const [first, ...rest] = nextAddresses;
-      return [{ ...first, is_default: true }, ...rest];
-    }
-    return nextAddresses;
-  }
-
-  function updateLocalAddresses(nextAddresses: AccountAddress[]) {
-    const normalized = withLocalDefaultState(nextAddresses);
-    setAddresses(normalized);
-    writeLocalAddressBook(userAddressCacheKey, normalized);
-  }
-
   async function saveAddress(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (addressState === "saving") return;
     if (!validateAddressForm()) return;
 
     const payload = {
@@ -444,45 +476,18 @@ export function AccountPage() {
     setAddressMessage(null);
 
     try {
-      if (token) {
-        if (editingAddressId) {
-          await apiRequest(`/account/addresses/${editingAddressId}`, { method: "PUT", token, body: payload });
-        } else {
-          await apiRequest("/account/addresses", { method: "POST", token, body: payload });
-        }
-        await loadAddresses(token);
-      } else {
-        throw new Error("no-token");
-      }
-
-      setAddressMode("list");
-      setAddressMessage("Address saved.");
-    } catch {
-      const base = addresses.length ? [...addresses] : [...readLocalAddressBook(userAddressCacheKey)];
+      if (!token) throw new Error("no-token");
       if (editingAddressId) {
-        const next = base.map((address) =>
-          address.id === editingAddressId
-            ? { ...address, country_key: addressCountry, address_values: { ...addressValues }, summary: payload.summary, is_default: addressSaveAsDefault }
-            : addressSaveAsDefault
-              ? { ...address, is_default: false }
-              : address,
-        );
-        updateLocalAddresses(next);
+        await apiRequest<{ address: AccountAddress }>(`/account/addresses/${editingAddressId}`, { method: "PUT", token, body: payload });
       } else {
-        const localId = Date.now();
-        const nextAddress: AccountAddress = {
-          id: localId,
-          country_key: addressCountry,
-          address_values: { ...addressValues },
-          summary: payload.summary,
-          is_default: addressSaveAsDefault || base.length === 0,
-        };
-        const next = [nextAddress, ...base.map((address) => (nextAddress.is_default ? { ...address, is_default: false } : address))];
-        updateLocalAddresses(next);
+        await apiRequest<{ address: AccountAddress }>("/account/addresses", { method: "POST", token, body: payload });
       }
+      await loadAddresses(token);
 
       setAddressMode("list");
-      setAddressMessage(saveAddressForFuture ? "Address saved locally." : "Address used locally and can be saved later.");
+      setAddressMessage(editingAddressId ? "Address updated successfully." : "Address saved successfully.");
+    } catch {
+      setAddressMessage("We could not save this address. Please try again.");
     } finally {
       setAddressState("idle");
     }
@@ -490,31 +495,31 @@ export function AccountPage() {
 
   async function removeAddress(addressId: number) {
     if (!token) {
-      updateLocalAddresses(addresses.filter((address) => address.id !== addressId));
+      setAddressMessage("Please sign in with your account to manage saved addresses.");
       return;
     }
 
     try {
       await apiRequest(`/account/addresses/${addressId}`, { method: "DELETE", token });
       await loadAddresses(token);
+      setAddressMessage("Address deleted successfully.");
     } catch {
-      updateLocalAddresses(addresses.filter((address) => address.id !== addressId));
-      setAddressMessage("Address removed locally.");
+      setAddressMessage("We could not delete this address. Please try again.");
     }
   }
 
   async function makeDefaultAddress(addressId: number) {
     if (!token) {
-      updateLocalAddresses(addresses.map((address) => ({ ...address, is_default: address.id === addressId })));
+      setAddressMessage("Please sign in with your account to manage saved addresses.");
       return;
     }
 
     try {
       await apiRequest(`/account/addresses/${addressId}/default`, { method: "PUT", token });
       await loadAddresses(token);
+      setAddressMessage("Default address updated successfully.");
     } catch {
-      updateLocalAddresses(addresses.map((address) => ({ ...address, is_default: address.id === addressId })));
-      setAddressMessage("Default address updated locally.");
+      setAddressMessage("We could not update the default address. Please try again.");
     }
   }
 
@@ -738,7 +743,7 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "saved" ? (
-              <SimplePanel title="Saved items" subtitle="Your saved products will appear here when available." />
+              <SavedItemsPanel />
             ) : null}
 
             {accountSection === "refer" ? (
@@ -804,7 +809,7 @@ export function AccountPage() {
             ) : (
               <p className="text-sm text-neutral-600">No saved addresses yet.</p>
             )}
-            {addressMessage ? <p className="text-sm font-semibold text-neutral-700">{addressMessage}</p> : null}
+            {addressMessage ? <p aria-live="polite" className="text-sm font-semibold text-neutral-700" role="status">{addressMessage}</p> : null}
             <button
               className="inline-flex min-h-12 items-center justify-center rounded-full border border-leaf-500 px-5 text-sm font-black text-leaf-700"
               onClick={openAddAddressForm}
@@ -877,15 +882,6 @@ export function AccountPage() {
               })}
             </div>
 
-            <label className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
-              <input
-                checked={saveAddressForFuture}
-                className="h-4 w-4 accent-leaf-600"
-                onChange={(event) => setSaveAddressForFuture(event.target.checked)}
-                type="checkbox"
-              />
-              Save this address for future orders
-            </label>
             <label className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
               <input
                 checked={addressSaveAsDefault}

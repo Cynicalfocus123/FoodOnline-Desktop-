@@ -1,5 +1,9 @@
 # FoodOnlines Site Weight
 
+## Account persistence update (2026-07-21)
+
+The address, customer-address, and Saved Items work reuses existing React, Zustand, account, and product-card surfaces. No dependency, asset, font, tracker, or third-party request was added.
+
 ## Refer & Earn system (2026-07-21)
 
 - Adds one lazy public invitation chunk, small account/admin API clients and UI, and Laravel referral source/migration files. It adds no raster image, video, font, QR asset, social SDK, email library, wallet dependency, or image-upload payload.

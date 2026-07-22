@@ -1,5 +1,12 @@
 # Agent Notes
 
+## Account addresses and saved items persistence (2026-07-21)
+
+- Authenticated Address Book and checkout saves are Laravel-authoritative: browser-only addresses are never shown as saved, used as persisted checkout records, or exposed to administrators.
+- The shared country contract accepts `usa`, `uk`, Thailand, Japan, Singapore, Taiwan, China, Philippines, Malaysia, Indonesia, and Hong Kong. Admin customer detail shows every selected-customer address and every stored country-specific field only.
+- Favorites use one shared public state and canonical backend UUIDs. Anonymous exact UUIDs merge safely after authentication; server rows remain intact; unmatched compatibility products stay explicitly unresolved. Saved Items renders that same state.
+- Existing address/favorite tables and unique constraints cover this release; no migration was added. Regenerate deployment mirrors and release archives from final source; report external deployment only from direct evidence.
+
 ## Refer & Earn system (2026-07-21)
 
 - The active FoodOnlines referral program is durable Laravel/MySQL state: permanent eligible-customer codes, referral attribution, rewards, account-bound Promotion coupons, qualification/revocation handling, database notifications, audited administration, and the additive referrals:backfill-codes command. It does not add a wallet, email-sending form, QR code, Facebook-specific action, or a new image-upload system.

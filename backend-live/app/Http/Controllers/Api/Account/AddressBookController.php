@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Account\UpsertUserAddressRequest;
+use App\Http\Resources\Account\UserAddressResource;
 use App\Models\UserAddress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AddressBookController extends Controller
 {
@@ -17,7 +20,7 @@ class AddressBookController extends Controller
             ->orderByDesc('is_default')
             ->orderByDesc('id')
             ->get()
-            ->map(fn (UserAddress $address): array => $this->toPayload($address))
+            ->map(fn (UserAddress $address): array => (new UserAddressResource($address))->resolve())
             ->values();
 
         return response()->json([
@@ -25,94 +28,93 @@ class AddressBookController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(UpsertUserAddressRequest $request): JsonResponse
     {
         $user = $request->user();
-        $validated = $request->validate([
-            'country_key' => ['required', 'string', 'in:thailand,japan,singapore,taiwan,china,philippines,malaysia,indonesia,hongKong'],
-            'address_values' => ['required', 'array'],
-            'summary' => ['nullable', 'string', 'max:255'],
-            'is_default' => ['nullable', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
-        $shouldBeDefault = (bool) ($validated['is_default'] ?? false) || ! UserAddress::query()->where('user_id', $user->id)->exists();
+        $address = DB::transaction(function () use ($user, $validated): UserAddress {
+            $hasAddresses = UserAddress::query()->where('user_id', $user->id)->lockForUpdate()->exists();
+            $shouldBeDefault = (bool) ($validated['is_default'] ?? false) || ! $hasAddresses;
 
-        if ($shouldBeDefault) {
-            UserAddress::query()->where('user_id', $user->id)->update(['is_default' => false]);
-        }
+            if ($shouldBeDefault) {
+                UserAddress::query()->where('user_id', $user->id)->update(['is_default' => false]);
+            }
 
-        $address = UserAddress::query()->create([
-            'user_id' => $user->id,
-            'country_key' => (string) $validated['country_key'],
-            'address_values' => $validated['address_values'],
-            'summary' => (string) ($validated['summary'] ?? ''),
-            'is_default' => $shouldBeDefault,
-        ]);
+            return UserAddress::query()->create([
+                'user_id' => $user->id,
+                'country_key' => (string) $validated['country_key'],
+                'address_values' => $validated['address_values'],
+                'summary' => (string) ($validated['summary'] ?? ''),
+                'is_default' => $shouldBeDefault,
+            ]);
+        });
 
         return response()->json([
             'message' => 'Address saved.',
-            'address' => $this->toPayload($address),
+            'address' => (new UserAddressResource($address))->resolve(),
         ], 201);
     }
 
-    public function update(Request $request, int $addressId): JsonResponse
+    public function update(UpsertUserAddressRequest $request, int $addressId): JsonResponse
     {
         $user = $request->user();
-        $address = UserAddress::query()
-            ->where('user_id', $user->id)
-            ->whereKey($addressId)
-            ->firstOrFail();
-
-        $validated = $request->validate([
-            'country_key' => ['required', 'string', 'in:thailand,japan,singapore,taiwan,china,philippines,malaysia,indonesia,hongKong'],
-            'address_values' => ['required', 'array'],
-            'summary' => ['nullable', 'string', 'max:255'],
-            'is_default' => ['nullable', 'boolean'],
-        ]);
-
-        $shouldBeDefault = (bool) ($validated['is_default'] ?? false);
-
-        if ($shouldBeDefault) {
-            UserAddress::query()
+        $validated = $request->validated();
+        $address = DB::transaction(function () use ($user, $addressId, $validated): UserAddress {
+            $address = UserAddress::query()
                 ->where('user_id', $user->id)
-                ->where('id', '!=', $address->id)
-                ->update(['is_default' => false]);
-        }
+                ->whereKey($addressId)
+                ->lockForUpdate()
+                ->firstOrFail();
+            $shouldBeDefault = (bool) ($validated['is_default'] ?? false);
 
-        $address->forceFill([
-            'country_key' => (string) $validated['country_key'],
-            'address_values' => $validated['address_values'],
-            'summary' => (string) ($validated['summary'] ?? ''),
-            'is_default' => $shouldBeDefault ? true : (bool) $address->is_default,
-        ])->save();
+            if ($shouldBeDefault) {
+                UserAddress::query()
+                    ->where('user_id', $user->id)
+                    ->where('id', '!=', $address->id)
+                    ->update(['is_default' => false]);
+            }
+
+            $address->forceFill([
+                'country_key' => (string) $validated['country_key'],
+                'address_values' => $validated['address_values'],
+                'summary' => (string) ($validated['summary'] ?? ''),
+                'is_default' => $shouldBeDefault ? true : (bool) $address->is_default,
+            ])->save();
+
+            return $address;
+        });
 
         return response()->json([
             'message' => 'Address updated.',
-            'address' => $this->toPayload($address),
+            'address' => (new UserAddressResource($address))->resolve(),
         ]);
     }
 
     public function destroy(Request $request, int $addressId): JsonResponse
     {
         $user = $request->user();
-        $address = UserAddress::query()
-            ->where('user_id', $user->id)
-            ->whereKey($addressId)
-            ->firstOrFail();
-
-        $wasDefault = (bool) $address->is_default;
-        $address->delete();
-
-        if ($wasDefault) {
-            $fallback = UserAddress::query()
+        DB::transaction(function () use ($user, $addressId): void {
+            $address = UserAddress::query()
                 ->where('user_id', $user->id)
-                ->orderByDesc('id')
-                ->first();
+                ->whereKey($addressId)
+                ->lockForUpdate()
+                ->firstOrFail();
+            $wasDefault = (bool) $address->is_default;
+            $address->delete();
 
-            if ($fallback) {
-                $fallback->forceFill(['is_default' => true])->save();
+            if ($wasDefault) {
+                $fallback = UserAddress::query()
+                    ->where('user_id', $user->id)
+                    ->orderByDesc('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($fallback) {
+                    $fallback->forceFill(['is_default' => true])->save();
+                }
             }
-        }
+        });
 
         return response()->json([
             'message' => 'Address removed.',
@@ -122,33 +124,22 @@ class AddressBookController extends Controller
     public function makeDefault(Request $request, int $addressId): JsonResponse
     {
         $user = $request->user();
-        $address = UserAddress::query()
-            ->where('user_id', $user->id)
-            ->whereKey($addressId)
-            ->firstOrFail();
+        $address = DB::transaction(function () use ($user, $addressId): UserAddress {
+            $address = UserAddress::query()
+                ->where('user_id', $user->id)
+                ->whereKey($addressId)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        UserAddress::query()->where('user_id', $user->id)->update(['is_default' => false]);
-        $address->forceFill(['is_default' => true])->save();
+            UserAddress::query()->where('user_id', $user->id)->update(['is_default' => false]);
+            $address->forceFill(['is_default' => true])->save();
+
+            return $address;
+        });
 
         return response()->json([
             'message' => 'Default address updated.',
-            'address' => $this->toPayload($address),
+            'address' => (new UserAddressResource($address))->resolve(),
         ]);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function toPayload(UserAddress $address): array
-    {
-        return [
-            'id' => $address->id,
-            'country_key' => $address->country_key,
-            'address_values' => is_array($address->address_values) ? $address->address_values : [],
-            'summary' => $address->summary,
-            'is_default' => (bool) $address->is_default,
-            'created_at' => optional($address->created_at)->toISOString(),
-            'updated_at' => optional($address->updated_at)->toISOString(),
-        ];
     }
 }

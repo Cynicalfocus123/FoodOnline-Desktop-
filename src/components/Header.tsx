@@ -238,6 +238,7 @@ export function Header() {
   const setSearchInputValue = useHomeStore((state) => state.setSearchInputValue);
   const selectedZipCode = useHomeStore((state) => state.selectedZipCode);
   const setSelectedZipCode = useHomeStore((state) => state.setSelectedZipCode);
+  const savedItemCount = useHomeStore((state) => state.favoriteProductIds.length);
   const totalCartItems = useHomeStore((state) =>
     Object.values(state.cartQuantities).reduce((sum, quantity) => sum + quantity, 0),
   );
@@ -581,6 +582,7 @@ export function Header() {
                     <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("saved")} type="button">
                       <HeartIcon />
                       <span className="flex-1">Saved items</span>
+                      {savedItemCount ? <span aria-label={`${savedItemCount} saved items`} className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-black text-leaf-700">{savedItemCount}</span> : null}
                       <RowChevronIcon />
                     </button>
                     <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50" onClick={() => handleDesktopAccountItem("settings")} type="button">

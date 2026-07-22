@@ -36,8 +36,12 @@ class AdminUsersController extends Controller
     public function show(User $user): JsonResponse
     {
         $this->ensureManagedUser($user);
+        $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
+        if (($user->account_type ?: $user->role) === 'customer') {
+            $relations['addresses'] = fn ($query) => $query->orderByDesc('is_default')->orderByDesc('id');
+        }
 
-        return response()->json(['user' => new AdminManagedUserResource($user->load(['referralCode', 'referralReceived', 'referralsMade', 'referralRewards']))]);
+        return response()->json(['user' => new AdminManagedUserResource($user->load($relations))]);
     }
 
     public function store(Request $request): JsonResponse
