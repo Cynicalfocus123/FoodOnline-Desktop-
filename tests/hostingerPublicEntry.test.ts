@@ -6,9 +6,9 @@ const entry = readFileSync("deployment/hostinger/backend-public/index.php", "utf
 const template = readFileSync("deployment/hostinger/backend-public/backend-path.php.example", "utf8");
 const syncScript = readFileSync("scripts/sync-backend-live.mjs", "utf8");
 const frontendRewrite = readFileSync("public/.htaccess", "utf8");
-const releaseScript = readFileSync("scripts/create-portable-live-zips.ps1", "utf8");
-const classicBuilder = readFileSync("scripts/create-hostinger-classic-backend-zip.py", "utf8");
-const classicReader = readFileSync("scripts/verify-hostinger-classic-zip.mjs", "utf8");
+const releaseScript = readFileSync("scripts/create-live-hostinger-zips.ps1", "utf8");
+const standardBuilder = readFileSync("scripts/create-standard-hostinger-zip.php", "utf8");
+const standardVerifier = readFileSync("scripts/verify-standard-hostinger-zip.py", "utf8");
 
 test("Hostinger public API entry resolves a separate private Laravel root safely", () => {
   assert.match(entry, /backend-path\.php/);
@@ -31,13 +31,14 @@ test("frontend Hostinger rewrite preserves the API and avoids restricted Options
   assert.doesNotMatch(frontendRewrite, /^\s*Options\s/m);
 });
 
-test("backend release uses a strict ZIP32 Hostinger compatibility path", () => {
-  assert.match(releaseScript, /Invoke-HostingerClassicBackendBuild/);
+test("paired Live release uses the verified standard ZIP32 Hostinger path", () => {
+  assert.match(releaseScript, /FoodOnlines_Frontend_Live\.zip/);
+  assert.match(releaseScript, /FoodOnlines_Backend_Live\.zip/);
   assert.match(releaseScript, /Expand-Archive/);
-  assert.match(releaseScript, /Invoke-PhpZipArchiveExtraction/);
-  assert.match(classicBuilder, /allowZip64=False/);
-  assert.match(classicBuilder, /compresslevel=6/);
-  assert.match(classicBuilder, /info\.external_attr = 0x20/);
-  assert.match(classicReader, /ZIP64 records are not permitted/);
-  assert.match(classicReader, /explicitDirectories/);
+  assert.match(releaseScript, /extract-standard-hostinger-zip\.php/);
+  assert.match(releaseScript, /Remove-ObsoleteReleaseArchives/);
+  assert.match(standardBuilder, /ZipArchive::CM_DEFLATE/);
+  assert.match(standardBuilder, /setCompressionName/);
+  assert.match(standardVerifier, /zip64/);
+  assert.match(standardVerifier, /explicitDirectories/);
 });

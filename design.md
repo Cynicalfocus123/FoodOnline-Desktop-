@@ -1,11 +1,11 @@
 # FoodOnlines Desktop Home Design
 
-## Mandatory paired clean-archive rule (2026-07-22)
+## Permanent matched Live-pair release rule (2026-07-22)
 
-- This is a release-governance change only: it does not alter the approved public/admin interface, responsive behavior, brand styling, route behavior, feature set, or production assets.
-- Every future production-delivery pass regenerates both the frontend and backend clean Hostinger archives from current verified mirrors. Historical `no ZIP`, single-archive, or unchanged-counterpart delivery notes no longer control the release workflow.
-- After verification, both clean staging folders and every noncanonical ZIP are removed. The external release directory presents exactly the latest frontend ZIP and backend ZIP, with no intermediate folders or legacy archives.
-- The adoption release rebuilt the unchanged 1,035-file frontend output and the synchronized 289-file backend payload as the verified standard Deflate ZIP32 pair. Both passed the established extraction and SHA-256 parity gates; external Hostinger deployment remains separate and unclaimed.
+- This is release governance only; it does not alter approved public/Admin interface, responsive behavior, styling, routes, features, or production assets.
+- Every completed change synchronizes source, final `dist/`, `frontend-upload/`, `backend-live/`, manifest, documentation, and Git before generating the matched `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` pair.
+- Both Live packages are regenerated even for one-sided changes. All other ZIPs and temporary folders are removed, and the standard Deflate ZIP32 root layout plus full extraction/SHA parity gates remain mandatory.
+- These are repository deployment mirrors and manual-deployment packages. They do not indicate that Codex accessed or updated the external Hostinger server.
 
 ## Administrator customer saved-data visibility (2026-07-22)
 

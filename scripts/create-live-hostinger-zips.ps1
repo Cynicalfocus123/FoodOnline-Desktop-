@@ -11,27 +11,27 @@ if ([string]::IsNullOrWhiteSpace($ReleaseDirectory)) {
     $ReleaseDirectory = Join-Path (Split-Path $repoRoot -Parent) "FoodOnlines-Live-Releases"
 }
 if ([string]::IsNullOrWhiteSpace($FrontendDirectory)) {
-    $FrontendDirectory = Join-Path $ReleaseDirectory "FoodOnlines-Frontend-Clean"
+    $FrontendDirectory = Join-Path $ReleaseDirectory "FoodOnlines-Frontend-Live-Stage"
 }
 if ([string]::IsNullOrWhiteSpace($BackendDirectory)) {
-    $BackendDirectory = Join-Path $ReleaseDirectory "FoodOnlines-Backend-Clean"
+    $BackendDirectory = Join-Path $ReleaseDirectory "FoodOnlines-Backend-Live-Stage"
 }
 
 $ReleaseDirectory = [IO.Path]::GetFullPath($ReleaseDirectory).TrimEnd([char]92, [char]47)
 $FrontendDirectory = [IO.Path]::GetFullPath($FrontendDirectory).TrimEnd([char]92, [char]47)
 $BackendDirectory = [IO.Path]::GetFullPath($BackendDirectory).TrimEnd([char]92, [char]47)
 
-if ((Split-Path -Parent $FrontendDirectory) -ne $ReleaseDirectory -or (Split-Path -Leaf $FrontendDirectory) -ne "FoodOnlines-Frontend-Clean") {
-    throw "Unsafe frontend clean staging path: $FrontendDirectory"
+if ((Split-Path -Parent $FrontendDirectory) -ne $ReleaseDirectory -or (Split-Path -Leaf $FrontendDirectory) -ne "FoodOnlines-Frontend-Live-Stage") {
+    throw "Unsafe frontend Live staging path: $FrontendDirectory"
 }
-if ((Split-Path -Parent $BackendDirectory) -ne $ReleaseDirectory -or (Split-Path -Leaf $BackendDirectory) -ne "FoodOnlines-Backend-Clean") {
-    throw "Unsafe backend clean staging path: $BackendDirectory"
+if ((Split-Path -Parent $BackendDirectory) -ne $ReleaseDirectory -or (Split-Path -Leaf $BackendDirectory) -ne "FoodOnlines-Backend-Live-Stage") {
+    throw "Unsafe backend Live staging path: $BackendDirectory"
 }
 $pythonVerifier = Join-Path $repoRoot "scripts/verify-standard-hostinger-zip.py"
 $phpCreator = Join-Path $repoRoot "scripts/create-standard-hostinger-zip.php"
 $phpExtractor = Join-Path $repoRoot "scripts/extract-standard-hostinger-zip.php"
 foreach ($tool in @($pythonVerifier, $phpCreator, $phpExtractor)) {
-    if (-not (Test-Path -LiteralPath $tool -PathType Leaf)) { throw "Required clean package tool is missing: $tool" }
+    if (-not (Test-Path -LiteralPath $tool -PathType Leaf)) { throw "Required Live package tool is missing: $tool" }
 }
 
 function Assert-PortablePath([string]$Path) {
@@ -45,14 +45,14 @@ function Assert-PortablePath([string]$Path) {
     }
 }
 
-function Reset-CleanStage([string]$Source, [string]$Target, [string]$ExpectedLeaf) {
+function Reset-LiveStage([string]$Source, [string]$Target, [string]$ExpectedLeaf) {
     $sourcePath = [IO.Path]::GetFullPath($Source).TrimEnd([char]92, [char]47)
     $targetPath = [IO.Path]::GetFullPath($Target).TrimEnd([char]92, [char]47)
     if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
         throw "Authoritative package source is missing: $sourcePath"
     }
     if ((Split-Path -Parent $targetPath) -ne $ReleaseDirectory -or (Split-Path -Leaf $targetPath) -ne $ExpectedLeaf) {
-        throw "Refusing to replace an unexpected clean staging path: $targetPath"
+        throw "Refusing to replace an unexpected Live staging path: $targetPath"
     }
     if (Test-Path -LiteralPath $targetPath) {
         Remove-Item -LiteralPath $targetPath -Force -Recurse
@@ -61,7 +61,7 @@ function Reset-CleanStage([string]$Source, [string]$Target, [string]$ExpectedLea
 
     foreach ($file in Get-ChildItem -LiteralPath $sourcePath -File -Recurse -Force) {
         if (($file.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-            throw "Linked files are not allowed in a clean package source: $($file.FullName)"
+            throw "Linked files are not allowed in a Live package source: $($file.FullName)"
         }
         $relative = $file.FullName.Substring($sourcePath.Length + 1).Replace([char]92, [char]47)
         Assert-PortablePath $relative
@@ -74,14 +74,14 @@ function Reset-CleanStage([string]$Source, [string]$Target, [string]$ExpectedLea
     }
 }
 
-Reset-CleanStage (Join-Path $repoRoot "dist") $FrontendDirectory "FoodOnlines-Frontend-Clean"
-Reset-CleanStage (Join-Path $repoRoot "backend-live") $BackendDirectory "FoodOnlines-Backend-Clean"
+Reset-LiveStage (Join-Path $repoRoot "frontend-upload") $FrontendDirectory "FoodOnlines-Frontend-Live-Stage"
+Reset-LiveStage (Join-Path $repoRoot "backend-live") $BackendDirectory "FoodOnlines-Backend-Live-Stage"
 
 function Get-Inventory([string]$Root) {
     $rootPath = [IO.Path]::GetFullPath($Root).TrimEnd([char]92, [char]47)
     return @(Get-ChildItem -LiteralPath $rootPath -File -Recurse -Force | Sort-Object FullName | ForEach-Object {
         if (($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-            throw "Linked files are not allowed in a clean package: $($_.FullName)"
+            throw "Linked files are not allowed in a Live package: $($_.FullName)"
         }
         $relative = $_.FullName.Substring($rootPath.Length + 1).Replace([char]92, [char]47)
         Assert-PortablePath $relative
@@ -94,15 +94,15 @@ function Get-Inventory([string]$Root) {
     })
 }
 
-function Assert-CleanSource([string]$Source, [string]$Kind, [System.Collections.IEnumerable]$Files) {
+function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.IEnumerable]$Files) {
     $fileNames = @($Files | ForEach-Object { $_.RelativePath })
     $rootDirectories = @(Get-ChildItem -LiteralPath $Source -Directory -Force | ForEach-Object { $_.Name })
     if ($Kind -eq "frontend") {
         foreach ($required in @("index.html", "admin.html", ".htaccess", "favicon.svg", "404.html", "HOSTINGER-DEPLOYMENT-INSTRUCTIONS.txt")) {
-            if ($fileNames -notcontains $required) { throw "Frontend clean stage is missing required file: $required" }
+            if ($fileNames -notcontains $required) { throw "Frontend Live stage is missing required file: $required" }
         }
         foreach ($directory in @("assets", "images")) {
-            if ($rootDirectories -notcontains $directory) { throw "Frontend clean stage is missing required directory: $directory" }
+            if ($rootDirectories -notcontains $directory) { throw "Frontend Live stage is missing required directory: $directory" }
         }
         $forbidden = @($Files | Where-Object {
             $_.RelativePath -match "^(api|app|bootstrap|config|database|resources|routes|storage|public|vendor|tests|src|node_modules)(/|$)" -or
@@ -110,10 +110,10 @@ function Assert-CleanSource([string]$Source, [string]$Kind, [System.Collections.
         })
     } else {
         foreach ($required in @("artisan", "composer.json", "composer.lock", "DEPLOYMENT.md", "SHA256SUMS", "public/index.php", "public/.htaccess", "public/backend-path.php.example")) {
-            if ($fileNames -notcontains $required) { throw "Backend clean stage is missing required file: $required" }
+            if ($fileNames -notcontains $required) { throw "Backend Live stage is missing required file: $required" }
         }
         foreach ($directory in @("app", "bootstrap", "config", "database", "public", "resources", "routes")) {
-            if ($rootDirectories -notcontains $directory) { throw "Backend clean stage is missing required directory: $directory" }
+            if ($rootDirectories -notcontains $directory) { throw "Backend Live stage is missing required directory: $directory" }
         }
         $forbidden = @($Files | Where-Object {
             $_.RelativePath -match "(^|/)\.env(?:\.|$)" -or
@@ -122,7 +122,7 @@ function Assert-CleanSource([string]$Source, [string]$Kind, [System.Collections.
             $_.RelativePath -match "\.(zip|sqlite|db|sql|log)$" -or $_.RelativePath -eq "public/backend-path.php"
         })
     }
-    if ($forbidden.Count -ne 0) { throw "$Kind clean stage contains forbidden files: $($forbidden.Count)" }
+    if ($forbidden.Count -ne 0) { throw "$Kind Live stage contains forbidden files: $($forbidden.Count)" }
 }
 
 function Assert-BackendManifest([string]$Source, [System.Collections.IEnumerable]$Files) {
@@ -160,8 +160,8 @@ function Compare-Inventory([System.Collections.IEnumerable]$Expected, [System.Co
 function Remove-VerificationDirectory([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return }
     $absolute = [IO.Path]::GetFullPath($Path).TrimEnd([char]92, [char]47)
-    if ((Split-Path -Parent $absolute) -ne $ReleaseDirectory -or (Split-Path -Leaf $absolute) -notmatch "^verify-clean-") {
-        throw "Refusing to remove a directory outside the clean verification scope: $absolute"
+    if ((Split-Path -Parent $absolute) -ne $ReleaseDirectory -or (Split-Path -Leaf $absolute) -notmatch "^verify-live-") {
+        throw "Refusing to remove a directory outside the Live verification scope: $absolute"
     }
     Remove-Item -LiteralPath $absolute -Force -Recurse
 }
@@ -186,19 +186,19 @@ function Remove-ObsoleteReleaseArchives([string[]]$KeepNames) {
     }
 }
 
-function Remove-CleanStage([string]$Path, [string]$ExpectedLeaf) {
+function Remove-LiveStage([string]$Path, [string]$ExpectedLeaf) {
     if (-not (Test-Path -LiteralPath $Path)) { return }
     $absolute = [IO.Path]::GetFullPath($Path).TrimEnd([char]92, [char]47)
     if ((Split-Path -Parent $absolute) -ne $ReleaseDirectory -or (Split-Path -Leaf $absolute) -ne $ExpectedLeaf) {
-        throw "Refusing to remove an unexpected clean staging path: $absolute"
+        throw "Refusing to remove an unexpected Live staging path: $absolute"
     }
     Remove-Item -LiteralPath $absolute -Force -Recurse
 }
 
-function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveName) {
+function Invoke-LivePackage([string]$Kind, [string]$Source, [string]$ArchiveName) {
     $files = Get-Inventory $Source
-    if ($files.Count -eq 0) { throw "$Kind clean stage is empty." }
-    Assert-CleanSource $Source $Kind $files
+    if ($files.Count -eq 0) { throw "$Kind Live stage is empty." }
+    Assert-LiveSource $Source $Kind $files
     if ($Kind -eq "backend") { Assert-BackendManifest $Source $files }
 
     $archive = Join-Path $ReleaseDirectory $ArchiveName
@@ -223,7 +223,7 @@ function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveNam
         }
     } finally { $read.Dispose() }
     if (($archiveEntries.RelativePath | Select-Object -Unique).Count -ne $archiveEntries.Count) { throw "$Kind archive has duplicate entries." }
-    if ($archiveEntries.Count -ne $files.Count) { throw "$Kind archive file count does not match clean stage." }
+    if ($archiveEntries.Count -ne $files.Count) { throw "$Kind archive file count does not match Live stage." }
     $archiveMap = @{}; foreach ($entry in $archiveEntries) { $archiveMap[$entry.RelativePath] = $entry }
     foreach ($file in $files) {
         if (-not $archiveMap.ContainsKey($file.RelativePath) -or $archiveMap[$file.RelativePath].Bytes -ne $file.Bytes) {
@@ -231,8 +231,8 @@ function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveNam
         }
     }
 
-    $windowsExtraction = Join-Path $ReleaseDirectory ("verify-clean-windows-" + [guid]::NewGuid().ToString("N"))
-    $phpExtraction = Join-Path $ReleaseDirectory ("verify-clean-php-" + [guid]::NewGuid().ToString("N"))
+    $windowsExtraction = Join-Path $ReleaseDirectory ("verify-live-windows-" + [guid]::NewGuid().ToString("N"))
+    $phpExtraction = Join-Path $ReleaseDirectory ("verify-live-php-" + [guid]::NewGuid().ToString("N"))
     try {
         Expand-Archive -LiteralPath $archive -DestinationPath $windowsExtraction -Force
         $windowsFiles = Get-Inventory $windowsExtraction
@@ -253,7 +253,7 @@ function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveNam
 
         $result = [pscustomobject]@{
             kind = $Kind
-            cleanFolder = $Source
+            stageFolder = $Source
             archive = $archive
             files = $files.Count
             sourceBytes = ($files | Measure-Object -Property Bytes -Sum).Sum
@@ -287,11 +287,11 @@ function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveNam
     return $result
 }
 
-$frontendArchiveName = "FoodOnlines_Frontend_Hostinger_Clean.zip"
-$backendArchiveName = "FoodOnlines_Backend_Hostinger_Clean.zip"
-$frontend = Invoke-CleanPackage "frontend" $FrontendDirectory $frontendArchiveName
-$backend = Invoke-CleanPackage "backend" $BackendDirectory $backendArchiveName
+$frontendArchiveName = "FoodOnlines_Frontend_Live.zip"
+$backendArchiveName = "FoodOnlines_Backend_Live.zip"
+$frontend = Invoke-LivePackage "frontend" $FrontendDirectory $frontendArchiveName
+$backend = Invoke-LivePackage "backend" $BackendDirectory $backendArchiveName
 Remove-ObsoleteReleaseArchives @($frontendArchiveName, $backendArchiveName)
-Remove-CleanStage $FrontendDirectory "FoodOnlines-Frontend-Clean"
-Remove-CleanStage $BackendDirectory "FoodOnlines-Backend-Clean"
+Remove-LiveStage $FrontendDirectory "FoodOnlines-Frontend-Live-Stage"
+Remove-LiveStage $BackendDirectory "FoodOnlines-Backend-Live-Stage"
 [pscustomobject]@{ frontend = $frontend; backend = $backend } | ConvertTo-Json -Depth 5

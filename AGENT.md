@@ -1,11 +1,11 @@
 # Agent Notes
 
-## PRIORITY RELEASE RULE — always build both clean Hostinger ZIPs
+## PRIORITY RELEASE RULE - exactly two matched Live ZIPs after Git synchronization
 
-- Every completed production-delivery task must generate `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` together from the current verified `dist`/`frontend-upload` and `backend-live` mirrors. Frontend-only, backend-only, migration, configuration, content, and mixed releases are all included; only a direct current user instruction may waive either archive.
-- After both archives pass verification, the dedicated external release directory must retain only those two canonical ZIP filenames. Delete every other root-level ZIP and both temporary clean staging folders there on every packaging run so no legacy, alternate, timestamped, superseded, or intermediate item is presented as current.
-- Use the clean Hostinger workflow and established standard Deflate ZIP32 root layout. Never reuse an old ZIP, extracted release, or stale staging folder. Both archives must pass CRC/listing, Windows and PHP extraction with full SHA-256 parity, path/metadata safety, forbidden-content checks, and backend manifest verification before the task is complete.
-- Report both archive paths, file counts, byte sizes, and SHA-256 hashes. This rule has precedence over all historical notes below that say `no ZIP`, request only one archive, or describe the other archive as unchanged.
+- Every completed change synchronizes source, final `dist/`, `frontend-upload/`, `backend-live/` plus `SHA256SUMS`, documentation, and Git before packaging. Commit/push and prove local HEAD equals the remote branch before creating archives.
+- The only archives are `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`. Regenerate both from the same final mirrors after every change, even when only one side changed; never reuse or preserve an older counterpart.
+- `npm run release:hostinger-live` uses PHP `ZipArchive` standard Deflate ZIP32 root entries and verifies CRC/listing, Windows/PHP extraction SHA-256 parity, path/metadata safety, forbidden content, and the backend manifest. It removes every other ZIP and all staging/verification folders.
+- `frontend-upload/` and `backend-live/` mean repository deployment mirrors, not the external Hostinger server. No external upload, migration, cache refresh, database change, or live smoke test is claimed without direct evidence. This newest section supersedes every older conflicting note below.
 
 ### Priority-rule adoption release (2026-07-22)
 

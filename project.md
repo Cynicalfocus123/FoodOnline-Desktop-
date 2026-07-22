@@ -1,8 +1,8 @@
 # FoodOnlines Project State
 
-## Priority paired Hostinger archive contract
+## Permanent Git, deployment-mirror, and Live-pair contract
 
-Every production-delivery task creates and verifies both clean Hostinger archives from the current frontend and backend mirrors. After verification, temporary staging folders and noncanonical ZIPs are removed so the external release directory contains exactly the latest frontend/backend pair. The paired ZIP contract in `AGENTS.md` and `DEPLOYMENT.md` supersedes every historical delivery note below that says not to create a ZIP, requests a single ZIP, or leaves either archive unchanged.
+Every completed change rebuilds and synchronizes authoritative source, `dist/`, `frontend-upload/`, `backend-live/`, its manifest, documentation, and Git before producing exactly `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`. Both packages represent one final commit; every other ZIP/stage is removed. The mirrors and ZIPs are deployment-ready artifacts, not evidence that the external Hostinger server was changed. This contract supersedes every conflicting historical note below.
 
 ## Administrator customer-detail data contract
 

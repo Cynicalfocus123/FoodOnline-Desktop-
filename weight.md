@@ -1,11 +1,11 @@
 # FoodOnlines Site Weight
 
-## Mandatory paired clean-archive rule (2026-07-22)
+## Permanent matched Live-pair release rule (2026-07-22)
 
-- Repository delivery instructions now require both clean Hostinger ZIPs for every production-delivery task, superseding historical `no ZIP`, single-archive, and unchanged-counterpart notes. This documentation/deployment-manifest change adds no frontend asset, runtime dependency, route, migration, application feature, or media.
-- Fresh `dist/`, `frontend-upload/`, and frontend clean staging each contain 1,035 files / 91,847,052 bytes. `FoodOnlines_Frontend_Hostinger_Clean.zip` contains 1,035 files and is 90,944,892 bytes / SHA-256 `244e504d8eb85ae79ac1da2f4157429a896c2ac70e94dc43cfdb8c7c1ef3e090`.
-- Fresh `backend-live/` and backend clean staging each contain 289 files / 971,798 bytes, including the manifest for 288 source files. `FoodOnlines_Backend_Hostinger_Clean.zip` contains 289 files and is 289,849 bytes / SHA-256 `3f9e61ec866d9163d8d3836e60dca7e436121e549d674801c4529b35a814739a`.
-- Both standard Deflate ZIP32 archives passed CRC/listing, root-layout and metadata inspection, Windows and PHP full SHA-256 extraction parity, safety/forbidden-content checks, and backend manifest verification. Hostinger File Manager extraction remains externally unconfirmed.
+- The newest release contract requires source, production output, both deployment mirrors, manifest, documentation, and Git to match before packaging. This governance/workflow change adds no runtime feature, route, migration, dependency, asset, media, or database state.
+- The only deployment archives are `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`; both are regenerated together from verified `frontend-upload/` and `backend-live/` after every completed change. Every other ZIP and temporary stage is removed.
+- Both use the verified PHP `ZipArchive` standard Deflate ZIP32 root-file method and must pass CRC/listing, Windows/PHP SHA-256 extraction parity, safety/forbidden-content checks, and backend-manifest verification.
+- The mirrors and archives are prepared for manual Hostinger deployment. Codex has no Hostinger connection, and no external upload, production migration/cache operation, database change, or live smoke test is claimed.
 
 ## Administrator customer detail saved-data repair (2026-07-22)
 
