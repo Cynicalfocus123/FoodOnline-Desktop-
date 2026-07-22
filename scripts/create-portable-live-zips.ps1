@@ -64,6 +64,29 @@ function Get-FileDigest([string]$Path) {
     return (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()
 }
 
+function Invoke-HostingerClassicBackendBuild([string]$Source, [string]$TemporaryArchive) {
+    $builder = Join-Path $repoRoot "scripts/create-hostinger-classic-backend-zip.py"
+    $reader = Join-Path $repoRoot "scripts/verify-hostinger-classic-zip.mjs"
+    $pythonOutput = & python $builder --source $Source --archive $TemporaryArchive
+    if ($LASTEXITCODE -ne 0) { throw "Hostinger classic backend ZIP build failed." }
+    $pythonResult = ($pythonOutput -join "`n") | ConvertFrom-Json
+    $nodeOutput = & node $reader --archive $TemporaryArchive
+    if ($LASTEXITCODE -ne 0) { throw "Node classic ZIP reader rejected the backend archive." }
+    $nodeResult = ($nodeOutput -join "`n") | ConvertFrom-Json
+    if (-not $pythonResult.zip32 -or $pythonResult.zip64 -or $pythonResult.directories -ne 0 -or $pythonResult.compression -ne "deflate" -or
+        -not $nodeResult.zip32 -or $nodeResult.zip64 -or $nodeResult.explicitDirectories -ne 0 -or $nodeResult.encryptedEntries -ne 0 -or $nodeResult.symlinks -ne 0) {
+        throw "Backend archive is not the required classic ZIP32/Deflate payload."
+    }
+    return [pscustomobject]@{ Python = $pythonResult; Node = $nodeResult }
+}
+
+function Invoke-PhpZipArchiveExtraction([string]$ArchivePath, [string]$OutputPath) {
+    $verifier = Join-Path $repoRoot "scripts/verify-hostinger-classic-zip.php"
+    $output = & php $verifier $ArchivePath $OutputPath
+    if ($LASTEXITCODE -ne 0) { throw "PHP ZipArchive extraction rejected the backend archive." }
+    return ($output -join "`n") | ConvertFrom-Json
+}
+
 function Get-SecretFindings([System.Collections.IEnumerable]$Files) {
     $findings = New-Object 'System.Collections.Generic.List[string]'
     $textExtensions = @(".css", ".html", ".htaccess", ".js", ".json", ".lock", ".md", ".php", ".txt", ".xml", ".yml", ".yaml")
@@ -191,7 +214,9 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
 
     $temporaryArchive = [IO.Path]::Combine($OutputDirectory, ("portable-" + [guid]::NewGuid().ToString("N") + ".zip"))
     $verificationDirectory = [IO.Path]::Combine($OutputDirectory, ("extract-verify-" + [guid]::NewGuid().ToString("N")))
+    $phpVerificationDirectory = [IO.Path]::Combine($OutputDirectory, ("php-extract-verify-" + [guid]::NewGuid().ToString("N")))
     $keepTemporaryArchive = $false
+    $compatibility = $null
 
     try {
         $sourceFiles = @(Get-ChildItem -LiteralPath $source -File -Recurse -Force | Sort-Object FullName | ForEach-Object {
@@ -231,25 +256,29 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
             Assert-BackendManifest -Source $source -Files $sourceFiles
         }
 
-        $outputStream = [IO.File]::Open($temporaryArchive, [IO.FileMode]::CreateNew)
-        try {
-            $zip = New-Object IO.Compression.ZipArchive($outputStream, [IO.Compression.ZipArchiveMode]::Create, $false)
+        if ($PayloadKind -eq "backend") {
+            $compatibility = Invoke-HostingerClassicBackendBuild -Source $source -TemporaryArchive $temporaryArchive
+        } else {
+            $outputStream = [IO.File]::Open($temporaryArchive, [IO.FileMode]::CreateNew)
             try {
-                foreach ($directory in $sourceDirectories) {
-                    $entry = $zip.CreateEntry($directory.RelativePath, [IO.Compression.CompressionLevel]::NoCompression)
-                    $entry.LastWriteTime = (Get-Item -LiteralPath $directory.FullName).LastWriteTime
-                }
-                foreach ($file in $sourceFiles) {
-                    $entry = $zip.CreateEntry($file.RelativePath, [IO.Compression.CompressionLevel]::Optimal)
-                    $entry.LastWriteTime = (Get-Item -LiteralPath $file.FullName).LastWriteTime
-                    $inputStream = [IO.File]::OpenRead($file.FullName)
-                    try {
-                        $entryStream = $entry.Open()
-                        try { $inputStream.CopyTo($entryStream) } finally { $entryStream.Dispose() }
-                    } finally { $inputStream.Dispose() }
-                }
-            } finally { $zip.Dispose() }
-        } finally { $outputStream.Dispose() }
+                $zip = New-Object IO.Compression.ZipArchive($outputStream, [IO.Compression.ZipArchiveMode]::Create, $false)
+                try {
+                    foreach ($directory in $sourceDirectories) {
+                        $entry = $zip.CreateEntry($directory.RelativePath, [IO.Compression.CompressionLevel]::NoCompression)
+                        $entry.LastWriteTime = (Get-Item -LiteralPath $directory.FullName).LastWriteTime
+                    }
+                    foreach ($file in $sourceFiles) {
+                        $entry = $zip.CreateEntry($file.RelativePath, [IO.Compression.CompressionLevel]::Optimal)
+                        $entry.LastWriteTime = (Get-Item -LiteralPath $file.FullName).LastWriteTime
+                        $inputStream = [IO.File]::OpenRead($file.FullName)
+                        try {
+                            $entryStream = $entry.Open()
+                            try { $inputStream.CopyTo($entryStream) } finally { $entryStream.Dispose() }
+                        } finally { $inputStream.Dispose() }
+                    }
+                } finally { $zip.Dispose() }
+            } finally { $outputStream.Dispose() }
+        }
 
         $actual = @{}
         $readZip = [IO.Compression.ZipFile]::OpenRead($temporaryArchive)
@@ -266,7 +295,9 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
 
         $expected = @{}
         foreach ($file in $sourceFiles) { $expected[$file.RelativePath] = [pscustomobject]@{ IsDirectory = $false; Length = $file.Length } }
-        foreach ($directory in $sourceDirectories) { $expected[$directory.RelativePath] = [pscustomobject]@{ IsDirectory = $true; Length = 0 } }
+        if ($PayloadKind -eq "frontend") {
+            foreach ($directory in $sourceDirectories) { $expected[$directory.RelativePath] = [pscustomobject]@{ IsDirectory = $true; Length = 0 } }
+        }
         $missing = @($expected.Keys | Where-Object { -not $actual.ContainsKey($_) })
         $extra = @($actual.Keys | Where-Object { -not $expected.ContainsKey($_) })
         $sizeMismatch = @($expected.Keys | Where-Object {
@@ -276,13 +307,17 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
             throw "Archive parity failed: missing=$($missing.Count), extra=$($extra.Count), sizeMismatch=$($sizeMismatch.Count)"
         }
 
-        [IO.Compression.ZipFile]::ExtractToDirectory($temporaryArchive, $verificationDirectory)
+        Expand-Archive -LiteralPath $temporaryArchive -DestinationPath $verificationDirectory -Force
+        if ($PayloadKind -eq "backend") {
+            $phpResult = Invoke-PhpZipArchiveExtraction -ArchivePath $temporaryArchive -OutputPath $phpVerificationDirectory
+            if (-not $phpResult.phpZipArchive -or $phpResult.files -ne $sourceFiles.Count) { throw "PHP ZipArchive verification did not extract every backend file." }
+        }
         $extractedFiles = @(Get-ChildItem -LiteralPath $verificationDirectory -File -Recurse -Force | ForEach-Object {
             [pscustomobject]@{ RelativePath = Get-RelativePath $_ $verificationDirectory; FullName = $_.FullName; Length = [long]$_.Length; SHA256 = Get-FileDigest $_.FullName }
         })
-        $extractedDirectories = @(Get-ChildItem -LiteralPath $verificationDirectory -Directory -Recurse -Force | ForEach-Object {
+        $extractedDirectories = if ($PayloadKind -eq "frontend") { @(Get-ChildItem -LiteralPath $verificationDirectory -Directory -Recurse -Force | ForEach-Object {
             [pscustomobject]@{ RelativePath = (Get-RelativePath $_ $verificationDirectory) + "/" }
-        })
+        }) } else { @() }
         $actualExtract = @{}
         foreach ($file in $extractedFiles) { $actualExtract[$file.RelativePath] = $file }
         foreach ($directory in $extractedDirectories) { $actualExtract[$directory.RelativePath] = $directory }
@@ -300,7 +335,7 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
             Archive = $archivePath
             TemporaryArchive = $temporaryArchive
             Files = $sourceFiles.Count
-            Directories = $sourceDirectories.Count
+            Directories = if ($PayloadKind -eq "backend") { 0 } else { $sourceDirectories.Count }
             Bytes = (Get-Item -LiteralPath $temporaryArchive).Length
             SHA256 = Get-FileDigest $temporaryArchive
             Missing = 0
@@ -314,9 +349,16 @@ function New-VerifiedPortableZip([string]$SourceDirectory, [string]$ArchiveName,
             ForbiddenPaths = 0
             ExtractionVerified = $true
             ManifestVerified = ($PayloadKind -eq "backend")
+            ZipFormat = if ($PayloadKind -eq "backend") { "ZIP32" } else { "standard" }
+            Compression = if ($PayloadKind -eq "backend") { "Deflate level 6" } else { "mixed" }
+            Zip64 = if ($PayloadKind -eq "backend") { $false } else { $null }
+            ExplicitDirectories = if ($PayloadKind -eq "backend") { 0 } else { $sourceDirectories.Count }
+            NodeReaderVerified = ($PayloadKind -eq "backend")
+            PhpZipArchiveVerified = ($PayloadKind -eq "backend")
         }
     } finally {
         Remove-TemporaryDirectory $verificationDirectory $OutputDirectory
+        Remove-TemporaryDirectory $phpVerificationDirectory $OutputDirectory
         if (-not $keepTemporaryArchive) {
             Remove-TemporaryFile $temporaryArchive
         }
@@ -336,7 +378,7 @@ try {
         Remove-TemporaryFile $result.Archive
         [IO.File]::Move($result.TemporaryArchive, $result.Archive)
     }
-    $pending | Select-Object Archive, Files, Directories, Bytes, SHA256, Missing, Extra, SizeMismatch, HashMismatch, UnsafePaths, BackslashEntries, DuplicateEntries, SecretFindings, ForbiddenPaths, ExtractionVerified, ManifestVerified | ConvertTo-Json -Depth 4
+    $pending | Select-Object Archive, Files, Directories, Bytes, SHA256, Missing, Extra, SizeMismatch, HashMismatch, UnsafePaths, BackslashEntries, DuplicateEntries, SecretFindings, ForbiddenPaths, ExtractionVerified, ManifestVerified, ZipFormat, Compression, Zip64, ExplicitDirectories, NodeReaderVerified, PhpZipArchiveVerified | ConvertTo-Json -Depth 4
 } finally {
     foreach ($result in $pending) {
         Remove-TemporaryFile $result.TemporaryArchive

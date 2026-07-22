@@ -1,5 +1,9 @@
 # Hostinger File Manager Deployment
 
+## Classic ZIP32 staging extraction (2026-07-22)
+
+The backend archive uses regular Deflate ZIP32 file records only and omits explicit empty directories for hosting-panel compatibility. Upload and extract it first in an empty private staging folder, verify the Laravel root files/directories, then copy source into the live private root while preserving `.env`, `vendor/`, complete `storage/`, `storage/app/public/media/`, permissions, runtime state, and `public_html/api/backend-path.php`. Create missing writable runtime folders manually or with safe `mkdir -p` commands only for a new installation; do not extract directly over a populated Laravel root.
+
 ## Split `public_html/api` entry requirement (2026-07-22)
 
 The current backend ZIP deploys the Laravel application to its private root. After extraction, copy `public/index.php` and `public/.htaccess` from that private root into the existing `public_html/api/` directory. Copy `public/backend-path.php.example` to `public_html/api/backend-path.php` and set its returned string to the real absolute private Laravel root, for example `/home/ACCOUNT_USERNAME/foodonlines-backend`. Keep `backend-path.php` server-only and preserve it across future updates.

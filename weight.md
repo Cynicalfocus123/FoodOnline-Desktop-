@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Hostinger classic backend ZIP compatibility (2026-07-22)
+
+- The backend archive is rebuilt as regular Deflate-compressed ZIP32 files without explicit directory entries, ZIP64 data, runtime data, symlinks, or platform-specific file metadata. This does not add a runtime dependency, asset, route, database change, or frontend payload change.
+- Empty Laravel writable folders are excluded from the compatibility archive and are preserved from production or safely recreated in staging/live deployment steps; logs, sessions, cache data, queue data, uploads, and media remain absent.
+- Final backend archive weight: 289 regular Deflate entries / 0 explicit directories / 290,661 bytes / SHA-256 `5c1e8ad82fbf649dc184a3b30554535b693cf6cd99d46f7d69aa509a0e412f2b`. `backend-live/` remains 288 source files plus its manifest, 289 files / 968,516 bytes.
+
 ## Complete current-site production packaging (2026-07-22)
 
 - The final audited `dist/` and `frontend-upload/` each contain 1,035 files / 91,847,052 bytes. The frontend release archive is 1,035 files / 90,959,405 bytes / SHA-256 `5ad4aa03c5076c24e5bf3f9408a21c24603ae88f825b3a58bd3f456b30b928bc`.

@@ -1,5 +1,30 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Hostinger File Manager ZIP32 staging workflow (2026-07-22)
+
+Hostinger File Manager returned a 500 while extracting a prior backend archive that passed local extraction. The current backend ZIP is therefore a conservative ZIP32 payload: standard Deflate level 6, no ZIP64, encryption, password, split data, symlink, hard-link, POSIX/NTFS metadata, Unicode/extended extra fields, or explicit empty-directory entries. It contains every verified regular file from `backend-live/` at archive root; it does not contain runtime data or rely on ZIP directory records.
+
+Do **not** extract this archive directly over a populated Laravel application. Use this Hostinger File Manager workflow:
+
+1. Create an empty backend staging folder outside `public_html`.
+2. Upload `FoodOnlines_Backend_Live.zip` into that staging folder.
+3. Extract the ZIP there.
+4. Confirm `artisan`, `app`, `bootstrap`, `config`, `database`, `resources`, and `routes` exist.
+5. Back up the live private Laravel directory.
+6. Copy application source from staging into the live private Laravel root.
+7. Preserve the live `.env`.
+8. Preserve `vendor/`.
+9. Preserve the complete `storage/` directory.
+10. Preserve `storage/app/public/media/`.
+11. Preserve permissions and runtime state.
+12. Preserve `public_html/api/backend-path.php`.
+13. Update `public_html/api` controlled adapter files separately only when required.
+14. Delete the staging folder only after smoke tests pass.
+
+The ZIP intentionally omits empty writable runtime folders. Preserve them from the live application; for a newly prepared private root, create `storage/app/public`, `storage/framework/cache/data`, `storage/framework/sessions`, `storage/framework/views`, `storage/logs`, and `bootstrap/cache` through Hostinger File Manager or, when SSH is available, `mkdir -p` followed by account-owner writable permissions. Do not create or package logs, sessions, cache data, queue data, uploads, or media.
+
+The split API adapter remains required: copy `public/backend-path.php.example` to `public_html/api/backend-path.php` only when that file does not already exist, set the real private Laravel absolute path, and preserve it on future deployments. Never package the real file or expose that path in API responses. This workspace has not yet confirmed a successful Hostinger extraction of the replacement archive.
+
 ## Hostinger 500 repair: split public API entry (2026-07-22)
 
 The backend archive's `public/index.php` is a controlled API entry file, but in the Hostinger split layout it must be copied to the existing `public_html/api/index.php`; it must not remain only under the private application's `public/` directory. The entry now supports a non-versioned path file so it can locate the private Laravel root safely instead of assuming `public_html` itself is the application.

@@ -1,5 +1,12 @@
 # Agent Notes
 
+## Hostinger classic backend ZIP compatibility (2026-07-22)
+
+- Hostinger File Manager returned a server-side 500 while extracting the prior backend archive, despite its local parity test passing. The prior result is not treated as Hostinger extraction evidence.
+- `npm run release:zips -- --Target backend` now builds `FoodOnlines_Backend_Live.zip` only from verified `backend-live/` using a conservative classic ZIP32 writer: standard Deflate level 6, no ZIP64, encryption, comments, Unicode/extended extra fields, POSIX/NTFS metadata, symlinks, or explicit directory records. Only normal regular files are archived at root-relative `/` paths.
+- The release gate independently validates central-directory metadata with Node, extracts with Windows `Expand-Archive`, and extracts with PHP `ZipArchive`; 7-Zip and `unzip` are not installed in this workspace and are explicitly unclaimed. Empty runtime directories are deliberately absent and must be preserved on the live server or safely created after staging extraction.
+- Final compatibility artifact: `backend-live/` has 288 source files plus `SHA256SUMS` (289 files / 968,516 bytes). `FoodOnlines_Backend_Live.zip` has 289 Deflate entries / 0 explicit directories / 290,661 bytes / SHA-256 `5c1e8ad82fbf649dc184a3b30554535b693cf6cd99d46f7d69aa509a0e412f2b`. Node, Windows extraction, Python CRC reading, and PHP ZipArchive extraction passed; manifest and source/extraction SHA-256 parity passed. Hostinger extraction is not yet externally confirmed.
+
 ## Hostinger split-public API entry repair (2026-07-22)
 
 - The backend release public adapter no longer assumes `public/index.php` is nested directly below the Laravel private root. It first accepts a non-versioned `public_html/api/backend-path.php` configuration, then an explicit environment value, then safe nearby Laravel-root discovery; this supports the documented split `public_html/api` Hostinger layout without exposing a server path in API responses.

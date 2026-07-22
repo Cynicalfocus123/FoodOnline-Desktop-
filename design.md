@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Hostinger classic backend archive delivery (2026-07-22)
+
+- This packaging-only compatibility correction does not change the approved interface, layout, responsive behavior, routes, or feature set. The backend archive now contains regular root-level Laravel files only; it has no explicit empty-directory records that some hosting-panel extractors reject.
+- Deployment remains split: stage the backend archive before copying source into the private Laravel root, preserve `public_html/api/backend-path.php`, and keep the existing frontend/API visual and routing separation intact.
+- The final backend compatibility archive has 289 root-relative Deflate file entries and zero explicit directory entries. It is 290,661 bytes with SHA-256 `5c1e8ad82fbf649dc184a3b30554535b693cf6cd99d46f7d69aa509a0e412f2b`; no visual asset or interface output changed.
+
 ## Complete current-site production package (2026-07-22)
 
 - This packaging-only release preserves the approved public, account, checkout, invitation, and administrator interfaces, including the desktop/mobile account Log out row, LINE ID contact presentation, country-specific Address Book fields, shared Saved Items, and Refer & Earn surfaces.
