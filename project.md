@@ -1,5 +1,9 @@
 # FoodOnlines Project State
 
+## Priority paired Hostinger archive contract
+
+Every production-delivery task creates and verifies both clean Hostinger archives from the current frontend and backend mirrors. The paired ZIP contract in `AGENTS.md` and `DEPLOYMENT.md` supersedes every historical delivery note below that says not to create a ZIP, requests a single ZIP, or leaves either archive unchanged.
+
 ## Enterprise CMS workflow (2026-07-18)
 
 - Admin modules now use dedicated list, create, and edit URLs while preserving the existing sidebar and FoodOnlines visual language.
@@ -27,4 +31,4 @@
 
 ## Delivery contract
 
-Use `backend-live/` and `frontend-upload/`; do not create a ZIP. Preserve the live `.env`, `vendor/`, database, storage/media, permissions, and `public_html/api`. After backend deployment run migrations, `catalog:backfill-categories`, and cache rebuilds from `DEPLOYMENT.md`, then smoke-test Admin Categories, homepage categories, deletion, and media lifecycle.
+Historical task-specific contract: use `backend-live/` and `frontend-upload/` while preserving the live `.env`, `vendor/`, database, storage/media, permissions, and `public_html/api`. The current priority rule additionally requires both clean Hostinger ZIPs for every production-delivery pass. After backend deployment run migrations, `catalog:backfill-categories`, and cache rebuilds from `DEPLOYMENT.md`, then smoke-test Admin Categories, homepage categories, deletion, and media lifecycle.

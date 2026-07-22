@@ -1,5 +1,17 @@
 # Agent Notes
 
+## PRIORITY RELEASE RULE — always build both clean Hostinger ZIPs
+
+- Every completed production-delivery task must generate `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` together from the current verified `dist`/`frontend-upload` and `backend-live` mirrors. Frontend-only, backend-only, migration, configuration, content, and mixed releases are all included; only a direct current user instruction may waive either archive.
+- Use the clean Hostinger workflow and established standard Deflate ZIP32 root layout. Never reuse an old ZIP, extracted release, or stale staging folder. Both archives must pass CRC/listing, Windows and PHP extraction with full SHA-256 parity, path/metadata safety, forbidden-content checks, and backend manifest verification before the task is complete.
+- Report both archive paths, file counts, byte sizes, and SHA-256 hashes. This rule has precedence over all historical notes below that say `no ZIP`, request only one archive, or describe the other archive as unchanged.
+
+### Priority-rule adoption release (2026-07-22)
+
+- The rule is enforced in root `AGENTS.md`, this operating ledger, `DEPLOYMENT.md`, `README.md`, and `project.md`; the generated backend deployment guide and manifest are synchronized. No application behavior, database schema, route, dependency, interface, or runtime media changed.
+- Fresh validation passed 72 Node tests, a 139-module production build, the 28-route audit, exact 1,035-file frontend mirror synchronization, and a 288-source-file-plus-manifest backend synchronization.
+- Both mandatory clean archives were rebuilt and passed CRC/listing, Windows and PHP SHA-256 extraction parity, required-root-file, safety/metadata, forbidden-content, and backend-manifest gates. Frontend: 1,035 files / 90,944,892 bytes / SHA-256 `244e504d8eb85ae79ac1da2f4157429a896c2ac70e94dc43cfdb8c7c1ef3e090`. Backend: 289 files / 289,849 bytes / SHA-256 `3f9e61ec866d9163d8d3836e60dca7e436121e549d674801c4529b35a814739a`.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 - Clean external staging folders were created from authoritative source only: `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Frontend-Clean` from the new audited `dist/`, and `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Backend-Clean` from a newly generated `backend-live/` whitelist mirror. No prior ZIP, extraction, release folder, or stale mirror was used as a package source.

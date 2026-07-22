@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Mandatory paired clean-archive rule (2026-07-22)
+
+- This is a release-governance change only: it does not alter the approved public/admin interface, responsive behavior, brand styling, route behavior, feature set, or production assets.
+- Every future production-delivery pass regenerates both the frontend and backend clean Hostinger archives from current verified mirrors. Historical `no ZIP`, single-archive, or unchanged-counterpart delivery notes no longer control the release workflow.
+- The adoption release rebuilt the unchanged 1,035-file frontend output and the synchronized 289-file backend payload as the verified standard Deflate ZIP32 pair. Both passed the established extraction and SHA-256 parity gates; external Hostinger deployment remains separate and unclaimed.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 - This deployment-only rebuild makes no visual, public/admin layout, brand, route, or feature change. The fresh audited storefront output remains 1,035 files / 91,847,052 bytes and includes the current account logout, persisted Address Book, Favorites/Saved Items, Refer & Earn, invitation page, and full catalog/admin flows.

@@ -1,5 +1,12 @@
 # FoodOnlines Site Weight
 
+## Mandatory paired clean-archive rule (2026-07-22)
+
+- Repository delivery instructions now require both clean Hostinger ZIPs for every production-delivery task, superseding historical `no ZIP`, single-archive, and unchanged-counterpart notes. This documentation/deployment-manifest change adds no frontend asset, runtime dependency, route, migration, application feature, or media.
+- Fresh `dist/`, `frontend-upload/`, and frontend clean staging each contain 1,035 files / 91,847,052 bytes. `FoodOnlines_Frontend_Hostinger_Clean.zip` contains 1,035 files and is 90,944,892 bytes / SHA-256 `244e504d8eb85ae79ac1da2f4157429a896c2ac70e94dc43cfdb8c7c1ef3e090`.
+- Fresh `backend-live/` and backend clean staging each contain 289 files / 971,798 bytes, including the manifest for 288 source files. `FoodOnlines_Backend_Hostinger_Clean.zip` contains 289 files and is 289,849 bytes / SHA-256 `3f9e61ec866d9163d8d3836e60dca7e436121e549d674801c4529b35a814739a`.
+- Both standard Deflate ZIP32 archives passed CRC/listing, root-layout and metadata inspection, Windows and PHP full SHA-256 extraction parity, safety/forbidden-content checks, and backend manifest verification. Hostinger File Manager extraction remains externally unconfirmed.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 - Fresh production output and the clean frontend staging folder each contain 1,035 files / 91,847,052 bytes. The frontend clean Hostinger archive contains the same 1,035 regular files and is 90,944,892 bytes / SHA-256 `2817ff56a648958445f9c6c84b81db051e41ee9d9f12aa349c4ced01836039ea`.

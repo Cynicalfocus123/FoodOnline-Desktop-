@@ -1,5 +1,13 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Priority paired-archive release rule
+
+Every completed production release must create both `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` as one release pair, including frontend-only, backend-only, migration, configuration, and content changes. Generate both from freshly validated authoritative source and synchronized mirrors using `npm run release:hostinger-clean`; never reuse old archives, extracted releases, or stale staging content. Only a direct instruction from the user for the current release may waive either ZIP.
+
+Both archives must retain the verified Hostinger-safe format: root-level regular files, standard Deflate ZIP32, no wrapper or explicit directory entries, and no unsafe paths, ZIP64, encryption, secrets, symlinks, frontend/backend cross-contamination, or runtime media. Do not mark a release complete until both archives pass CRC/listing, Windows and PHP extraction with SHA-256 parity, required-file checks, and backend `SHA256SUMS` verification. Record both archive paths, file counts, sizes, and SHA-256 hashes in the release handoff.
+
+This rule supersedes older historical sections in this document that say `no ZIP`, permit only one archive, or leave the other archive unchanged.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 The current clean deployment staging roots are `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Frontend-Clean` and `D:\Codex projects\FoodOnlines-Live-Releases\FoodOnlines-Backend-Clean`. They are created only from a fresh audited `dist/` build and a newly synchronized `backend-live/` mirror, respectively; no old archive, release extraction, or existing staging content is a source.

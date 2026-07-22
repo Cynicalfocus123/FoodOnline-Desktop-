@@ -1,5 +1,7 @@
 # FoodOnline-Desktop-
 
+> **Priority release rule:** every completed production-delivery task generates and verifies both `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` together from fresh authoritative source. This applies even when only one side changed and supersedes older `no ZIP` or single-archive notes. Only a direct user instruction for the current task can waive an archive. See `AGENTS.md` and `DEPLOYMENT.md` for the required ZIP32 root layout and verification gates.
+
 > Account-menu logout and administrator LINE ID (2026-07-21): signed-in desktop/tablet and mobile account navigation now expose one accessible Log out action that clears account-owned frontend state before revoking the existing public token. Admin Customer, Supplier, and Partner lists show any supplied LINE ID directly below the primary contact number. No schema migration is required; the verified release contains a 1,035-file frontend mirror and 288-file backend archive. External Hostinger deployment remains a separate manual action.
 
 > Account persistence (2026-07-21): authenticated addresses are Laravel-authoritative and shared by Address Book and checkout. Administrator customer detail is strictly customer-scoped. Product hearts use canonical UUID favorites, and Saved Items is the shared persisted-favorites view.
@@ -28,7 +30,7 @@
 
 The Laravel foundation and category-management backend are on `main`. The repository backend deployment mirror is `backend-live/` and must be regenerated with `node scripts/sync-backend-live.mjs` for every backend change. Every completed task reviews and updates all tracked Markdown documentation; external Hostinger deployment is never implied by the repository mirror.
 
-Backend changes use one combined pass: edit Laravel source, validate, generate `backend-live/`, verify parity, commit source/docs/mirror together, and push `main`. Do not hand-edit the generated mirror. When an upload ZIP is explicitly requested, package only the verified mirror contents at archive root and keep the archive outside Git.
+Backend changes use one combined pass: edit Laravel source, validate, generate `backend-live/`, verify parity, commit source/docs/mirror together, and push `main`. Do not hand-edit the generated mirror. Every production-delivery pass packages both verified frontend and backend mirrors as the clean Hostinger archive pair at ZIP root and keeps the archives outside Git.
 
 FoodOnlines desktop homepage built with React, TypeScript, Zustand, and Tailwind CSS.
 
