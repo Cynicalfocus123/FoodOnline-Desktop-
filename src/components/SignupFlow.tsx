@@ -62,6 +62,7 @@ export function SignupFlow() {
   const continueToForm = useHomeStore((state) => state.continueToForm);
   const setFormValue = useHomeStore((state) => state.setFormValue);
   const finishSignup = useHomeStore((state) => state.finishSignup);
+  const backToHome = useHomeStore((state) => state.backToHome);
   const openLogin = useHomeStore((state) => state.openLogin);
   const returnAfterAuth = useHomeStore((state) => state.returnAfterAuth);
   const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
@@ -157,28 +158,16 @@ export function SignupFlow() {
   if (signupStep === "complete" && completedSubmission) {
     return (
       <section className="bg-neutral-50 px-4 pb-16 pt-[164px] sm:px-6 sm:pt-[178px] lg:pt-[186px]">
-        <div className="mx-auto max-w-3xl rounded-[28px] border border-emerald-100 bg-emerald-50/80 p-6 shadow-sm shadow-emerald-950/5 sm:p-8">
-          <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black text-white">
-              OK
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-ink sm:text-3xl">Registration Complete</h1>
-              <p className="mt-2 max-w-xl text-base leading-7 text-neutral-600">
-                Thank you for registering. Your{" "}
-                {getSignupRoleMeta(completedSubmission.selectedRole).signupLabel} account has been saved to the live
-                FoodOnlines account system and is ready for sign in.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                  className="min-h-12 rounded-md bg-citrus-500 px-6 text-sm font-black text-white transition hover:bg-citrus-600"
-                  onClick={openLogin}
-                  type="button"
-                >
-                  Go to Login
-                </button>
-              </div>
-            </div>
+        <div className="mx-auto max-w-lg rounded-[28px] border border-emerald-100 bg-emerald-50/80 p-6 shadow-sm shadow-emerald-950/5 sm:p-8">
+          <p className="text-base font-semibold leading-7 text-ink">Thank you for registering.</p>
+          <div className="mt-6">
+            <button
+              className="min-h-12 rounded-md bg-citrus-500 px-6 text-sm font-black text-white transition hover:bg-citrus-600"
+              onClick={backToHome}
+              type="button"
+            >
+              Go to Home
+            </button>
           </div>
         </div>
       </section>

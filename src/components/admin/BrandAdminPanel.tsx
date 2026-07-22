@@ -17,6 +17,12 @@ import {
 } from "./CatalogCommon";
 import { ManagedMediaControl } from "./ManagedMediaControl";
 import { AdminListPage, exportCsv } from "./AdminListPage";
+import {
+  AdminSubmissionNotice,
+  queueAdminSubmissionNotice,
+  takeAdminSubmissionNotice,
+  type AdminSubmissionNotice as AdminSubmissionNoticeState,
+} from "./AdminSubmissionNotice";
 
 const blank = {
   name: "",
@@ -43,30 +49,37 @@ export function BrandAdminPanel({
   const [selected, setSelected] = useState<AdminBrand | null>(null);
   const [form, setForm] = useState(blank);
   const [message, setMessage] = useState("");
+  const [submissionNotice, setSubmissionNotice] = useState<AdminSubmissionNoticeState | null>(() => takeAdminSubmissionNotice());
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [search, setSearch] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const saveInFlight = useRef(false);
+  const pendingLogoTargetRef = useRef<string | null>(null);
   const [pendingLogo, setPendingLogo] = useState<{ file: File; previewUrl: string } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("sort_order");
-  const clearPendingLogo = () => setPendingLogo((current) => {
-    if (current) URL.revokeObjectURL(current.previewUrl);
-    return null;
-  });
+  const clearPendingLogo = () => {
+    pendingLogoTargetRef.current = null;
+    setPendingLogo((current) => {
+      if (current) URL.revokeObjectURL(current.previewUrl);
+      return null;
+    });
+  };
   const load = async () =>
     setItems(await catalogApi.allBrands(token, search ? `&search=${encodeURIComponent(search)}` : ""));
   useEffect(() => {
     void load().catch((error) => setMessage(adminError(error).message));
   }, [token]);
   useEffect(() => {
+    const queuedNotice = takeAdminSubmissionNotice();
+    if (queuedNotice) setSubmissionNotice(queuedNotice);
     if (mode === "create") { clearPendingLogo(); setSelected(null); setForm(blank); setErrors({}); setMessage(""); }
-    if (mode === "edit" && recordId) void catalogApi.brand(token, recordId).then(choose).catch((error) => setMessage(adminError(error).message));
+    if (mode === "edit" && recordId) void catalogApi.brand(token, recordId).then((detail) => choose(detail, pendingLogoTargetRef.current !== detail.uuid)).catch((error) => setMessage(adminError(error).message));
   }, [mode, recordId, token]);
-  const choose = (item: AdminBrand) => {
-    clearPendingLogo();
+  const choose = (item: AdminBrand, discardPending = true) => {
+    if (discardPending) clearPendingLogo();
     setSelected(item);
     setForm({
       name: item.name,
@@ -84,6 +97,7 @@ export function BrandAdminPanel({
     saveInFlight.current = true;
     setSaving(true);
     setErrors({});
+    setMessage("");
     try {
       const wasNew = !selected;
       const item = await catalogApi.saveBrand(token, selected?.uuid ?? null, {
@@ -103,7 +117,6 @@ export function BrandAdminPanel({
           clearPendingLogo();
         } catch (error) {
           uploadFailed = true;
-          setMessage(`Brand saved. ${adminError(error).message}`);
         } finally {
           setProgress(null);
         }
@@ -111,8 +124,24 @@ export function BrandAdminPanel({
       await load();
       setSelected(finalItem);
       setForm({ name: finalItem.name, slug: finalItem.slug, country_code: finalItem.country_code ?? "", logo_path: finalItem.logo_path ?? "", is_active: finalItem.is_active, sort_order: String(finalItem.sort_order) });
-      if (!uploadFailed) setMessage(pendingLogo ? "Brand and selected image saved." : "Brand saved.");
-      if (wasNew) onNavigate(`/admin/brands/${finalItem.uuid}/edit`, true);
+      const notice: AdminSubmissionNoticeState = uploadFailed
+        ? {
+            tone: "warning",
+            message: wasNew
+              ? "The record was created, but one or more images could not be uploaded. Retry the remaining images."
+              : "One or more images could not be uploaded. Retry the remaining images.",
+          }
+        : {
+            tone: "success",
+            message: wasNew ? "Brand created successfully." : "Brand updated successfully.",
+          };
+      pendingLogoTargetRef.current = uploadFailed ? finalItem.uuid : null;
+      if (wasNew) {
+        queueAdminSubmissionNotice(notice);
+        onNavigate(`/admin/brands/${finalItem.uuid}/edit`, true);
+      } else {
+        setSubmissionNotice(notice);
+      }
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
@@ -247,6 +276,7 @@ export function BrandAdminPanel({
             {message}
           </Notice>
         ) : null}
+        <AdminSubmissionNotice notice={submissionNotice} onDismiss={() => setSubmissionNotice(null)} />
         <div className="grid gap-4 md:grid-cols-2">
           <TextField
             error={errors.name?.[0]}

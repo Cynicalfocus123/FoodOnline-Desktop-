@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ProductCarouselSection } from "../types/catalog";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
+import { categorySlugForSection } from "./categoryNavigation";
 
 type ProductCarouselProps = {
   section: ProductCarouselSection;
@@ -63,7 +64,7 @@ export function ProductCarousel({ section }: ProductCarouselProps) {
             href={section.seeAllHref}
             onClick={(event) => {
               event.preventDefault();
-              openCategory(section.sectionId);
+              openCategory(categorySlugForSection(section));
             }}
           >
             see all

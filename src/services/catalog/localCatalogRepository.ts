@@ -10,6 +10,7 @@ import {
   getRelatedProducts,
   productCarouselSections,
   productCatalog,
+  resolveKnownCategorySlug,
   searchProducts,
 } from "../../data/home";
 import type { CatalogQuery, Product } from "../../types/catalog";
@@ -32,8 +33,14 @@ export const localCatalogRepository: CatalogRepository = {
   getAllPublicCategories: async () => localCategories,
   getNavigationCategories: async () => localCategories,
   getHomepageCategories: async () => localCategories,
-  getCategoryBySlug: async (slug) => getCategoryBySlug(slug),
-  getCategoryProducts: async (slug) => getCategoryListingProducts(slug),
+  getCategoryBySlug: async (slug) => {
+    const resolvedSlug = resolveKnownCategorySlug(slug);
+    return resolvedSlug ? getCategoryBySlug(resolvedSlug) : null;
+  },
+  getCategoryProducts: async (slug) => {
+    const resolvedSlug = resolveKnownCategorySlug(slug);
+    return resolvedSlug ? getCategoryListingProducts(resolvedSlug) : [];
+  },
   getProductById: async (id) => getProductById(id),
   getRelatedProducts: async (product, limit) => getRelatedProducts(product, limit),
   searchProducts: async (query) => searchProducts(query),

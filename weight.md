@@ -1,9 +1,15 @@
 # FoodOnlines Site Weight
 
+## Registration, admin feedback, and category resolution (2026-07-21)
+
+- This frontend-only change adds small shared state/formatting utilities and focused tests; it adds no backend route, migration, production dependency, runtime media, or design asset.
+- Category catalog state is resolution-aware: loading and error do not render an empty category or zero-product claim; valid hybrid/local products remain available while authority resolves; filtered zero results are distinct from a confirmed empty category; stale category requests are rejected.
+- The active Promo Code editor uses human percentage-to-basis-point and money-to-minor conversions. Shared success/warning alerts carry create feedback across Edit navigation without duplicate parent creation or premature media-success claims.
+
 ## Production ZIP packaging (2026-07-21)
 
 - Packaging adds no application dependency, raster asset, video, font, source map, route, database migration, or runtime media. The two release archives are generated from verified mirrors outside both deployment mirrors; exact final file counts, ZIP sizes, SHA-256 values, and extraction-parity results are recorded after the portable release command completes.
-- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,949,854 bytes / SHA-256 `c725f3b8cdac9472232244d2ced52be3ea9f6aebad0bde89bbeb55b155274014`; `FoodOnlines_Backend_Live.zip` is 274 files / 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
+- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,951,692 bytes / SHA-256 `60172fbd046e9c60c1c7946b63f55bba40fb7a7d894a5e4970775b44d54a94d9`; the unchanged `FoodOnlines_Backend_Live.zip` is 274 files / 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
 
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 

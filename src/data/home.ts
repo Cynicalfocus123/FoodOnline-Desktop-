@@ -1007,6 +1007,12 @@ function resolveCategorySlug(slug: string) {
   return CATEGORY_SLUG_ALIASES[slug] ?? slug;
 }
 
+export function resolveKnownCategorySlug(slug: string | null) {
+  if (!slug) return null;
+  const resolvedSlug = resolveCategorySlug(slug);
+  return categoryTileBySlug.has(resolvedSlug) ? resolvedSlug : null;
+}
+
 function normalizeSearchText(value: string) {
   return value
     .toLowerCase()

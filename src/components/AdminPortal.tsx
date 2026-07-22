@@ -18,7 +18,8 @@ import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
 import { ProductAdminPanel } from "./admin/ProductAdminPanel";
 import { AuditAdminPanel, CommerceSettingsPanel, InventoryAdminPanel } from "./admin/CommerceAdminPanels";
 import { ReportsAdminPanel, StaffAdminPanel, OperationsAdminPanel } from "./admin/OperationalAdminPanels";
-import { EnterpriseOrdersAdminPanel, EnterprisePromotionsAdminPanel } from "./admin/EnterpriseCommercePanels";
+import { EnterpriseOrdersAdminPanel } from "./admin/EnterpriseCommercePanels";
+import { EnterprisePromotionsAdminPanel } from "./admin/EnterprisePromotionsAdminPanel";
 import { EnterpriseReturnsAdminPanel, EnterpriseReviewsAdminPanel, EnterpriseSupportAdminPanel } from "./admin/EnterpriseOperationalPanels";
 import { EnterpriseUsersAdminPanel } from "./admin/EnterpriseUsersAdminPanel";
 

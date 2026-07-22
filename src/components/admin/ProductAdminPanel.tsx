@@ -26,6 +26,12 @@ import {
 } from "./CatalogCommon";
 import { ManagedMediaPreview } from "./ManagedMediaControl";
 import { AdminListPage, exportCsv } from "./AdminListPage";
+import {
+  AdminSubmissionNotice,
+  queueAdminSubmissionNotice,
+  takeAdminSubmissionNotice,
+  type AdminSubmissionNotice as AdminSubmissionNoticeState,
+} from "./AdminSubmissionNotice";
 
 type Tab = "basics" | "variants" | "media" | "nutrition" | "publication";
 type PendingProductImage = { id: string; file: File; previewUrl: string };
@@ -101,18 +107,23 @@ export function ProductAdminPanel({
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [message, setMessage] = useState("");
+  const [submissionNotice, setSubmissionNotice] = useState<AdminSubmissionNoticeState | null>(() => takeAdminSubmissionNotice());
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [progress, setProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const saveInFlight = useRef(false);
+  const pendingMediaTargetRef = useRef<string | null>(null);
   const [pendingMedia, setPendingMedia] = useState<PendingProductImage[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("updated");
-  const clearPendingMedia = () => setPendingMedia((current) => {
-    current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
-    return [];
-  });
+  const clearPendingMedia = () => {
+    pendingMediaTargetRef.current = null;
+    setPendingMedia((current) => {
+      current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+      return [];
+    });
+  };
   const query = useMemo(
     () =>
       `${search ? `&search=${encodeURIComponent(search)}` : ""}${status ? `&status=${status}` : ""}${categoryFilter ? `&category_id=${categoryFilter}` : ""}${brandFilter ? `&brand_id=${brandFilter}` : ""}${availability ? `&availability_status=${availability}` : ""}${countryFilter ? `&country_of_origin_code=${countryFilter}` : ""}${storageFilter ? `&storage_type=${storageFilter}` : ""}${featuredFilter ? `&is_featured=${featuredFilter}` : ""}${minPrice ? `&min_price=${minPrice}` : ""}${maxPrice ? `&max_price=${maxPrice}` : ""}`,
@@ -169,8 +180,10 @@ export function ProductAdminPanel({
     applyProduct(detail);
   };
   useEffect(() => {
+    const queuedNotice = takeAdminSubmissionNotice();
+    if (queuedNotice) setSubmissionNotice(queuedNotice);
     if (mode === "create") { clearPendingMedia(); setSelected(null); setForm(blankProduct); setTab("basics"); setErrors({}); setMessage(""); }
-    if (mode === "edit" && recordId) void catalogApi.product(token, recordId).then(applyProduct).catch((error) => setMessage(adminError(error).message));
+    if (mode === "edit" && recordId) void catalogApi.product(token, recordId).then((detail) => applyProduct(detail, pendingMediaTargetRef.current !== detail.uuid)).catch((error) => setMessage(adminError(error).message));
   }, [mode, recordId, token]);
   const refresh = async () => {
     if (selected) {
@@ -185,6 +198,7 @@ export function ProductAdminPanel({
     saveInFlight.current = true;
     setSaving(true);
     setErrors({});
+    setMessage("");
     try {
       const wasNew = !selected;
       const body = {
@@ -219,17 +233,25 @@ export function ProductAdminPanel({
       await load();
       const detail = await catalogApi.product(token, saved.uuid);
       applyProduct(detail, false);
-      setMessage(
-        uploadFailures.length
-          ? "Product saved. Some selected images could not be uploaded; retry from Media."
-          : pendingMedia.length
-            ? "Product and selected images saved."
-            : selected
-          ? "Product saved."
-          : "Draft product created. Add at least one active default variant and one image before publishing.",
-      );
-      if (!selected) setTab(uploadFailures.length ? "media" : "variants");
-      if (wasNew) onNavigate(`/admin/products/${detail.uuid}/edit`, true);
+      const notice: AdminSubmissionNoticeState = uploadFailures.length
+        ? {
+            tone: "warning",
+            message: wasNew
+              ? "The record was created, but one or more images could not be uploaded. Retry the remaining images."
+              : "One or more images could not be uploaded. Retry the remaining images.",
+          }
+        : {
+            tone: "success",
+            message: wasNew ? "Product created successfully." : "Product updated successfully.",
+          };
+      pendingMediaTargetRef.current = uploadFailures.length ? saved.uuid : null;
+      if (wasNew) {
+        setTab(uploadFailures.length ? "media" : "variants");
+        queueAdminSubmissionNotice(notice);
+        onNavigate(`/admin/products/${detail.uuid}/edit`, true);
+      } else {
+        setSubmissionNotice(notice);
+      }
     } catch (error) {
       const clean = adminError(error);
       setMessage(clean.message);
@@ -490,6 +512,7 @@ export function ProductAdminPanel({
             </Notice>
           </div>
         ) : null}
+        <AdminSubmissionNotice notice={submissionNotice} onDismiss={() => setSubmissionNotice(null)} />
         <div className="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>

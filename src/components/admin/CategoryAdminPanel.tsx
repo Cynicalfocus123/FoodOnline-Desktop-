@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { getPublicRouteHref } from "../../lib/routes";
 import { adminError, catalogApi, uploadManagedImage } from "../../services/admin/catalogApi";
 import type { AdminCategory, MediaPurpose, MediaStorageState } from "../../types/adminCatalog";
@@ -6,6 +6,12 @@ import { ActionButton, CheckField, ConfirmationModal, Field, Notice, PanelHeader
 import { ManagedMediaControl } from "./ManagedMediaControl";
 import { slugifyCategoryName, updateCategoryPlacement } from "./categoryAdminLogic";
 import { AdminListPage, exportCsv } from "./AdminListPage";
+import {
+  AdminSubmissionNotice,
+  queueAdminSubmissionNotice,
+  takeAdminSubmissionNotice,
+  type AdminSubmissionNotice as AdminSubmissionNoticeState,
+} from "./AdminSubmissionNotice";
 
 const empty = {
   name: "", slug: "", parent_id: "", description: "", status: "draft", visibility: "public", sort_order: "",
@@ -43,6 +49,7 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"neutral" | "error" | "success">("neutral");
+  const [submissionNotice, setSubmissionNotice] = useState<AdminSubmissionNoticeState | null>(() => takeAdminSubmissionNotice());
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [listError, setListError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -53,6 +60,7 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
   const [progress, setProgress] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState("");
   const [pendingMedia, setPendingMedia] = useState<PendingCategoryMedia>({});
+  const pendingMediaTargetRef = useRef<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -60,6 +68,7 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
   const [sort, setSort] = useState("sort_order");
 
   function clearPendingMedia() {
+    pendingMediaTargetRef.current = null;
     setPendingMedia((current) => {
       Object.values(current).forEach((item) => item && URL.revokeObjectURL(item.previewUrl));
       return {};
@@ -86,6 +95,8 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
   useEffect(() => { void load(); }, [token, statusFilter]);
 
   useEffect(() => {
+    const queuedNotice = takeAdminSubmissionNotice();
+    if (queuedNotice) setSubmissionNotice(queuedNotice);
     if (mode === "create") {
       startNew();
       return;
@@ -93,7 +104,8 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
     if (mode === "edit" && recordId) {
       void catalogApi.category(token, recordId).then((detail) => {
         setSelected(detail); setForm(formFromCategory(detail)); setSlugEdited(true);
-        clearPendingMedia(); setErrors({}); setMessage(""); setAliasError(""); setDeleteOpen(false); setUploadError("");
+        if (pendingMediaTargetRef.current !== detail.uuid) clearPendingMedia();
+        setErrors({}); setMessage(""); setAliasError(""); setDeleteOpen(false); setUploadError("");
       }).catch((error) => { setMessage(adminError(error).message); setMessageTone("error"); });
     }
   }, [mode, recordId, token]);
@@ -157,9 +169,24 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
       setSelected(detail); setForm(formFromCategory(detail)); setSlugEdited(true);
       await load(result.id);
       setUploadError(uploadFailures[0] ?? "");
-      setMessage(uploadFailures.length ? "Category saved. Some selected images could not be uploaded; retry when ready." : queued.length ? "Category and selected images saved." : "Category saved.");
-      setMessageTone(uploadFailures.length ? "neutral" : "success");
-      if (wasNew) onNavigate(`/admin/categories/${result.id}/edit`, true);
+      const notice: AdminSubmissionNoticeState = uploadFailures.length
+        ? {
+            tone: "warning",
+            message: wasNew
+              ? "The record was created, but one or more images could not be uploaded. Retry the remaining images."
+              : "One or more images could not be uploaded. Retry the remaining images.",
+          }
+        : {
+            tone: "success",
+            message: wasNew ? "Category created successfully." : "Category updated successfully.",
+          };
+      pendingMediaTargetRef.current = uploadFailures.length ? result.uuid : null;
+      if (wasNew) {
+        queueAdminSubmissionNotice(notice);
+        onNavigate(`/admin/categories/${result.id}/edit`, true);
+      } else {
+        setSubmissionNotice(notice);
+      }
     } catch (error) {
       const clean = adminError(error); setMessage(clean.message); setMessageTone("error"); setErrors(clean.fields);
     } finally { setProgress(null); setSaving(false); }
@@ -299,6 +326,7 @@ export function CategoryAdminPanel({ token, storage, mode = "list", recordId, on
       <form className="grid gap-6 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft sm:p-7" onSubmit={save}>
         <div className="flex flex-col gap-4 border-b border-neutral-100 pb-5 sm:flex-row sm:items-start sm:justify-between"><div><button className="text-sm font-black text-leaf-700" onClick={() => onNavigate("/admin/categories")} type="button">← Categories</button><PanelHeader eyebrow={selected ? "Edit category" : "Create category"} title={selected?.name ?? "Create category"} /></div><div className="flex flex-wrap gap-2"><ActionButton disabled={saving} type="submit">{saving ? "Saving…" : "Save"}</ActionButton><ActionButton disabled={saving} type="submit" tone="secondary">Save &amp; Continue</ActionButton>{selected?.status === "archived" ? <ActionButton onClick={() => void changeStatus("restore")} tone="secondary">Restore</ActionButton> : selected ? <ActionButton onClick={() => void changeStatus("archive")} tone="danger">Archive</ActionButton> : null}</div></div>
         {message ? <Notice tone={messageTone}>{message}</Notice> : null}
+        <AdminSubmissionNotice notice={submissionNotice} onDismiss={() => setSubmissionNotice(null)} />
         <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-neutral-500">Public Storefront Status</p><p className={`mt-1 text-lg font-black ${selected && !storefrontReasons.length ? "text-emerald-700" : "text-amber-700"}`}>{selected && !storefrontReasons.length ? "Accessible" : "Not publicly accessible"}</p></div>{selected ? <ActionButton onClick={() => window.open(getPublicRouteHref(`category/${selected.slug}`), "_blank", "noopener,noreferrer")} tone="secondary">View on Storefront</ActionButton> : null}</div>{storefrontReasons.length ? <ul className="mt-2 grid gap-1 text-sm text-neutral-600">{storefrontReasons.map((reason) => <li key={reason}>• {reason}</li>)}</ul> : <p className="mt-2 text-sm text-neutral-600">Published public categories can be reached from the storefront.</p>}</div>
 
         <div className="grid gap-4 md:grid-cols-2">

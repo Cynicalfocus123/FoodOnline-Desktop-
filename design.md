@@ -1,10 +1,17 @@
 # FoodOnlines Desktop Home Design
 
+## Registration, admin feedback, and category resolution (2026-07-21)
+
+- The compact registration outcome card retains its light success background, rounded corners, FoodOnlines spacing, and orange primary treatment while showing only the requested thank-you message and Home action.
+- Administrator create/edit feedback uses a shared accessible green alert near each form header. Product, Brand, and Category media failures keep the existing retryable previews and use a warning so the UI never claims complete success too soon.
+- Promo Code presents a human Percentage control with a `%` suffix, while fixed discounts, optional minimum subtotal, and optional maximum discount remain monetary. No basis-point wording is exposed as the primary administrator-facing value.
+- The public category page retains its layout during loading. Loading, loaded products, filtered-empty results, confirmed-empty categories, and safe failures are visually and logically separate; only confirmed zero-product categories show the existing coming-soon copy. Homepage See All, category tiles, header/mobile links, direct routes, and history navigation use stable category slugs and cannot flash stale products.
+
 ## Production delivery packaging (2026-07-21)
 
 - Packaging changes no public or administrator visual, route, responsive, promotion, registration, or pre-save media behavior. The final frontend mirror keeps the current public registration, nested-admin routing, and pending-media interface exactly as approved.
 - Production delivery is two root-level ZIP payloads: the frontend belongs directly in the domain `public_html` while preserving `public_html/api`; the backend belongs only in the private Laravel application root while preserving all live runtime data. No migration, database, or design change belongs to this packaging release.
-- Verified delivery evidence: the 1,033-file frontend ZIP is 90,949,854 bytes / SHA-256 `c725f3b8cdac9472232244d2ced52be3ea9f6aebad0bde89bbeb55b155274014`; the 274-file backend ZIP is 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Both portable archives passed separate extraction with zero content, SHA-256, path-safety, duplicate, secret, or forbidden-content findings; this validation changes no interface behavior.
+- Verified delivery evidence: the 1,033-file frontend ZIP is 90,951,692 bytes / SHA-256 `60172fbd046e9c60c1c7946b63f55bba40fb7a7d894a5e4970775b44d54a94d9`; the unchanged 274-file backend ZIP is 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Both portable archives passed separate extraction with zero content, SHA-256, path-safety, duplicate, secret, or forbidden-content findings; this validation changes no interface behavior.
 
 ## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
 

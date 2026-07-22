@@ -4,15 +4,11 @@ import {
   type MadeInOption,
   type ProductItem,
   type ProductTypeOption,
-  getAvailableDeliveryTypes,
-  getAvailableFilterBrands,
-  getAvailableMadeInOptions,
-  getAvailableProductTypes,
-  getCategoryBySlug,
-  getCategoryListingProducts,
 } from "../services/catalog";
+import { createCategoryListingRequestGuard, loadCategoryListing } from "../services/catalog/categoryListingLoader";
 import { useHomeStore } from "../store/homeStore";
 import { ProductCard } from "./ProductCard";
+import { categoryProductCountLabel, getCategoryListingViewState, type CategoryListingResolution } from "./categoryListingState";
 
 type SortOption = "featured" | "best-selling" | "price-low" | "price-high";
 type PriceBand = "all" | "under-5" | "5-10" | "10-15" | "15-25" | "25-plus";
@@ -41,6 +37,13 @@ const initialSectionState: Record<FilterSectionKey, boolean> = {
   price: true,
   priceRange: true,
   brand: true,
+};
+
+const emptyFilterOptions = {
+  delivery: [] as DeliveryTypeOption[],
+  productType: [] as ProductTypeOption[],
+  madeIn: [] as MadeInOption[],
+  brands: [] as string[],
 };
 
 function Chevron({ open }: { open: boolean }) {
@@ -345,11 +348,16 @@ function FilterPanel({
 
 export function CategoryListingPage() {
   const selectedCategorySlug = useHomeStore((state) => state.selectedCategorySlug);
-  const [categoryData, setCategoryData] = useState<Awaited<ReturnType<typeof getCategoryBySlug>>>(null);
-  const [products, setProducts] = useState<ProductItem[]>([]);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [filterOptions, setFilterOptions] = useState({ delivery: [] as DeliveryTypeOption[], productType: [] as ProductTypeOption[], madeIn: [] as MadeInOption[], brands: [] as string[] });
-  const category = categoryData ?? { name: "Loading catalog", icon: "categories" as const, image: "", sectionId: "", categorySlug: selectedCategorySlug ?? "", href: "" };
+  const routeSlug = selectedCategorySlug?.trim() || null;
+  const [listing, setListing] = useState<{
+    category: Awaited<ReturnType<typeof loadCategoryListing>>["category"];
+    filterOptions: typeof emptyFilterOptions;
+    products: ProductItem[];
+    resolution: CategoryListingResolution;
+  }>({ category: null, filterOptions: emptyFilterOptions, products: [], resolution: "loading" });
+  const [retryVersion, setRetryVersion] = useState(0);
+  const category = listing.category ?? { name: "Category", icon: "categories" as const, image: "", sectionId: "", categorySlug: routeSlug ?? "", href: "" };
+  const { filterOptions, products } = listing;
   const [selectedSort, setSelectedSort] = useState<SortOption>("featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -364,34 +372,35 @@ export function CategoryListingPage() {
   const tabletSortReference = useRef<HTMLDivElement | null>(null);
   const desktopSortReference = useRef<HTMLDivElement | null>(null);
   const mobileSortReference = useRef<HTMLDivElement | null>(null);
+  const categoryRequestGuard = useRef(createCategoryListingRequestGuard());
 
   useEffect(() => {
-    let mounted = true;
-    setLoadError(null);
-    setCategoryData(null);
-    setProducts([]);
-    void Promise.all([
-      getCategoryBySlug(selectedCategorySlug),
-      getCategoryListingProducts(selectedCategorySlug),
-      getAvailableDeliveryTypes(),
-      getAvailableProductTypes(),
-      getAvailableMadeInOptions(),
-      getAvailableFilterBrands(),
-    ]).then(([nextCategory, nextProducts, delivery, productType, madeIn, brands]) => {
-      if (!mounted) return;
-      setCategoryData(nextCategory);
-      setProducts(nextProducts);
-      setFilterOptions({ delivery, productType, madeIn, brands });
-    }).catch(() => mounted && setLoadError("Unable to load this category. Please retry."));
-    return () => { mounted = false; };
-  }, [selectedCategorySlug]);
+    let cancelled = false;
+    const request = categoryRequestGuard.current.begin();
+    setListing({ category: null, filterOptions: emptyFilterOptions, products: [], resolution: "loading" });
+    void loadCategoryListing(routeSlug, (known) => {
+      if (cancelled || !categoryRequestGuard.current.isCurrent(request)) return;
+      setListing((current) => ({ ...current, category: known.category, products: known.products }));
+    }).then((resolved) => {
+      if (cancelled || !categoryRequestGuard.current.isCurrent(request)) return;
+      if (!resolved.category) {
+        setListing((current) => ({ ...current, filterOptions: resolved.filters, resolution: "error" }));
+        return;
+      }
+      setListing({ category: resolved.category, filterOptions: resolved.filters, products: resolved.products, resolution: "loaded" });
+    }).catch(() => {
+      if (cancelled || !categoryRequestGuard.current.isCurrent(request)) return;
+      setListing((current) => ({ ...current, resolution: "error" }));
+    });
+    return () => { cancelled = true; };
+  }, [retryVersion, routeSlug]);
 
   useEffect(() => {
-    if (!categoryData) return;
-    document.title = `${categoryData.seo?.title ?? categoryData.name} | FoodOnlines`;
+    if (!listing.category) return;
+    document.title = `${listing.category.seo?.title ?? listing.category.name} | FoodOnlines`;
     const meta = document.head.querySelector('meta[name="description"]') ?? document.head.appendChild(Object.assign(document.createElement("meta"), { name: "description" }));
-    meta.setAttribute("content", categoryData.seo?.description ?? `Shop ${categoryData.name} from FoodOnlines.`);
-  }, [categoryData]);
+    meta.setAttribute("content", listing.category.seo?.description ?? `Shop ${listing.category.name} from FoodOnlines.`);
+  }, [listing.category]);
 
   useEffect(() => {
     setSelectedSort("featured");
@@ -405,7 +414,7 @@ export function CategoryListingPage() {
     setCollapsedSections(initialSectionState);
     setIsFilterDrawerOpen(false);
     setIsSortOpen(false);
-  }, [category.categorySlug]);
+  }, [routeSlug]);
 
   useEffect(() => {
     if (!isSortOpen) {
@@ -522,6 +531,12 @@ export function CategoryListingPage() {
     }
   }, [filteredProducts, selectedSort]);
 
+  const viewState = getCategoryListingViewState({
+    resolution: listing.resolution,
+    totalProducts: products.length,
+    visibleProducts: sortedProducts.length,
+  });
+
   const gridStateKey = useMemo(
     () =>
       [
@@ -580,12 +595,12 @@ export function CategoryListingPage() {
 
           <div className="grid gap-5">
             <SectionShell>
-              {loadError ? <p className="mb-3 text-sm font-semibold text-rose-700">{loadError}</p> : null}
+              {viewState === "error" ? <p className="mb-3 text-sm font-semibold text-rose-700">Unable to load this category. Please retry.</p> : null}
               <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div className="grid gap-2">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-citrus-500">Category Listing</p>
                   <h1 className="text-3xl font-black tracking-[-0.03em] text-neutral-950 sm:text-4xl">{category.name}</h1>
-                  <p className="text-sm font-medium text-neutral-500">{sortedProducts.length} products shown</p>
+                  <p aria-live="polite" className="text-sm font-medium text-neutral-500">{categoryProductCountLabel(viewState, sortedProducts.length)}</p>
                 </div>
 
                 <div className="hidden sm:flex sm:flex-row sm:items-center sm:justify-end sm:gap-3 lg:hidden">
@@ -708,11 +723,30 @@ export function CategoryListingPage() {
                   <ProductCard key={product.id} layout="grid" product={product} />
                 ))}
               </div>
+            ) : viewState === "loading" ? (
+              <div aria-live="polite" aria-label="Loading products" className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+                {Array.from({ length: 10 }, (_, index) => <div className="min-h-[280px] animate-pulse rounded-2xl border border-neutral-100 bg-white" key={index} />)}
+              </div>
+            ) : viewState === "error" ? (
+              <SectionShell>
+                <div className="grid gap-3">
+                  <h2 className="text-2xl font-black text-neutral-950">Unable to load products</h2>
+                  <p className="text-sm leading-7 text-neutral-600">Please try again.</p>
+                  <button className="w-fit rounded-full border border-neutral-300 px-4 py-2 text-sm font-black text-neutral-800" onClick={() => setRetryVersion((current) => current + 1)} type="button">Retry</button>
+                </div>
+              </SectionShell>
+            ) : viewState === "filtered-empty" ? (
+              <SectionShell>
+                <div className="grid gap-3">
+                  <h2 className="text-2xl font-black text-neutral-950">No products match your current filters.</h2>
+                  <button className="w-fit rounded-full border border-neutral-300 px-4 py-2 text-sm font-black text-neutral-800" onClick={resetFilters} type="button">Reset filters</button>
+                </div>
+              </SectionShell>
             ) : (
               <SectionShell>
                 <div className="grid gap-2">
-                  <h2 className="text-2xl font-black text-neutral-950">{products.length ? "No matching products" : "Products are coming soon"}</h2>
-                  <p className="text-sm leading-7 text-neutral-600">{products.length ? "Try resetting filters or widening the price range to see more items." : "This category is ready, and products will appear here as soon as they are added."}</p>
+                  <h2 className="text-2xl font-black text-neutral-950">Products are coming soon</h2>
+                  <p className="text-sm leading-7 text-neutral-600">This category is ready, and products will appear here as soon as they are added.</p>
                 </div>
               </SectionShell>
             )}
