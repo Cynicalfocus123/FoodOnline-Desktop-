@@ -166,6 +166,26 @@ function Remove-VerificationDirectory([string]$Path) {
     Remove-Item -LiteralPath $absolute -Force -Recurse
 }
 
+function Remove-ObsoleteReleaseArchives([string[]]$KeepNames) {
+    $allowed = @{}
+    foreach ($name in $KeepNames) {
+        if ([string]::IsNullOrWhiteSpace($name) -or [IO.Path]::GetFileName($name) -ne $name -or -not $name.EndsWith(".zip", [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Unsafe canonical archive name: $name"
+        }
+        $allowed[$name.ToLowerInvariant()] = $true
+    }
+
+    foreach ($archive in Get-ChildItem -LiteralPath $ReleaseDirectory -File -Filter "*.zip" -Force) {
+        $archivePath = [IO.Path]::GetFullPath($archive.FullName)
+        if ((Split-Path -Parent $archivePath) -ne $ReleaseDirectory) {
+            throw "Refusing to remove an archive outside the release directory: $archivePath"
+        }
+        if (-not $allowed.ContainsKey($archive.Name.ToLowerInvariant())) {
+            Remove-Item -LiteralPath $archivePath -Force
+        }
+    }
+}
+
 function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveName) {
     $files = Get-Inventory $Source
     if ($files.Count -eq 0) { throw "$Kind clean stage is empty." }
@@ -258,6 +278,9 @@ function Invoke-CleanPackage([string]$Kind, [string]$Source, [string]$ArchiveNam
     return $result
 }
 
-$frontend = Invoke-CleanPackage "frontend" $FrontendDirectory "FoodOnlines_Frontend_Hostinger_Clean.zip"
-$backend = Invoke-CleanPackage "backend" $BackendDirectory "FoodOnlines_Backend_Hostinger_Clean.zip"
+$frontendArchiveName = "FoodOnlines_Frontend_Hostinger_Clean.zip"
+$backendArchiveName = "FoodOnlines_Backend_Hostinger_Clean.zip"
+$frontend = Invoke-CleanPackage "frontend" $FrontendDirectory $frontendArchiveName
+$backend = Invoke-CleanPackage "backend" $BackendDirectory $backendArchiveName
+Remove-ObsoleteReleaseArchives @($frontendArchiveName, $backendArchiveName)
 [pscustomobject]@{ frontend = $frontend; backend = $backend } | ConvertTo-Json -Depth 5

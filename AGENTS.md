@@ -7,6 +7,8 @@ Every completed production-delivery task must generate **both** current deployme
 - `FoodOnlines_Frontend_Hostinger_Clean.zip`
 - `FoodOnlines_Backend_Hostinger_Clean.zip`
 
+The external release directory must contain **only** these two current ZIP files. On every successful packaging run, delete every other root-level `.zip` from that dedicated release directory so obsolete, alternate, timestamped, or legacy archives cannot be mistaken for the current release. The two canonical filenames are replaced by the newly generated pair; never retain older ZIP copies alongside them.
+
 This applies to frontend-only, backend-only, migration, configuration, content, and mixed releases. Never leave one archive unchanged, never publish only one archive, and never treat ZIP generation as optional. The only exception is a direct instruction from the user in the current task not to create one or both archives.
 
 Build from current authoritative source only: run the frontend validation/production build and synchronize `frontend-upload/` from `dist/`; synchronize `backend-live/` from Laravel source and verify `SHA256SUMS`; then run `npm run release:hostinger-clean`, which recreates both clean staging folders outside Git before writing either archive. Never package an old ZIP, an extracted release, a stale staging folder, or live runtime data.
