@@ -103,4 +103,8 @@ class User extends Authenticatable
     public function supportTickets(): HasMany { return $this->hasMany(SupportTicket::class); }
     public function adminRecoveryCodes(): HasMany { return $this->hasMany(AdminRecoveryCode::class); }
     public function userApiTokens(): HasMany { return $this->hasMany(UserApiToken::class); }
+    public function referralCode(): HasOne { return $this->hasOne(ReferralCode::class); }
+    public function referralsMade(): HasMany { return $this->hasMany(Referral::class, 'referrer_user_id'); }
+    public function referralReceived(): HasOne { return $this->hasOne(Referral::class, 'referred_user_id'); }
+    public function referralRewards(): HasMany { return $this->hasMany(ReferralReward::class, 'beneficiary_user_id'); }
 }

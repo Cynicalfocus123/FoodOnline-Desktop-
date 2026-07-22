@@ -1,5 +1,11 @@
 # Agent Notes
 
+## Refer & Earn system (2026-07-21)
+
+- The active FoodOnlines referral program is durable Laravel/MySQL state: permanent eligible-customer codes, referral attribution, rewards, account-bound Promotion coupons, qualification/revocation handling, database notifications, audited administration, and the additive referrals:backfill-codes command. It does not add a wallet, email-sending form, QR code, Facebook-specific action, or a new image-upload system.
+- Customer referral UI remains inside the existing account shell. The public /invite/{REFERRAL_CODE} route resolves an active invite before signup; customer registration sends an optional code only for Customer accounts. Customer activity names are backend-masked and the visible share controls are exactly Share, Copy link, and Copy invite code.
+- This task has a migration and must be deployed from synchronized backend-live/ and frontend-upload/ mirrors. Do not create, regenerate, upload, or use any ZIP for this referral release. Preserve public_html/api, live .env, vendor, database, storage/media, writable permissions, queues, and all existing runtime state.
+
 ## Homepage hybrid catalog presentation (2026-07-21)
 
 - Homepage category tiles and approved product-preview rails start from a synchronous valid local/hybrid snapshot. They never initialize as empty arrays while compatible catalog data exists, and their shared refresh performs API synchronization in the background without clearing retained tiles, rails, cards, or controls.

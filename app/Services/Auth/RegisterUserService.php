@@ -3,6 +3,8 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Services\Referral\ReferralAttributionService;
+use App\Services\Referral\ReferralCodeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -11,6 +13,11 @@ use Illuminate\Support\Facades\Schema;
 
 class RegisterUserService
 {
+    public function __construct(
+        private readonly ReferralCodeService $referralCodes,
+        private readonly ReferralAttributionService $referrals,
+    ) {}
+
     /**
      * @param  array<string, mixed>  $validated
      */
@@ -48,6 +55,10 @@ class RegisterUserService
             }
 
             $user = User::query()->create($attributes);
+            $this->referralCodes->ensure($user);
+            if ($accountType === 'customer') {
+                $this->referrals->attributeRegisteredCustomer($user, $validated['referral_code'] ?? null);
+            }
 
             Event::dispatch(new Registered($user));
 

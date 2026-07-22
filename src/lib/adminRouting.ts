@@ -8,7 +8,7 @@ export type AdminRoute = {
 };
 
 const sidebarKeys = new Set<AdminSidebarKey>([
-  "overview", "users", "categories", "brands", "products", "orders", "inventory", "promotions", "audit",
+  "overview", "users", "categories", "brands", "products", "orders", "inventory", "promotions", "referrals", "audit",
   "returns", "reviews", "support", "reports", "staff", "operations", "settings", "deleteAccount",
 ]);
 
@@ -26,6 +26,8 @@ const segmentToSidebar: Record<string, AdminSidebarKey> = {
   inventory: "inventory",
   promotions: "promotions",
   "promo-codes": "promotions",
+  referrals: "referrals",
+  "referral-settings": "referrals",
   audit: "audit",
   returns: "returns",
   reviews: "reviews",
@@ -46,6 +48,7 @@ const sidebarToSegment: Record<AdminSidebarKey, string> = {
   orders: "orders",
   inventory: "inventory",
   promotions: "promotions",
+  referrals: "referrals",
   audit: "audit",
   returns: "returns",
   reviews: "reviews",
@@ -62,7 +65,7 @@ export function readAdminRoute(pathname = window.location.pathname): AdminRoute 
   const module = segments[0] ?? "";
   const sidebarKey = segmentToSidebar[module] ?? "overview";
   if (segments[1] === "create") return { sidebarKey, module, mode: "create", recordId: null };
-  if (segments[1] && segments[2] === "edit") return { sidebarKey, module, mode: "edit", recordId: segments[1] };
+  if (segments[1] && (segments[2] === "edit" || module === "referrals")) return { sidebarKey, module, mode: "edit", recordId: segments[1] };
   return { sidebarKey, module, mode: "list", recordId: null };
 }
 export function adminPath(sidebarKey: AdminSidebarKey) {

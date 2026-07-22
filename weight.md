@@ -1,5 +1,10 @@
 # FoodOnlines Site Weight
 
+## Refer & Earn system (2026-07-21)
+
+- Adds one lazy public invitation chunk, small account/admin API clients and UI, and Laravel referral source/migration files. It adds no raster image, video, font, QR asset, social SDK, email library, wallet dependency, or image-upload payload.
+- Referral coupons reuse the existing Promotion and redemption path, so no parallel checkout provider or customer-balance subsystem is shipped. Deployment remains mirror-only for this task: no release ZIP is created or updated.
+
 ## Homepage hybrid catalog presentation (2026-07-21)
 
 - This frontend-only improvement adds a small shared homepage snapshot/controller utility and focused Node tests. It adds no backend route, migration, dependency, production media, font, video, or design asset.

@@ -9,6 +9,7 @@ const routeAudit = [
   ["/", "Home shell", null, null],
   ["/login", "LoginFlow", "LoginFlow-", null],
   ["/signup", "SignupFlow", "SignupFlow-", null],
+  ["/invite/:referralCode", "InvitationPage", "InvitationPage-", null],
   ["/account", "AccountPage", "AccountPage-", null],
   ["/search/:query", "SearchResultsPage", "SearchResultsPage-", null],
   ["/cart", "CartPage", "CartPage-", null],

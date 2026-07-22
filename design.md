@@ -1,5 +1,11 @@
 # FoodOnlines Desktop Home Design
 
+## Refer & Earn customer and admin experience (2026-07-21)
+
+- Keep Refer & Earn inside the existing Account page chrome. The customer sequence is a clear benefit/share area, server-computed stats, privacy-safe activity, and terms. The only sharing controls are Share, Copy link, and Copy invite code; no email-recipient form, QR display, or social-network-specific button is introduced.
+- /invite/{REFERRAL_CODE} is a direct-loadable public invitation page with a compact FoodOnlines benefit card and Customer account call to action. It uses the established responsive whitespace, rounded cards, green/white surface treatment, and generic unavailable state rather than exposing backend detail.
+- Admin keeps the approved sidebar/workspace pattern. Referrals uses a responsive operations table, detail view, auditable status actions, and a separate settings surface; wide data stays scrollable only within its table.
+
 ## Homepage hybrid catalog presentation (2026-07-21)
 
 - Keep the current category-tile artwork, order, card design, product rails, carousel arrows, See All actions, spacing, and desktop/tablet/mobile behavior. Valid local/hybrid category tiles and product rails appear immediately in their intended positions rather than leaving an empty catalog gap.

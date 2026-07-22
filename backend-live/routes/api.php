@@ -56,6 +56,9 @@ use App\Http\Controllers\Api\Admin\AdminReportController;
 use App\Http\Controllers\Api\Admin\AdminOperationsController;
 use App\Http\Controllers\Api\Admin\AdminSecurityController;
 use App\Http\Controllers\Api\Admin\AdminFailedJobController;
+use App\Http\Controllers\Api\Admin\AdminReferralController;
+use App\Http\Controllers\Api\Account\ReferralController as AccountReferralController;
+use App\Http\Controllers\Api\ReferralInvitationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/media/{path}', LocalMediaController::class)
@@ -78,6 +81,9 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/password/forgot', [PasswordRecoveryController::class, 'request'])->middleware(['throttle:api', 'throttle:login'])->name('api.v1.auth.password.forgot');
     Route::post('/auth/password/reset', [PasswordRecoveryController::class, 'reset'])->middleware(['throttle:api', 'throttle:login'])->name('api.v1.auth.password.reset');
     Route::post('/auth/email/verify', [EmailVerificationController::class, 'verify'])->middleware('throttle:api')->name('api.v1.auth.email.verify');
+    Route::get('/referrals/invite/{referralCode}', ReferralInvitationController::class)
+        ->middleware(['throttle:api', 'throttle:referral-public'])
+        ->name('api.v1.referrals.invite');
 
     Route::middleware(['user.token', 'throttle:api'])->group(function (): void {
         Route::post('/auth/logout', LogoutUserController::class)->name('api.v1.auth.logout');
@@ -123,6 +129,9 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('/account/reviews/{review}', [AccountReviewController::class, 'update'])->name('api.v1.account.reviews.update');
         Route::delete('/account/reviews/{review}', [AccountReviewController::class, 'destroy'])->name('api.v1.account.reviews.destroy');
         Route::get('/account/notifications', [AccountNotificationController::class, 'index'])->name('api.v1.account.notifications.index');
+        Route::get('/account/referrals', [AccountReferralController::class, 'dashboard'])->middleware('throttle:referral-customer')->name('api.v1.account.referrals.dashboard');
+        Route::get('/account/referrals/activity', [AccountReferralController::class, 'activity'])->middleware('throttle:referral-customer')->name('api.v1.account.referrals.activity');
+        Route::get('/account/referral-coupons', [AccountReferralController::class, 'coupons'])->middleware('throttle:referral-customer')->name('api.v1.account.referrals.coupons');
         Route::post('/account/notifications/{notification}/read', [AccountNotificationController::class, 'read'])->name('api.v1.account.notifications.read');
         Route::post('/account/notifications/read-all', [AccountNotificationController::class, 'readAll'])->name('api.v1.account.notifications.read-all');
         Route::delete('/account/notifications/{notification}', [AccountNotificationController::class, 'destroy'])->name('api.v1.account.notifications.destroy');
@@ -218,6 +227,11 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/commerce-settings', [AdminCommerceSettingsController::class, 'show'])->name('api.v1.admin.commerce-settings.show');
             Route::put('/commerce-settings', [AdminCommerceSettingsController::class, 'update'])->name('api.v1.admin.commerce-settings.update');
             Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])->name('api.v1.admin.audit-logs.index');
+            Route::get('/referrals', [AdminReferralController::class, 'index'])->name('api.v1.admin.referrals.index');
+            Route::get('/referral-settings', [AdminReferralController::class, 'settings'])->name('api.v1.admin.referrals.settings.show');
+            Route::put('/referral-settings', [AdminReferralController::class, 'updateSettings'])->name('api.v1.admin.referrals.settings.update');
+            Route::get('/referrals/{referral}', [AdminReferralController::class, 'show'])->name('api.v1.admin.referrals.show');
+            Route::post('/referrals/{referral}/actions', [AdminReferralController::class, 'action'])->name('api.v1.admin.referrals.action');
             Route::get('/returns', [AdminReturnController::class, 'index'])->middleware('admin.permission:returns.view')->name('api.v1.admin.returns.index');
             Route::get('/returns/{returnRequest}', [AdminReturnController::class, 'show'])->middleware('admin.permission:returns.view')->name('api.v1.admin.returns.show');
             Route::post('/returns/{returnRequest}/actions', [AdminReturnController::class, 'action'])->middleware('admin.permission:returns.manage')->name('api.v1.admin.returns.action');

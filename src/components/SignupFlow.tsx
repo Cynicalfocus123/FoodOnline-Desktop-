@@ -65,6 +65,8 @@ export function SignupFlow() {
   const backToHome = useHomeStore((state) => state.backToHome);
   const openLogin = useHomeStore((state) => state.openLogin);
   const returnAfterAuth = useHomeStore((state) => state.returnAfterAuth);
+  const pendingReferralCode = useHomeStore((state) => state.pendingReferralCode);
+  const setPendingReferralCode = useHomeStore((state) => state.setPendingReferralCode);
   const completeMockPhoneOtpLogin = usePublicAuthStore((state) => state.completeMockPhoneOtpLogin);
   const isSubmittingLogin = usePublicAuthStore((state) => state.isSubmittingLogin);
 
@@ -314,6 +316,24 @@ export function SignupFlow() {
                   </label>
                 );
               })}
+
+              {selectedRole === "customer" ? (
+                <details className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4" open={Boolean(pendingReferralCode)}>
+                  <summary className="cursor-pointer text-sm font-black text-neutral-800">Have a referral code?</summary>
+                  <label className="mt-3 grid gap-2" htmlFor="referral-code">
+                    <span className="text-sm font-bold text-neutral-700">Referral code (optional)</span>
+                    <input
+                      autoCapitalize="characters"
+                      className="min-h-12 rounded-md border border-neutral-200 bg-white px-4 font-semibold uppercase text-ink outline-none focus:border-leaf-500"
+                      id="referral-code"
+                      maxLength={16}
+                      onChange={(event) => setPendingReferralCode(event.target.value)}
+                      placeholder="FOLXXXXXX"
+                      value={pendingReferralCode ?? ""}
+                    />
+                  </label>
+                </details>
+              ) : null}
 
               {signupMethod === "phone" && phoneSignupStep === "otp" ? (
                 <div className="grid gap-3 rounded-[22px] border border-neutral-200 bg-neutral-50 px-4 py-4">

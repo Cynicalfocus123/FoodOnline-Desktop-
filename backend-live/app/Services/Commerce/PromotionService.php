@@ -15,12 +15,19 @@ class PromotionService
             return ['promotion' => null, 'discount_minor' => 0, 'snapshot' => null];
         }
 
-        $query = Promotion::query()->with(['products:id', 'categories:id'])->whereRaw('UPPER(code) = ?', [strtoupper(trim($code))]);
+        $query = Promotion::query()->with(['products:id', 'categories:id', 'referralReward'])->whereRaw('UPPER(code) = ?', [strtoupper(trim($code))]);
         if ($lock) { $query->lockForUpdate(); }
         $promotion = $query->first();
         $message = 'This promo code is not available for the selected items.';
         if (! $promotion || ! $promotion->active || $promotion->archived_at || ($promotion->starts_at && $promotion->starts_at->isFuture()) || ($promotion->ends_at && $promotion->ends_at->isPast())) {
             throw ValidationException::withMessages(['promo_code' => [$message]]);
+        }
+        if ($promotion->referralReward) {
+            $reward = $promotion->referralReward;
+            if (! $user || $reward->beneficiary_user_id !== $user->id || $reward->status !== 'issued'
+                || ($reward->expires_at && $reward->expires_at->isPast())) {
+                throw ValidationException::withMessages(['promo_code' => ['This referral coupon is not available for this account.']]);
+            }
         }
         if ($promotion->discount_type === 'percentage' && $promotion->discount_value > 10000) {
             throw ValidationException::withMessages(['promo_code' => [$message]]);

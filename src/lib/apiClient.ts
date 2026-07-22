@@ -87,7 +87,7 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}) {
   return payload as T;
 }
 
-export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: SignupFormValues) {
+export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: SignupFormValues, referralCode?: string | null) {
   return {
     account_type: selectedRole,
     email: formValues.emailAddress,
@@ -97,6 +97,7 @@ export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: Signu
     line_id: optionalRegistrationValue(formValues.lineId),
     company_name: optionalRegistrationValue(formValues.companyName),
     password: formValues.password,
+    ...(selectedRole === "customer" && referralCode?.trim() ? { referral_code: referralCode.trim().toUpperCase() } : {}),
     registered_from: "main_public_frontend",
   };
 }

@@ -12,6 +12,7 @@ use App\Models\OrderStatusHistory;
 use App\Models\PromotionRedemption;
 use App\Models\User;
 use App\Notifications\CommerceNotification;
+use App\Services\Referral\ReferralRewardService;
 use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -26,6 +27,7 @@ class OrderService
         private readonly ShippingService $shipping,
         private readonly PaymentMethodService $paymentMethods,
         private readonly CommerceSettingsService $settings,
+        private readonly ReferralRewardService $referralRewards,
     ) {}
 
     public function create(CheckoutQuote $quote, ?User $user, string $idempotencyKey, ?string $customerNote = null): array
@@ -86,6 +88,7 @@ class OrderService
                     'guest_email' => $user ? null : $quote->guest_email, 'code_snapshot' => $promotion->code,
                     'discount_type_snapshot' => $promotion->discount_type, 'discount_value_snapshot' => $promotion->discount_value,
                     'discount_applied_minor' => $quote->promo_discount_minor, 'currency_code' => $quote->currency_code, 'redeemed_at' => now()]);
+                $this->referralRewards->markRedeemed($promotion, $order->id);
             }
 
             $quote->update(['consumed_at' => now()]);

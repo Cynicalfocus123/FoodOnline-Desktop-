@@ -35,6 +35,7 @@ const SignupFlow = lazy(() => import("./components/SignupFlow").then((module) =>
 const TermsOfUsePage = lazy(() => import("./components/TermsOfUsePage").then((module) => ({ default: module.TermsOfUsePage })));
 const WholesalerPage = lazy(() => import("./components/WholesalerPage").then((module) => ({ default: module.WholesalerPage })));
 const InformationPage = lazy(() => import("./components/InformationPage").then((module) => ({ default: module.InformationPage })));
+const InvitationPage = lazy(() => import("./components/InvitationPage").then((module) => ({ default: module.InvitationPage })));
 
 export default function App() {
   const siteView = useHomeStore((state) => state.siteView);
@@ -99,6 +100,7 @@ export default function App() {
         }
       >
         {siteView === "signup" ? <SignupFlow /> : null}
+        {siteView === "invite" ? <InvitationPage /> : null}
         {siteView === "login" ? <LoginFlow /> : null}
         {siteView === "cart" ? <CartPage /> : null}
         {siteView === "checkout" ? <CheckoutPage /> : null}

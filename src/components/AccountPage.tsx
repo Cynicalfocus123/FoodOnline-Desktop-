@@ -47,6 +47,13 @@ type NotificationPreferences = {
   push_notifications: boolean;
 };
 type AccountNotification = { id: string; type: string; data: { title?: string; message?: string; link?: Record<string, string> }; read_at: string | null; created_at: string };
+type ReferralDashboard = {
+  program: { heading?: string; referrer_benefit_title?: string; referrer_benefit_copy?: string; referee_benefit_title?: string; referee_benefit_copy?: string; share_message?: string; terms_content?: string } | null;
+  invite: { code: string; url: string } | null;
+  stats: { registered: number; first_qualified: number; second_qualified: number; earned_coupons: number };
+  recent_activity: Array<{ id: string; friend_name: string; status: string; registered_at: string | null; first_qualified_at: string | null; second_qualified_at: string | null }>;
+};
+type ReferralCoupon = { id: string; milestone: string; amount_minor: number; currency_code: string; status: string; coupon_code: string | null; expires_at: string | null; redeemed_at: string | null };
 
 type SaveState = "idle" | "saving";
 type DeleteReasonKey =
@@ -735,11 +742,11 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "refer" ? (
-              <SimplePanel title="Refer a friend" subtitle="Referral rewards and invitations will appear here when available." />
+              <ReferralPanel token={token} />
             ) : null}
 
             {accountSection === "coupon" ? (
-              <SimplePanel title="Coupons" subtitle="Available coupons and redemption history will appear here." />
+              <ReferralCouponsPanel token={token} />
             ) : null}
 
             {accountSection === "language" ? (
@@ -1321,6 +1328,114 @@ function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)
         </article>
       ))}
       {!message && !visible.length ? <p className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">No orders match this status.</p> : null}
+    </div>
+  );
+}
+
+function ReferralPanel({ token }: { token: string | null }) {
+  const [dashboard, setDashboard] = useState<ReferralDashboard | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    apiRequest<ReferralDashboard>("/account/referrals", { token }).then(setDashboard).catch(() => setMessage("Referral details are unavailable right now."));
+  }, [token]);
+
+  const invite = dashboard?.invite;
+  const formatDate = (value: string | null) => value ? new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value)) : "—";
+  const copy = async (value: string, success: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setMessage(success);
+    } catch {
+      window.prompt("Copy this value", value);
+    }
+  };
+  const share = async () => {
+    if (!invite) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "FoodOnlines", text: dashboard?.program?.share_message, url: invite.url });
+        return;
+      } catch {
+        return;
+      }
+    }
+    await copy(invite.url, "Invite link copied.");
+  };
+
+  if (!dashboard && !message) return <SimplePanel title="Refer a friend" subtitle="Loading your referral details…" />;
+  if (!dashboard || !invite) return <SimplePanel title="Refer a friend" subtitle={message ?? "Referral details are unavailable right now."} />;
+
+  return (
+    <div className="mt-6 grid gap-5">
+      <section className="rounded-3xl bg-leaf-700 p-6 text-white sm:p-8">
+        <p className="text-sm font-black uppercase tracking-[0.16em] text-white/70">FoodOnlines</p>
+        <h2 className="mt-2 text-3xl font-black">{dashboard.program?.heading ?? "Refer & Earn"}</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-white/85">{dashboard.program?.referrer_benefit_copy}</p>
+        <div className="mt-5 rounded-2xl bg-white/10 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-white/70">Your invite code</p>
+          <p className="mt-1 text-2xl font-black tracking-[0.12em]">{invite.code}</p>
+        </div>
+        <div className="mt-5 grid gap-2 sm:grid-cols-3">
+          <button className="min-h-12 rounded-full bg-white px-4 text-sm font-black text-leaf-800" onClick={() => void share()} type="button">Share</button>
+          <button className="min-h-12 rounded-full border border-white/50 px-4 text-sm font-black text-white" onClick={() => void copy(invite.url, "Invite link copied.")} type="button">Copy link</button>
+          <button className="min-h-12 rounded-full border border-white/50 px-4 text-sm font-black text-white" onClick={() => void copy(invite.code, "Invite code copied.")} type="button">Copy invite code</button>
+        </div>
+        {message ? <p className="mt-3 text-sm font-semibold text-white/90">{message}</p> : null}
+      </section>
+
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          ["Registered", dashboard.stats.registered],
+          ["First qualified", dashboard.stats.first_qualified],
+          ["Second qualified", dashboard.stats.second_qualified],
+          ["Active coupons", dashboard.stats.earned_coupons],
+        ].map(([label, value]) => (
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4" key={String(label)}>
+            <p className="text-2xl font-black text-neutral-950">{value}</p>
+            <p className="mt-1 text-xs font-bold text-neutral-500">{label}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="rounded-3xl border border-neutral-200 bg-white p-5">
+        <h3 className="text-lg font-black text-neutral-950">Recent activity</h3>
+        {dashboard.recent_activity.length ? (
+          <div className="mt-4 divide-y divide-neutral-100">
+            {dashboard.recent_activity.map((item) => (
+              <div className="flex items-center justify-between gap-3 py-3" key={item.id}>
+                <div><p className="font-bold text-neutral-900">{item.friend_name}</p><p className="text-sm text-neutral-500">{item.status.replaceAll("_", " ")}</p></div>
+                <p className="text-right text-xs font-semibold text-neutral-500">{formatDate(item.second_qualified_at ?? item.first_qualified_at ?? item.registered_at)}</p>
+              </div>
+            ))}
+          </div>
+        ) : <p className="mt-3 text-sm text-neutral-600">Your referral activity will appear here.</p>}
+      </section>
+      <section className="rounded-3xl border border-neutral-200 bg-neutral-50 p-5">
+        <h3 className="font-black text-neutral-950">Terms</h3>
+        <p className="mt-2 text-sm leading-6 text-neutral-600">{dashboard.program?.terms_content}</p>
+      </section>
+    </div>
+  );
+}
+
+function ReferralCouponsPanel({ token }: { token: string | null }) {
+  const [coupons, setCoupons] = useState<ReferralCoupon[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!token) return;
+    apiRequest<{ data: ReferralCoupon[] }>("/account/referral-coupons", { token }).then((response) => setCoupons(response.data)).catch(() => setCoupons([])).finally(() => setLoaded(true));
+  }, [token]);
+  const money = (coupon: ReferralCoupon) => new Intl.NumberFormat("en-US", { style: "currency", currency: coupon.currency_code }).format(coupon.amount_minor / 100);
+  return (
+    <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5">
+      <h2 className="text-xl font-black text-neutral-950">Coupons</h2>
+      {!loaded ? <p className="mt-3 text-sm text-neutral-600">Loading coupons…</p> : null}
+      {loaded && !coupons.length ? <p className="mt-3 text-sm text-neutral-600">No referral coupons are available yet.</p> : null}
+      <div className="mt-4 grid gap-3">
+        {coupons.map((coupon) => <div className="rounded-2xl border border-neutral-200 p-4" key={coupon.id}><div className="flex items-start justify-between gap-3"><div><p className="font-black text-neutral-950">{money(coupon)} referral coupon</p><p className="mt-1 text-sm text-neutral-600">{coupon.coupon_code ?? "Coupon pending"}</p></div><span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-black text-neutral-700">{coupon.status}</span></div><p className="mt-3 text-xs text-neutral-500">Expires {coupon.expires_at ? new Date(coupon.expires_at).toLocaleDateString() : "—"}</p></div>)}
+      </div>
     </div>
   );
 }

@@ -23,6 +23,7 @@ class RegisterUserRequest extends FormRequest
             'last_name' => $this->sanitizeTextValue('last_name'),
             'line_id' => $this->sanitizeLineId(),
             'password' => $this->sanitizePassword(),
+            'referral_code' => $this->sanitizeReferralCode(),
             'registered_from' => $this->sanitizeSimpleValue('registered_from') ?: 'website',
         ]);
     }
@@ -90,6 +91,7 @@ class RegisterUserRequest extends FormRequest
                 'max:72',
                 'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/',
             ],
+            'referral_code' => ['nullable', 'string', 'max:32', 'regex:/^FOL[A-Z2-9]{6,12}$/'],
             'registered_from' => [
                 'nullable',
                 'string',
@@ -160,6 +162,14 @@ class RegisterUserRequest extends FormRequest
         $value = trim($value);
 
         return $value !== '' ? mb_substr($value, 0, 72) : null;
+    }
+
+    private function sanitizeReferralCode(): ?string
+    {
+        $value = strtoupper((string) $this->input('referral_code', ''));
+        $value = preg_replace('/[^A-Z2-9]/', '', strip_tags($value)) ?? '';
+
+        return $value !== '' ? mb_substr($value, 0, 32) : null;
     }
 
     private function sanitizeSimpleValue(string $key): string

@@ -22,6 +22,7 @@ import { EnterpriseOrdersAdminPanel } from "./admin/EnterpriseCommercePanels";
 import { EnterprisePromotionsAdminPanel } from "./admin/EnterprisePromotionsAdminPanel";
 import { EnterpriseReturnsAdminPanel, EnterpriseReviewsAdminPanel, EnterpriseSupportAdminPanel } from "./admin/EnterpriseOperationalPanels";
 import { EnterpriseUsersAdminPanel } from "./admin/EnterpriseUsersAdminPanel";
+import { ReferralAdminPanel } from "./admin/ReferralAdminPanel";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -309,6 +310,7 @@ function AdminDashboard() {
             {activeSidebarKey === "orders" && token ? <EnterpriseOrdersAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} token={token} /> : null}
             {activeSidebarKey === "inventory" && token ? <InventoryAdminPanel token={token} /> : null}
             {activeSidebarKey === "promotions" && token ? <EnterprisePromotionsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} token={token} /> : null}
+            {activeSidebarKey === "referrals" && token ? <ReferralAdminPanel onNavigate={navigate} recordId={route.recordId} settings={route.module === "referral-settings"} token={token} /> : null}
             {activeSidebarKey === "audit" && token ? <AuditAdminPanel token={token} /> : null}
             {activeSidebarKey === "returns" && token ? <EnterpriseReturnsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "reviews" && token ? <EnterpriseReviewsAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}

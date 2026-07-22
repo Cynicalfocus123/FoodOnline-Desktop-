@@ -29,6 +29,13 @@ class AdminManagedUserResource extends JsonResource
             'registered_from' => $this->resource->registered_from,
             'created_at' => $this->resource->created_at?->toIso8601String(),
             'updated_at' => $this->resource->updated_at?->toIso8601String(),
+            'referral_summary' => $this->when($this->resource->relationLoaded('referralCode'), fn () => [
+                'code' => $this->resource->referralCode?->code,
+                'code_status' => $this->resource->referralCode?->status,
+                'referrals_made' => $this->resource->relationLoaded('referralsMade') ? $this->resource->referralsMade->count() : null,
+                'was_referred' => $this->resource->relationLoaded('referralReceived') && (bool) $this->resource->referralReceived,
+                'coupon_count' => $this->resource->relationLoaded('referralRewards') ? $this->resource->referralRewards->count() : null,
+            ]),
         ];
     }
 }

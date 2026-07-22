@@ -37,7 +37,7 @@ class AdminUsersController extends Controller
     {
         $this->ensureManagedUser($user);
 
-        return response()->json(['user' => new AdminManagedUserResource($user)]);
+        return response()->json(['user' => new AdminManagedUserResource($user->load(['referralCode', 'referralReceived', 'referralsMade', 'referralRewards']))]);
     }
 
     public function store(Request $request): JsonResponse

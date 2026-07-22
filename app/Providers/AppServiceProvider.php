@@ -36,6 +36,9 @@ class AppServiceProvider extends ServiceProvider
             $this->perMinute(10, 'admin-login:ip:'.$request->ip()),
             $this->perMinute(5, 'admin-login:credentials:'.$this->credentialKey($request)),
         ]);
+
+        RateLimiter::for('referral-public', fn (Request $request): Limit => $this->perMinute(30, 'referral-public:'.$request->ip()));
+        RateLimiter::for('referral-customer', fn (Request $request): Limit => $this->perMinute(60, 'referral-customer:'.($request->user()?->id ?? $request->ip())));
     }
 
     private function perMinute(int $attempts, string $key): Limit

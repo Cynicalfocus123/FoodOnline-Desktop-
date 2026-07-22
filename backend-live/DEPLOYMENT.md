@@ -1,5 +1,20 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Refer & Earn migration release (2026-07-21 — no ZIP)
+
+Deploy backend-live/ and frontend-upload/ generated from the same commit. Do not run the release-zips script and do not create, upload, or extract a ZIP for this release. Preserve the live .env, vendor/, database, complete storage/media tree, writable permissions, queue/runtime state, and the existing public_html/api entry point.
+
+After backing up the database and uploading only the synchronized source/mirror files to their existing destinations, run from the private Laravel root:
+
+    php artisan migrate --force
+    php artisan referrals:backfill-codes
+    php artisan optimize:clear
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+
+Do not use migrate:fresh, reset, truncate, seed, or replace the production database. Smoke-test a direct invite refresh, customer registration with a valid and invalid optional code, account Refer & Earn/Coupons, checkout rejection of another account's referral coupon, delivered+paid/COD qualification, full-refund revocation, and the Referrals admin list/detail/settings. No Hostinger deployment is implied by local mirror generation.
+
 ## Production ZIP deployment guide (2026-07-20)
 
 This no-migration release is delivered as `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`, generated only by `npm run release:zips` from the verified `frontend-upload/` and `backend-live/` mirrors. Each ZIP extracts its own mirror contents at archive root: it has no wrapper folder. The frontend ZIP is for the FoodOnlines domain `public_html`; the backend ZIP is for the private Laravel application directory. Do not interchange those destinations.

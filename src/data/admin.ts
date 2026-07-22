@@ -29,6 +29,7 @@ export const adminSidebarItems = [
   { key: "orders", label: "Orders", description: "Orders, payments, fulfillment, and history" },
   { key: "inventory", label: "Inventory", description: "Variant stock, reservations, and movements" },
   { key: "promotions", label: "Promo Codes", description: "Discount rules, limits, and redemption" },
+  { key: "referrals", label: "Referrals", description: "Referral programs, rewards, and review workflow" },
   { key: "audit", label: "Audit Logs", description: "Recorded commerce admin actions" },
   { key: "returns", label: "Returns", description: "Review requests, inspections, restocking, and refunds" },
   { key: "reviews", label: "Reviews", description: "Moderate customer reviews and reports" },

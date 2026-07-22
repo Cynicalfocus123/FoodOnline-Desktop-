@@ -8,13 +8,17 @@ use App\Models\OrderStatusHistory;
 use App\Models\PaymentRefund;
 use App\Models\User;
 use App\Notifications\CommerceNotification;
+use App\Services\Referral\ReferralQualificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OrderManagementService
 {
-    public function __construct(private readonly InventoryService $inventory) {}
+    public function __construct(
+        private readonly InventoryService $inventory,
+        private readonly ReferralQualificationService $referrals,
+    ) {}
 
     public function adminAction(Order $order, string $action, array $input, User $admin, Request $request): Order
     {
@@ -33,6 +37,12 @@ class OrderManagementService
                 default => throw ValidationException::withMessages(['action' => ['Unsupported order action.']]),
             };
             $order->save();
+            if (in_array($action, ['deliver', 'collect_cod'], true)) {
+                $this->referrals->processOrder($order);
+            }
+            if ($action === 'refund') {
+                $this->referrals->handleFullRefund($order, $admin);
+            }
             OrderStatusHistory::query()->create(['order_id' => $order->id, 'actor_type' => 'admin', 'actor_id' => $admin->id,
                 'event_type' => 'order.'.$action, 'previous_order_status' => $previous['order'], 'new_order_status' => $order->order_status,
                 'previous_payment_status' => $previous['payment'], 'new_payment_status' => $order->payment_status,

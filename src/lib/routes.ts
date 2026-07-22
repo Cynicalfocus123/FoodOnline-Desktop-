@@ -1,7 +1,7 @@
 const configuredPublicBase = import.meta.env?.BASE_URL ?? "/";
 const publicBase = configuredPublicBase.endsWith("/") ? configuredPublicBase : `${configuredPublicBase}/`;
 
-const applicationRoutePattern = /^(?:home|signup|login|cart|checkout|account(?:\/[^/?#]+)?|category\/[^/?#]+|product\/[^/?#]+|search\/[^?#]+|about-us|contact-us|return-policy|terms-and-conditions|privacy-policy|faq|become-vendor|become-partner|become-a-sponsor|wholesaler|affiliate|company\/drivers|recipes|company-news|our-mission|accessibility|sitemap)(?:[/?#].*)?$/i;
+const applicationRoutePattern = /^(?:home|signup|login|cart|checkout|invite\/[^/?#]+|account(?:\/[^/?#]+)?|category\/[^/?#]+|product\/[^/?#]+|search\/[^?#]+|about-us|contact-us|return-policy|terms-and-conditions|privacy-policy|faq|become-vendor|become-partner|become-a-sponsor|wholesaler|affiliate|company\/drivers|recipes|company-news|our-mission|accessibility|sitemap)(?:[/?#].*)?$/i;
 
 export function getPublicRouteHref(route = "") {
   return `${publicBase}${route.replace(/^\/+/, "")}`;

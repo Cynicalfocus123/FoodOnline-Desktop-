@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasPublicUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Promotion extends Model
@@ -16,4 +17,5 @@ class Promotion extends Model
     protected static function booted(): void { static::saving(fn (Promotion $promotion) => $promotion->code = Str::upper(trim($promotion->code))); }
     public function products(): BelongsToMany { return $this->belongsToMany(Product::class, 'promotion_products'); }
     public function categories(): BelongsToMany { return $this->belongsToMany(Category::class, 'promotion_categories'); }
+    public function referralReward(): HasOne { return $this->hasOne(ReferralReward::class); }
 }

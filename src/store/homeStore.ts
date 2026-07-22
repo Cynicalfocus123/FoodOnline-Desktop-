@@ -26,6 +26,7 @@ export type AccountSection = "overview" | "orders" | "saved" | "refer" | "coupon
 export type SiteView =
   | "home"
   | "signup"
+  | "invite"
   | "login"
   | "product"
   | "category"
@@ -142,6 +143,11 @@ function readCategorySlugFromHash(hash: string) {
 function readSearchQueryFromHash(hash: string) {
   const match = hash.match(/^#search\/([^?#]+)/i);
   return match?.[1] ? safeDecodeRouteSegment(match[1]) : null;
+}
+
+function readInviteCodeFromHash(hash: string) {
+  const match = hash.match(/^#invite\/([^/?#]+)/i);
+  return match?.[1] ? safeDecodeRouteSegment(match[1]).toUpperCase() : null;
 }
 
 function isCartHash(hash: string) {
@@ -372,6 +378,7 @@ type HomeState = {
   searchInputValue: string;
   searchQuery: string;
   accountSection: AccountSection;
+  pendingReferralCode: string | null;
   authReturnRoute: string | null;
   productReturnRoute: string | null;
   formValues: SignupFormValues;
@@ -401,6 +408,7 @@ type HomeState = {
   backToProducts: (fallbackCategorySlug: string) => void;
   openSearchResults: (query: string) => void;
   openAccount: (section?: AccountSection) => void;
+  setPendingReferralCode: (code: string | null) => void;
   returnAfterAuth: () => void;
   syncRouteFromHash: (hash: string) => void;
   setSearchInputValue: (value: string) => void;
@@ -434,10 +442,10 @@ type RegisterResponse = {
   };
 };
 
-async function submitSignupToBackend(selectedRole: SignupRoleKey, formValues: SignupFormValues) {
+async function submitSignupToBackend(selectedRole: SignupRoleKey, formValues: SignupFormValues, referralCode: string | null) {
   return apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",
-    body: toRegisterPayload(selectedRole, formValues),
+    body: toRegisterPayload(selectedRole, formValues, referralCode),
   });
 }
 
@@ -507,6 +515,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
   searchInputValue: "",
   searchQuery: "",
   accountSection: "overview",
+  pendingReferralCode: null,
   authReturnRoute: null,
   productReturnRoute: null,
   ...getBlankSignupState(),
@@ -838,6 +847,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
         submissionError: null,
       };
     }),
+  setPendingReferralCode: (code) => set({ pendingReferralCode: code?.replace(/[^A-Z2-9]/gi, "").toUpperCase() || null }),
   returnAfterAuth: () => {
     const authReturnRoute = get().authReturnRoute;
 
@@ -855,7 +865,19 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       const productId = readProductIdFromHash(hash);
       const categorySlug = readCategorySlugFromHash(hash);
       const searchQuery = readSearchQueryFromHash(hash);
+      const inviteCode = readInviteCodeFromHash(hash);
       const accountSection = readAccountSectionFromHash(hash);
+
+      if (inviteCode) {
+        return {
+          authReturnRoute: state.authReturnRoute,
+          siteView: "invite",
+          pendingReferralCode: inviteCode,
+          accountSection: "overview",
+          selectedProductId: null,
+          selectedCategorySlug: null,
+        };
+      }
 
       if (isSignupHash(hash)) {
         return {
@@ -1407,7 +1429,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       };
     }),
   finishSignup: async () => {
-    const { selectedRole, formValues } = get();
+    const { selectedRole, formValues, pendingReferralCode } = get();
     const roleError = validateSignupRole(selectedRole);
     const { cleanedValues, fieldErrors } = sanitizeAndValidateSignupFormValues(formValues, true);
 
@@ -1428,7 +1450,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({ isSubmittingSignup: true, submissionError: null });
 
     try {
-      const response = await submitSignupToBackend(selectedRole, cleanedValues);
+      const response = await submitSignupToBackend(selectedRole, cleanedValues, pendingReferralCode);
       const token = response.token ?? response.data?.token ?? null;
       const user = response.user ?? response.data?.user;
 
@@ -1468,6 +1490,7 @@ export const useHomeStore = create<HomeState>((set, get) => ({
       completedSubmission: payload,
       isSubmittingSignup: false,
       submissionError: null,
+      pendingReferralCode: null,
     });
   },
 }));
