@@ -1,6 +1,6 @@
 # FoodOnline-Desktop-
 
-> **Permanent release rule:** every completed change synchronizes source, `dist/`, `frontend-upload/`, `backend-live/`, its manifest, documentation, and Git before regenerating exactly `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`. Both are one matched release state; every other ZIP and temporary stage is removed. These mirrors/packages are ready for manual Hostinger deployment but do not prove the external server was updated. See `AGENTS.md` and `DEPLOYMENT.md`.
+> **Permanent release rule:** every completed change synchronizes source, `dist/`, `frontend-upload/`, `backend-live/`, its manifest, documentation, and Git before regenerating exactly `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`. Both are one matched release state; every other ZIP and temporary stage is removed. These mirrors/packages are ready for manual Hostinger deployment but do not prove the external server was updated. See `AGENT.md` and `DEPLOYMENT.md`.
 
 > Administrator customer detail (2026-07-22): direct/refreshed Customer edit routes now load the selected Laravel customer with every real saved address and active masked payment method. The UI distinguishes loading, confirmed-empty, safe failure/retry, and unavailable states and rejects stale/wrong-customer responses. Payment output excludes provider tokens and raw credentials. No migration or parallel storage was added.
 
@@ -8,7 +8,7 @@
 
 > Account persistence (2026-07-21): authenticated addresses are Laravel-authoritative and shared by Address Book and checkout. Administrator customer detail is strictly customer-scoped. Product hearts use canonical UUID favorites, and Saved Items is the shared persisted-favorites view.
 
-> Enterprise CMS workflow (2026-07-18): the unchanged admin sidebar now opens dedicated scalable list pages and full-width create/edit routes for content and user modules. Product variants remain inside Product Edit, nested admin routes refresh through `admin.html`, and requested production ZIPs are generated from the final backend/frontend mirrors. See `AGENT.md`, `DESIGNER.md`, `design.md`, and `DEPLOYMENT.md`.
+> Enterprise CMS workflow (2026-07-18): the unchanged admin sidebar now opens dedicated scalable list pages and full-width create/edit routes for content and user modules. Product variants remain inside Product Edit, nested admin routes refresh through `admin.html`, and requested production ZIPs are generated from the final backend/frontend mirrors. See `AGENT.md`, `design.md`, and `DEPLOYMENT.md`.
 
 > Brand country selector update (2026-07-18): Admin Brands now uses a searchable, keyboard-accessible list of all 249 assigned ISO 3166-1 alpha-2 entries, displays country names for existing records, and continues storing the unchanged two-letter code. No backend, schema, route, theme, or brand-data migration is involved.
 
@@ -16,7 +16,7 @@
 
 > CMS restoration release (2026-07-18): soft-deleted categories are restored in place before missing originals are appended, deletion uses a no-typing Cancel/Delete modal, and category/brand/product images can be selected before initial save. Manual non-ZIP deployment uses `backend-live/` and `frontend-upload/` with `DEPLOYMENT.md`.
 
-> Frontend production API visibility fix (2026-07-17): the centralized frontend host is `https://api.foodonlines.com/api/v1`, hybrid catalog mode remains active, and production customer/admin UI must not display API, backend, infrastructure, or raw technical error details. See `AGENT.md` and `DESIGNER.md`.
+> Frontend production API visibility fix (2026-07-17): the centralized frontend host is `https://api.foodonlines.com/api/v1`, hybrid catalog mode remains active, and production customer/admin UI must not display API, backend, infrastructure, or raw technical error details. See `AGENT.md` and `design.md`.
 
 > Current catalog compatibility (2026-07-15): production uses explicit hybrid mode so the complete approved local storefront remains visible while matching/new Laravel catalog records overlay and append automatically. Strict API-only and isolated local modes remain available. See `docs/hybrid-catalog-compatibility.md`.
 
