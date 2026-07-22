@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build && node scripts/copy-public-assets.mjs",
-    "test": "node --experimental-strip-types --test tests/hybridCatalog.test.ts tests/apiErrorNormalization.test.ts tests/categoryAdministration.test.ts tests/categoryListingState.test.ts tests/homepageCatalogState.test.ts tests/managedMediaWorkflow.test.ts tests/registrationOptionalFields.test.ts tests/adminPromoFeedback.test.ts tests/countries.test.ts tests/adminCmsWorkflow.test.ts tests/addressFavoritesPersistence.test.ts tests/accountLogoutAndAdminLineId.test.ts tests/hostingerPublicEntry.test.ts",
+    "test": "node --experimental-strip-types --test tests/hybridCatalog.test.ts tests/apiErrorNormalization.test.ts tests/categoryAdministration.test.ts tests/categoryListingState.test.ts tests/homepageCatalogState.test.ts tests/managedMediaWorkflow.test.ts tests/registrationOptionalFields.test.ts tests/adminPromoFeedback.test.ts tests/countries.test.ts tests/adminCmsWorkflow.test.ts tests/addressFavoritesPersistence.test.ts tests/accountLogoutAndAdminLineId.test.ts tests/adminCustomerDetail.test.ts tests/hostingerPublicEntry.test.ts",
     "audit:production": "node scripts/audit-production.mjs",
     "sync:hostinger": "node scripts/sync-hostinger-mirror.mjs",
     "sync:backend-live": "node scripts/sync-backend-live.mjs",

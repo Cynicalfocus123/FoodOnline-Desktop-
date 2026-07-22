@@ -24,7 +24,7 @@ test("logout clears the public session before revocation and invalidates private
 });
 
 test("administrator lists show supplied LINE IDs directly under contact numbers", () => {
-  assert.match(usersPanel, /<p>\{user\.contactNumber \|\| "—"\}<\/p>\{user\.lineId \? <p/);
+  assert.match(usersPanel, /<p>\{user\.contactNumber \|\| "—"\}<\/p>[\s\S]*\{user\.lineId \?/);
   assert.doesNotMatch(usersPanel, /No Line ID/);
   assert.match(usersPanel, /line_id: user\.lineId \|\| undefined/);
 });

@@ -7,6 +7,13 @@
 - Fresh `backend-live/` and backend clean staging each contain 289 files / 971,798 bytes, including the manifest for 288 source files. `FoodOnlines_Backend_Hostinger_Clean.zip` contains 289 files and is 289,849 bytes / SHA-256 `3f9e61ec866d9163d8d3836e60dca7e436121e549d674801c4529b35a814739a`.
 - Both standard Deflate ZIP32 archives passed CRC/listing, root-layout and metadata inspection, Windows and PHP full SHA-256 extraction parity, safety/forbidden-content checks, and backend manifest verification. Hostinger File Manager extraction remains externally unconfirmed.
 
+## Administrator customer detail saved-data repair (2026-07-22)
+
+- Scope is one bounded Laravel administrator detail contract, two allowlist resources, one focused feature test, one small frontend presentation/state helper and test, and the existing Customers editor. No migration, table, route, dependency, raster, video, font, payment provider, runtime media, or duplicate address/payment system was added.
+- The production build transforms 140 modules. `dist/` and `frontend-upload/` each contain 1,036 files / 91,852,257 bytes with zero missing, extra, size, or SHA-256 mismatches. The extra emitted JavaScript chunk is shared address-country presentation code rather than duplicate media.
+- Validation passed 77 Node tests and 9 focused Laravel tests / 126 assertions plus TypeScript, PHP syntax, cache compilation, production audit, backend synchronization, and secret-safe compiled inspection. The separately attempted full Laravel suite retains 53 known environment/throttle/media failures and is not recorded as passing.
+- The synchronized backend mirror and clean backend stage contain 291 files / 975,046 bytes (290 source files plus `SHA256SUMS`). Final mandatory clean ZIPs are: frontend 1,036 files / 90,946,526 bytes / SHA-256 `1d7254e9df025d4bad330b642f737755f3ddcf00ad12c35314a22314ee4aae90`; backend 291 files / 291,280 bytes / SHA-256 `ff23a5548a7fab071814b5ea0627614463139d393769b8ee7bc4aa7b636a71cf`. Both passed the full paired release gate; external Hostinger deployment remains unconfirmed.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 - Fresh production output and the clean frontend staging folder each contain 1,035 files / 91,847,052 bytes. The frontend clean Hostinger archive contains the same 1,035 regular files and is 90,944,892 bytes / SHA-256 `2817ff56a648958445f9c6c84b81db051e41ee9d9f12aa349c4ced01836039ea`.

@@ -2,6 +2,8 @@
 
 > **Priority release rule:** every completed production-delivery task generates and verifies both `FoodOnlines_Frontend_Hostinger_Clean.zip` and `FoodOnlines_Backend_Hostinger_Clean.zip` together from fresh authoritative source. This applies even when only one side changed and supersedes older `no ZIP` or single-archive notes. Only a direct user instruction for the current task can waive an archive. See `AGENTS.md` and `DEPLOYMENT.md` for the required ZIP32 root layout and verification gates.
 
+> Administrator customer detail (2026-07-22): direct/refreshed Customer edit routes now load the selected Laravel customer with every real saved address and active masked payment method. The UI distinguishes loading, confirmed-empty, safe failure/retry, and unavailable states and rejects stale/wrong-customer responses. Payment output excludes provider tokens and raw credentials. No migration or parallel storage was added.
+
 > Account-menu logout and administrator LINE ID (2026-07-21): signed-in desktop/tablet and mobile account navigation now expose one accessible Log out action that clears account-owned frontend state before revoking the existing public token. Admin Customer, Supplier, and Partner lists show any supplied LINE ID directly below the primary contact number. No schema migration is required; the verified release contains a 1,035-file frontend mirror and 288-file backend archive. External Hostinger deployment remains a separate manual action.
 
 > Account persistence (2026-07-21): authenticated addresses are Laravel-authoritative and shared by Address Book and checkout. Administrator customer detail is strictly customer-scoped. Product hearts use canonical UUID favorites, and Saved Items is the shared persisted-favorites view.

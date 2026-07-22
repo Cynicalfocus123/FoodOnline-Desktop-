@@ -4,6 +4,10 @@
 
 Every production-delivery task creates and verifies both clean Hostinger archives from the current frontend and backend mirrors. The paired ZIP contract in `AGENTS.md` and `DEPLOYMENT.md` supersedes every historical delivery note below that says not to create a ZIP, requests a single ZIP, or leaves either archive unchanged.
 
+## Administrator customer-detail data contract
+
+The administrator Customer edit route reads one canonical `/api/v1/admin/users/{id}` detail response. It contains selected-customer-only structured addresses plus active saved payment methods limited to masked brand/last-four/expiry/default/status metadata. React versions requests and validates the returned customer ID before rendering; direct routes, loading, empty, retryable error, unavailable, and stale-response states are explicit. Existing Laravel tables and relationships remain authoritative; no migration is involved.
+
 ## Enterprise CMS workflow (2026-07-18)
 
 - Admin modules now use dedicated list, create, and edit URLs while preserving the existing sidebar and FoodOnlines visual language.

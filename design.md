@@ -6,6 +6,12 @@
 - Every future production-delivery pass regenerates both the frontend and backend clean Hostinger archives from current verified mirrors. Historical `no ZIP`, single-archive, or unchanged-counterpart delivery notes no longer control the release workflow.
 - The adoption release rebuilt the unchanged 1,035-file frontend output and the synchronized 289-file backend payload as the verified standard Deflate ZIP32 pair. Both passed the established extraction and SHA-256 parity gates; external Hostinger deployment remains separate and unclaimed.
 
+## Administrator customer saved-data visibility (2026-07-22)
+
+- The existing Customers edit workspace retains the dark-green sidebar, orange active state, rounded white surface, typography, spacing, routing, and responsive behavior. Below customer information it now presents two matching read-only sections: Saved addresses and Payment methods.
+- Every selected-customer address renders as its own stable-ID card with recipient, saved summary, human country name, phone, complete stored country-specific fields, and Default badge only when authoritative state is true. Different records are never merged. Payment cards show only brand/last-four, expiry, optional status, and Default; no editing control or fake method is added.
+- Loading never renders a false empty state. Confirmed empty copy is exactly `No saved addresses for this customer.` and `No saved payment methods for this customer.` Safe failure includes Retry; missing/wrong-role records show customer unavailable. Customer switches clear prior content and reject stale or wrong-ID responses.
+
 ## Clean Hostinger frontend and backend rebuild (2026-07-22)
 
 - This deployment-only rebuild makes no visual, public/admin layout, brand, route, or feature change. The fresh audited storefront output remains 1,035 files / 91,847,052 bytes and includes the current account logout, persisted Address Book, Favorites/Saved Items, Refer & Earn, invitation page, and full catalog/admin flows.

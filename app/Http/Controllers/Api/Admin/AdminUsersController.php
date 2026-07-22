@@ -36,12 +36,8 @@ class AdminUsersController extends Controller
     public function show(User $user): JsonResponse
     {
         $this->ensureManagedUser($user);
-        $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
-        if (($user->account_type ?: $user->role) === 'customer') {
-            $relations['addresses'] = fn ($query) => $query->orderByDesc('is_default')->orderByDesc('id');
-        }
 
-        return response()->json(['user' => new AdminManagedUserResource($user->load($relations))]);
+        return $this->detailResponse($user);
     }
 
     public function store(Request $request): JsonResponse
@@ -78,7 +74,7 @@ class AdminUsersController extends Controller
             'phone' => $values['contact_number'] ?? $user->contact_number,
         ])->save();
 
-        return response()->json(['user' => new AdminManagedUserResource($user->fresh())]);
+        return $this->detailResponse($user->fresh());
     }
 
     public function destroy(User $user): JsonResponse
@@ -87,7 +83,7 @@ class AdminUsersController extends Controller
         $user->forceFill(['status' => 'disabled'])->save();
         $user->userApiTokens()->delete();
 
-        return response()->json(['user' => new AdminManagedUserResource($user->fresh())]);
+        return $this->detailResponse($user->fresh());
     }
 
     /** @return array<string, mixed> */
@@ -118,5 +114,23 @@ class AdminUsersController extends Controller
     private function ensureManagedUser(User $user): void
     {
         abort_unless(in_array($user->account_type ?: $user->role, ['customer', 'supplier', 'partner'], true), 404);
+    }
+
+    private function detailResponse(User $user): JsonResponse
+    {
+        $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
+        if (($user->account_type ?: $user->role) === 'customer') {
+            $relations['addresses'] = fn ($query) => $query
+                ->orderByDesc('is_default')
+                ->orderByDesc('id');
+            $relations['paymentMethods'] = fn ($query) => $query
+                ->where('status', 'active')
+                ->orderByDesc('is_default')
+                ->orderByDesc('id');
+        }
+
+        return response()->json([
+            'user' => new AdminManagedUserResource($user->load($relations)),
+        ]);
     }
 }

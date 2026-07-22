@@ -27,10 +27,6 @@ if ((Split-Path -Parent $FrontendDirectory) -ne $ReleaseDirectory -or (Split-Pat
 if ((Split-Path -Parent $BackendDirectory) -ne $ReleaseDirectory -or (Split-Path -Leaf $BackendDirectory) -ne "FoodOnlines-Backend-Clean") {
     throw "Unsafe backend clean staging path: $BackendDirectory"
 }
-if (-not (Test-Path -LiteralPath $FrontendDirectory -PathType Container) -or -not (Test-Path -LiteralPath $BackendDirectory -PathType Container)) {
-    throw "Both clean staging folders must exist before archive creation."
-}
-
 $pythonVerifier = Join-Path $repoRoot "scripts/verify-standard-hostinger-zip.py"
 $phpCreator = Join-Path $repoRoot "scripts/create-standard-hostinger-zip.php"
 $phpExtractor = Join-Path $repoRoot "scripts/extract-standard-hostinger-zip.php"
@@ -48,6 +44,38 @@ function Assert-PortablePath([string]$Path) {
         }
     }
 }
+
+function Reset-CleanStage([string]$Source, [string]$Target, [string]$ExpectedLeaf) {
+    $sourcePath = [IO.Path]::GetFullPath($Source).TrimEnd([char]92, [char]47)
+    $targetPath = [IO.Path]::GetFullPath($Target).TrimEnd([char]92, [char]47)
+    if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
+        throw "Authoritative package source is missing: $sourcePath"
+    }
+    if ((Split-Path -Parent $targetPath) -ne $ReleaseDirectory -or (Split-Path -Leaf $targetPath) -ne $ExpectedLeaf) {
+        throw "Refusing to replace an unexpected clean staging path: $targetPath"
+    }
+    if (Test-Path -LiteralPath $targetPath) {
+        Remove-Item -LiteralPath $targetPath -Force -Recurse
+    }
+    New-Item -ItemType Directory -Path $targetPath | Out-Null
+
+    foreach ($file in Get-ChildItem -LiteralPath $sourcePath -File -Recurse -Force) {
+        if (($file.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+            throw "Linked files are not allowed in a clean package source: $($file.FullName)"
+        }
+        $relative = $file.FullName.Substring($sourcePath.Length + 1).Replace([char]92, [char]47)
+        Assert-PortablePath $relative
+        $destination = Join-Path $targetPath $relative.Replace([char]47, [IO.Path]::DirectorySeparatorChar)
+        $destinationDirectory = Split-Path -Parent $destination
+        if (-not (Test-Path -LiteralPath $destinationDirectory -PathType Container)) {
+            New-Item -ItemType Directory -Path $destinationDirectory -Force | Out-Null
+        }
+        [IO.File]::Copy($file.FullName, $destination, $true)
+    }
+}
+
+Reset-CleanStage (Join-Path $repoRoot "dist") $FrontendDirectory "FoodOnlines-Frontend-Clean"
+Reset-CleanStage (Join-Path $repoRoot "backend-live") $BackendDirectory "FoodOnlines-Backend-Clean"
 
 function Get-Inventory([string]$Root) {
     $rootPath = [IO.Path]::GetFullPath($Root).TrimEnd([char]92, [char]47)

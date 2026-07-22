@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Admin;
 
-use App\Http\Resources\Account\UserAddressResource;
 use App\Models\UserAddress;
+use App\Models\UserPaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -32,7 +32,10 @@ class AdminManagedUserResource extends JsonResource
             'created_at' => $this->resource->created_at?->toIso8601String(),
             'updated_at' => $this->resource->updated_at?->toIso8601String(),
             'addresses' => $this->when($this->resource->relationLoaded('addresses'), fn () => $this->resource->addresses
-                ->map(fn (UserAddress $address): array => (new UserAddressResource($address))->resolve())
+                ->map(fn (UserAddress $address): array => (new AdminUserAddressResource($address))->resolve())
+                ->values()),
+            'payment_methods' => $this->when($this->resource->relationLoaded('paymentMethods'), fn () => $this->resource->paymentMethods
+                ->map(fn (UserPaymentMethod $method): array => (new AdminUserPaymentMethodResource($method))->resolve())
                 ->values()),
             'referral_summary' => $this->when($this->resource->relationLoaded('referralCode'), fn () => [
                 'code' => $this->resource->referralCode?->code,
