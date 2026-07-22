@@ -1,5 +1,12 @@
 # FoodOnlines Desktop Home Design
 
+## Homepage hybrid catalog presentation (2026-07-21)
+
+- Keep the current category-tile artwork, order, card design, product rails, carousel arrows, See All actions, spacing, and desktop/tablet/mobile behavior. Valid local/hybrid category tiles and product rails appear immediately in their intended positions rather than leaving an empty catalog gap.
+- Background API synchronization may update matching content or append valid API-only placement, but it must not blank, collapse, or slowly reintroduce known homepage content. The shared homepage catalog snapshot keeps the page stable during refresh and safe API failure.
+- Category and product cards retain their established dimensions, responsive horizontal scrolling, image aspect-ratio containers, lazy image loading, and fallback artwork. Card structure renders independently of image download completion.
+- See All and category-tile navigation keeps canonical slugs and the resolution-aware category page behavior; no homepage interaction may produce a false empty-category state. Task 5 validation retained the existing design across breakpoints through 62 Node tests, the production build, and asset audit.
+
 ## Registration, admin feedback, and category resolution (2026-07-21)
 
 - The compact registration outcome card retains its light success background, rounded corners, FoodOnlines spacing, and orange primary treatment while showing only the requested thank-you message and Home action.
@@ -11,7 +18,7 @@
 
 - Packaging changes no public or administrator visual, route, responsive, promotion, registration, or pre-save media behavior. The final frontend mirror keeps the current public registration, nested-admin routing, and pending-media interface exactly as approved.
 - Production delivery is two root-level ZIP payloads: the frontend belongs directly in the domain `public_html` while preserving `public_html/api`; the backend belongs only in the private Laravel application root while preserving all live runtime data. No migration, database, or design change belongs to this packaging release.
-- Verified delivery evidence: the 1,033-file frontend ZIP is 90,951,692 bytes / SHA-256 `60172fbd046e9c60c1c7946b63f55bba40fb7a7d894a5e4970775b44d54a94d9`; the unchanged 274-file backend ZIP is 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Both portable archives passed separate extraction with zero content, SHA-256, path-safety, duplicate, secret, or forbidden-content findings; this validation changes no interface behavior.
+- Verified delivery evidence: the 1,033-file frontend ZIP is 90,952,439 bytes / SHA-256 `0e1c7ba4847e66527cf7149a41b87b1513021ef982283ef7890d5c6bb4350915`; the unchanged 274-file backend ZIP is 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Both portable archives passed separate extraction with zero content, SHA-256, path-safety, duplicate, secret, or forbidden-content findings; this validation changes no interface behavior.
 
 ## Promo, Registration, and Pre-Save Media Corrections (2026-07-20)
 

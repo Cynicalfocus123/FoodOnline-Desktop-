@@ -11,7 +11,7 @@ import type {
 } from "../../types/catalog";
 
 export interface CatalogRepository {
-  getHomepageCatalog(): Promise<ProductCarouselSection[]>;
+  getHomepageCatalog(preloadedCategories?: Category[] | Promise<Category[]>): Promise<ProductCarouselSection[]>;
   getCategories(): Promise<Category[]>;
   getAllPublicCategories(): Promise<Category[]>;
   getNavigationCategories(): Promise<Category[]>;

@@ -41,6 +41,22 @@ async function listProducts(query: CatalogQuery = {}) {
   } satisfies PaginatedProductResult;
 }
 
+async function listAllHomepageProducts() {
+  const first = await listProducts({ page: 1, pageSize: 100 });
+  const pageSize = Math.max(1, first.pageSize || 100);
+  const pageCount = Math.max(1, Math.ceil(first.total / pageSize));
+  const remaining = pageCount > 1
+    ? await Promise.all(Array.from({ length: pageCount - 1 }, (_, index) => listProducts({ page: index + 2, pageSize })))
+    : [];
+  const seen = new Set<string>();
+  return [first, ...remaining].flatMap((page) => page.items).filter((product) => {
+    const identity = product.uuid ?? product.id ?? product.slug;
+    if (seen.has(identity)) return false;
+    seen.add(identity);
+    return true;
+  });
+}
+
 export const apiCatalogRepository: CatalogRepository = {
   async getCategories() {
     return listCategories("per_page=100&sort=sort_order");
@@ -76,14 +92,17 @@ export const apiCatalogRepository: CatalogRepository = {
   async getRelatedProducts(product, limit = 8) {
     return (await listProducts({ categorySlug: product.categorySlug, pageSize: limit })).items.filter((item) => item.id !== product.id).slice(0, limit);
   },
-  async getHomepageCatalog() {
-    const categories = await listCategories("homepage=1&per_page=100&sort=sort_order");
-    const sections = await Promise.all(categories.map(async (category) => ({
+  async getHomepageCatalog(preloadedCategories) {
+    const categoryPromise = preloadedCategories
+      ? Promise.resolve(preloadedCategories)
+      : listCategories("homepage=1&per_page=100&sort=sort_order");
+    const [categories, products] = await Promise.all([categoryPromise, listAllHomepageProducts()]);
+    const sections = categories.map((category) => ({
       title: category.name,
       sectionId: category.categorySlug,
       seeAllHref: getPublicRouteHref(`category/${category.categorySlug}`),
-      items: await this.getCategoryProducts(category.categorySlug),
-    })));
+      items: products.filter((product) => product.categorySlug === category.categorySlug),
+    }));
     return sections.filter((section) => section.items.length);
   },
   async getAvailableFilterBrands() {

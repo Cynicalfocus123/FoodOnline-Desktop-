@@ -1,5 +1,11 @@
 # FoodOnlines Site Weight
 
+## Homepage hybrid catalog presentation (2026-07-21)
+
+- This frontend-only improvement adds a small shared homepage snapshot/controller utility and focused Node tests. It adds no backend route, migration, dependency, production media, font, video, or design asset.
+- The homepage begins from local/hybrid category and rail data, then deduplicates one background refresh. API homepage rail assembly uses a combined paginated product request instead of a per-category request waterfall; retained content survives refresh and API failure.
+- Product-card rendering still uses fixed image aspect-ratio frames, lazy decoding, and existing fallback media, so image transfer does not gate category tiles or rail/card structure. Task 5 passed 62 Node tests, TypeScript no-emit, a 135-module production build, and the 27-route audit; `dist/` and `frontend-upload/` each contain 1,033 files / 91,817,320 bytes with zero parity findings.
+
 ## Registration, admin feedback, and category resolution (2026-07-21)
 
 - This frontend-only change adds small shared state/formatting utilities and focused tests; it adds no backend route, migration, production dependency, runtime media, or design asset.
@@ -9,7 +15,7 @@
 ## Production ZIP packaging (2026-07-21)
 
 - Packaging adds no application dependency, raster asset, video, font, source map, route, database migration, or runtime media. The two release archives are generated from verified mirrors outside both deployment mirrors; exact final file counts, ZIP sizes, SHA-256 values, and extraction-parity results are recorded after the portable release command completes.
-- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,951,692 bytes / SHA-256 `60172fbd046e9c60c1c7946b63f55bba40fb7a7d894a5e4970775b44d54a94d9`; the unchanged `FoodOnlines_Backend_Live.zip` is 274 files / 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
+- Final portable outputs: `FoodOnlines_Frontend_Live.zip` is 1,033 files / 90,952,439 bytes / SHA-256 `0e1c7ba4847e66527cf7149a41b87b1513021ef982283ef7890d5c6bb4350915`; the unchanged `FoodOnlines_Backend_Live.zip` is 274 files / 277,622 bytes / SHA-256 `aa79f9b5ac710d2ecc00a1a24e9184ed17b60de989ccb2bc159cd48cf20abb1c`. Archive and separate-extraction parity both found 0 missing, extra, size, SHA-256, unsafe-path, backslash, duplicate, secret, or forbidden-content findings.
 
 ## Promo, registration, and pre-save media corrections (2026-07-20)
 

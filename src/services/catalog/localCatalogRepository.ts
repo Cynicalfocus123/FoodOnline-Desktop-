@@ -16,7 +16,7 @@ import {
 import type { CatalogQuery, Product } from "../../types/catalog";
 import type { CatalogRepository } from "./catalogRepository";
 
-const localCategories = categories.map((category, sortOrder) => ({
+export const localHomepageCategories = categories.map((category, sortOrder) => ({
   ...category,
   status: "published" as const,
   visibility: "public" as const,
@@ -27,12 +27,14 @@ const localCategories = categories.map((category, sortOrder) => ({
   catalogOrigin: "local" as const,
 }));
 
+export const localHomepageCatalog = productCarouselSections;
+
 export const localCatalogRepository: CatalogRepository = {
-  getHomepageCatalog: async () => productCarouselSections,
-  getCategories: async () => localCategories,
-  getAllPublicCategories: async () => localCategories,
-  getNavigationCategories: async () => localCategories,
-  getHomepageCategories: async () => localCategories,
+  getHomepageCatalog: async () => localHomepageCatalog,
+  getCategories: async () => localHomepageCategories,
+  getAllPublicCategories: async () => localHomepageCategories,
+  getNavigationCategories: async () => localHomepageCategories,
+  getHomepageCategories: async () => localHomepageCategories,
   getCategoryBySlug: async (slug) => {
     const resolvedSlug = resolveKnownCategorySlug(slug);
     return resolvedSlug ? getCategoryBySlug(resolvedSlug) : null;
