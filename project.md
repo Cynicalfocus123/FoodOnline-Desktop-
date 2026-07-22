@@ -4,6 +4,8 @@
 
 Every completed change rebuilds and synchronizes authoritative source, `dist/`, `frontend-upload/`, `backend-live/`, its manifest, documentation, and Git before producing exactly `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`. Both packages represent one final commit; every other ZIP/stage is removed. The mirrors and ZIPs are deployment-ready artifacts, not evidence that the external Hostinger server was changed. This contract supersedes every conflicting historical note below.
 
+The permanent workflow adoption passed 77 Node tests, TypeScript, production build/audit, exact 1,036-file frontend mirror parity, and a 290-source-file backend manifest audit. Commit `39a81482f6707d20edd009b35599d7dfa1e3248d` was pushed and matched `origin/main` before the paired Live ZIP verification; only the two approved archives remained afterward. External Hostinger deployment was not performed.
+
 ## Administrator customer-detail data contract
 
 The administrator Customer edit route reads one canonical `/api/v1/admin/users/{id}` detail response. It contains selected-customer-only structured addresses plus active saved payment methods limited to masked brand/last-four/expiry/default/status metadata. React versions requests and validates the returned customer ID before rendering; direct routes, loading, empty, retryable error, unavailable, and stale-response states are explicit. Existing Laravel tables and relationships remain authoritative; no migration is involved.

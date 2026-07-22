@@ -7,6 +7,11 @@
 - Both Live packages are regenerated even for one-sided changes. All other ZIPs and temporary folders are removed, and the standard Deflate ZIP32 root layout plus full extraction/SHA parity gates remain mandatory.
 - These are repository deployment mirrors and manual-deployment packages. They do not indicate that Codex accessed or updated the external Hostinger server.
 
+### Exact-two-Live workflow validation
+
+- The governance change replaces competing Clean/partial archive paths with one paired PHP ZipArchive workflow and does not change any public or Admin visual output. The final frontend remains 1,036 files / 91,852,257 bytes and exactly matches `frontend-upload/`; the backend mirror remains 290 source files plus its manifest.
+- The first post-push verification generated only `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip`; both passed root-layout, CRC, Windows/PHP extraction SHA-256 parity, safety, and backend-manifest gates. External Hostinger deployment remains pending and unclaimed.
+
 ## Administrator customer saved-data visibility (2026-07-22)
 
 - The existing Customers edit workspace retains the dark-green sidebar, orange active state, rounded white surface, typography, spacing, routing, and responsive behavior. Below customer information it now presents two matching read-only sections: Saved addresses and Payment methods.

@@ -7,6 +7,12 @@
 - Both use the verified PHP `ZipArchive` standard Deflate ZIP32 root-file method and must pass CRC/listing, Windows/PHP SHA-256 extraction parity, safety/forbidden-content checks, and backend-manifest verification.
 - The mirrors and archives are prepared for manual Hostinger deployment. Codex has no Hostinger connection, and no external upload, production migration/cache operation, database change, or live smoke test is claimed.
 
+### Exact-two-Live workflow validation
+
+- Production output and `frontend-upload/` each contain 1,036 files / 91,852,257 bytes with zero path, size, or SHA-256 mismatch. `backend-live/` contains 290 source files plus `SHA256SUMS`, 291 files / 975,454 bytes, with zero missing, stale, checksum, secret, frontend, ZIP, or runtime-data findings.
+- The paired PHP ZipArchive pass produced `FoodOnlines_Frontend_Live.zip` at 1,036 files / 90,946,526 bytes / SHA-256 `56274d0ac50fc3702d009158f2dd62bf322ead28c0e829f4f26b6519b5ed69c7` and `FoodOnlines_Backend_Live.zip` at 291 files / 291,413 bytes / SHA-256 `7801946f7dba2ccbf68c529357862e3116a0616447ac1a364e07740844bf492c`.
+- Both have zero wrapper/explicit-directory, ZIP64, encryption, unsafe, duplicate, backslash, symlink, or forbidden-content findings and passed CRC plus Windows/PHP full extraction parity. Temporary stages and every other ZIP were removed. No external deployment is claimed.
+
 ## Administrator customer detail saved-data repair (2026-07-22)
 
 - Scope is one bounded Laravel administrator detail contract, two allowlist resources, one focused feature test, one small frontend presentation/state helper and test, and the existing Customers editor. No migration, table, route, dependency, raster, video, font, payment provider, runtime media, or duplicate address/payment system was added.

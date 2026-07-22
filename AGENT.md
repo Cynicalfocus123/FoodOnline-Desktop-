@@ -7,6 +7,13 @@
 - `npm run release:hostinger-live` uses PHP `ZipArchive` standard Deflate ZIP32 root entries and verifies CRC/listing, Windows/PHP extraction SHA-256 parity, path/metadata safety, forbidden content, and the backend manifest. It removes every other ZIP and all staging/verification folders.
 - `frontend-upload/` and `backend-live/` mean repository deployment mirrors, not the external Hostinger server. No external upload, migration, cache refresh, database change, or live smoke test is claimed without direct evidence. This newest section supersedes every older conflicting note below.
 
+### Exact-two-Live workflow adoption verification (2026-07-22)
+
+- Release workflow source changed in `package.json`, `scripts/create-live-hostinger-zips.ps1`, and `tests/hostingerPublicEntry.test.ts`; the old Clean-named and partial-capable release scripts were removed. No application feature, route, migration, dependency, asset, media, or database state changed.
+- Validation passed 77 Node tests, TypeScript no-emit, PowerShell/PHP syntax, a 140-module production build, and the 28-route/zero-missing-reference audit. `dist/` and `frontend-upload/` have exact SHA-256 parity at 1,036 files / 91,852,257 bytes. `backend-live/` has 290 source files plus `SHA256SUMS`, 291 files / 975,454 bytes, with zero manifest/safety findings.
+- Workflow commit `39a81482f6707d20edd009b35599d7dfa1e3248d` was pushed to `main` and matched `origin/main` before packaging. The paired PHP ZipArchive verification pass produced frontend 1,036 files / 90,946,526 bytes / SHA-256 `56274d0ac50fc3702d009158f2dd62bf322ead28c0e829f4f26b6519b5ed69c7` and backend 291 files / 291,413 bytes / SHA-256 `7801946f7dba2ccbf68c529357862e3116a0616447ac1a364e07740844bf492c`; all CRC, Windows/PHP extraction parity, manifest, and safety gates passed.
+- The release directory contains only the two Live ZIPs after verification. No external Hostinger upload, extraction, migration, cache command, database change, or smoke test was performed.
+
 ### Priority-rule adoption release (2026-07-22)
 
 - The rule is enforced in root `AGENTS.md`, this operating ledger, `DEPLOYMENT.md`, `README.md`, and `project.md`; the generated backend deployment guide and manifest are synchronized. No application behavior, database schema, route, dependency, interface, or runtime media changed.
