@@ -11,7 +11,7 @@ import { SignupRoleKey } from "../lib/registerSchema";
 import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 import { catalogApi } from "../services/admin/catalogApi";
-import { adminPath, readAdminRoute, type AdminRoute } from "../lib/adminRouting";
+import { adminPath, adminUserRoleForModule, readAdminRoute, type AdminRoute } from "../lib/adminRouting";
 import type { MediaStorageState } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
@@ -150,6 +150,8 @@ function AdminDashboard() {
   const [mediaStorage, setMediaStorage] = useState<MediaStorageState>({ phase: "checking", status: null });
   const [route, setRoute] = useState<AdminRoute>(() => readAdminRoute());
   const activeSidebarKey = route.sidebarKey;
+  const routeUsersRole = adminUserRoleForModule(route.module);
+  const effectiveUsersRole = routeUsersRole ?? activeUsersTab;
 
   const navigate = (path: string, replace = false) => {
     if (replace) window.history.replaceState({}, "", path);
@@ -174,7 +176,7 @@ function AdminDashboard() {
   }, [setActiveSidebarKey]);
 
   useEffect(() => {
-    const role = route.module === "customers" ? "customer" : route.module === "suppliers" ? "supplier" : route.module === "partners" ? "partner" : null;
+    const role = adminUserRoleForModule(route.module);
     if (role && role !== activeUsersTab) setActiveUsersTab(role);
   }, [route.module, activeUsersTab, setActiveUsersTab]);
 
@@ -194,8 +196,8 @@ function AdminDashboard() {
   }, [token]);
 
   const filteredUsers = useMemo(
-    () => users.filter((user) => user.selectedRole === activeUsersTab),
-    [activeUsersTab, users],
+    () => users.filter((user) => user.selectedRole === effectiveUsersRole),
+    [effectiveUsersRole, users],
   );
 
   return (
@@ -289,9 +291,9 @@ function AdminDashboard() {
                   navigate(`/admin/${tab === "customer" ? "customers" : tab === "supplier" ? "suppliers" : "partners"}`);
                 }}
                 onNavigate={navigate}
-                onReload={() => fetchUsers(activeUsersTab)}
+                onReload={() => fetchUsers(effectiveUsersRole)}
                 recordId={route.recordId}
-                role={activeUsersTab}
+                role={effectiveUsersRole}
                 token={token}
                 users={filteredUsers}
               />

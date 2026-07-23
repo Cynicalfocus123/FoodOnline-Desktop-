@@ -37,6 +37,11 @@ test("paired Live release uses the verified standard ZIP32 Hostinger path", () =
   assert.match(releaseScript, /Expand-Archive/);
   assert.match(releaseScript, /extract-standard-hostinger-zip\.php/);
   assert.match(releaseScript, /Remove-ObsoleteReleaseArchives/);
+  assert.match(releaseScript, /Assert-LiveRepairContent/);
+  assert.match(releaseScript, /RegisterUserController\.php/);
+  assert.match(releaseScript, /AdminUsersController\.php/);
+  assert.match(releaseScript, /Registration could not be completed\./);
+  assert.match(releaseScript, /No saved addresses for this customer\./);
   assert.match(standardBuilder, /ZipArchive::CM_DEFLATE/);
   assert.match(standardBuilder, /setCompressionName/);
   assert.match(standardVerifier, /zip64/);

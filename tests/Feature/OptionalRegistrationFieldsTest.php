@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -11,6 +12,14 @@ use Tests\TestCase;
 class OptionalRegistrationFieldsTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Data-provider coverage deliberately exceeds the public per-IP limit.
+        $this->withoutMiddleware(ThrottleRequests::class);
+    }
 
     #[DataProvider('roles')]
     public function test_every_role_can_register_with_each_optional_field_combination(string $role): void

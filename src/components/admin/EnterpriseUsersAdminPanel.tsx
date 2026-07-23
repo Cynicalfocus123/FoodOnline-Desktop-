@@ -46,6 +46,48 @@ const empty = {
 };
 const optionalValue = (value: string) => value.trim() || null;
 
+function managedUserRole(user: ManagedUser) {
+  return user.account_type ?? user.role;
+}
+
+function formForUser(user: ManagedUser) {
+  return {
+    email: user.email,
+    first_name: user.first_name ?? "",
+    last_name: user.last_name ?? "",
+    contact_number: user.contact_number ?? "",
+    line_id: user.line_id ?? "",
+    company_name: user.company_name ?? "",
+    business_type: user.business_type ?? "",
+    status: user.status,
+    password: "",
+  };
+}
+
+function managedUserFromList(user: AdminUserRecord): ManagedUser {
+  return {
+    id: String(user.id),
+    account_type: user.selectedRole,
+    role: user.selectedRole,
+    email: user.emailAddress,
+    first_name: user.firstName || null,
+    last_name: user.lastName || null,
+    contact_number: user.contactNumber || null,
+    line_id: user.lineId || null,
+    company_name: user.companyName || null,
+    business_type: null,
+    status:
+      user.requestStatus === "approved"
+        ? "active"
+        : user.requestStatus === "disabled"
+          ? "disabled"
+          : "in_review",
+    registered_from: null,
+    created_at: user.createdTimestamp || null,
+    updated_at: user.reviewedAt,
+  };
+}
+
 type Props = {
   token: string;
   role: SignupRoleKey;
@@ -78,31 +120,55 @@ export function EnterpriseUsersAdminPanel({
   const [form, setForm] = useState(empty);
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
-  const [detailPhase, setDetailPhase] =
+  const [profilePhase, setProfilePhase] =
     useState<CustomerDetailPhase>("loading");
+  const [addressPhase, setAddressPhase] =
+    useState<CustomerDetailPhase>("loading");
+  const [paymentPhase, setPaymentPhase] =
+    useState<CustomerDetailPhase>("loading");
+  const [addresses, setAddresses] = useState<ManagedUserAddress[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<
+    ManagedUserPaymentMethod[]
+  >([]);
   const [detailMessage, setDetailMessage] = useState("");
   const [detailAttempt, setDetailAttempt] = useState(0);
   const userLoadVersion = useRef(0);
 
   useEffect(() => {
     const requestVersion = ++userLoadVersion.current;
-    setEditing(null);
+    const listFallback =
+      mode === "edit" && recordId
+        ? users.find((user) => String(user.id) === String(recordId))
+        : undefined;
+    const fallbackUser = listFallback
+      ? managedUserFromList(listFallback)
+      : null;
+    setEditing(fallbackUser);
+    setAddresses([]);
+    setPaymentMethods([]);
     if (mode === "create") {
       setForm(empty);
       setMessage("");
       setDetailMessage("");
-      setDetailPhase("loaded");
+      setProfilePhase("loaded");
+      setAddressPhase("unavailable");
+      setPaymentPhase("unavailable");
       return;
     }
     if (mode !== "edit") return;
     if (!recordId) {
-      setDetailMessage("Customer information is unavailable.");
-      setDetailPhase("unavailable");
+      setDetailMessage(`${labels[role]} information is unavailable.`);
+      setProfilePhase("unavailable");
+      setAddressPhase("unavailable");
+      setPaymentPhase("unavailable");
       return;
     }
+    if (fallbackUser) setForm(formForUser(fallbackUser));
     setMessage("");
     setDetailMessage("");
-    setDetailPhase("loading");
+    setProfilePhase(fallbackUser ? "loaded" : "loading");
+    setAddressPhase(role === "customer" ? "loading" : "unavailable");
+    setPaymentPhase(role === "customer" ? "loading" : "unavailable");
     void usersApi
       .show(token, recordId)
       .then(({ user }) => {
@@ -113,46 +179,64 @@ export function EnterpriseUsersAdminPanel({
             requestVersion,
             userLoadVersion.current,
           )
-        )
+        ) {
+          if (requestVersion === userLoadVersion.current) {
+            setEditing(null);
+            setDetailMessage(`${labels[role]} information is unavailable.`);
+            setProfilePhase("unavailable");
+            setAddressPhase("unavailable");
+            setPaymentPhase("unavailable");
+          }
           return;
-        if (user.account_type !== role) {
-          setDetailMessage("Customer information is unavailable.");
-          setDetailPhase("unavailable");
+        }
+        if (managedUserRole(user) !== role) {
+          setEditing(null);
+          setDetailMessage(`${labels[role]} information is unavailable.`);
+          setProfilePhase("unavailable");
+          setAddressPhase("unavailable");
+          setPaymentPhase("unavailable");
           return;
         }
         setEditing(user);
-        setForm({
-          email: user.email,
-          first_name: user.first_name ?? "",
-          last_name: user.last_name ?? "",
-          contact_number: user.contact_number ?? "",
-          line_id: user.line_id ?? "",
-          company_name: user.company_name ?? "",
-          business_type: user.business_type ?? "",
-          status: user.status,
-          password: "",
-        });
-        setDetailPhase("loaded");
+        setForm(formForUser(user));
+        setProfilePhase("loaded");
+        if (role === "customer") {
+          const returnedAddresses = Array.isArray(user.addresses)
+            ? user.addresses
+            : null;
+          const returnedPayments = Array.isArray(user.payment_methods)
+            ? user.payment_methods
+            : null;
+          setAddresses(returnedAddresses ?? []);
+          setPaymentMethods(returnedPayments ?? []);
+          setAddressPhase(returnedAddresses ? "loaded" : "error");
+          setPaymentPhase(returnedPayments ? "loaded" : "error");
+        }
       })
       .catch((error) => {
         if (requestVersion !== userLoadVersion.current) return;
         if (error instanceof ApiError && error.status === 404) {
-          setDetailMessage("Customer information is unavailable.");
-          setDetailPhase("unavailable");
+          setEditing(null);
+          setDetailMessage(`${labels[role]} information is unavailable.`);
+          setProfilePhase("unavailable");
+          setAddressPhase("unavailable");
+          setPaymentPhase("unavailable");
           return;
         }
         setDetailMessage(
           toUserFacingErrorMessage(
             error,
-            "Unable to load this customer. Please try again.",
+            `Unable to load this ${labels[role].toLowerCase()}. Please try again.`,
           ),
         );
-        setDetailPhase("error");
+        setProfilePhase(fallbackUser ? "loaded" : "error");
+        setAddressPhase(role === "customer" ? "error" : "unavailable");
+        setPaymentPhase(role === "customer" ? "error" : "unavailable");
       });
     return () => {
       userLoadVersion.current += 1;
     };
-  }, [detailAttempt, mode, recordId, role, token]);
+  }, [detailAttempt, mode, recordId, role, token, users]);
 
   const filtered = useMemo(
     () =>
@@ -221,8 +305,21 @@ export function EnterpriseUsersAdminPanel({
         company_name: optionalValue(form.company_name),
         password: form.password || undefined,
       });
-      setEditing(response.user);
-      setDetailPhase("loaded");
+      setEditing((current) => ({
+        ...(current ?? response.user),
+        ...response.user,
+        addresses: response.user.addresses ?? addresses,
+        payment_methods: response.user.payment_methods ?? paymentMethods,
+      }));
+      setProfilePhase("loaded");
+      if (Array.isArray(response.user.addresses)) {
+        setAddresses(response.user.addresses);
+        setAddressPhase("loaded");
+      }
+      if (Array.isArray(response.user.payment_methods)) {
+        setPaymentMethods(response.user.payment_methods);
+        setPaymentPhase("loaded");
+      }
       setForm((current) => ({ ...current, password: "" }));
       await onReload();
       setMessage(`${labels[role]} saved.`);
@@ -443,13 +540,13 @@ export function EnterpriseUsersAdminPanel({
     );
   }
 
-  if (mode === "edit" && (detailPhase !== "loaded" || !editing)) {
+  if (mode === "edit" && (profilePhase !== "loaded" || !editing)) {
     return (
       <DetailLoadShell
         message={detailMessage}
         onBack={() => onNavigate(`/admin/${plural[role]}`)}
         onRetry={() => setDetailAttempt((attempt) => attempt + 1)}
-        phase={detailPhase}
+        phase={profilePhase}
         role={role}
       />
     );
@@ -525,6 +622,15 @@ export function EnterpriseUsersAdminPanel({
           {message}
         </p>
       ) : null}
+      {detailMessage ? (
+        <p
+          aria-live="polite"
+          className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+          role="status"
+        >
+          {detailMessage}
+        </p>
+      ) : null}
       <section className="grid gap-4 rounded-2xl border border-neutral-200 p-5 md:grid-cols-2">
         {[
           ["email", "Email", "email"],
@@ -571,15 +677,40 @@ export function EnterpriseUsersAdminPanel({
           </select>
         </label>
       </section>
+      {editing ? (
+        <section className="grid gap-3 rounded-2xl border border-neutral-200 p-5 sm:grid-cols-2 lg:grid-cols-4">
+          <ReadOnlyDetail label="Account type" value={labels[managedUserRole(editing) ?? role]} />
+          <ReadOnlyDetail label="Registration source" value={editing.registered_from || "Not provided"} />
+          <ReadOnlyDetail label="Registered" value={formatManagedUserDate(editing.created_at)} />
+          <ReadOnlyDetail label="Updated" value={formatManagedUserDate(editing.updated_at)} />
+        </section>
+      ) : null}
       {role === "customer" && editing ? (
         <CustomerDetailSections
-          addresses={editing.addresses ?? []}
-          paymentMethods={editing.payment_methods ?? []}
-          phase={detailPhase}
+          addressPhase={addressPhase}
+          addresses={addresses}
+          onRetry={() => setDetailAttempt((attempt) => attempt + 1)}
+          paymentMethods={paymentMethods}
+          paymentPhase={paymentPhase}
         />
       ) : null}
     </form>
   );
+}
+
+function ReadOnlyDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-500">{label}</p>
+      <p className="mt-1 break-words text-sm font-semibold text-neutral-800">{value}</p>
+    </div>
+  );
+}
+
+function formatManagedUserDate(value: string | null) {
+  if (!value) return "Not available";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not available" : date.toLocaleString();
 }
 
 function DetailLoadShell({
@@ -616,14 +747,7 @@ function DetailLoadShell({
             : message || `${labels[role]} information is unavailable.`}
         </h2>
       </div>
-      {role === "customer" ? (
-        <CustomerDetailSections
-          addresses={[]}
-          onRetry={onRetry}
-          paymentMethods={[]}
-          phase={phase}
-        />
-      ) : phase === "error" ? (
+      {phase === "error" ? (
         <button
           className="w-fit rounded-2xl bg-citrus-500 px-5 py-3 text-sm font-black text-white"
           onClick={onRetry}
@@ -637,18 +761,20 @@ function DetailLoadShell({
 }
 
 function CustomerDetailSections({
+  addressPhase,
   addresses,
   onRetry,
   paymentMethods,
-  phase,
+  paymentPhase,
 }: {
+  addressPhase: CustomerDetailPhase;
   addresses: ManagedUserAddress[];
   onRetry?: () => void;
   paymentMethods: ManagedUserPaymentMethod[];
-  phase: CustomerDetailPhase;
+  paymentPhase: CustomerDetailPhase;
 }) {
-  const addressState = customerDetailSectionState(phase, addresses.length);
-  const paymentState = customerDetailSectionState(phase, paymentMethods.length);
+  const addressState = customerDetailSectionState(addressPhase, addresses.length);
+  const paymentState = customerDetailSectionState(paymentPhase, paymentMethods.length);
 
   return (
     <div className="grid gap-6">

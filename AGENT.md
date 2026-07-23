@@ -2,6 +2,12 @@
 
 Last reviewed: 2026-07-22.
 
+## Current production-repair contract
+
+Public registration and administrator Customer/Supplier/Partner detail must remain available even when the newly introduced referral schema is not yet present. Referral attribution and referral summaries are optional enhancements: guard them behind schema-readiness checks and never let them turn core authentication or the managed-user editor into HTTP 500 responses.
+
+Registration and login share one exact root-level `message`, `token_type`, `token`, and `user` envelope. The frontend may show registration success only after validating and persisting a non-empty bearer token and canonical user whose role matches the requested account type. The administrator editor derives its role synchronously from the URL, compares normalized IDs, retains the original account fields, and loads profile, saved addresses, and masked payment methods as independent states.
+
 ## Canonical root documentation
 
 This is the single repository and delivery guide. At the repository root, keep exactly one file for each of these roles:
@@ -46,7 +52,7 @@ Regenerate both archives together for every change. They are created only from t
 
 ## Current verified baseline
 
-The paired-live workflow was verified on 2026-07-22. Validation recorded 77 Node tests, TypeScript no-emit, PowerShell/PHP syntax checks, a 140-module production build, and a 28-route production audit with no missing references. `dist/` and `frontend-upload/` matched at 1,036 files / 91,852,257 bytes; `backend-live/` contained 290 payload files plus `SHA256SUMS` (291 files / 975,454 bytes), with no manifest or safety findings. The release pair passed all required archive and extraction checks. No external Hostinger deployment was performed or verified.
+The 2026-07-22 urgent repair candidate passed 85 Node tests, TypeScript no-emit, changed-PHP syntax checks, and 28 focused Laravel scenarios / 355 assertions. The full Laravel run reached 105 tests: 69 passed and 36 unrelated legacy cases failed, predominantly because a shared test-cache API throttle carried across cases; one pre-existing local-media URL expectation also remained. The production build transformed 141 modules, and the 28-route audit found no missing local references or placeholder links. `dist/` and `frontend-upload/` matched exactly at 1,036 files / 91,855,885 bytes; `backend-live/` contained 289 source files plus `SHA256SUMS` (290 files / 977,238 bytes), with zero missing, stale, checksum, secret, frontend, or ZIP findings. External Hostinger deployment remains unperformed and unverified.
 
 ## Ongoing maintenance
 

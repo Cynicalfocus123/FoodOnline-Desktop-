@@ -118,19 +118,37 @@ class AdminUsersController extends Controller
 
     private function detailResponse(User $user): JsonResponse
     {
-        $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
+        $relations = [];
+        if ($this->referralSchemaIsReady()) {
+            $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
+        }
         if (($user->account_type ?: $user->role) === 'customer') {
-            $relations['addresses'] = fn ($query) => $query
-                ->orderByDesc('is_default')
-                ->orderByDesc('id');
-            $relations['paymentMethods'] = fn ($query) => $query
-                ->where('status', 'active')
-                ->orderByDesc('is_default')
-                ->orderByDesc('id');
+            if (Schema::hasTable('user_addresses')) {
+                $relations['addresses'] = fn ($query) => $query
+                    ->orderByDesc('is_default')
+                    ->orderByDesc('id');
+            }
+            if (Schema::hasTable('user_payment_methods')) {
+                $relations['paymentMethods'] = fn ($query) => $query
+                    ->where('status', 'active')
+                    ->orderByDesc('is_default')
+                    ->orderByDesc('id');
+            }
         }
 
         return response()->json([
             'user' => new AdminManagedUserResource($user->load($relations)),
         ]);
+    }
+
+    private function referralSchemaIsReady(): bool
+    {
+        foreach (['referral_programs', 'referral_codes', 'referrals', 'referral_rewards'] as $table) {
+            if (! Schema::hasTable($table)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

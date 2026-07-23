@@ -1,4 +1,5 @@
 import type { AdminSidebarKey } from "../data/admin";
+import type { SignupRoleKey } from "./registerSchema";
 
 export type AdminRoute = {
   sidebarKey: AdminSidebarKey;
@@ -71,6 +72,13 @@ export function readAdminRoute(pathname = window.location.pathname): AdminRoute 
 export function adminPath(sidebarKey: AdminSidebarKey) {
   const segment = sidebarToSegment[sidebarKey];
   return segment ? `/admin/${segment}` : "/admin";
+}
+
+export function adminUserRoleForModule(module: string): SignupRoleKey | null {
+  if (module === "customers") return "customer";
+  if (module === "suppliers") return "supplier";
+  if (module === "partners") return "partner";
+  return null;
 }
 
 export function isAdminSidebarKey(value: string): value is AdminSidebarKey {

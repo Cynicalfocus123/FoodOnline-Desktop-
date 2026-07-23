@@ -16,7 +16,12 @@ class ReferralAttributionService
 
     public function attributeRegisteredCustomer(User $referred, ?string $incomingCode): ?Referral
     {
-        if (! $this->codes->isEligible($referred) || ! $incomingCode) return null;
+        if (! $this->codes->isReady()) {
+            return null;
+        }
+        if (! $this->codes->isEligible($referred) || ! $incomingCode) {
+            return null;
+        }
         $program = ReferralProgram::active();
         if (! $program || ! $program->isAvailable()) return null;
         $code = $this->codes->findActive($incomingCode);

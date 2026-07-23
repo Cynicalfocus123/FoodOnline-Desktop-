@@ -4,11 +4,20 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AdminManagedUserCrudTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutMiddleware(ThrottleRequests::class);
+    }
 
     public function test_admin_can_create_edit_and_archive_managed_users_without_deleting_history(): void
     {
@@ -75,5 +84,73 @@ class AdminManagedUserCrudTest extends TestCase
             'email' => 'admin@example.com',
             'password' => 'Strongpass123',
         ])->assertUnprocessable()->assertJsonValidationErrors('email');
+    }
+
+    public function test_customer_supplier_and_partner_detail_keep_the_complete_managed_user_contract(): void
+    {
+        $token = $this->adminToken();
+
+        foreach (['customer', 'supplier', 'partner'] as $role) {
+            $user = User::factory()->create([
+                'role' => $role,
+                'email' => $role.'-detail@example.test',
+                'first_name' => ucfirst($role),
+                'last_name' => 'Account',
+                'phone' => '+66 81 555 1000',
+                'line_id' => $role.'.line',
+                'company_name' => ucfirst($role).' Company',
+                'registered_from' => 'main_public_frontend',
+                'status' => 'active',
+            ]);
+
+            $this->withToken($token)
+                ->getJson('/api/v1/admin/users/'.$user->id)
+                ->assertOk()
+                ->assertJsonPath('user.id', (string) $user->id)
+                ->assertJsonPath('user.account_type', $role)
+                ->assertJsonPath('user.email', $user->email)
+                ->assertJsonPath('user.first_name', ucfirst($role))
+                ->assertJsonPath('user.last_name', 'Account')
+                ->assertJsonPath('user.contact_number', '+66 81 555 1000')
+                ->assertJsonPath('user.line_id', $role.'.line')
+                ->assertJsonPath('user.company_name', ucfirst($role).' Company')
+                ->assertJsonPath('user.registered_from', 'main_public_frontend')
+                ->assertJsonPath('user.status', 'active')
+                ->assertJsonStructure(['user' => ['created_at', 'updated_at']]);
+        }
+    }
+
+    public function test_pending_referral_migration_does_not_replace_managed_user_detail_with_a_server_error(): void
+    {
+        $token = $this->adminToken();
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'email' => 'pending-referral-admin-detail@example.test',
+        ]);
+        foreach (['referral_rewards', 'referrals', 'referral_codes', 'referral_programs'] as $table) {
+            Schema::dropIfExists($table);
+        }
+
+        $this->withToken($token)
+            ->getJson('/api/v1/admin/users/'.$customer->id)
+            ->assertOk()
+            ->assertJsonPath('user.id', (string) $customer->id)
+            ->assertJsonPath('user.email', 'pending-referral-admin-detail@example.test')
+            ->assertJsonCount(0, 'user.addresses')
+            ->assertJsonCount(0, 'user.payment_methods')
+            ->assertJsonMissingPath('user.referral_summary');
+    }
+
+    private function adminToken(): string
+    {
+        $admin = User::factory()->admin()->create([
+            'email' => 'managed-user-admin-'.bin2hex(random_bytes(5)).'@example.test',
+            'password' => 'Adminpass123',
+        ]);
+
+        return (string) $this->postJson('/api/v1/admin/login', [
+            'email' => $admin->email,
+            'password' => 'Adminpass123',
+        ])->assertOk()->json('token');
     }
 }

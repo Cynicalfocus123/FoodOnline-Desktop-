@@ -9,7 +9,7 @@ import {
   maskedPaymentMethodLabel,
   shouldAcceptCustomerDetail,
 } from "../src/components/admin/customerDetailPresentation.ts";
-import { readAdminRoute } from "../src/lib/adminRouting.ts";
+import { adminUserRoleForModule, readAdminRoute } from "../src/lib/adminRouting.ts";
 import { toUserFacingErrorMessage } from "../src/lib/userFacingError.ts";
 import type {
   ManagedUserAddress,
@@ -101,6 +101,7 @@ test("technical failures stay hidden and stale customer responses are rejected",
     "Unable to load this customer. Please try again.",
   );
   assert.equal(shouldAcceptCustomerDetail("42", "42", 7, 7), true);
+  assert.equal(shouldAcceptCustomerDetail("42", 42, 7, 7), true);
   assert.equal(shouldAcceptCustomerDetail("42", "43", 7, 7), false);
   assert.equal(shouldAcceptCustomerDetail("42", "42", 6, 7), false);
 });
@@ -127,4 +128,28 @@ test("direct customer edit routing and detail UI load the canonical record", () 
   assert.match(source, /No saved payment methods for this customer\./);
   assert.match(source, /paymentMethods\.map\(\(method\)/);
   assert.match(source, /Retry/);
+});
+
+test("direct user routes derive customer supplier and partner roles from the URL module", () => {
+  assert.equal(adminUserRoleForModule("customers"), "customer");
+  assert.equal(adminUserRoleForModule("suppliers"), "supplier");
+  assert.equal(adminUserRoleForModule("partners"), "partner");
+  assert.equal(adminUserRoleForModule("products"), null);
+
+  const portal = readFileSync("src/components/AdminPortal.tsx", "utf8");
+  assert.match(portal, /effectiveUsersRole = routeUsersRole \?\? activeUsersTab/);
+  assert.match(portal, /role=\{effectiveUsersRole\}/);
+});
+
+test("profile editor and optional customer collections keep independent state", () => {
+  const source = readFileSync("src/components/admin/EnterpriseUsersAdminPanel.tsx", "utf8");
+  assert.match(source, /profilePhase/);
+  assert.match(source, /addressPhase/);
+  assert.match(source, /paymentPhase/);
+  assert.match(source, /managedUserFromList/);
+  assert.match(source, /Registration source/);
+  assert.match(source, /First name/);
+  assert.match(source, /Save &amp; Continue/);
+  assert.match(source, /No saved addresses for this customer\./);
+  assert.match(source, /No saved payment methods for this customer\./);
 });

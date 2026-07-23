@@ -29,11 +29,14 @@ export function customerDetailSectionState(
 
 export function shouldAcceptCustomerDetail(
   requestedId: string,
-  returnedId: string,
+  returnedId: string | number,
   requestVersion: number,
   currentVersion: number,
 ) {
-  return requestVersion === currentVersion && requestedId === returnedId;
+  return (
+    requestVersion === currentVersion &&
+    String(requestedId).trim() === String(returnedId).trim()
+  );
 }
 
 export function customerAddressCountry(address: ManagedUserAddress) {

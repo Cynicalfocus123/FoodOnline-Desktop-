@@ -2,22 +2,14 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { SignupRoleKey } from "../lib/registerSchema";
+import {
+  parsePublicAuthEnvelope,
+  type ApiAuthenticatedUser,
+} from "../lib/publicAuthContract";
 import { genericUserAuthError, normalizeUserEmail, sanitizeUserPasswordInput } from "../lib/security";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
 
-export type ApiAuthenticatedUser = {
-  id: number | string;
-  account_type?: SignupRoleKey;
-  company_name: string | null;
-  contact_number: string | null;
-  email: string;
-  first_name: string | null;
-  last_name: string | null;
-  line_id: string | null;
-  registered_at: string | null;
-  role?: SignupRoleKey;
-  status: string;
-};
+export type { ApiAuthenticatedUser } from "../lib/publicAuthContract";
 
 export type PublicSessionUser = {
   id: string;
@@ -49,7 +41,11 @@ type PublicAuthState = {
   hydrateSession: () => Promise<void>;
   loginUser: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => Promise<void>;
-  setAuthenticatedSession: (user: ApiAuthenticatedUser, token: string) => void;
+  setAuthenticatedSession: (
+    user: ApiAuthenticatedUser,
+    token: string,
+    expectedAccountType?: SignupRoleKey,
+  ) => boolean;
 };
 
 function isPhoneLikeIdentifier(value: string) {
@@ -78,9 +74,12 @@ function toMockPhoneSession(
 }
 
 function toPublicSessionUser(user: ApiAuthenticatedUser): PublicSessionUser {
+  const accountType = user.account_type ?? user.role;
+  if (!accountType) throw new Error("Invalid authenticated account type.");
+
   return {
     id: String(user.id),
-    accountType: user.account_type ?? user.role ?? "customer",
+    accountType,
     companyName: user.company_name ?? "",
     contactNumber: user.contact_number ?? "",
     email: user.email,
@@ -165,13 +164,7 @@ export const usePublicAuthStore = create<PublicAuthState>()(
 
         try {
           const response = await apiRequest<{ user: ApiAuthenticatedUser }>("/auth/me", { token });
-          set({
-            authError: null,
-            currentUser: toPublicSessionUser(response.user),
-            hasHydratedSession: true,
-            isLoggingOut: false,
-            isValidatingSession: false,
-          });
+          if (!get().setAuthenticatedSession(response.user, token)) throw new Error("Invalid session response.");
         } catch {
           set({
             authError: null,
@@ -194,15 +187,9 @@ export const usePublicAuthStore = create<PublicAuthState>()(
               password: sanitizeUserPasswordInput(password, true),
             },
           });
-
-          set({
-            authError: null,
-            currentUser: toPublicSessionUser(response.user),
-            hasHydratedSession: true,
-            isLoggingOut: false,
-            isSubmittingLogin: false,
-            token: response.token,
-          });
+          if (!get().setAuthenticatedSession(response.user, response.token)) {
+            throw new ApiError("Unable to sign in right now.", 502);
+          }
           return true;
         } catch (error) {
           set({
@@ -232,16 +219,20 @@ export const usePublicAuthStore = create<PublicAuthState>()(
           set({ isLoggingOut: false });
         }
       },
-      setAuthenticatedSession: (user, token) => {
+      setAuthenticatedSession: (user, token, expectedAccountType) => {
+        const session = parsePublicAuthEnvelope({ user, token }, expectedAccountType);
+        if (!session) return false;
+
         set({
           authError: null,
-          currentUser: toPublicSessionUser(user),
+          currentUser: toPublicSessionUser(session.user),
           hasHydratedSession: true,
           isLoggingOut: false,
           isSubmittingLogin: false,
           isValidatingSession: false,
-          token,
+          token: session.token,
         });
+        return true;
       },
     }),
     {

@@ -6,6 +6,12 @@ Every completed change rebuilds and synchronizes authoritative source, `dist/`, 
 
 The permanent workflow adoption passed 77 Node tests, TypeScript, production build/audit, exact 1,036-file frontend mirror parity, and a 290-source-file backend manifest audit. Commit `39a81482f6707d20edd009b35599d7dfa1e3248d` was pushed and matched `origin/main` before the paired Live ZIP verification; only the two approved archives remained afterward. External Hostinger deployment was not performed.
 
+## Urgent authentication and managed-user repair (2026-07-22)
+
+The referral rollout introduced mandatory referral-table reads into every registration and administrator managed-user detail request. Production evidence showed core health and request validation working while the public referral invite path returned a safe HTTP 500, identifying referral schema readiness as the shared failure boundary. The repaired services explicitly treat referral features as unavailable until all referral tables exist, so Customer/Supplier/Partner registration and Admin detail no longer fail with them.
+
+Registration and login now return the same root token/user envelope, and the public frontend uses one strict persistence path that refuses success without a real token, canonical user, and matching role. Direct Admin Customer/Supplier/Partner routes derive their role from the URL, normalize numeric/string IDs, preserve the complete original editor, and isolate profile, address, and masked-payment states. The paired deployment still must apply `2026_07_21_600000_create_referral_program_tables.php` on Hostinger to restore referral functionality; no external migration or live repair is claimed here.
+
 ## Administrator customer-detail data contract
 
 The administrator Customer edit route reads one canonical `/api/v1/admin/users/{id}` detail response. It contains selected-customer-only structured addresses plus active saved payment methods limited to masked brand/last-four/expiry/default/status metadata. React versions requests and validates the returned customer ID before rendering; direct routes, loading, empty, retryable error, unavailable, and stale-response states are explicit. Existing Laravel tables and relationships remain authoritative; no migration is involved.

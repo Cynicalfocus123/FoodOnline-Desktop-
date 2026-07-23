@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Http\Resources\Auth\AuthenticatedUserResource;
-use App\Http\Resources\Auth\RegisteredUserResource;
 use App\Services\Auth\RegisterUserService;
 use App\Services\Auth\UserAuthTokenService;
 use Illuminate\Http\JsonResponse;
@@ -25,12 +24,6 @@ class RegisterUserController extends Controller
             'token_type' => 'Bearer',
             'token' => $plainToken,
             'user' => new AuthenticatedUserResource($user),
-            'data' => [
-                'user' => new RegisteredUserResource($user),
-                'token_type' => 'Bearer',
-                'token' => $plainToken,
-                'next_url' => config('foodonlines.frontend_url', env('FRONTEND_URL')),
-            ],
         ], 201);
     }
 }

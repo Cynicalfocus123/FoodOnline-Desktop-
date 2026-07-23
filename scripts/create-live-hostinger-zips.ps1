@@ -109,7 +109,23 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
             $_.RelativePath -match "(^|/)\.env(?:\.|$)" -or $_.RelativePath -match "\.(zip|map)$"
         })
     } else {
-        foreach ($required in @("artisan", "composer.json", "composer.lock", "DEPLOYMENT.md", "SHA256SUMS", "public/index.php", "public/.htaccess", "public/backend-path.php.example")) {
+        foreach ($required in @(
+            "artisan", "composer.json", "composer.lock", "DEPLOYMENT.md", "SHA256SUMS",
+            "routes/api.php",
+            "app/Http/Controllers/Api/Auth/RegisterUserController.php",
+            "app/Http/Controllers/Api/Auth/LoginUserController.php",
+            "app/Http/Controllers/Api/Auth/CurrentUserController.php",
+            "app/Http/Controllers/Api/Auth/LogoutUserController.php",
+            "app/Http/Controllers/Api/Admin/AdminUsersController.php",
+            "app/Http/Requests/Auth/RegisterUserRequest.php",
+            "app/Http/Requests/Auth/LoginUserRequest.php",
+            "app/Http/Resources/Admin/AdminManagedUserResource.php",
+            "app/Services/Auth/UserAuthTokenService.php",
+            "app/Services/Auth/RegisterUserService.php",
+            "app/Models/User.php", "app/Models/UserAddress.php", "app/Models/UserPaymentMethod.php",
+            "database/migrations/2026_07_21_600000_create_referral_program_tables.php",
+            "public/index.php", "public/.htaccess", "public/backend-path.php.example"
+        )) {
             if ($fileNames -notcontains $required) { throw "Backend Live stage is missing required file: $required" }
         }
         foreach ($directory in @("app", "bootstrap", "config", "database", "public", "resources", "routes")) {
@@ -123,6 +139,49 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
         })
     }
     if ($forbidden.Count -ne 0) { throw "$Kind Live stage contains forbidden files: $($forbidden.Count)" }
+}
+
+function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label) {
+    foreach ($marker in $Markers) {
+        if (-not $Content.Contains($marker, [StringComparison]::Ordinal)) {
+            throw "$Label is missing required repair marker: $marker"
+        }
+    }
+}
+
+function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
+    if ($Kind -eq "backend") {
+        $checks = @{
+            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/users/{user}")
+            "app/Http/Controllers/Api/Auth/RegisterUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
+            "app/Http/Controllers/Api/Auth/LoginUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
+            "app/Http/Controllers/Api/Auth/CurrentUserController.php" = @("AuthenticatedUserResource")
+            "app/Http/Controllers/Api/Auth/LogoutUserController.php" = @("revoked_at")
+            "app/Services/Auth/RegisterUserService.php" = @("referralCodes->ensure", "Hash::make")
+            "app/Http/Controllers/Api/Admin/AdminUsersController.php" = @("detailResponse", "user_addresses", "paymentMethods", "referralSchemaIsReady")
+            "app/Http/Resources/Admin/AdminManagedUserResource.php" = @("addresses", "payment_methods", "registered_from")
+            "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
+        }
+        foreach ($relative in $checks.Keys) {
+            $path = Join-Path $Source $relative.Replace([char]47, [IO.Path]::DirectorySeparatorChar)
+            Assert-TextMarkers ([IO.File]::ReadAllText($path)) $checks[$relative] "Backend $relative"
+        }
+        $registerController = [IO.File]::ReadAllText((Join-Path $Source "app/Http/Controllers/Api/Auth/RegisterUserController.php"))
+        if ($registerController.Contains("'data' =>", [StringComparison]::Ordinal)) {
+            throw "Backend registration still contains a competing nested response envelope."
+        }
+        return
+    }
+
+    $javascript = [Text.StringBuilder]::new()
+    foreach ($file in Get-ChildItem -LiteralPath $Source -Filter "*.js" -File -Recurse -Force) {
+        [void] $javascript.AppendLine([IO.File]::ReadAllText($file.FullName))
+    }
+    Assert-TextMarkers $javascript.ToString() @(
+        "/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/admin/users/",
+        "Registration could not be completed.", "Registration source",
+        "No saved addresses for this customer.", "No saved payment methods for this customer."
+    ) "Frontend compiled output"
 }
 
 function Assert-BackendManifest([string]$Source, [System.Collections.IEnumerable]$Files) {
@@ -199,6 +258,7 @@ function Invoke-LivePackage([string]$Kind, [string]$Source, [string]$ArchiveName
     $files = Get-Inventory $Source
     if ($files.Count -eq 0) { throw "$Kind Live stage is empty." }
     Assert-LiveSource $Source $Kind $files
+    Assert-LiveRepairContent $Source $Kind
     if ($Kind -eq "backend") { Assert-BackendManifest $Source $files }
 
     $archive = Join-Path $ReleaseDirectory $ArchiveName
@@ -237,12 +297,14 @@ function Invoke-LivePackage([string]$Kind, [string]$Source, [string]$ArchiveName
         Expand-Archive -LiteralPath $archive -DestinationPath $windowsExtraction -Force
         $windowsFiles = Get-Inventory $windowsExtraction
         Compare-Inventory $files $windowsFiles "$Kind Windows Expand-Archive"
+        Assert-LiveRepairContent $windowsExtraction $Kind
 
         $php = & php $phpExtractor $archive $phpExtraction
         if ($LASTEXITCODE -ne 0) { throw "PHP ZipArchive extraction failed for $Kind." }
         $phpResult = ($php -join "`n") | ConvertFrom-Json
         $phpFiles = Get-Inventory $phpExtraction
         Compare-Inventory $files $phpFiles "$Kind PHP ZipArchive"
+        Assert-LiveRepairContent $phpExtraction $Kind
 
         $tarCommand = Get-Command tar -ErrorAction SilentlyContinue
         $tarResult = "unavailable"

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasPublicUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Schema;
 
 class ReferralProgram extends Model
 {
@@ -29,6 +30,10 @@ class ReferralProgram extends Model
 
     public static function active(): ?self
     {
+        if (! Schema::hasTable('referral_programs')) {
+            return null;
+        }
+
         return static::query()->where('status', 'active')->where(fn ($query) => $query->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
             ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>=', now()))->latest('id')->first();
     }

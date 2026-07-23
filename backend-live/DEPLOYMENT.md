@@ -10,6 +10,24 @@ Both archives retain the verified PHP `ZipArchive` standard Deflate ZIP32 root-f
 
 `frontend-upload/` and `backend-live/` are repository deployment mirrors only. Codex is not connected to Hostinger; archive creation does not upload to `public_html`, update the private Laravel root/database, run production migrations/caches, or prove a live smoke test. Preserve `public_html/api`, `public_html/api/backend-path.php`, live `.env`, `vendor/`, database, storage/media/uploads, permissions, writable directories, logs, sessions, queues, and runtime state during manual deployment. This section supersedes all older conflicting release instructions below.
 
+## Urgent registration and Admin user-detail repair (2026-07-22)
+
+The shared regression boundary is the referral rollout: registration attempted referral-code work for every new user and Admin managed-user detail always loaded referral relations. The live API still served health and field-validation responses, while the referral invite endpoint returned HTTP 500, demonstrating that the deployed referral subsystem was not schema-ready. This release guards optional referral work so core Customer/Supplier/Partner registration and Admin editing remain available before migration, but the migration is still required to restore Refer & Earn itself.
+
+Deploy the synchronized frontend and backend from the same pushed commit. Extract frontend files into `public_html` while preserving the complete `public_html/api` directory. Extract backend source into the private Laravel root while preserving live `.env`, `vendor/`, database, all `storage/` content (especially media/uploads), permissions, sessions, queues, logs, and writable directories. Confirm `public_html/api/backend-path.php` still contains the exact absolute path of that private root; never replace it with the packaged example or expose the path publicly. Copy the controlled `public/index.php` and `public/.htaccess` to `public_html/api/` only as described by the split-entry workflow below.
+
+After a database backup and backend upload, run from the private Laravel root:
+
+```bash
+php artisan optimize:clear
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+Then verify `/api/v1/health`; Customer, Supplier, and Partner registration; token-authenticated `/api/v1/auth/me`; duplicate/invalid validation; referral invite resolution; and direct Admin Customer/Supplier/Partner detail routes with original fields plus customer address/payment sections. Inspect the timestamped Laravel/PHP log if any route returns 500. These are manual production actions and smoke tests; local package creation is not evidence they occurred.
+
 ## Administrator customer-detail release (2026-07-22)
 
 Deploy the synchronized frontend and backend from the same commit. The frontend adds the selected-customer Saved addresses and masked Payment methods presentation; the backend extends the existing administrator user-detail response with the selected customer's structured address records and an allowlisted masked payment-method collection. The route remains inside the existing administrator-token boundary. No migration, table, credential, payment-provider configuration, or public account route changes are required.

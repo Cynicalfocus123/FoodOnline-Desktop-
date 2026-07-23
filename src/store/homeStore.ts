@@ -443,12 +443,8 @@ type HomeState = {
 export const signupRoleOptions = signupRoles;
 
 type RegisterResponse = {
-  token?: string;
-  user?: ApiAuthenticatedUser;
-  data?: {
-    token?: string;
-    user?: ApiAuthenticatedUser;
-  };
+  token: string;
+  user: ApiAuthenticatedUser;
 };
 
 async function submitSignupToBackend(selectedRole: SignupRoleKey, formValues: SignupFormValues, referralCode: string | null) {
@@ -1694,11 +1690,8 @@ export const useHomeStore = create<HomeState>((set, get) => ({
 
     try {
       const response = await submitSignupToBackend(selectedRole, cleanedValues, pendingReferralCode);
-      const token = response.token ?? response.data?.token ?? null;
-      const user = response.user ?? response.data?.user;
-
-      if (user && token) {
-        usePublicAuthStore.getState().setAuthenticatedSession(user, token);
+      if (!usePublicAuthStore.getState().setAuthenticatedSession(response.user, response.token, selectedRole)) {
+        throw new ApiError("Registration could not be completed.", 502);
       }
     } catch (error) {
       const backendFieldErrors = error instanceof ApiError ? mapRegisterFieldErrors(error) : {};

@@ -12,6 +12,8 @@ Public pages must remain responsive across desktop, tablet, iOS Safari, and Andr
 
 Keep catalog browsing, product details, search, cart, checkout, authentication, account, favorites/saved items, addresses, and referral flows within the existing route and component structure. Loading, filtered-empty, confirmed-empty, unavailable, and error states must be distinct; never show an empty-state claim while compatible catalog data is still resolving.
 
+Customer, Supplier, and Partner signup use the same authenticated-session contract as login. Success is never inferred from an HTTP response alone: it requires a valid token, canonical user ID, email, status, and matching account type. Validation errors remain field-specific, while offline/server failures use safe retry language and never expose endpoints or raw payloads.
+
 The signed-in account menu includes one clear logout action, and public logout clears account-owned state before late network responses can repopulate it. Address Book and checkout show persisted addresses only when the Laravel-authoritative record exists.
 
 ## Administration
@@ -21,6 +23,8 @@ The existing sidebar labels, ordering, dark-green surface, and orange active sta
 Category, brand, and product editors use the shared managed-media control. A user may select, replace, remove, and preview media before the first save; upload follows a successful parent save. Do not expose storage providers, buckets, paths, temporary-upload mechanics, or save-first warnings. Image failure is informational and retryable, not a reason to block an otherwise valid save.
 
 Administrator customer detail presents responsive, read-only Saved addresses and Payment methods sections. Address fields stay structured and country-aware. Payment copy is limited to safe, masked metadata such as brand, last four digits, expiry, default, status, and created time.
+
+Customer, Supplier, and Partner edit routes keep one stable editor with the original identity, contact, LINE ID, company, status, source, and timestamp fields. The profile, saved-address, and payment-method requests have independent loading, empty, failure, and retry states; an optional-section failure must not replace or hide the profile editor. The URL module is authoritative for the expected role on direct navigation and refresh.
 
 ## Privacy and error presentation
 

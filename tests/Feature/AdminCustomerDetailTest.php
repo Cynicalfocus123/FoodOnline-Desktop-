@@ -7,11 +7,19 @@ use App\Models\UserAddress;
 use App\Models\UserApiToken;
 use App\Models\UserPaymentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Tests\TestCase;
 
 class AdminCustomerDetailTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutMiddleware(ThrottleRequests::class);
+    }
 
     public function test_admin_customer_detail_returns_only_selected_customer_addresses_and_masked_payment_methods(): void
     {

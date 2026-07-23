@@ -3,7 +3,8 @@ import type { SignupRoleKey } from "../../lib/registerSchema";
 
 export type ManagedUser = {
   id: string;
-  account_type: SignupRoleKey;
+  account_type?: SignupRoleKey;
+  role?: SignupRoleKey;
   email: string;
   first_name: string | null;
   last_name: string | null;
@@ -12,6 +13,7 @@ export type ManagedUser = {
   company_name: string | null;
   business_type: string | null;
   status: "active" | "in_review" | "disabled";
+  registered_from: string | null;
   created_at: string | null;
   updated_at: string | null;
   addresses?: ManagedUserAddress[];
