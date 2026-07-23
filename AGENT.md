@@ -8,6 +8,8 @@ Public registration and administrator Customer/Supplier/Partner detail must rema
 
 Registration and login share one exact root-level `message`, `token_type`, `token`, and `user` envelope. The frontend may show registration success only after validating and persisting a non-empty bearer token and canonical user whose role matches the requested account type. The administrator editor derives its role synchronously from the URL, compares normalized IDs, retains the original account fields, and loads profile, saved addresses, and masked payment methods as independent states.
 
+The user-address acceptance gate is mandatory. `npm run test:address-acceptance` must register a real temporary customer, save a default Thailand address and non-default United States address through `/account/addresses`, prove both database rows share that `users.id`, prove Admin detail returns only those rows twice, and use headless Chrome against a compiled production frontend to verify two separate cards before and after direct-route refresh. The final archive gate must repeat controller/resource/model/relationship/route and compiled-address marker checks inside both Windows and PHP ZIP extractions.
+
 ## Canonical root documentation
 
 This is the single repository and delivery guide. At the repository root, keep exactly one file for each of these roles:
@@ -52,7 +54,7 @@ Regenerate both archives together for every change. They are created only from t
 
 ## Current verified baseline
 
-The 2026-07-22 urgent repair candidate passed 85 Node tests, TypeScript no-emit, changed-PHP syntax checks, and 28 focused Laravel scenarios / 355 assertions. The full Laravel run reached 105 tests: 69 passed and 36 unrelated legacy cases failed, predominantly because a shared test-cache API throttle carried across cases; one pre-existing local-media URL expectation also remained. The production build transformed 141 modules, and the 28-route audit found no missing local references or placeholder links. `dist/` and `frontend-upload/` matched exactly at 1,036 files / 91,855,885 bytes; `backend-live/` contained 289 source files plus `SHA256SUMS` (290 files / 977,238 bytes), with zero missing, stale, checksum, secret, frontend, or ZIP findings. External Hostinger deployment remains unperformed and unverified.
+The 2026-07-22 urgent repair candidate passed 85 Node tests, TypeScript no-emit, changed-PHP syntax checks, and the mandatory real user-address acceptance command. That acceptance recorded HTTP 201 for registration and both saves, two authoritative rows under one `users.id`, HTTP 200 for initial/refreshed Admin detail, and two compiled headless-Chrome cards on both direct-route loads with Thailand as the only default. The focused address suites passed 8 tests / 163 assertions. The earlier full Laravel run reached 105 tests: 69 passed and 36 unrelated legacy cases failed, predominantly because a shared test-cache API throttle carried across cases; one pre-existing local-media URL expectation also remained. The production build transformed 141 modules, and the 28-route audit found no missing local references or placeholder links. `dist/` and `frontend-upload/` matched exactly at 1,036 files / 91,856,095 bytes; `backend-live/` contained 289 source files plus `SHA256SUMS` (290 files / 977,941 bytes), with zero missing, stale, checksum, secret, frontend, or ZIP findings. External Hostinger deployment remains unperformed and unverified.
 
 ## Ongoing maintenance
 

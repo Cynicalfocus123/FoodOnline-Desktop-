@@ -24,6 +24,8 @@ Category, brand, and product editors use the shared managed-media control. A use
 
 Administrator customer detail presents responsive, read-only Saved addresses and Payment methods sections. Address fields stay structured and country-aware. Payment copy is limited to safe, masked metadata such as brand, last four digits, expiry, default, status, and created time.
 
+Each saved address is one separate card tied to the selected customer. Country-specific labels and populated values, stored phone number, delivery note, and summary remain visible. The Default badge appears only when `is_default` is true; loading, empty, or unrelated-user data must never substitute for returned address records, including after refreshing a direct Customer Edit URL.
+
 Customer, Supplier, and Partner edit routes keep one stable editor with the original identity, contact, LINE ID, company, status, source, and timestamp fields. The profile, saved-address, and payment-method requests have independent loading, empty, failure, and retry states; an optional-section failure must not replace or hide the profile editor. The URL module is authoritative for the expected role on direct navigation and refresh.
 
 ## Privacy and error presentation

@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   customerAddressCountry,
+  customerAddressFields,
+  customerAddressPhone,
   customerAddressRecipient,
   customerDetailSectionState,
   maskedPaymentMethodExpiry,
@@ -25,6 +27,7 @@ const addresses: ManagedUserAddress[] = [
       fullName: "Mike",
       phoneNumber: "+66 81 234 5678",
       province: "Bangkok",
+      deliveryNote: "Leave with the lobby concierge",
     },
     summary: "Bangkok 10110",
     is_default: true,
@@ -39,6 +42,7 @@ const addresses: ManagedUserAddress[] = [
       fullName: "Pasit",
       phoneNumber: "+1 213 555 0142",
       state: "California",
+      deliveryNote: "Call from the loading entrance",
     },
     summary: "Los Angeles, CA 90071",
     is_default: false,
@@ -63,6 +67,14 @@ test("two selected-customer addresses remain distinct and only the real default 
     "Thailand",
     "United States",
   ]);
+  assert.deepEqual(addresses.map(customerAddressPhone), [
+    "+66 81 234 5678",
+    "+1 213 555 0142",
+  ]);
+  assert.deepEqual(
+    addresses.map((address) => customerAddressFields(address).find((field) => field.field === "deliveryNote")?.value),
+    ["Leave with the lobby concierge", "Call from the loading entrance"],
+  );
 });
 
 test("detail collection states never show a confirmed empty state while loading", () => {
@@ -127,6 +139,9 @@ test("direct customer edit routing and detail UI load the canonical record", () 
   assert.match(source, /No saved addresses for this customer\./);
   assert.match(source, /No saved payment methods for this customer\./);
   assert.match(source, /paymentMethods\.map\(\(method\)/);
+  assert.match(source, /data-testid="managed-user-editor"/);
+  assert.match(source, /data-testid="customer-addresses"/);
+  assert.match(source, /data-address-id=\{address\.id\}/);
   assert.match(source, /Retry/);
 });
 

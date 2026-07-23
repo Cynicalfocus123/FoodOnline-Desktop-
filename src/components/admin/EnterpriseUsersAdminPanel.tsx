@@ -555,6 +555,8 @@ export function EnterpriseUsersAdminPanel({
   return (
     <form
       className="grid gap-6 rounded-[28px] border border-neutral-200 bg-white p-5 shadow-soft sm:p-8"
+      data-record-id={editing?.id ?? recordId ?? ""}
+      data-testid="managed-user-editor"
       onSubmit={save}
     >
       <button
@@ -656,6 +658,7 @@ export function EnterpriseUsersAdminPanel({
                   [key]: event.target.value,
                 }))
               }
+              name={key}
               required={key === "email" || (!editing && key === "password")}
               type={type}
               value={form[key as keyof typeof form]}
@@ -778,7 +781,10 @@ function CustomerDetailSections({
 
   return (
     <div className="grid gap-6">
-      <section className="grid gap-4 rounded-2xl border border-neutral-200 p-5">
+      <section
+        className="grid gap-4 rounded-2xl border border-neutral-200 p-5"
+        data-testid="customer-addresses"
+      >
         <div>
           <p className="text-sm font-black uppercase tracking-[0.16em] text-citrus-500">
             Customer addresses
@@ -853,7 +859,12 @@ function AddressCard({ address }: { address: ManagedUserAddress }) {
   const fields = customerAddressFields(address);
 
   return (
-    <article className="min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+    <article
+      className="min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
+      data-address-id={address.id}
+      data-country-key={address.country_key}
+      data-is-default={address.is_default ? "true" : "false"}
+    >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="font-black text-neutral-950">
           {customerAddressRecipient(address)}

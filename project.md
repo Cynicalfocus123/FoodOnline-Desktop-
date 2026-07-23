@@ -12,6 +12,12 @@ The referral rollout introduced mandatory referral-table reads into every regist
 
 Registration and login now return the same root token/user envelope, and the public frontend uses one strict persistence path that refuses success without a real token, canonical user, and matching role. Direct Admin Customer/Supplier/Partner routes derive their role from the URL, normalize numeric/string IDs, preserve the complete original editor, and isolate profile, address, and masked-payment states. The paired deployment still must apply `2026_07_21_600000_create_referral_program_tables.php` on Hostinger to restore referral functionality; no external migration or live repair is claimed here.
 
+## Real user-address acceptance (2026-07-22)
+
+`npm run test:address-acceptance` creates a temporary migrated SQLite application, registers the customer through the public API, saves Thailand and United States addresses through the same authenticated `/account/addresses` endpoint used by Address Book, and creates a control address for another customer. Direct database inspection and two Admin detail requests prove exactly two selected-customer rows and exactly one Thailand default. A temporary production frontend build is then opened at `/admin/customers/{users.id}/edit` in headless Chrome; the original editor and both country-specific address cards, phone numbers, delivery notes, and single Default badge are asserted before and after refresh, while the control address must remain absent.
+
+The paired release script requires and scans the account address controller/request/resource, Admin controller/resources, `User`/`UserAddress` relationships, routes, and compiled Admin rendering markers at the source stage and inside Windows/PHP extractions. A stale frontend or backend archive therefore fails the whole release.
+
 ## Administrator customer-detail data contract
 
 The administrator Customer edit route reads one canonical `/api/v1/admin/users/{id}` detail response. It contains selected-customer-only structured addresses plus active saved payment methods limited to masked brand/last-four/expiry/default/status metadata. React versions requests and validates the returned customer ID before rendering; direct routes, loading, empty, retryable error, unavailable, and stale-response states are explicit. Existing Laravel tables and relationships remain authoritative; no migration is involved.

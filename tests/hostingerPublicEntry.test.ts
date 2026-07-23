@@ -42,6 +42,11 @@ test("paired Live release uses the verified standard ZIP32 Hostinger path", () =
   assert.match(releaseScript, /AdminUsersController\.php/);
   assert.match(releaseScript, /Registration could not be completed\./);
   assert.match(releaseScript, /No saved addresses for this customer\./);
+  assert.match(releaseScript, /AddressBookController\.php/);
+  assert.match(releaseScript, /AdminUserAddressResource\.php/);
+  assert.match(releaseScript, /hasMany\(UserAddress::class\)/);
+  assert.match(releaseScript, /managed-user-editor/);
+  assert.match(releaseScript, /data-address-id/);
   assert.match(standardBuilder, /ZipArchive::CM_DEFLATE/);
   assert.match(standardBuilder, /setCompressionName/);
   assert.match(standardVerifier, /zip64/);

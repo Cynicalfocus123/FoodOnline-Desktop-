@@ -9,10 +9,10 @@ The 2026-07-22 urgent authentication/Admin repair candidate recorded:
 | Item | Verified result |
 | --- | --- |
 | Production build | 141 transformed modules |
-| Production audit | 28 routes; 1,036 files / 91,855,885 bytes; zero missing local references or placeholder links |
-| `dist/` | 1,036 files / 91,855,885 bytes |
-| `frontend-upload/` | 1,036 files / 91,855,885 bytes; exact SHA-256 parity with `dist/` |
-| `backend-live/` | 289 source files plus `SHA256SUMS`; 290 files / 977,238 bytes; manifest/safety clean |
+| Production audit | 28 routes; 1,036 files / 91,856,095 bytes; zero missing local references or placeholder links |
+| `dist/` | 1,036 files / 91,856,095 bytes |
+| `frontend-upload/` | 1,036 files / 91,856,095 bytes; exact SHA-256 parity with `dist/` |
+| `backend-live/` | 289 source files plus `SHA256SUMS`; 290 files / 977,941 bytes; manifest/safety clean |
 | Live archives | Generated only after the candidate commit is pushed and remote equality is proven; exact counts, sizes, and hashes belong in the release handoff |
 
 The final `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` must use standard Deflate ZIP32 entries at archive root and pass CRC/listing, Windows extraction parity, PHP extraction parity, repair-content checks inside both extractions, path/metadata safety, forbidden-content checks, and backend-manifest verification. No external Hostinger deployment was performed or verified.

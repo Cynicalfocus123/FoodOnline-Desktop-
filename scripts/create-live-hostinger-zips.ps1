@@ -116,10 +116,14 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
             "app/Http/Controllers/Api/Auth/LoginUserController.php",
             "app/Http/Controllers/Api/Auth/CurrentUserController.php",
             "app/Http/Controllers/Api/Auth/LogoutUserController.php",
+            "app/Http/Controllers/Api/Account/AddressBookController.php",
             "app/Http/Controllers/Api/Admin/AdminUsersController.php",
+            "app/Http/Requests/Account/UpsertUserAddressRequest.php",
             "app/Http/Requests/Auth/RegisterUserRequest.php",
             "app/Http/Requests/Auth/LoginUserRequest.php",
             "app/Http/Resources/Admin/AdminManagedUserResource.php",
+            "app/Http/Resources/Account/UserAddressResource.php",
+            "app/Http/Resources/Admin/AdminUserAddressResource.php",
             "app/Services/Auth/UserAuthTokenService.php",
             "app/Services/Auth/RegisterUserService.php",
             "app/Models/User.php", "app/Models/UserAddress.php", "app/Models/UserPaymentMethod.php",
@@ -152,14 +156,19 @@ function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label
 function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
     if ($Kind -eq "backend") {
         $checks = @{
-            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/users/{user}")
+            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}")
             "app/Http/Controllers/Api/Auth/RegisterUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LoginUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/CurrentUserController.php" = @("AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LogoutUserController.php" = @("revoked_at")
             "app/Services/Auth/RegisterUserService.php" = @("referralCodes->ensure", "Hash::make")
+            "app/Http/Controllers/Api/Account/AddressBookController.php" = @("where('user_id', `$user->id)", "address_values", "is_default")
             "app/Http/Controllers/Api/Admin/AdminUsersController.php" = @("detailResponse", "user_addresses", "paymentMethods", "referralSchemaIsReady")
             "app/Http/Resources/Admin/AdminManagedUserResource.php" = @("addresses", "payment_methods", "registered_from")
+            "app/Http/Resources/Account/UserAddressResource.php" = @("country_key", "address_values", "is_default")
+            "app/Http/Resources/Admin/AdminUserAddressResource.php" = @("user_id", "parent::toArray")
+            "app/Models/User.php" = @("function addresses(): HasMany", "hasMany(UserAddress::class)")
+            "app/Models/UserAddress.php" = @("function user(): BelongsTo", "belongsTo(User::class)")
             "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
         }
         foreach ($relative in $checks.Keys) {
@@ -180,7 +189,9 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
     Assert-TextMarkers $javascript.ToString() @(
         "/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/admin/users/",
         "Registration could not be completed.", "Registration source",
-        "No saved addresses for this customer.", "No saved payment methods for this customer."
+        "No saved addresses for this customer.", "No saved payment methods for this customer.",
+        "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number",
+        "Thailand", "United States"
     ) "Frontend compiled output"
 }
 

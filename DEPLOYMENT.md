@@ -28,6 +28,8 @@ php artisan view:cache
 
 Then verify `/api/v1/health`; Customer, Supplier, and Partner registration; token-authenticated `/api/v1/auth/me`; duplicate/invalid validation; referral invite resolution; and direct Admin Customer/Supplier/Partner detail routes with original fields plus customer address/payment sections. Inspect the timestamped Laravel/PHP log if any route returns 500. These are manual production actions and smoke tests; local package creation is not evidence they occurred.
 
+Before accepting a package, run `npm run test:address-acceptance`. Its real temporary customer must receive HTTP 201 for registration and both address saves, HTTP 200 for two Admin detail reads, two authoritative rows under one `users.id`, and two compiled Admin cards before and after direct-route refresh. Thailand must be the only default; United States must remain non-default; stored country-specific fields, phone numbers, and delivery notes must render; an unrelated customer's marker must never appear. The release command then rechecks the exact backend address controller/request/resources/models/relationships/routes and compiled frontend markers inside both independent extraction methods.
+
 ## Administrator customer-detail release (2026-07-22)
 
 Deploy the synchronized frontend and backend from the same commit. The frontend adds the selected-customer Saved addresses and masked Payment methods presentation; the backend extends the existing administrator user-detail response with the selected customer's structured address records and an allowlisted masked payment-method collection. The route remains inside the existing administrator-token boundary. No migration, table, credential, payment-provider configuration, or public account route changes are required.
