@@ -20,7 +20,7 @@ class ReferralSchema
     private const REQUIRED = [
         'referral_programs' => ['id', 'uuid', 'status', 'starts_at', 'ends_at'],
         'referral_codes' => ['id', 'uuid', 'user_id', 'code', 'status'],
-        'referrals' => ['id', 'uuid', 'referral_program_id', 'referral_code_id', 'referrer_user_id', 'referred_user_id', 'status', 'registered_at', 'review_status'],
+        'referrals' => ['id', 'uuid', 'referral_program_id', 'referral_code_id', 'referrer_user_id', 'referred_user_id', 'status', 'registered_at', 'review_status', 'review_note'],
         'referral_rewards' => ['id', 'uuid', 'referral_id', 'beneficiary_user_id', 'qualifying_order_id', 'milestone', 'status', 'promotion_id', 'idempotency_key'],
     ];
 

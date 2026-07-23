@@ -165,12 +165,12 @@ function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label
 function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
     if ($Kind -eq "backend") {
         $checks = @{
-            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}", "/referrals/invite/{referralCode}", "/account/referrals", "api.v1.admin.referrals.index")
+            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}", "/referrals/invite/{referralCode}", "/account/referrals", "/qualification", "/audit-history", "api.v1.admin.referrals.index")
             "app/Http/Controllers/Api/Auth/RegisterUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LoginUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/CurrentUserController.php" = @("AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LogoutUserController.php" = @("revoked_at")
-            "app/Services/Auth/RegisterUserService.php" = @("referralCodes->ensure", "Hash::make")
+            "app/Services/Auth/RegisterUserService.php" = @("referralCodes->ensure", "attributeRegisteredAccount", "Hash::make")
             "app/Http/Controllers/Api/Account/AddressBookController.php" = @("where('user_id', `$user->id)", "address_values", "is_default")
             "app/Http/Controllers/Api/Admin/AdminAuthController.php" = @("expires_at", "AdminApiToken", "function me")
             "app/Http/Controllers/Api/Admin/AdminUsersController.php" = @("detailResponse", "user_addresses", "addresses", "paymentMethods", "referralSchemaIsReady")
@@ -181,10 +181,11 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Models/User.php" = @("function addresses(): HasMany", "hasMany(UserAddress::class)")
             "app/Models/UserAddress.php" = @("function user(): BelongsTo", "belongsTo(User::class)")
             "app/Http/Controllers/Api/ReferralInvitationController.php" = @("ReferralSchema", "unavailableResponse")
-            "app/Http/Controllers/Api/Account/ReferralController.php" = @("ReferralSchema", "unavailableResponse", "function activity")
-            "app/Http/Controllers/Api/Admin/AdminReferralController.php" = @("ReferralSchema", "unavailableResponse", "function findReferral")
+            "app/Http/Controllers/Api/Account/ReferralController.php" = @("ReferralSchema", "unavailableResponse", "function activity", "friend_account_type")
+            "app/Http/Controllers/Api/Admin/AdminReferralController.php" = @("ReferralSchema", "unavailableResponse", "function qualification", "function rewards", "function auditHistory", "function notifications", "function findReferral")
             "app/Services/Referral/ReferralSchema.php" = @("Referral services are temporarily unavailable. Please try again later.", "referral_programs", "referral_rewards")
-            "app/Services/Referral/ReferralAttributionService.php" = @("codes->isReady", "This referral code is not available.")
+            "app/Services/Referral/ReferralCodeService.php" = @("ELIGIBLE_ACCOUNT_TYPES", "supplier", "partner")
+            "app/Services/Referral/ReferralAttributionService.php" = @("codes->isReady", "attributeRegisteredAccount", "This referral code is not available.")
             "app/Services/Referral/ReferralQualificationService.php" = @("ReferralSchema", "handleFullRefund")
             "app/Services/Referral/ReferralRewardService.php" = @("fully refunded.", "Promotion::query")
             "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
@@ -210,9 +211,9 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
         "No saved addresses for this customer.", "No saved addresses for this supplier.", "No saved addresses for this partner.",
         "No saved payment methods for this customer.", "Restoring your administrator session",
         "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number", "Country calling code", "+1", "+66", "+65",
-        "Thailand", "United States", "Your invite code", "Copy invite code", "No referral activity yet.", "Referral operations", "Referral detail", "No referrals found."
+        "Thailand", "United States", "Your invite code", "Copy invite code", "No referral activity yet.", "friend_account_type", "Customer, Supplier, or Partner", "Referral operations", "View details", "Referral detail", "Referral notifications", "Audit history", "No referrals found."
     ) "Frontend compiled output"
-    foreach ($forbidden in @("Referral details are unavailable right now.", "Unable to load referrals.")) {
+    foreach ($forbidden in @("Referral details are unavailable right now.", "Unable to load referrals.", "Refer & Earn is available for Customer accounts.", "Referral coupons are available for Customer accounts.")) {
         if ($javascript.ToString().IndexOf($forbidden, [StringComparison]::Ordinal) -ge 0) {
             throw "Frontend compiled output contains obsolete referral fallback text: $forbidden"
         }

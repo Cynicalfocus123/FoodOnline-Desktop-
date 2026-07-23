@@ -15,7 +15,7 @@ class ReferralAttributionService
         private readonly ReferralRewardService $rewards,
     ) {}
 
-    public function attributeRegisteredCustomer(User $referred, ?string $incomingCode): ?Referral
+    public function attributeRegisteredAccount(User $referred, ?string $incomingCode): ?Referral
     {
         if (! $this->codes->isReady()) {
             return null;
@@ -52,11 +52,18 @@ class ReferralAttributionService
             'program_snapshot' => $this->snapshot($program),
         ]);
         $this->rewards->issueFriendEntitlements($referral, $program);
-        DB::afterCommit(function () use ($code, $referred): void {
-            $code->user?->notify(new \App\Notifications\CommerceNotification('referral_registered', 'A friend registered', 'Your referral is waiting for a qualifying order.', ['type' => 'referral']));
-            $referred->notify(new \App\Notifications\CommerceNotification('referral_coupon_issued', 'Referral coupons available', 'Your new-customer referral coupons are available in your account.', ['type' => 'referral']));
+        DB::afterCommit(function () use ($code, $referred, $referral): void {
+            $link = ['type' => 'referral', 'referral_id' => $referral->uuid];
+            $code->user?->notify(new \App\Notifications\CommerceNotification('referral_registered', 'A friend registered', 'Your referral is waiting for a qualifying order.', $link));
+            $referred->notify(new \App\Notifications\CommerceNotification('referral_coupon_issued', 'Referral coupons available', 'Your account-bound referral coupons are available in your account.', $link));
         });
         return $referral;
+    }
+
+    /** @deprecated Use attributeRegisteredAccount(). */
+    public function attributeRegisteredCustomer(User $referred, ?string $incomingCode): ?Referral
+    {
+        return $this->attributeRegisteredAccount($referred, $incomingCode);
     }
 
     /** @return array<string, mixed> */

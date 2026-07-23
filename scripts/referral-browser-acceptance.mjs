@@ -67,32 +67,32 @@ async function writeSession(client, key, value) {
   await client.evaluate(`localStorage.setItem(${JSON.stringify(key)}, ${serialized});`);
 }
 
-async function referralDashboard(client, config) {
+async function referralDashboard(client, config, entry) {
   let dashboardReady = false;
   let diagnostics = "";
   for (let attempt = 1; attempt <= 3 && !dashboardReady; attempt += 1) {
     await navigate(client, `${config.frontendOrigin}/account/refer`);
     await writeSession(client, "foodonline-public-auth", {
-      currentUser: config.customer,
-      token: config.customerToken,
+      currentUser: entry.account,
+      token: entry.token,
     });
     await client.send("Page.reload", { ignoreCache: true });
     try {
-      await waitFor(() => client.evaluate(`document.body.innerText.includes(${JSON.stringify(config.referralCode)})`), "Customer referral code", 15_000);
+      await waitFor(() => client.evaluate(`document.body.innerText.includes(${JSON.stringify(entry.referralCode)})`), `${entry.account.accountType} referral code`, 15_000);
       dashboardReady = true;
     } catch {
       diagnostics = await client.evaluate("JSON.stringify({ path: window.location.pathname, storage: localStorage.getItem('foodonline-public-auth'), text: document.body.innerText.slice(0, 1600) })");
     }
   }
-  if (!dashboardReady) throw new Error(`Customer referral dashboard did not render: ${diagnostics}`);
+  if (!dashboardReady) throw new Error(`${entry.account.accountType} referral dashboard did not render: ${diagnostics}`);
   const state = await client.evaluate(`(() => ({
     text: document.body.innerText,
     actions: [...document.querySelectorAll('button')].map((button) => button.textContent.trim()).filter((label) => ['Share', 'Copy link', 'Copy invite code'].includes(label)),
     overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
   }))()`);
-  assert(state.actions.join("|") === "Share|Copy link|Copy invite code", "Customer referral actions are not exactly Share, Copy link, and Copy invite code.");
-  assert(state.text.includes("Referral activity"), "Customer referral activity section did not render.");
-  assert(!state.overflow, "Customer referral page has horizontal overflow.");
+  assert(state.actions.join("|") === "Share|Copy link|Copy invite code", `${entry.account.accountType} referral actions are not exactly Share, Copy link, and Copy invite code.`);
+  assert(state.text.includes("Referral activity"), `${entry.account.accountType} referral activity section did not render.`);
+  assert(!state.overflow, `${entry.account.accountType} referral page has horizontal overflow.`);
   return state;
 }
 
@@ -144,10 +144,12 @@ try {
   const browserUrl = `http://127.0.0.1:${config.debugPort}`;
   await waitFor(async () => { try { return (await fetch(`${browserUrl}/json/version`)).ok; } catch { return false; } }, "headless browser");
   client = await attach(browserUrl);
-  const customer = await referralDashboard(client, config);
+  const dashboards = [];
+  for (const entry of config.accounts ?? []) dashboards.push(await referralDashboard(client, config, entry));
+  assert(dashboards.length === 3, "Customer, Supplier, and Partner dashboards were not all tested.");
   await invitationRoute(client, config);
   await adminOperations(client, config);
-  process.stdout.write(`${JSON.stringify({ result: "passed", customer })}\n`);
+  process.stdout.write(`${JSON.stringify({ result: "passed", dashboards })}\n`);
 } finally {
   client?.close();
   await terminateProcessTree(chrome);

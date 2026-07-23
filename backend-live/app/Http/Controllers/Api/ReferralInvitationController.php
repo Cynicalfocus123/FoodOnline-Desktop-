@@ -20,7 +20,7 @@ class ReferralInvitationController extends Controller
         $program = ReferralProgram::active();
         $code = $program ? $codes->findActive($referralCode) : null;
 
-        if (! $program || ! $code || ! $codes->isEligible($code->user)) {
+        if (! $program || ! $code || ! $code->user || ! $codes->isEligible($code->user)) {
             return response()->json(['valid' => false, 'message' => 'This invitation is not available.'], 404);
         }
 

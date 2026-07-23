@@ -42,13 +42,13 @@ class ReferralRewardService
                 $reward->update(['status' => 'revoked', 'revoked_at' => now(), 'revoked_by' => $admin?->id, 'revocation_reason' => $reason]);
                 $reward->promotion?->update(['active' => false, 'archived_at' => now()]);
                 DB::afterCommit(function () use ($reward): void {
-                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_revoked', 'Referral coupon updated', 'A referral coupon is no longer available.', ['type' => 'referral']));
+                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_revoked', 'Referral coupon updated', 'A referral coupon is no longer available.', ['type' => 'referral', 'referral_id' => $reward->referral?->uuid]));
                 });
             }
             if ($reward->status === 'redeemed') {
                 $reward->referral()->update(['status' => 'under_review', 'review_status' => 'under_review']);
                 DB::afterCommit(function () use ($reward): void {
-                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_review', 'Referral reward under review', 'A referral reward needs review after an order update.', ['type' => 'referral']));
+                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_review', 'Referral reward under review', 'A referral reward needs review after an order update.', ['type' => 'referral', 'referral_id' => $reward->referral?->uuid]));
                 });
             }
         });

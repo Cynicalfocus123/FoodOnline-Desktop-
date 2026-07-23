@@ -56,9 +56,7 @@ class RegisterUserService
 
             $user = User::query()->create($attributes);
             $this->referralCodes->ensure($user);
-            if ($accountType === 'customer') {
-                $this->referrals->attributeRegisteredCustomer($user, $validated['referral_code'] ?? null);
-            }
+            $this->referrals->attributeRegisteredAccount($user, $validated['referral_code'] ?? null);
 
             Event::dispatch(new Registered($user));
 

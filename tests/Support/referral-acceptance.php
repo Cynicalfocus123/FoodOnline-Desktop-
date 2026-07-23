@@ -30,6 +30,30 @@ if ($action === 'seed-admin') {
     exit(0);
 }
 
+if ($action === 'seed-missing-public-accounts') {
+    $result = [];
+    foreach (['customer', 'supplier', 'partner'] as $role) {
+        $email = 'backfill-'.$role.'@example.test';
+        $user = User::query()->updateOrCreate(['email' => $email], [
+            'name' => 'Backfill '.ucfirst($role), 'first_name' => 'Backfill', 'last_name' => ucfirst($role),
+            'role' => $role, 'status' => 'active', 'password' => 'Strongpass123', 'registered_from' => 'automated_referral_acceptance',
+        ]);
+        $result[$role] = ['id' => $user->id, 'email' => $email, 'code' => ReferralCode::query()->where('user_id', $user->id)->value('code')];
+    }
+    echo json_encode($result, JSON_THROW_ON_ERROR).PHP_EOL;
+    exit(0);
+}
+
+if ($action === 'codes-for') {
+    $result = [];
+    foreach (['customer', 'supplier', 'partner'] as $role) {
+        $email = 'backfill-'.$role.'@example.test';
+        $result[$role] = ReferralCode::query()->whereHas('user', fn ($query) => $query->where('email', $email))->value('code');
+    }
+    echo json_encode($result, JSON_THROW_ON_ERROR).PHP_EOL;
+    exit(0);
+}
+
 if ($action === 'inspect') {
     $referrerEmail = $argv[2] ?? '';
     $friendEmail = $argv[3] ?? '';

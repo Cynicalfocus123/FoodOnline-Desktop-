@@ -97,7 +97,7 @@ export function toRegisterPayload(selectedRole: SignupRoleKey, formValues: Signu
     line_id: optionalRegistrationValue(formValues.lineId),
     company_name: optionalRegistrationValue(formValues.companyName),
     password: formValues.password,
-    ...(selectedRole === "customer" && referralCode?.trim() ? { referral_code: referralCode.trim().toUpperCase() } : {}),
+    ...(referralCode?.trim() ? { referral_code: referralCode.trim().toUpperCase() } : {}),
     registered_from: "main_public_frontend",
   };
 }

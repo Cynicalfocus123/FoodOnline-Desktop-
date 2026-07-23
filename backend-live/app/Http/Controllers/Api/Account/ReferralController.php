@@ -16,10 +16,11 @@ class ReferralController extends Controller
     public function dashboard(Request $request, ReferralCodeService $codes, ReferralSchema $schema): JsonResponse
     {
         if (! $schema->isReady()) return $schema->unavailableResponse($request);
-        $user = $this->customer($request);
+        $user = $this->eligibleAccount($request, $codes);
         $code = $codes->ensure($user);
         $program = ReferralProgram::active();
-        $referrals = $user->referralsMade()->with(['referred:id,first_name', 'rewards'])->latest('registered_at')->get();
+        $referrals = $user->referralsMade();
+        $recentActivity = $user->referralsMade()->with('referred:id,first_name,role')->latest('registered_at')->limit(5)->get();
 
         return response()->json([
             'program' => $this->programPayload($program),
@@ -28,20 +29,20 @@ class ReferralController extends Controller
                 'url' => rtrim((string) config('foodonlines.frontend_url', 'https://foodonlines.com'), '/').'/invite/'.$code->code,
             ] : null,
             'stats' => [
-                'registered' => $referrals->count(),
-                'first_qualified' => $referrals->whereNotNull('first_qualifying_order_id')->count(),
-                'second_qualified' => $referrals->whereNotNull('second_qualifying_order_id')->count(),
+                'registered' => (clone $referrals)->count(),
+                'first_qualified' => (clone $referrals)->whereNotNull('first_qualifying_order_id')->count(),
+                'second_qualified' => (clone $referrals)->whereNotNull('second_qualifying_order_id')->count(),
                 'earned_coupons' => $user->referralRewards()->where('status', 'issued')->count(),
             ],
-            'recent_activity' => $referrals->take(5)->map(fn ($referral) => $this->activityPayload($referral))->values(),
+            'recent_activity' => $recentActivity->map(fn ($referral) => $this->activityPayload($referral))->values(),
         ]);
     }
 
     public function activity(Request $request, ReferralSchema $schema): JsonResponse
     {
         if (! $schema->isReady()) return $schema->unavailableResponse($request);
-        $user = $this->customer($request);
-        $page = $user->referralsMade()->with('referred:id,first_name')->latest('registered_at')->paginate(min(50, max(1, (int) $request->query('per_page', 10))));
+        $user = $this->eligibleAccount($request, app(ReferralCodeService::class));
+        $page = $user->referralsMade()->with('referred:id,first_name,role')->latest('registered_at')->paginate(min(50, max(1, (int) $request->query('per_page', 10))));
 
         return response()->json([
             'data' => $page->getCollection()->map(fn ($referral) => $this->activityPayload($referral)),
@@ -52,7 +53,7 @@ class ReferralController extends Controller
     public function coupons(Request $request, ReferralSchema $schema): JsonResponse
     {
         if (! $schema->isReady()) return $schema->unavailableResponse($request);
-        $user = $this->customer($request);
+        $user = $this->eligibleAccount($request, app(ReferralCodeService::class));
         $page = $user->referralRewards()->with('promotion:id,uuid,code')->latest('issued_at')->paginate(min(50, max(1, (int) $request->query('per_page', 20))));
 
         return response()->json([
@@ -66,10 +67,10 @@ class ReferralController extends Controller
         ]);
     }
 
-    private function customer(Request $request): User
+    private function eligibleAccount(Request $request, ReferralCodeService $codes): User
     {
         $user = $request->user();
-        abort_unless($user && (($user->account_type ?: $user->role) === 'customer') && ! $user->staff_role, 403);
+        abort_unless($user && $codes->isEligible($user), 403);
 
         return $user;
     }
@@ -96,6 +97,7 @@ class ReferralController extends Controller
         return [
             'id' => $referral->uuid,
             'friend_name' => $name === '' ? 'Friend' : mb_substr($name, 0, 1).'.',
+            'friend_account_type' => strtolower((string) ($referral->referred?->account_type ?: $referral->referred?->role ?: 'account')),
             'status' => $referral->status,
             'registered_at' => $referral->registered_at?->toIso8601String(),
             'first_qualified_at' => $referral->first_qualified_at?->toIso8601String(),

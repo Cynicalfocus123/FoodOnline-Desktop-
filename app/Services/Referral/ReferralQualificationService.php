@@ -56,7 +56,7 @@ class ReferralQualificationService
     private function notify(Referral $referral, ReferralReward $reward, string $message): void
     {
         DB::afterCommit(function () use ($referral, $reward, $message): void {
-            $referral->referrer?->notify(new \App\Notifications\CommerceNotification('referral_reward_earned', 'Referral coupon earned', $message, ['type' => 'referral']));
+            $referral->referrer?->notify(new \App\Notifications\CommerceNotification('referral_reward_earned', 'Referral coupon earned', $message, ['type' => 'referral', 'referral_id' => $referral->uuid]));
         });
     }
 }

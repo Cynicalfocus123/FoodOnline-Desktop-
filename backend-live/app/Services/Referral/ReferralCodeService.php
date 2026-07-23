@@ -10,10 +10,18 @@ use Illuminate\Validation\ValidationException;
 class ReferralCodeService
 {
     private const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    public const ELIGIBLE_ACCOUNT_TYPES = ['customer', 'supplier', 'partner'];
 
     public function isEligible(User $user): bool
     {
-        return ($user->account_type ?: $user->role) === 'customer' && $user->role !== 'admin' && ! $user->staff_role && $user->status === 'active';
+        return $this->accountType($user) !== null && $user->role !== 'admin' && ! $user->staff_role && $user->status === 'active';
+    }
+
+    public function accountType(User $user): ?string
+    {
+        $accountType = strtolower((string) ($user->account_type ?: $user->role));
+
+        return in_array($accountType, self::ELIGIBLE_ACCOUNT_TYPES, true) ? $accountType : null;
     }
 
     public function normalize(?string $code): string

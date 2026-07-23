@@ -317,7 +317,7 @@ export function SignupFlow() {
                 );
               })}
 
-              {selectedRole === "customer" ? (
+              {selectedRole ? (
                 <details className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4" open={Boolean(pendingReferralCode)}>
                   <summary className="cursor-pointer text-sm font-black text-neutral-800">Have a referral code?</summary>
                   <label className="mt-3 grid gap-2" htmlFor="referral-code">
