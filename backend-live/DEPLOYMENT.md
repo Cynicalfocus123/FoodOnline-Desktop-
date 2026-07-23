@@ -1,5 +1,9 @@
 # FoodOnlines Laravel Backend Deployment
 
+## Post-upload Artisan reporting rule
+
+For every future ZIP release, decide whether post-upload Artisan work is required. Report commands only when they are required for a migration, a one-time data repair, or a necessary Laravel cache rebuild; include the exact ordered commands and the private Laravel root. When no Artisan work is required, do not mention Artisan in the handoff. Extracting a ZIP updates files only and never executes Laravel commands.
+
 ## Permanent matched Git, mirror, and Live archive rule
 
 Every completed change must synchronize authoritative source, rebuilt `dist/`, exact `frontend-upload/`, regenerated `backend-live/` plus `SHA256SUMS`, documentation, and the current Git branch/origin before packaging. Local HEAD must equal the pushed remote branch. Only then run `npm run release:hostinger-live` to create the inseparable `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` pair from those verified mirrors.

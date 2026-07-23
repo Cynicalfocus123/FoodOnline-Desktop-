@@ -2,6 +2,10 @@
 
 Last reviewed: 2026-07-22.
 
+## Post-upload Artisan rule
+
+For every future release, assess whether post-upload Artisan work is required. Mention it in the user handoff only when it is required: provide the exact copyable commands, their order, the private Laravel root, and the reason (migration, one-time data repair, or necessary Laravel cache rebuild). If no Artisan work is required, omit it entirely from the handoff. ZIP extraction updates files only and never runs database migrations, data repairs, or cache commands; never expose Artisan through a public URL.
+
 ## Current production-repair contract
 
 Public registration and administrator Customer/Supplier/Partner detail must remain available even when the referral migration has not yet reached an environment. Referral routes use the central `ReferralSchema` guard: when the required tables or columns are absent, return only the safe HTTP 503 referral-unavailable message, log diagnostic detail privately, and do not simulate referral data. Registration skips optional attribution in that condition; Admin user detail skips optional referral relations; order qualification/refund hooks exit safely. Never let optional referral work turn authentication, ordering, or the managed-user editor into HTTP 500 responses.
