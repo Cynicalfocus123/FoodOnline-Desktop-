@@ -167,7 +167,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             Assert-TextMarkers ([IO.File]::ReadAllText($path)) $checks[$relative] "Backend $relative"
         }
         $registerController = [IO.File]::ReadAllText((Join-Path $Source "app/Http/Controllers/Api/Auth/RegisterUserController.php"))
-        if ($registerController.Contains("'data' =>", [StringComparison]::Ordinal)) {
+        if ($registerController.IndexOf("'data' =>", [StringComparison]::Ordinal) -ge 0) {
             throw "Backend registration still contains a competing nested response envelope."
         }
         return
