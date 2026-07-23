@@ -165,7 +165,7 @@ function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label
 function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
     if ($Kind -eq "backend") {
         $checks = @{
-            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}", "/referrals/invite/{referralCode}", "/account/referrals", "/admin/referrals")
+            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}", "/referrals/invite/{referralCode}", "/account/referrals", "api.v1.admin.referrals.index")
             "app/Http/Controllers/Api/Auth/RegisterUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LoginUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/CurrentUserController.php" = @("AuthenticatedUserResource")
