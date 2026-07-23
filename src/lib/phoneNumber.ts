@@ -70,6 +70,10 @@ export function normalizeInternationalPhone(country: CallingCodeCountry, localVa
     localNumber = localNumber.slice(codeDigits.length);
   }
 
+  if (selectedCountry.id === "th" && localNumber.startsWith("0")) {
+    localNumber = localNumber.slice(1);
+  }
+
   return localNumber ? `${selectedCountry.dialCode}${localNumber}` : "";
 }
 

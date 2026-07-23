@@ -73,7 +73,7 @@ export function PhoneNumberInput({
             {callingCodeCountries.map((country) => <option key={country.id} value={country.id}>{country.iso} {country.dialCode} - {country.name}</option>)}
           </select>
         </div>
-        <input aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} autoComplete={autoComplete} className="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 text-base font-semibold text-ink outline-none placeholder:text-neutral-400" id={id} inputMode="tel" onBlur={onBlur} onChange={(event) => emitPhoneValue(selectedCountry, event.target.value)} placeholder="Phone number" required={required} type="tel" value={localNumber} />
+        <input aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} aria-required={required} autoComplete={autoComplete} className="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 text-base font-semibold text-ink outline-none placeholder:text-neutral-400" id={id} inputMode="tel" onBlur={onBlur} onChange={(event) => emitPhoneValue(selectedCountry, event.target.value)} placeholder="Phone number" type="tel" value={localNumber} />
       </div>
       {error ? <span className="text-sm font-semibold text-red-600" id={errorId}>{error}</span> : null}
     </div>

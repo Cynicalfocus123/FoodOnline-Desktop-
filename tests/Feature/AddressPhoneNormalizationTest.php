@@ -23,6 +23,40 @@ class AddressPhoneNormalizationTest extends TestCase
         }
     }
 
+    public function test_every_supported_address_country_accepts_its_normalized_calling_code(): void
+    {
+        [, $token] = $this->userToken('customer');
+        $phones = [
+            'usa' => '+16265928975', 'uk' => '+442071234567', 'thailand' => '+66813925429', 'japan' => '+819012345678',
+            'singapore' => '+6561234567', 'taiwan' => '+886912345678', 'china' => '+8613812345678', 'philippines' => '+639171234567',
+            'malaysia' => '+60123456789', 'indonesia' => '+628123456789', 'hongKong' => '+85261234567',
+        ];
+
+        foreach ($phones as $country => $phone) {
+            $response = $this->withToken($token)->postJson('/api/v1/account/addresses', [
+                ...$this->addressPayload($phone),
+                'country_key' => $country,
+                'is_default' => false,
+            ]);
+            $response->assertCreated()
+                ->assertJsonPath('address.country_key', $country)
+                ->assertJsonPath('address.address_values.phoneNumber', $phone);
+            $this->assertGreaterThan(0, (int) $response->json('address.id'));
+        }
+
+        $this->withToken($token)->getJson('/api/v1/account/addresses')->assertOk()->assertJsonCount(count($phones), 'addresses');
+    }
+
+    public function test_missing_or_invalid_phone_returns_validation_errors_without_creating_an_address(): void
+    {
+        [, $token] = $this->userToken('customer');
+        foreach (['', 'not-a-phone', '+66+66813925429'] as $phone) {
+            $this->withToken($token)->postJson('/api/v1/account/addresses', $this->addressPayload($phone))
+                ->assertUnprocessable()
+                ->assertJsonStructure(['errors' => ['address_values.phoneNumber']]);
+        }
+    }
+
     public function test_address_update_normalizes_format_without_changing_country_specific_fields_or_default_state(): void
     {
         [$user, $token] = $this->userToken('customer');

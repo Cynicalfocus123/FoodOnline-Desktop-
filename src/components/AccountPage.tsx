@@ -19,7 +19,7 @@ import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
 import { ProductCard } from "./ProductCard";
 import { PhoneNumberInput } from "./PhoneNumberInput";
-import { callingCodeCountryForAddressCountry, formatInternationalPhone, replacePhoneCallingCode } from "../lib/phoneNumber";
+import { callingCodeCountryForAddressCountry, formatInternationalPhone, normalizeInternationalPhone, replacePhoneCallingCode } from "../lib/phoneNumber";
 import { useCatalogProducts } from "../services/catalog/useCatalogProducts";
 import type { Product } from "../types/catalog";
 
@@ -472,7 +472,25 @@ export function AccountPage() {
     }, {});
     setAddressErrors(nextErrors);
     setAddressTouched(nextTouched);
+    if (Object.keys(nextErrors).length) {
+      setAddressMessage("Please correct the highlighted address fields and try again.");
+      focusAddressField(Object.keys(nextErrors)[0]);
+    }
     return Object.keys(nextErrors).length === 0;
+  }
+
+  function focusAddressField(fieldKey: string) {
+    const targetId = fieldKey === "phoneNumber" ? "account-address-phone" : fieldKey === "country_key" ? "account-address-country" : `account-address-${fieldKey}`;
+    window.requestAnimationFrame(() => document.getElementById(targetId)?.focus());
+  }
+
+  function formAddressErrors(error: ApiError) {
+    return Object.entries(error.fieldErrors).reduce<Record<string, string>>((mapped, [key, messages]) => {
+      const field = key === "country_key" ? "country_key" : key.replace(/^address_values\./, "");
+      const message = messages[0];
+      if (message) mapped[field] = message;
+      return mapped;
+    }, {});
   }
 
   async function saveAddress(event: FormEvent<HTMLFormElement>) {
@@ -480,10 +498,26 @@ export function AccountPage() {
     if (addressState === "saving") return;
     if (!validateAddressForm()) return;
 
+    const normalizedValues = {
+      ...addressValues,
+      phoneNumber: normalizeInternationalPhone(
+        callingCodeCountryForAddressCountry(addressCountry),
+        addressValues.phoneNumber ?? "",
+      ),
+    };
+    const normalizedErrors = validateAddress(normalizedValues, activeAddressConfig);
+    if (Object.keys(normalizedErrors).length) {
+      setAddressErrors(normalizedErrors);
+      setAddressTouched(activeAddressConfig.fields.reduce<Record<string, boolean>>((state, field) => ({ ...state, [field.key]: true }), {}));
+      setAddressMessage("Please correct the highlighted address fields and try again.");
+      focusAddressField(Object.keys(normalizedErrors)[0]);
+      return;
+    }
+
     const payload = {
       country_key: addressCountry,
-      address_values: addressValues,
-      summary: createAddressSummary(addressCountry, addressValues),
+      address_values: normalizedValues,
+      summary: createAddressSummary(addressCountry, normalizedValues),
       is_default: addressSaveAsDefault,
     };
 
@@ -492,17 +526,29 @@ export function AccountPage() {
 
     try {
       if (!token) throw new Error("no-token");
-      if (editingAddressId) {
-        await apiRequest<{ address: AccountAddress }>(`/account/addresses/${editingAddressId}`, { method: "PUT", token, body: payload });
-      } else {
-        await apiRequest<{ address: AccountAddress }>("/account/addresses", { method: "POST", token, body: payload });
+      const response = editingAddressId
+        ? await apiRequest<{ address: AccountAddress }>(`/account/addresses/${editingAddressId}`, { method: "PUT", token, body: payload })
+        : await apiRequest<{ address: AccountAddress }>("/account/addresses", { method: "POST", token, body: payload });
+      if (!response.address || !Number.isFinite(Number(response.address.id)) || Number(response.address.id) <= 0) {
+        throw new Error("address-response-missing-id");
       }
-      await loadAddresses(token);
+      if (!(await loadAddresses(token))) {
+        throw new Error("address-refresh-failed");
+      }
 
       setAddressMode("list");
       setAddressMessage(editingAddressId ? "Address updated successfully." : "Address saved successfully.");
-    } catch {
-      setAddressMessage("We could not save this address. Please try again.");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 422) {
+        const fieldErrors = formAddressErrors(error);
+        setAddressErrors(fieldErrors);
+        setAddressTouched((current) => ({ ...current, ...Object.keys(fieldErrors).reduce<Record<string, boolean>>((state, field) => ({ ...state, [field]: true }), {}) }));
+        setAddressMessage(error.message || "Please correct the highlighted address fields and try again.");
+        const firstField = Object.keys(fieldErrors)[0];
+        if (firstField) focusAddressField(firstField);
+      } else {
+        setAddressMessage(error instanceof ApiError ? error.message : "We could not save this address. Please try again.");
+      }
     } finally {
       setAddressState("idle");
     }
@@ -836,7 +882,8 @@ export function AccountPage() {
             </button>
           </div>
         ) : (
-          <form className="grid gap-4" onSubmit={saveAddress}>
+          <form className="grid gap-4" noValidate onSubmit={saveAddress}>
+            {addressMessage ? <p aria-live="assertive" className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-800" role="alert">{addressMessage}</p> : null}
             <label className="grid gap-1.5" htmlFor="account-address-country">
               <span className="text-sm font-bold text-neutral-700">
                 Country <span className="text-red-500">*</span>
@@ -892,6 +939,7 @@ export function AccountPage() {
                       <textarea
                         autoComplete={field.autoComplete}
                         className="min-h-[110px] rounded-2xl border border-neutral-200 px-3 py-3 text-base font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        id={`account-address-${field.key}`}
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));
                           setAddressErrors((current) => ({ ...current, [field.key]: getAddressError(field, addressValues[field.key] ?? "") }));
@@ -903,6 +951,7 @@ export function AccountPage() {
                       <input
                         autoComplete={field.autoComplete}
                         className="min-h-12 rounded-2xl border border-neutral-200 px-3 text-base font-semibold outline-none ring-2 ring-transparent focus:border-leaf-500 focus:ring-leaf-500/15"
+                        id={`account-address-${field.key}`}
                         inputMode={field.type === "postal" ? "numeric" : field.inputMode}
                         onBlur={() => {
                           setAddressTouched((current) => ({ ...current, [field.key]: true }));

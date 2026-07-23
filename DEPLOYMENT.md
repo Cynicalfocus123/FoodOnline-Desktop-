@@ -268,6 +268,8 @@ For Customer, Supplier, and Partner disposable accounts, use the existing public
 
 For the Address Book calling-code repair, choose an address country and confirm its compact country calling-code selector defaults to the matching code before entering local digits. Save one Thailand number and one non-Thailand number, refresh Address Book, checkout, and Admin detail, and confirm each shows exactly one full international calling code. Existing legacy local numbers remain editable; no migration is included. Preserve the existing `user_addresses.address_values` JSON contract and never use a client-only role filter for ownership.
 
+The save-regression repair requires a visible outcome for every attempt: a valid request returns an authoritative address ID and refreshes the list; a validation response keeps the form open with safe field errors; auth, network, throttle, and server failures keep entered data and show safe retry copy. Do not replace this with browser-only address state or dismiss the form before Laravel confirms a real address record.
+
 Run the production cache commands from the private Laravel root after upload:
 
 ```bash

@@ -33,6 +33,7 @@ test("country changes preserve local digits without duplicating a calling code",
   assert.equal(replacePhoneCallingCode("+66813925429", singapore), "+65813925429");
   assert.equal(normalizeInternationalPhone(thailand, "+66 +66 81 392 5429"), "+66813925429");
   assert.equal(normalizeInternationalPhone(thailand, "66813925429"), "+66813925429");
+  assert.equal(normalizeInternationalPhone(thailand, "0813925429"), "+66813925429");
   assert.equal(normalizeInternationalPhone(thailand, "+66 81 392 5429"), "+66813925429");
 });
 
