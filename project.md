@@ -12,6 +12,10 @@ The apparent Admin login loop was a frontend state race, not an automatic expiry
 
 Public Address Book routes already authorized Customer, Supplier, and Partner sessions and scoped records by `user_id`. The missing Admin representation was caused by Customer-only address eager loading and Customer-only address UI state/rendering. Admin detail now returns selected-user addresses for all three supported roles, with role-correct neutral empty states; payment metadata remains Customer-only. `npm run test:managed-user-address-acceptance` executes real Customer, Supplier, and Partner registration, persistence, selected-detail, refresh, and cross-role-isolation coverage.
 
+## Shared Address Book country calling codes (2026-07-22)
+
+Address Book now uses registration’s shared `PhoneNumberInput` and `phoneNumber` utility/data contract for Customer, Supplier, and Partner. Its country selection synchronizes `US +1`, `UK +44`, `TH +66`, `JP +81`, `SG +65`, `TW +886`, `CN +86`, `PH +63`, `MY +60`, `ID +62`, and `HK +852`; users can still choose another supported calling code. New records normalize `address_values.phoneNumber` to one international value such as `+66813925429` without a schema change, while legacy local values remain visible and only change when saved. Address Book, checkout, and Admin format stored supported international values for display.
+
 ## Urgent authentication and managed-user repair (2026-07-22)
 
 The referral rollout introduced mandatory referral-table reads into every registration and administrator managed-user detail request. Production evidence showed core health and request validation working while the public referral invite path returned a safe HTTP 500, identifying referral schema readiness as the shared failure boundary. The repaired services explicitly treat referral features as unavailable until all referral tables exist, so Customer/Supplier/Partner registration and Admin detail no longer fail with them.

@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes } from "react";
+import { phoneNumberError } from "./phoneNumber.ts";
 
 export type CountryKey =
   | "usa"
@@ -230,12 +231,7 @@ export function getAddressError(field: AddressField, value: string) {
     return field.requiredMessage ?? `${field.label} is required.`;
   }
 
-  if (field.key === "phoneNumber" && trimmedValue) {
-    const digitCount = trimmedValue.replace(/\D/g, "").length;
-    if (digitCount < 7) {
-      return "Enter a valid phone number.";
-    }
-  }
+  if (field.key === "phoneNumber" && trimmedValue) return phoneNumberError(trimmedValue);
 
   if (field.type === "postal" && trimmedValue && trimmedValue.length < 3) {
     return "Enter a valid postal code.";

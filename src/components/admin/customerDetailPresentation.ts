@@ -1,4 +1,5 @@
 import { addressConfigs, type CountryKey } from "../../lib/addressSchema.ts";
+import { formatInternationalPhone } from "../../lib/phoneNumber.ts";
 import type {
   ManagedUserAddress,
   ManagedUserPaymentMethod,
@@ -63,7 +64,7 @@ export function customerAddressRecipient(address: ManagedUserAddress) {
 }
 
 export function customerAddressPhone(address: ManagedUserAddress) {
-  return valueOf(address.address_values, "phoneNumber", "phone", "telephone");
+  return formatInternationalPhone(valueOf(address.address_values, "phoneNumber", "phone", "telephone"));
 }
 
 export function customerAddressFields(address: ManagedUserAddress) {

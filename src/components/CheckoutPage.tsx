@@ -6,6 +6,7 @@ import { isBackendOrderableProduct } from "../services/catalog/catalogCompatibil
 import { useHomeStore } from "../store/homeStore";
 import { usePublicAuthStore } from "../store/publicAuthStore";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
+import { formatInternationalPhone } from "../lib/phoneNumber";
 import { productFallbackArtwork } from "./productVisuals";
 
 const FREE_SHIPPING_THRESHOLD = 49;
@@ -1333,7 +1334,7 @@ export function CheckoutPage() {
                         <span className="min-w-0">
                           <span className="block text-sm font-black text-neutral-950">{selectedAddress.values.fullName}</span>
                           <span className="mt-1 block text-sm leading-6 text-neutral-600">{selectedAddress.summary}</span>
-                          <span className="mt-1 block text-xs font-semibold text-neutral-500">{selectedAddress.values.phoneNumber}</span>
+                          <span className="mt-1 block text-xs font-semibold text-neutral-500">{formatInternationalPhone(selectedAddress.values.phoneNumber)}</span>
                         </span>
                       </label>
                       <button

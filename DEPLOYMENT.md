@@ -266,6 +266,8 @@ Deploy the matched source and mirrors only after the final commit is pushed. Adm
 
 For Customer, Supplier, and Partner disposable accounts, use the existing public authenticated Address Book endpoint to save a default Thailand address and a non-default United States address. Verify each matching Admin edit route shows only its selected user’s two saved-address cards before and after refresh. Customer alone may show masked payment methods. Do not rely on Client-side role filtering for isolation: confirm that address markers from the other two roles are absent.
 
+For the Address Book calling-code repair, choose an address country and confirm its compact country calling-code selector defaults to the matching code before entering local digits. Save one Thailand number and one non-Thailand number, refresh Address Book, checkout, and Admin detail, and confirm each shows exactly one full international calling code. Existing legacy local numbers remain editable; no migration is included. Preserve the existing `user_addresses.address_values` JSON contract and never use a client-only role filter for ownership.
+
 Run the production cache commands from the private Laravel root after upload:
 
 ```bash

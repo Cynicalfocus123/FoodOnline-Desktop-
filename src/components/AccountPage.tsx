@@ -18,6 +18,8 @@ import { logoutPublicSession } from "../services/logoutPublicSession";
 import { checkoutApi, type CommerceOrder } from "../services/commerceApi";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
 import { ProductCard } from "./ProductCard";
+import { PhoneNumberInput } from "./PhoneNumberInput";
+import { callingCodeCountryForAddressCountry, formatInternationalPhone, replacePhoneCallingCode } from "../lib/phoneNumber";
 import { useCatalogProducts } from "../services/catalog/useCatalogProducts";
 import type { Product } from "../types/catalog";
 
@@ -431,9 +433,21 @@ export function AccountPage() {
 
   function handleAddressCountryChange(nextCountry: CountryKey) {
     setAddressCountry(nextCountry);
-    setAddressValues((current) => preserveAddressValuesForCountry(current, nextCountry));
-    setAddressErrors({});
-    setAddressTouched({});
+    const nextValues = preserveAddressValuesForCountry(addressValues, nextCountry);
+    const phoneNumber = addressValues.phoneNumber ?? "";
+    nextValues.phoneNumber = phoneNumber ? replacePhoneCallingCode(phoneNumber, callingCodeCountryForAddressCountry(nextCountry)) : "";
+    setAddressValues(nextValues);
+    const phoneField = addressConfigs[nextCountry].fields.find((field) => field.key === "phoneNumber");
+    if (phoneField) {
+      const phoneError = getAddressError(phoneField, nextValues.phoneNumber);
+      setAddressErrors((current) => {
+        const next = { ...current };
+        if (phoneError) next.phoneNumber = phoneError;
+        else delete next.phoneNumber;
+        return next;
+      });
+    }
+    setAddressTouched((current) => ({ ...current, phoneNumber: Boolean(current.phoneNumber) }));
   }
 
   function handleAddressValueChange(field: AddressField, value: string) {
@@ -786,7 +800,7 @@ export function AccountPage() {
                         <p className="text-base font-black text-neutral-950">{address.address_values.fullName || "Saved address"}</p>
                         <p className="mt-1 text-sm text-neutral-600">{address.summary}</p>
                         {address.address_values.phoneNumber ? (
-                          <p className="mt-1 text-sm text-neutral-500">{address.address_values.phoneNumber}</p>
+                          <p className="mt-1 text-sm text-neutral-500">{formatInternationalPhone(address.address_values.phoneNumber)}</p>
                         ) : null}
                       </div>
                       {address.is_default ? (
@@ -848,6 +862,26 @@ export function AccountPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               {activeAddressConfig.fields.map((field) => {
                 const error = addressTouched[field.key] || addressErrors[field.key] ? addressErrors[field.key] : "";
+                if (field.key === "phoneNumber") {
+                  return (
+                    <div className="min-w-0" key={field.key}>
+                      <PhoneNumberInput
+                        autoComplete={field.autoComplete}
+                        countryKey={addressCountry}
+                        error={error || undefined}
+                        id="account-address-phone"
+                        label={field.label}
+                        onBlur={() => {
+                          setAddressTouched((current) => ({ ...current, [field.key]: true }));
+                          setAddressErrors((current) => ({ ...current, [field.key]: getAddressError(field, addressValues[field.key] ?? "") }));
+                        }}
+                        onChange={(value) => handleAddressValueChange(field, value)}
+                        required={field.required}
+                        value={addressValues[field.key] ?? ""}
+                      />
+                    </div>
+                  );
+                }
                 return (
                   <label className={field.fullWidth ? "grid gap-1.5 sm:col-span-2" : "grid gap-1.5"} key={field.key}>
                     <span className="text-sm font-bold text-neutral-700">

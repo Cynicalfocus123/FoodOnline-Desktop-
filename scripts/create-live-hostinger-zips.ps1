@@ -166,6 +166,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Http/Controllers/Api/Admin/AdminAuthController.php" = @("expires_at", "AdminApiToken", "function me")
             "app/Http/Controllers/Api/Admin/AdminUsersController.php" = @("detailResponse", "user_addresses", "addresses", "paymentMethods", "referralSchemaIsReady")
             "app/Http/Resources/Admin/AdminManagedUserResource.php" = @("addresses", "payment_methods", "registered_from")
+            "app/Http/Requests/Account/UpsertUserAddressRequest.php" = @("address_values.phoneNumber", "sanitizePhoneNumber")
             "app/Http/Resources/Account/UserAddressResource.php" = @("country_key", "address_values", "is_default")
             "app/Http/Resources/Admin/AdminUserAddressResource.php" = @("user_id", "parent::toArray")
             "app/Models/User.php" = @("function addresses(): HasMany", "hasMany(UserAddress::class)")
@@ -192,7 +193,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
         "Registration could not be completed.", "Registration source",
         "No saved addresses for this customer.", "No saved addresses for this supplier.", "No saved addresses for this partner.",
         "No saved payment methods for this customer.", "Restoring your administrator session",
-        "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number",
+        "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number", "Country calling code", "+1", "+66", "+65",
         "Thailand", "United States"
     ) "Frontend compiled output"
 }

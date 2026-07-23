@@ -10,6 +10,8 @@ Registration and login share one exact root-level `message`, `token_type`, `toke
 
 The user-address acceptance gate is mandatory. `npm run test:address-acceptance` must register a real temporary customer, save a default Thailand address and non-default United States address through `/account/addresses`, prove both database rows share that `users.id`, prove Admin detail returns only those rows twice, and use headless Chrome against a compiled production frontend to verify two separate cards before and after direct-route refresh. `npm run test:managed-user-address-acceptance` repeats the same proof for Customer, Supplier, and Partner and proves cross-role control addresses never appear. The final archive gate must repeat controller/resource/model/relationship/route and compiled-address marker checks inside both Windows and PHP ZIP extractions.
 
+Address Book phone fields use the shared `PhoneNumberInput` and its single country-calling-code dataset. Address country changes select the matching code while retaining safe local digits; new saves store one normalized international `phoneNumber` in the existing `address_values` JSON payload. Legacy local values remain readable and editable until saved. Do not create a competing country-code list, a second phone normalizer, or a migration for this visual separation.
+
 ## Canonical root documentation
 
 This is the single repository and delivery guide. At the repository root, keep exactly one file for each of these roles:
@@ -30,7 +32,7 @@ The production interface must never expose API URLs, hostnames, endpoint paths, 
 
 Follow `design.md` for visual and responsive decisions. Keep the existing dark-green/orange administration shell, responsive storefront behavior, and managed-media language. Category, brand, and product editors may retain local pre-save media previews, but media availability must not block a normal record save.
 
-Customer, Supplier, and Partner addresses remain Laravel-authoritative. Administrator views show only the selected managed user’s approved address fields; masked payment metadata is Customer-only and explicitly allowlisted. Never serialize or display payment tokens, provider references, CVV, or raw card data.
+Customer, Supplier, and Partner addresses remain Laravel-authoritative. Address `phoneNumber` values are normalized as a single international `+` value for new saves and formatted safely in Address Book, checkout, and Administrator cards; legacy local values remain readable. Administrator views show only the selected managed user’s approved address fields; masked payment metadata is Customer-only and explicitly allowlisted. Never serialize or display payment tokens, provider references, CVV, or raw card data.
 
 ## Required release workflow
 
@@ -54,7 +56,7 @@ Regenerate both archives together for every change. They are created only from t
 
 ## Current verified baseline
 
-The 2026-07-22 urgent repair candidate passed 89 Node tests, TypeScript no-emit, changed-PHP syntax checks, and focused Laravel coverage with 272 assertions and no failures (only non-failing legacy file-read warnings). Real compiled-browser acceptance passed separately for Customer, Supplier, and Partner: each recorded HTTP 201 registration and both saves, two authoritative rows under one `users.id`, HTTP 200 for initial/refreshed Admin detail, and two role-correct cards on both direct-route loads, while cross-role control addresses remained absent. The production build transformed 141 modules, and the 28-route audit found no missing local references or placeholder links. External Hostinger deployment remains unperformed and unverified.
+The 2026-07-22 calling-code repair candidate passed 94 Node tests, TypeScript no-emit, changed-PHP syntax checks, and focused Laravel address/Admin coverage with 15 tests / 276 assertions and no failures. It covers normalized Customer/Supplier/Partner address saves, update/default preservation, legacy-phone readability, Admin detail, and ownership isolation. Laravel configuration, route, and view caches compiled successfully. The production build transformed 142 modules, and the 28-route audit found no missing local references or placeholder links (1,037 files / 91,860,475 bytes). Browser acceptance scripts were intentionally not run because this task prohibits localhost and local-server commands. External Hostinger deployment remains unperformed and unverified.
 
 ## Ongoing maintenance
 

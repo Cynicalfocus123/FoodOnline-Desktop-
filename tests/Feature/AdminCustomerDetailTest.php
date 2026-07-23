@@ -113,14 +113,14 @@ class AdminCustomerDetailTest extends TestCase
                 ->assertJsonPath('user.addresses.0.user_id', (string) $customer->id)
                 ->assertJsonPath('user.addresses.0.country_key', 'thailand')
                 ->assertJsonPath('user.addresses.0.is_default', true)
-                ->assertJsonPath('user.addresses.0.address_values.phoneNumber', '+66 81 234 5678')
+                ->assertJsonPath('user.addresses.0.address_values.phoneNumber', '+66812345678')
                 ->assertJsonPath('user.addresses.0.address_values.subdistrict', 'Khlong Toei Nuea')
                 ->assertJsonPath('user.addresses.0.address_values.deliveryNote', 'Leave with the lobby concierge')
                 ->assertJsonPath('user.addresses.1.id', $usa->json('address.id'))
                 ->assertJsonPath('user.addresses.1.user_id', (string) $customer->id)
                 ->assertJsonPath('user.addresses.1.country_key', 'usa')
                 ->assertJsonPath('user.addresses.1.is_default', false)
-                ->assertJsonPath('user.addresses.1.address_values.phoneNumber', '+1 213 555 0142')
+                ->assertJsonPath('user.addresses.1.address_values.phoneNumber', '+12135550142')
                 ->assertJsonPath('user.addresses.1.address_values.state', 'California')
                 ->assertJsonPath('user.addresses.1.address_values.deliveryNote', 'Call from the loading entrance');
 
