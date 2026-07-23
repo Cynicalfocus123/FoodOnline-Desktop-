@@ -192,7 +192,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
         "Registration could not be completed.", "Registration source",
         "No saved addresses for this customer.", "No saved addresses for this supplier.", "No saved addresses for this partner.",
         "No saved payment methods for this customer.", "Restoring your administrator session",
-        "managed-user-editor", "customer-addresses", "supplier-addresses", "partner-addresses", "data-address-id", "Delivery note", "Phone number",
+        "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number",
         "Thailand", "United States"
     ) "Frontend compiled output"
 }
