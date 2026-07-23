@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ReferralProgram;
 use App\Services\Referral\ReferralCodeService;
+use App\Services\Referral\ReferralSchema;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ReferralInvitationController extends Controller
 {
-    public function __invoke(string $referralCode, ReferralCodeService $codes): JsonResponse
+    public function __invoke(Request $request, string $referralCode, ReferralCodeService $codes, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) {
+            return $schema->unavailableResponse($request);
+        }
+
         $program = ReferralProgram::active();
         $code = $program ? $codes->findActive($referralCode) : null;
 

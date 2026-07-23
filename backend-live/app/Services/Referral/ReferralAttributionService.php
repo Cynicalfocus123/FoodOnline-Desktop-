@@ -6,6 +6,7 @@ use App\Models\Referral;
 use App\Models\ReferralProgram;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ReferralAttributionService
 {
@@ -23,13 +24,22 @@ class ReferralAttributionService
             return null;
         }
         $program = ReferralProgram::active();
-        if (! $program || ! $program->isAvailable()) return null;
+        if (! $program || ! $program->isAvailable()) {
+            throw ValidationException::withMessages(['referral_code' => ['This referral code is not available.']]);
+        }
         $code = $this->codes->findActive($incomingCode);
-        if (! $code || ! $code->user || ! $this->codes->isEligible($code->user) || $code->user_id === $referred->id) return null;
+        if (! $code || ! $code->user || ! $this->codes->isEligible($code->user)) {
+            throw ValidationException::withMessages(['referral_code' => ['This referral code is not available.']]);
+        }
+        if ($code->user_id === $referred->id) {
+            throw ValidationException::withMessages(['referral_code' => ['You cannot use your own referral code.']]);
+        }
 
         $existing = Referral::query()->where('referred_user_id', $referred->id)->first();
         if ($existing) return $existing;
-        if ($program->maximum_successful_referrals_per_user !== null && Referral::query()->where('referrer_user_id', $code->user_id)->whereIn('status', ['registered', 'active', 'completed'])->count() >= $program->maximum_successful_referrals_per_user) return null;
+        if ($program->maximum_successful_referrals_per_user !== null && Referral::query()->where('referrer_user_id', $code->user_id)->whereIn('status', ['registered', 'active', 'completed'])->count() >= $program->maximum_successful_referrals_per_user) {
+            throw ValidationException::withMessages(['referral_code' => ['This referral code is not available.']]);
+        }
 
         $referral = Referral::query()->create([
             'referral_program_id' => $program->id,
@@ -42,8 +52,9 @@ class ReferralAttributionService
             'program_snapshot' => $this->snapshot($program),
         ]);
         $this->rewards->issueFriendEntitlements($referral, $program);
-        DB::afterCommit(function () use ($code): void {
+        DB::afterCommit(function () use ($code, $referred): void {
             $code->user?->notify(new \App\Notifications\CommerceNotification('referral_registered', 'A friend registered', 'Your referral is waiting for a qualifying order.', ['type' => 'referral']));
+            $referred->notify(new \App\Notifications\CommerceNotification('referral_coupon_issued', 'Referral coupons available', 'Your new-customer referral coupons are available in your account.', ['type' => 'referral']));
         });
         return $referral;
     }

@@ -10,11 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class ReferralQualificationService
 {
-    public function __construct(private readonly ReferralRewardService $rewards) {}
+    public function __construct(
+        private readonly ReferralRewardService $rewards,
+        private readonly ReferralSchema $schema,
+    ) {}
 
     public function processOrder(Order $order): void
     {
-        if (! $order->user_id) return;
+        if (! $order->user_id || ! $this->schema->isReady()) return;
 
         DB::transaction(function () use ($order): void {
             $order = Order::query()->lockForUpdate()->findOrFail($order->id);
@@ -37,6 +40,7 @@ class ReferralQualificationService
 
     public function handleFullRefund(Order $order, ?User $admin = null): void
     {
+        if (! $this->schema->isReady()) return;
         if ($order->paid_minor > 0 && $order->refunded_minor >= $order->paid_minor) $this->rewards->revokeUnusedForOrder($order->id, $admin);
     }
 

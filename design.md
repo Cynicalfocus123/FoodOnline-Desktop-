@@ -16,6 +16,8 @@ Customer, Supplier, and Partner signup use the same authenticated-session contra
 
 The signed-in account menu includes one clear logout action, and public logout clears account-owned state before late network responses can repopulate it. Address Book and checkout show persisted addresses only when the Laravel-authoritative record exists for the signed-in Customer, Supplier, or Partner. Address Book reuses the registration country calling-code control: a compact text-labelled selector and a 16px local-number input remain on one readable row, synchronize with address country, preserve safe digits on country changes, and expose normal keyboard, focus, label, and error behavior. Save validation, authorization, network, and server failures stay visibly safe in the open form; the first invalid field is identified rather than silently doing nothing.
 
+Refer & Earn is a Customer-only account experience. The dashboard must clearly show the server-issued invite code and direct link with exactly Share, Copy link, and Copy invite code actions; explain the program in concise safe language; and show referral activity as its own pageable state. Dashboard, activity, and coupons use distinct loading, empty, unavailable, and retry states. Direct `/invite/{code}` routes and refreshes remain usable. Do not show referral cards to Supplier or Partner accounts, expose friends' private data, or imply a reward is payable before the server marks it qualified.
+
 ## Administration
 
 The existing sidebar labels, ordering, dark-green surface, and orange active state are the navigation foundation. Content modules use dedicated list workspaces with search, filters, sort, selection, bulk actions where supported, export, responsive tables, and pagination. Create and edit operations use full-width routes, not forms beside record lists. Product variants remain within Product Edit.
@@ -27,6 +29,8 @@ Administrator Customer, Supplier, and Partner detail presents a responsive, read
 Each saved address is one separate card tied to the selected Customer, Supplier, or Partner. Country-specific labels and populated values, stored phone number, delivery note, and summary remain visible. The Default badge appears only when `is_default` is true; loading, empty, or unrelated-user data must never substitute for returned address records, including after refreshing a direct managed-user Edit URL.
 
 Customer, Supplier, and Partner edit routes keep one stable editor with the original identity, contact, LINE ID, company, status, source, and timestamp fields. The profile and saved-address requests have independent loading, empty, failure, and retry states; Customer payment methods follow the same rule. An optional-section failure must not replace or hide the profile editor. The URL module is authoritative for the expected role on direct navigation and refresh. Admin session restoration stays on a neutral loading screen until persisted state is hydrated; retryable `/admin/me` failures do not force the Login view.
+
+Referral operations is a dedicated Admin workspace, not a static dashboard card. Preserve Referrer, Friend, Code, Status, and Registered columns with server-driven search, status/review filters, pagination, safe zero-result copy, and a retryable failure state. The detail route shows only data authorized by the API, reward/coupon state, review actions, and audit history. Program settings are an explicit route. Hide technical causes and never replace failed data with mock referrals.
 
 ## Privacy and error presentation
 

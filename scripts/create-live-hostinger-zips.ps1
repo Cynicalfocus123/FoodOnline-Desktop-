@@ -128,6 +128,15 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
             "app/Services/Auth/RegisterUserService.php",
             "app/Models/User.php", "app/Models/UserAddress.php", "app/Models/UserPaymentMethod.php",
             "database/migrations/2026_07_21_600000_create_referral_program_tables.php",
+            "app/Http/Controllers/Api/ReferralInvitationController.php",
+            "app/Http/Controllers/Api/Account/ReferralController.php",
+            "app/Http/Controllers/Api/Admin/AdminReferralController.php",
+            "app/Services/Referral/ReferralSchema.php",
+            "app/Services/Referral/ReferralCodeService.php",
+            "app/Services/Referral/ReferralAttributionService.php",
+            "app/Services/Referral/ReferralQualificationService.php",
+            "app/Services/Referral/ReferralRewardService.php",
+            "app/Models/ReferralProgram.php", "app/Models/ReferralCode.php", "app/Models/Referral.php", "app/Models/ReferralReward.php",
             "public/index.php", "public/.htaccess", "public/backend-path.php.example"
         )) {
             if ($fileNames -notcontains $required) { throw "Backend Live stage is missing required file: $required" }
@@ -156,7 +165,7 @@ function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label
 function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
     if ($Kind -eq "backend") {
         $checks = @{
-            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}")
+            "routes/api.php" = @("/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/account/addresses", "/users/{user}", "/referrals/invite/{referralCode}", "/account/referrals", "/admin/referrals")
             "app/Http/Controllers/Api/Auth/RegisterUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/LoginUserController.php" = @("UserAuthTokenService", "'token' => `$plainToken", "AuthenticatedUserResource")
             "app/Http/Controllers/Api/Auth/CurrentUserController.php" = @("AuthenticatedUserResource")
@@ -171,6 +180,13 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Http/Resources/Admin/AdminUserAddressResource.php" = @("user_id", "parent::toArray")
             "app/Models/User.php" = @("function addresses(): HasMany", "hasMany(UserAddress::class)")
             "app/Models/UserAddress.php" = @("function user(): BelongsTo", "belongsTo(User::class)")
+            "app/Http/Controllers/Api/ReferralInvitationController.php" = @("ReferralSchema", "unavailableResponse")
+            "app/Http/Controllers/Api/Account/ReferralController.php" = @("ReferralSchema", "unavailableResponse", "function activity")
+            "app/Http/Controllers/Api/Admin/AdminReferralController.php" = @("ReferralSchema", "unavailableResponse", "function findReferral")
+            "app/Services/Referral/ReferralSchema.php" = @("Referral services are temporarily unavailable. Please try again later.", "referral_programs", "referral_rewards")
+            "app/Services/Referral/ReferralAttributionService.php" = @("ReferralSchema", "Referral code is not available.")
+            "app/Services/Referral/ReferralQualificationService.php" = @("ReferralSchema", "handleFullRefund")
+            "app/Services/Referral/ReferralRewardService.php" = @("full refund", "Promotion::query")
             "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
         }
         foreach ($relative in $checks.Keys) {
@@ -189,13 +205,18 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
         [void] $javascript.AppendLine([IO.File]::ReadAllText($file.FullName))
     }
     Assert-TextMarkers $javascript.ToString() @(
-        "/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/admin/users/",
+        "/auth/register", "/auth/login", "/auth/me", "/auth/logout", "/admin/users/", "/account/referrals", "/account/referrals/activity", "/account/referral-coupons", "/admin/referrals", "/admin/referral-settings",
         "Registration could not be completed.", "Registration source",
         "No saved addresses for this customer.", "No saved addresses for this supplier.", "No saved addresses for this partner.",
         "No saved payment methods for this customer.", "Restoring your administrator session",
         "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number", "Country calling code", "+1", "+66", "+65",
-        "Thailand", "United States"
+        "Thailand", "United States", "Your invite code", "Copy invite code", "No referral activity yet.", "Referral operations", "Referral detail", "No referrals found."
     ) "Frontend compiled output"
+    foreach ($forbidden in @("Referral details are unavailable right now.", "Unable to load referrals.")) {
+        if ($javascript.ToString().IndexOf($forbidden, [StringComparison]::Ordinal) -ge 0) {
+            throw "Frontend compiled output contains obsolete referral fallback text: $forbidden"
+        }
+    }
 }
 
 function Assert-BackendManifest([string]$Source, [System.Collections.IEnumerable]$Files) {

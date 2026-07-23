@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AdminManagedUserResource;
 use App\Models\User;
+use App\Services\Referral\ReferralSchema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -144,12 +145,6 @@ class AdminUsersController extends Controller
 
     private function referralSchemaIsReady(): bool
     {
-        foreach (['referral_programs', 'referral_codes', 'referrals', 'referral_rewards'] as $table) {
-            if (! Schema::hasTable($table)) {
-                return false;
-            }
-        }
-
-        return true;
+        return app(ReferralSchema::class)->isReady();
     }
 }

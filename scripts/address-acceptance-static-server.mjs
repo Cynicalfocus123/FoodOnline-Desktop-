@@ -23,7 +23,7 @@ createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url || "/", "http://127.0.0.1").pathname);
   const requested = /^\/admin(?:\/|$)/.test(pathname)
     ? "admin.html"
-    : pathname === "/"
+    : pathname === "/" || /^\/(?:invite|account)(?:\/|$)/.test(pathname)
       ? "index.html"
       : pathname.replace(/^\/+/, "");
   const candidate = normalize(join(root, requested));

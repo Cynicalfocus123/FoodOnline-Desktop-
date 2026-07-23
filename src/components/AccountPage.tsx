@@ -810,11 +810,11 @@ export function AccountPage() {
             ) : null}
 
             {accountSection === "refer" ? (
-              <ReferralPanel token={token} />
+              <ReferralPanel accountType={currentUser.accountType} token={token} />
             ) : null}
 
             {accountSection === "coupon" ? (
-              <ReferralCouponsPanel token={token} />
+              <ReferralCouponsPanel accountType={currentUser.accountType} token={token} />
             ) : null}
 
             {accountSection === "language" ? (
@@ -1414,13 +1414,13 @@ function OrderHistoryPanel({ filter, token }: { filter: (typeof statusShortcuts)
   );
 }
 
-function ReferralPanel({ token }: { token: string | null }) {
+function LegacyReferralPanel({ token }: { token: string | null }) {
   const [dashboard, setDashboard] = useState<ReferralDashboard | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
-    apiRequest<ReferralDashboard>("/account/referrals", { token }).then(setDashboard).catch(() => setMessage("Referral details are unavailable right now."));
+    apiRequest<ReferralDashboard>("/account/referrals", { token }).then(setDashboard).catch(() => setMessage("We couldn't load your referral details. Please retry."));
   }, [token]);
 
   const invite = dashboard?.invite;
@@ -1447,7 +1447,7 @@ function ReferralPanel({ token }: { token: string | null }) {
   };
 
   if (!dashboard && !message) return <SimplePanel title="Refer a friend" subtitle="Loading your referral details…" />;
-  if (!dashboard || !invite) return <SimplePanel title="Refer a friend" subtitle={message ?? "Referral details are unavailable right now."} />;
+  if (!dashboard || !invite) return <SimplePanel title="Refer a friend" subtitle={message ?? "We couldn't load your referral details. Please retry."} />;
 
   return (
     <div className="mt-6 grid gap-5">
@@ -1502,7 +1502,7 @@ function ReferralPanel({ token }: { token: string | null }) {
   );
 }
 
-function ReferralCouponsPanel({ token }: { token: string | null }) {
+function LegacyReferralCouponsPanel({ token }: { token: string | null }) {
   const [coupons, setCoupons] = useState<ReferralCoupon[]>([]);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -1520,6 +1520,121 @@ function ReferralCouponsPanel({ token }: { token: string | null }) {
       </div>
     </div>
   );
+}
+
+type ReferralActivity = ReferralDashboard["recent_activity"][number];
+type ReferralActivityResponse = { data: ReferralActivity[]; meta: { current_page: number; last_page: number; total: number } };
+type ReferralLoadState = "loading" | "ready" | "error";
+
+function referralDate(value: string | null) {
+  return value ? new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value)) : "—";
+}
+
+function referralStatus(value: string) {
+  return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function ReferralRetry({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4"><p className="text-sm font-semibold text-amber-950">{message}</p><button className="mt-3 min-h-10 rounded-full border border-amber-300 px-4 text-sm font-black text-amber-900" onClick={onRetry} type="button">Retry</button></div>;
+}
+
+function ReferralPanel({ accountType, token }: { accountType: string; token: string | null }) {
+  const [dashboard, setDashboard] = useState<ReferralDashboard | null>(null);
+  const [dashboardState, setDashboardState] = useState<ReferralLoadState>("loading");
+  const [activity, setActivity] = useState<ReferralActivity[]>([]);
+  const [activityState, setActivityState] = useState<ReferralLoadState>("loading");
+  const [activityPage, setActivityPage] = useState(1);
+  const [activityLastPage, setActivityLastPage] = useState(1);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const loadDashboard = async () => {
+    if (!token) return;
+    setDashboardState("loading");
+    try {
+      setDashboard(await apiRequest<ReferralDashboard>("/account/referrals", { token }));
+      setDashboardState("ready");
+    } catch (error) {
+      setNotice(toErrorMessage(error, "We couldn't load your referral details. Please retry."));
+      setDashboardState("error");
+    }
+  };
+
+  const loadActivity = async (page: number, append = false) => {
+    if (!token) return;
+    setActivityState("loading");
+    try {
+      const response = await apiRequest<ReferralActivityResponse>(`/account/referrals/activity?page=${page}&per_page=10`, { token });
+      setActivity((current) => append ? [...current, ...response.data] : response.data);
+      setActivityPage(response.meta.current_page);
+      setActivityLastPage(response.meta.last_page);
+      setActivityState("ready");
+    } catch (error) {
+      setNotice(toErrorMessage(error, "We couldn't load referral activity. Please retry."));
+      setActivityState("error");
+    }
+  };
+
+  useEffect(() => {
+    if (accountType !== "customer") return;
+    void loadDashboard();
+    void loadActivity(1);
+  }, [accountType, token]);
+
+  if (accountType !== "customer") return <SimplePanel title="Refer a friend" subtitle="Refer & Earn is available for Customer accounts." />;
+  if (dashboardState === "loading" && !dashboard) return <SimplePanel title="Refer a friend" subtitle="Loading your referral details…" />;
+  if (dashboardState === "error" && !dashboard) return <ReferralRetry message={notice ?? "We couldn't load your referral details. Please retry."} onRetry={() => void loadDashboard()} />;
+
+  const invite = dashboard?.invite;
+  const copy = async (value: string, success: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setNotice(success);
+    } catch {
+      window.prompt("Copy this value", value);
+    }
+  };
+  const share = async () => {
+    if (!invite) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "FoodOnlines", text: dashboard?.program?.share_message, url: invite.url });
+        setNotice("Invite ready to share.");
+        return;
+      } catch {
+        setNotice("Sharing was cancelled. You can copy your link instead.");
+        return;
+      }
+    }
+    await copy(invite.url, "Invite link copied.");
+  };
+
+  if (!dashboard || !invite) return <div className="mt-6"><ReferralRetry message="Your referral program is not available right now. Please retry." onRetry={() => void loadDashboard()} /></div>;
+
+  return <div className="mt-6 grid gap-5">
+    <section className="rounded-3xl bg-leaf-700 p-6 text-white sm:p-8">
+      <p className="text-sm font-black uppercase tracking-[0.16em] text-white/70">FoodOnlines</p>
+      <h2 className="mt-2 text-3xl font-black">{dashboard.program?.heading ?? "Refer & Earn"}</h2>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-white/85">{dashboard.program?.referrer_benefit_copy}</p>
+      <div className="mt-5 grid gap-3 rounded-2xl bg-white/10 p-4"><div><p className="text-xs font-black uppercase tracking-wide text-white/70">Your invite code</p><p className="mt-1 text-2xl font-black tracking-[0.12em]">{invite.code}</p></div><div><p className="text-xs font-black uppercase tracking-wide text-white/70">Your invite link</p><p className="mt-1 break-all text-sm font-semibold text-white">{invite.url}</p></div></div>
+      <div className="mt-5 grid gap-2 sm:grid-cols-3"><button className="min-h-12 rounded-full bg-white px-4 text-sm font-black text-leaf-800" onClick={() => void share()} type="button">Share</button><button className="min-h-12 rounded-full border border-white/50 px-4 text-sm font-black text-white" onClick={() => void copy(invite.url, "Invite link copied.")} type="button">Copy link</button><button className="min-h-12 rounded-full border border-white/50 px-4 text-sm font-black text-white" onClick={() => void copy(invite.code, "Invite code copied.")} type="button">Copy invite code</button></div>
+      {notice ? <p aria-live="polite" className="mt-3 text-sm font-semibold text-white/90">{notice}</p> : null}
+    </section>
+    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[["Registered", dashboard.stats.registered], ["First qualified", dashboard.stats.first_qualified], ["Second qualified", dashboard.stats.second_qualified], ["Active coupons", dashboard.stats.earned_coupons]].map(([label, value]) => <div className="rounded-2xl border border-neutral-200 bg-white p-4" key={String(label)}><p className="text-2xl font-black text-neutral-950">{value}</p><p className="mt-1 text-xs font-bold text-neutral-500">{label}</p></div>)}</section>
+    <section className="rounded-3xl border border-neutral-200 bg-white p-5"><h3 className="text-lg font-black text-neutral-950">How it works</h3><ol className="mt-4 grid gap-3 text-sm leading-6 text-neutral-600 sm:grid-cols-3"><li><strong className="text-neutral-900">1. Share</strong><br />Send your unique link or code to a new Customer.</li><li><strong className="text-neutral-900">2. They join</strong><br />Their registration is recorded under your invitation.</li><li><strong className="text-neutral-900">3. Earn</strong><br />Rewards are issued after qualifying orders are completed.</li></ol></section>
+    <section className="rounded-3xl border border-neutral-200 bg-white p-5"><h3 className="text-lg font-black text-neutral-950">Referral activity</h3>{activityState === "loading" && !activity.length ? <p className="mt-3 text-sm text-neutral-600">Loading referral activity…</p> : null}{activityState === "error" ? <ReferralRetry message="We couldn't load referral activity. Please retry." onRetry={() => void loadActivity(activityPage || 1)} /> : null}{activityState === "ready" && !activity.length ? <p className="mt-3 text-sm text-neutral-600">No referral activity yet.</p> : null}{activity.length ? <div className="mt-4 divide-y divide-neutral-100">{activity.map((item) => <div className="flex flex-wrap items-center justify-between gap-3 py-3" key={item.id}><div><p className="font-bold text-neutral-900">{item.friend_name}</p><span className="mt-1 inline-flex rounded-full bg-leaf-50 px-2.5 py-1 text-xs font-black text-leaf-800">{referralStatus(item.status)}</span></div><p className="text-right text-xs font-semibold text-neutral-500">{referralDate(item.second_qualified_at ?? item.first_qualified_at ?? item.registered_at)}</p></div>)}</div> : null}{activityState === "ready" && activityPage < activityLastPage ? <button className="mt-4 min-h-10 rounded-full border border-leaf-500 px-4 text-sm font-black text-leaf-700" onClick={() => void loadActivity(activityPage + 1, true)} type="button">Load more</button> : null}</section>
+    <section className="rounded-3xl border border-neutral-200 bg-neutral-50 p-5"><h3 className="font-black text-neutral-950">Terms</h3><p className="mt-2 text-sm leading-6 text-neutral-600">{dashboard.program?.terms_content || "Referral rewards are account-bound and subject to qualifying order, expiry, review, and revocation rules."}</p></section>
+  </div>;
+}
+
+function ReferralCouponsPanel({ accountType, token }: { accountType: string; token: string | null }) {
+  const [coupons, setCoupons] = useState<ReferralCoupon[]>([]);
+  const [state, setState] = useState<ReferralLoadState>("loading");
+  const [message, setMessage] = useState<string | null>(null);
+  const load = async () => { if (!token) return; setState("loading"); try { const response = await apiRequest<{ data: ReferralCoupon[] }>("/account/referral-coupons", { token }); setCoupons(response.data); setState("ready"); } catch (error) { setMessage(toErrorMessage(error, "We couldn't load referral coupons. Please retry.")); setState("error"); } };
+  useEffect(() => { if (accountType === "customer") void load(); }, [accountType, token]);
+  if (accountType !== "customer") return <SimplePanel title="Coupons" subtitle="Referral coupons are available for Customer accounts." />;
+  const money = (coupon: ReferralCoupon) => new Intl.NumberFormat("en-US", { style: "currency", currency: coupon.currency_code }).format(coupon.amount_minor / 100);
+  return <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5"><h2 className="text-xl font-black text-neutral-950">Coupons</h2>{state === "loading" ? <p className="mt-3 text-sm text-neutral-600">Loading coupons…</p> : null}{state === "error" ? <ReferralRetry message={message ?? "We couldn't load referral coupons. Please retry."} onRetry={() => void load()} /> : null}{state === "ready" && !coupons.length ? <p className="mt-3 text-sm text-neutral-600">No referral coupons are available yet.</p> : null}<div className="mt-4 grid gap-3">{coupons.map((coupon) => <div className="rounded-2xl border border-neutral-200 p-4" key={coupon.id}><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-black text-neutral-950">{money(coupon)} referral coupon</p><p className="mt-1 font-mono text-sm text-neutral-600">{coupon.coupon_code ?? "Coupon pending"}</p></div><span className="rounded-full bg-leaf-50 px-3 py-1 text-xs font-black text-leaf-800">{referralStatus(coupon.status)}</span></div><p className="mt-3 text-xs text-neutral-500">Expires {referralDate(coupon.expires_at)}</p></div>)}</div></div>;
 }
 
 function SimplePanel({ subtitle, title }: { subtitle: string; title: string }) {

@@ -9,6 +9,7 @@ use App\Models\ReferralProgram;
 use App\Models\ReferralReward;
 use App\Services\Referral\ReferralCodeService;
 use App\Services\Referral\ReferralRewardService;
+use App\Services\Referral\ReferralSchema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +17,9 @@ use Illuminate\Validation\Rule;
 
 class AdminReferralController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
         $query = Referral::query()->with(['code', 'referrer:id,uuid,name,email', 'referred:id,uuid,name,email', 'rewards.promotion']);
         if ($request->filled('status')) $query->where('status', $request->query('status'));
         if ($request->filled('review_status')) $query->where('review_status', $request->query('review_status'));
@@ -41,13 +43,17 @@ class AdminReferralController extends Controller
         ]);
     }
 
-    public function show(Referral $referral): JsonResponse
+    public function show(Request $request, string $referral, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
+        $referral = $this->findReferral($referral);
         return response()->json(['referral' => $this->payload($referral->load(['program', 'code', 'referrer', 'referred', 'firstQualifyingOrder', 'secondQualifyingOrder', 'rewards.promotion']))]);
     }
 
-    public function action(Request $request, Referral $referral, ReferralCodeService $codes, ReferralRewardService $rewards): JsonResponse
+    public function action(Request $request, string $referral, ReferralCodeService $codes, ReferralRewardService $rewards, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
+        $referral = $this->findReferral($referral);
         $values = $request->validate(['action' => ['required', Rule::in(['review', 'approve', 'disqualify', 'restore', 'revoke_reward', 'disable_code'])],
             'reason' => ['nullable', 'string', 'max:500'], 'reward_id' => ['nullable', 'uuid']]);
         $before = $referral->load(['code', 'rewards.promotion'])->toArray();
@@ -73,14 +79,16 @@ class AdminReferralController extends Controller
         return response()->json(['referral' => $this->payload($referral->fresh()->load(['program', 'code', 'referrer', 'referred', 'rewards.promotion']))]);
     }
 
-    public function settings(): JsonResponse
+    public function settings(Request $request, ReferralSchema $schema): JsonResponse
     {
-        return response()->json(['program' => ReferralProgram::active()]);
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
+        return response()->json(['program' => ReferralProgram::query()->latest('id')->first()]);
     }
 
-    public function updateSettings(Request $request): JsonResponse
+    public function updateSettings(Request $request, ReferralSchema $schema): JsonResponse
     {
-        $program = ReferralProgram::active() ?? ReferralProgram::query()->latest()->firstOrFail();
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
+        $program = ReferralProgram::query()->latest('id')->firstOrFail();
         $values = $request->validate([
             'status' => ['sometimes', Rule::in(['draft', 'active', 'paused', 'ended'])],
             'currency_code' => ['sometimes', 'string', 'size:3'],
@@ -126,6 +134,11 @@ class AdminReferralController extends Controller
             'program' => $referral->program?->only(['uuid', 'name', 'currency_code']),
             'rewards' => $referral->rewards->map(fn (ReferralReward $reward) => ['id' => $reward->uuid, 'milestone' => $reward->milestone, 'amount_minor' => $reward->amount_minor, 'status' => $reward->status, 'coupon_code' => $reward->promotion?->code, 'expires_at' => $reward->expires_at?->toIso8601String()])->values(),
         ];
+    }
+
+    private function findReferral(string $referral): Referral
+    {
+        return Referral::query()->where('uuid', $referral)->firstOrFail();
     }
 
     private function audit(Request $request, string $action, $subject, ?array $before): void

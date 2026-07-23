@@ -8,6 +8,7 @@ use App\Models\ReferralProgram;
 use App\Models\ReferralReward;
 use App\Models\User;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 class ReferralRewardService
 {
@@ -40,9 +41,15 @@ class ReferralRewardService
             if ($reward->status === 'issued') {
                 $reward->update(['status' => 'revoked', 'revoked_at' => now(), 'revoked_by' => $admin?->id, 'revocation_reason' => $reason]);
                 $reward->promotion?->update(['active' => false, 'archived_at' => now()]);
+                DB::afterCommit(function () use ($reward): void {
+                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_revoked', 'Referral coupon updated', 'A referral coupon is no longer available.', ['type' => 'referral']));
+                });
             }
             if ($reward->status === 'redeemed') {
                 $reward->referral()->update(['status' => 'under_review', 'review_status' => 'under_review']);
+                DB::afterCommit(function () use ($reward): void {
+                    $reward->beneficiary?->notify(new \App\Notifications\CommerceNotification('referral_reward_review', 'Referral reward under review', 'A referral reward needs review after an order update.', ['type' => 'referral']));
+                });
             }
         });
     }

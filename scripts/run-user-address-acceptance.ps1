@@ -79,7 +79,7 @@ function Assert-True([bool]$Condition, [string]$Message) {
 $environmentNames = @(
     "APP_ENV", "APP_DEBUG", "APP_KEY", "APP_URL", "FRONTEND_URL", "DB_CONNECTION", "DB_DATABASE",
     "CACHE_STORE", "CACHE_DRIVER", "SESSION_DRIVER", "QUEUE_CONNECTION", "MAIL_MAILER", "VITE_API_BASE_URL",
-    "ACCEPTANCE_STATIC_ROOT", "ACCEPTANCE_STATIC_PORT"
+    "ACCEPTANCE_STATIC_ROOT", "ACCEPTANCE_STATIC_PORT", "APP_CONFIG_CACHE"
 )
 $savedEnvironment = @{}
 foreach ($name in $environmentNames) { $savedEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, "Process") }
@@ -109,6 +109,7 @@ try {
     $env:QUEUE_CONNECTION = "sync"
     $env:MAIL_MAILER = "array"
     $env:VITE_API_BASE_URL = $apiBase
+    $env:APP_CONFIG_CACHE = (Join-Path $tempRoot "config.php")
 
     Push-Location $projectRoot
     try {

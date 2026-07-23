@@ -5,7 +5,6 @@ namespace App\Services\Referral;
 use App\Models\ReferralCode;
 use App\Models\User;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class ReferralCodeService
@@ -31,9 +30,11 @@ class ReferralCodeService
         return $prefix.$value;
     }
 
+    public function __construct(private readonly ReferralSchema $schema) {}
+
     public function ensure(User $user): ?ReferralCode
     {
-        if (! Schema::hasTable('referral_codes')) {
+        if (! $this->schema->isReady()) {
             return null;
         }
 
@@ -54,7 +55,7 @@ class ReferralCodeService
 
     public function findActive(?string $code): ?ReferralCode
     {
-        if (! Schema::hasTable('referral_codes')) {
+        if (! $this->schema->isReady()) {
             return null;
         }
 
@@ -70,12 +71,6 @@ class ReferralCodeService
 
     public function isReady(): bool
     {
-        foreach (['referral_programs', 'referral_codes', 'referrals', 'referral_rewards'] as $table) {
-            if (! Schema::hasTable($table)) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->schema->isReady();
     }
 }

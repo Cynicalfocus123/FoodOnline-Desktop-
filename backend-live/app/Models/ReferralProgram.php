@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasPublicUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Schema;
+use App\Services\Referral\ReferralSchema;
 
 class ReferralProgram extends Model
 {
@@ -30,7 +30,7 @@ class ReferralProgram extends Model
 
     public static function active(): ?self
     {
-        if (! Schema::hasTable('referral_programs')) {
+        if (! app(ReferralSchema::class)->isReady()) {
             return null;
         }
 

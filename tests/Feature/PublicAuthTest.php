@@ -172,7 +172,9 @@ class PublicAuthTest extends TestCase
             ->getJson('/api/v1/auth/me')
             ->assertOk()
             ->assertJsonPath('user.email', 'migration-pending@example.test');
-        $this->getJson('/api/v1/referrals/invite/FOLAAAAAA')->assertNotFound();
+        $this->getJson('/api/v1/referrals/invite/FOLAAAAAA')
+            ->assertServiceUnavailable()
+            ->assertJsonPath('message', 'Referral services are temporarily unavailable. Please try again later.');
     }
 
     /** @return array<string, string|null> */

@@ -7,13 +7,15 @@ use App\Models\ReferralProgram;
 use App\Models\ReferralReward;
 use App\Models\User;
 use App\Services\Referral\ReferralCodeService;
+use App\Services\Referral\ReferralSchema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ReferralController extends Controller
 {
-    public function dashboard(Request $request, ReferralCodeService $codes): JsonResponse
+    public function dashboard(Request $request, ReferralCodeService $codes, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
         $user = $this->customer($request);
         $code = $codes->ensure($user);
         $program = ReferralProgram::active();
@@ -35,8 +37,9 @@ class ReferralController extends Controller
         ]);
     }
 
-    public function activity(Request $request): JsonResponse
+    public function activity(Request $request, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
         $user = $this->customer($request);
         $page = $user->referralsMade()->with('referred:id,first_name')->latest('registered_at')->paginate(min(50, max(1, (int) $request->query('per_page', 10))));
 
@@ -46,8 +49,9 @@ class ReferralController extends Controller
         ]);
     }
 
-    public function coupons(Request $request): JsonResponse
+    public function coupons(Request $request, ReferralSchema $schema): JsonResponse
     {
+        if (! $schema->isReady()) return $schema->unavailableResponse($request);
         $user = $this->customer($request);
         $page = $user->referralRewards()->with('promotion:id,uuid,code')->latest('issued_at')->paginate(min(50, max(1, (int) $request->query('per_page', 20))));
 
