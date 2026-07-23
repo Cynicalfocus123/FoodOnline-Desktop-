@@ -121,6 +121,10 @@ try {
 
         $adminLogin = Invoke-JsonRequest -Method POST -Url "$apiBase/admin/login" -ExpectedStatus 200 -Body @{ email = $adminEmail; password = $adminPassword }
         $adminToken = [string]$adminLogin.Data.token
+        $adminSettings = Invoke-JsonRequest -Method GET -Url "$apiBase/admin/referral-settings" -ExpectedStatus 200 -Token $adminToken -Body $null
+        Assert-True ($null -ne $adminSettings.Data.program) 'Admin referral settings did not load the active program.'
+        $savedSettings = Invoke-JsonRequest -Method PUT -Url "$apiBase/admin/referral-settings" -ExpectedStatus 200 -Token $adminToken -Body @{ manual_code_entry_enabled = $false }
+        Assert-True (-not [bool]$savedSettings.Data.program.manual_code_entry_enabled) 'Admin referral settings did not persist the saved value.'
         $adminList = Invoke-JsonRequest -Method GET -Url "$apiBase/admin/referrals?per_page=25" -ExpectedStatus 200 -Token $adminToken -Body $null
         Assert-True (@($adminList.Data.data).Count -ge 9) 'Admin referral list did not return mixed-role attributions.'
         $adminFiltered = Invoke-JsonRequest -Method GET -Url "$apiBase/admin/referrals?referrer_account_type=customer&referred_account_type=partner" -ExpectedStatus 200 -Token $adminToken -Body $null

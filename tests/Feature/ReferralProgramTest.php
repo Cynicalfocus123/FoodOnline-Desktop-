@@ -154,6 +154,10 @@ class ReferralProgramTest extends TestCase
         $this->withToken($adminToken)->postJson('/api/v1/admin/referrals/'.$referral->uuid.'/actions', ['action' => 'add_note', 'reason' => 'Verified account ownership.'])->assertOk()->assertJsonPath('referral.review_note', 'Verified account ownership.');
         $this->withToken($adminToken)->getJson('/api/v1/admin/referrals/'.$referral->uuid.'/audit-history')->assertOk()->assertJsonCount(3, 'data');
         $this->assertDatabaseHas('admin_audit_logs', ['action' => 'referral.review']);
+        $this->withToken($adminToken)->getJson('/api/v1/admin/referral-settings')->assertOk()->assertJsonPath('program.status', 'active');
+        $this->withToken($adminToken)->putJson('/api/v1/admin/referral-settings', ['manual_code_entry_enabled' => false])
+            ->assertOk()->assertJsonPath('program.manual_code_entry_enabled', false);
+        $this->assertDatabaseHas('admin_audit_logs', ['action' => 'referral.settings.updated']);
 
         $this->withToken($created[0]['token'])->getJson('/api/v1/admin/referrals/'.$referral->uuid)->assertUnauthorized();
         [$restricted, $restrictedToken] = $this->adminToken();
