@@ -186,7 +186,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Services/Referral/ReferralSchema.php" = @("Referral services are temporarily unavailable. Please try again later.", "referral_programs", "referral_rewards")
             "app/Services/Referral/ReferralAttributionService.php" = @("ReferralSchema", "Referral code is not available.")
             "app/Services/Referral/ReferralQualificationService.php" = @("ReferralSchema", "handleFullRefund")
-            "app/Services/Referral/ReferralRewardService.php" = @("full refund", "Promotion::query")
+            "app/Services/Referral/ReferralRewardService.php" = @("fully refunded.", "Promotion::query")
             "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
         }
         foreach ($relative in $checks.Keys) {
