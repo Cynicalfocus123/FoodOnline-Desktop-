@@ -143,7 +143,7 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
 
 function Assert-TextMarkers([string]$Content, [string[]]$Markers, [string]$Label) {
     foreach ($marker in $Markers) {
-        if (-not $Content.Contains($marker, [StringComparison]::Ordinal)) {
+        if ($Content.IndexOf($marker, [StringComparison]::Ordinal) -lt 0) {
             throw "$Label is missing required repair marker: $marker"
         }
     }
