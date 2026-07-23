@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Models\User;
 use App\Services\Referral\ReferralCodeService;
+use App\Services\Referral\ReferralSchema;
 
 Artisan::command('foodonlines:about', function (): void {
     $this->comment('FoodOnlines backend ready.');
@@ -36,6 +37,30 @@ Artisan::command('referrals:backfill-codes', function (ReferralCodeService $code
     $this->info("Ineligible accounts skipped: {$skipped}");
     $this->info("Total codes created: {$total}");
 })->purpose('Backfill permanent referral codes for eligible Customer, Supplier, and Partner accounts.');
+
+Artisan::command('referrals:diagnose', function (ReferralSchema $schema): int {
+    $missing = $schema->missing();
+    $this->info('Core schema ready: '.($schema->isReady() ? 'yes' : 'no'));
+    $this->info('Full schema ready: '.($schema->isReady() ? 'yes' : 'no'));
+    $this->line('Missing tables/columns: '.($missing === [] ? 'none' : implode(', ', $missing)));
+
+    if (! $schema->isReady()) {
+        return self::FAILURE;
+    }
+
+    $program = \App\Models\ReferralProgram::active();
+    $this->info('Active referral program exists: '.($program ? 'yes' : 'no'));
+    foreach (ReferralCodeService::ELIGIBLE_ACCOUNT_TYPES as $role) {
+        $withoutCodes = User::query()
+            ->where('role', $role)
+            ->where('status', 'active')
+            ->whereDoesntHave('referralCode')
+            ->count();
+        $this->line('Eligible '.ucfirst($role).'s without codes: '.$withoutCodes);
+    }
+
+    return $program ? self::SUCCESS : self::FAILURE;
+})->purpose('Report private referral schema, program, and eligible-code readiness for deployment.');
 
 Schedule::command('media:cleanup --limit=100')->hourly()->withoutOverlapping();
 Schedule::command('media:diagnose')->dailyAt('03:30')->withoutOverlapping();

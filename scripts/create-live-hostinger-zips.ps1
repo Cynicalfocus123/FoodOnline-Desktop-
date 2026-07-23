@@ -127,7 +127,9 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
             "app/Services/Auth/UserAuthTokenService.php",
             "app/Services/Auth/RegisterUserService.php",
             "app/Models/User.php", "app/Models/UserAddress.php", "app/Models/UserPaymentMethod.php",
+            "tests/Feature/ReferralProgramTest.php", "tests/Support/referral-acceptance.php",
             "database/migrations/2026_07_21_600000_create_referral_program_tables.php",
+            "database/migrations/2026_07_23_700200_upgrade_referral_schema_for_existing_installations.php",
             "app/Http/Controllers/Api/ReferralInvitationController.php",
             "app/Http/Controllers/Api/Account/ReferralController.php",
             "app/Http/Controllers/Api/Admin/AdminReferralController.php",
@@ -136,6 +138,7 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
             "app/Services/Referral/ReferralAttributionService.php",
             "app/Services/Referral/ReferralQualificationService.php",
             "app/Services/Referral/ReferralRewardService.php",
+            "routes/console.php",
             "app/Models/ReferralProgram.php", "app/Models/ReferralCode.php", "app/Models/Referral.php", "app/Models/ReferralReward.php",
             "public/index.php", "public/.htaccess", "public/backend-path.php.example"
         )) {
@@ -146,7 +149,7 @@ function Assert-LiveSource([string]$Source, [string]$Kind, [System.Collections.I
         }
         $forbidden = @($Files | Where-Object {
             $_.RelativePath -match "(^|/)\.env(?:\.|$)" -or
-            $_.RelativePath -match "^(vendor|tests|dist|frontend-upload|src|assets|images|node_modules)(/|$)" -or
+            $_.RelativePath -match "^(vendor|dist|frontend-upload|src|assets|images|node_modules)(/|$)" -or
             $_.RelativePath -match "^storage/(logs|framework/(cache|sessions|views)|app/public/media)(/|$)" -or
             $_.RelativePath -match "\.(zip|sqlite|db|sql|log)$" -or $_.RelativePath -eq "public/backend-path.php"
         })
@@ -184,6 +187,8 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Http/Controllers/Api/Account/ReferralController.php" = @("ReferralSchema", "unavailableResponse", "function activity", "friend_account_type")
             "app/Http/Controllers/Api/Admin/AdminReferralController.php" = @("ReferralSchema", "unavailableResponse", "function qualification", "function rewards", "function auditHistory", "function notifications", "function findReferral")
             "app/Services/Referral/ReferralSchema.php" = @("Referral services are temporarily unavailable. Please try again later.", "referral_programs", "referral_rewards")
+            "database/migrations/2026_07_23_700200_upgrade_referral_schema_for_existing_installations.php" = @("Production databases can have the original referral migration", "review_note", "ensureActiveProgram")
+            "routes/console.php" = @("referrals:backfill-codes", "referrals:diagnose", "Eligible Supplier", "Eligible Partner")
             "app/Services/Referral/ReferralCodeService.php" = @("ELIGIBLE_ACCOUNT_TYPES", "supplier", "partner")
             "app/Services/Referral/ReferralAttributionService.php" = @("codes->isReady", "attributeRegisteredAccount", "This referral code is not available.")
             "app/Services/Referral/ReferralQualificationService.php" = @("ReferralSchema", "handleFullRefund")
@@ -211,9 +216,9 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
         "No saved addresses for this customer.", "No saved addresses for this supplier.", "No saved addresses for this partner.",
         "No saved payment methods for this customer.", "Restoring your administrator session",
         "managed-user-editor", "customer-addresses", "data-address-id", "Delivery note", "Phone number", "Country calling code", "+1", "+66", "+65",
-        "Thailand", "United States", "Your invite code", "Copy invite code", "No referral activity yet.", "friend_account_type", "Customer, Supplier, or Partner", "Referral operations", "View details", "Referral detail", "Referral notifications", "Audit history", "No referrals found."
+        "Thailand", "United States", "Your invite code", "Copy invite code", "No referral activity yet.", "friend_account_type", "Customer, Supplier, or Partner", "Referral operations", "View details", "Referral detail", "Referral notifications", "Audit history", "No referrals found.", "Search by name, email, or code", "All referral statuses", "All review statuses"
     ) "Frontend compiled output"
-    foreach ($forbidden in @("Referral details are unavailable right now.", "Unable to load referrals.", "Refer & Earn is available for Customer accounts.", "Referral coupons are available for Customer accounts.")) {
+    foreach ($forbidden in @("Referral details are unavailable right now.", "Unable to load referrals.", "Refer & Earn is available for Customer accounts.", "Referral coupons are available for Customer accounts.", ("All referral statu" + "ss"), ("All review statu" + "ss"), ("Search referrer or " + "friend"))) {
         if ($javascript.ToString().IndexOf($forbidden, [StringComparison]::Ordinal) -ge 0) {
             throw "Frontend compiled output contains obsolete referral fallback text: $forbidden"
         }

@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "backend-live");
 const manifestName = "SHA256SUMS";
 const rootFiles = ["artisan", "composer.json", "composer.lock", "DEPLOYMENT.md"];
-const sourceDirectories = ["app", "config", "database", "routes", "resources"];
+const sourceDirectories = ["app", "config", "database", "routes", "resources", "tests"];
 const publicSource = path.join(root, "deployment", "hostinger", "backend-public");
 const publicFiles = [".htaccess", "index.php", "backend-path.php.example"];
 
@@ -99,7 +99,7 @@ const forbiddenNames = actual.filter((file) => {
   const lower = file.toLowerCase();
   return lower === ".env" || lower.startsWith(".env.") || lower.includes("/.env") || lower === ".git" || lower.startsWith(".git/") || lower.includes("/.git/")
     || lower.endsWith(".gitignore") || lower.endsWith(".gitattributes") || lower.endsWith(".zip") || lower.includes("vendor/")
-    || lower.includes("tests/") || lower.includes("node_modules/") || lower.startsWith("src/")
+    || lower.includes("node_modules/") || lower.startsWith("src/")
     || lower === "package.json" || lower === "package-lock.json" || lower.includes("frontend-upload")
     || lower.endsWith(".sqlite") || lower.endsWith(".db") || lower.endsWith(".log")
     || /(^|\/)(sessions|cache|logs)(\/|$)/.test(lower);

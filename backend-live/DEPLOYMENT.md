@@ -10,7 +10,29 @@ Both archives retain the verified PHP `ZipArchive` standard Deflate ZIP32 root-f
 
 `frontend-upload/` and `backend-live/` are repository deployment mirrors only. Codex is not connected to Hostinger; archive creation does not upload to `public_html`, update the private Laravel root/database, run production migrations/caches, or prove a live smoke test. Preserve `public_html/api`, `public_html/api/backend-path.php`, live `.env`, `vendor/`, database, storage/media/uploads, permissions, writable directories, logs, sessions, queues, and runtime state during manual deployment. This section supersedes all older conflicting release instructions below.
 
-## Full Refer & Earn restoration (2026-07-22)
+## Current referral production-upgrade handoff (2026-07-23)
+
+This section supersedes every older referral deployment note below. The authoritative source must be committed and pushed before running npm run release:hostinger-live; use only the resulting matched FoodOnlines_Frontend_Live.zip and FoodOnlines_Backend_Live.zip. Do not infer current contents from any prior archive, timestamp, mirror, or historical instruction. The package gate rejects the known obsolete Admin filter strings and verifies both extraction paths.
+
+Before deployment, back up the production database, public_html, public_html/api, the private Laravel root, live .env, vendor/, complete storage/ including media/uploads, permissions, logs, sessions, queues, and runtime state. Extract the frontend ZIP directly into public_html without a wrapper and preserve public_html/api. Extract the backend ZIP into the actual private Laravel root and preserve all listed live/runtime data. Verify that public_html/api/backend-path.php names that exact private root.
+
+From the private Laravel root run, in order:
+
+    php artisan optimize:clear
+    php artisan referrals:diagnose
+    php artisan migrate --force
+    php artisan migrate:status
+    php artisan referrals:diagnose
+    php artisan referrals:backfill-codes
+    php artisan referrals:backfill-codes
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    php artisan referrals:diagnose
+
+The final diagnostic must report core/full schema ready, no missing table or column, an active program, and zero eligible Customers, Suppliers, and Partners without codes; the second backfill must create zero codes. Never use migrate:fresh, reset, truncate, destructive schema commands, or a seed against production. This workspace has not connected to or deployed on Hostinger.
+
+## Full Refer & Earn restoration (2026-07-22; historical context only)
 
 The regression boundary was an incomplete referral rollout: referral routes and hooks could query absent referral tables, allowing an optional feature to produce HTTP 500 responses while core registration and Admin user detail otherwise worked. This release centralizes referral schema readiness. Referral endpoints return a controlled safe HTTP 503 until all required referral tables/columns exist; registration, Admin user detail, order qualification, and full-refund handling continue without referral work until then. The guard is not a substitute for the migration and must not fabricate codes, referrals, rewards, coupons, or success responses.
 

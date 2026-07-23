@@ -4,15 +4,15 @@ Last reviewed: 2026-07-23. This is the single root-level record for current prod
 
 ## Current verified baseline
 
-The active shared Customer/Supplier/Partner referral release was rebuilt from source on 2026-07-23. Archive measurements and hashes are recorded in the paired release handoff because they are rebuild-sensitive:
+The active shared Customer/Supplier/Partner referral repair was rebuilt from authoritative source on 2026-07-23. It adds the additive existing-installation schema upgrade, private readiness diagnostic, responsive Admin filters, and a latest-fix archive gate. Archive measurements and hashes are recorded in the paired release handoff because they are rebuild-sensitive:
 
 | Item | Verified result |
 | --- | --- |
 | Production build | 142 transformed modules |
-| Production audit | 28 routes; 1,037 files / 91,883,398 bytes; zero missing local references or placeholder links |
-| `dist/` | 1,037 files / 91,883,398 bytes |
+| Production audit | 28 routes; 1,037 files / 91,883,725 bytes; zero missing local references or placeholder links |
+| `dist/` | 1,037 files / 91,883,725 bytes |
 | `frontend-upload/` | Exact SHA-256 parity with `dist/` |
-| `backend-live/` | 292 source files plus `SHA256SUMS`; manifest/safety clean |
+| `backend-live/` | 352 source files plus `SHA256SUMS`, including referral acceptance tests; manifest/safety clean |
 | Live archives | Generated only after the candidate commit is pushed and remote equality is proven; exact counts, sizes, and hashes belong in the release handoff |
 
 The final `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` must use standard Deflate ZIP32 entries at archive root and pass CRC/listing, Windows extraction parity, PHP extraction parity, address and referral repair-content checks inside both extractions, path/metadata safety, forbidden-content checks, and backend-manifest verification. No external Hostinger deployment was performed or verified.

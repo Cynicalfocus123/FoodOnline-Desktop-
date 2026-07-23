@@ -126,6 +126,13 @@ async function adminOperations(client, config) {
   const list = await client.evaluate("document.body.innerText");
   const headings = await client.evaluate("[...document.querySelectorAll('th')].map((heading) => heading.textContent.trim())");
   assert(headings.includes("Referrer") && headings.includes("Friend") && headings.includes("Registered"), `Admin referral table headings did not render: ${list.slice(0, 800)}`);
+  const filterLabels = await client.evaluate("[...document.querySelectorAll('form select')].map((select) => select.options[0]?.textContent?.trim())");
+  assert(filterLabels.includes("All referral statuses") && filterLabels.includes("All review statuses"), "Admin filter labels did not render correctly: " + filterLabels.join(", "));
+  await client.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 800, deviceScaleFactor: 1, mobile: true });
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  const responsiveFilters = await client.evaluate('(() => { const form = [...document.querySelectorAll("form")].find((candidate) => candidate.querySelector("select")); if (!form) return { found: false }; const bounds = form.getBoundingClientRect(); const controls = [...form.querySelectorAll("input, select, button")].map((control) => control.getBoundingClientRect()); return { found: true, scrollWidth: form.scrollWidth, clientWidth: form.clientWidth, controlsFit: controls.every((box) => box.left >= bounds.left - 1 && box.right <= bounds.right + 1) }; })()');
+  assert(responsiveFilters.found && responsiveFilters.scrollWidth <= responsiveFilters.clientWidth && responsiveFilters.controlsFit, "Admin filters overlap or overflow on mobile: " + JSON.stringify(responsiveFilters));
+  await client.send("Emulation.clearDeviceMetricsOverride");
   await navigate(client, `${config.frontendOrigin}/admin/referrals/${encodeURIComponent(config.referralId)}`);
   try {
     await waitFor(() => client.evaluate("document.body.innerText.toLowerCase().includes('referral detail')"), "Admin referral detail");
