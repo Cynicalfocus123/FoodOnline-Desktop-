@@ -140,7 +140,7 @@ test("direct customer edit routing and detail UI load the canonical record", () 
   assert.match(source, /No saved payment methods for this customer\./);
   assert.match(source, /paymentMethods\.map\(\(method\)/);
   assert.match(source, /data-testid="managed-user-editor"/);
-  assert.match(source, /data-testid="customer-addresses"/);
+  assert.match(source, /role === "customer" \? "customer-addresses"/);
   assert.match(source, /data-address-id=\{address\.id\}/);
   assert.match(source, /Retry/);
 });
@@ -167,4 +167,14 @@ test("profile editor and optional customer collections keep independent state", 
   assert.match(source, /Save &amp; Continue/);
   assert.match(source, /No saved addresses for this customer\./);
   assert.match(source, /No saved payment methods for this customer\./);
+});
+
+test("supplier and partner routes retain their profiles and use the shared saved-address cards", () => {
+  const source = readFileSync("src/components/admin/EnterpriseUsersAdminPanel.tsx", "utf8");
+  assert.match(source, /setAddressPhase\("loading"\)/);
+  assert.match(source, /setAddresses\(returnedAddresses \?\? \[\]\)/);
+  assert.match(source, /No saved addresses for this supplier\./);
+  assert.match(source, /No saved addresses for this partner\./);
+  assert.match(source, /role === "customer" \? "customer-addresses" : `\$\{role\}-addresses`/);
+  assert.match(source, /role === "customer" \? <section/);
 });

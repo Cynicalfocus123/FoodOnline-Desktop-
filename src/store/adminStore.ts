@@ -51,6 +51,11 @@ type DashboardStats = {
   low_stock_variants: number;
 };
 
+type ApiAdminSession = {
+  admin: ApiAdmin;
+  expires_at?: string | null;
+};
+
 type ApiDeleteAccountRequest = {
   id: number;
   user_id: number;
@@ -83,6 +88,9 @@ type AdminStore = {
   activeSidebarKey: AdminSidebarKey;
   activeUsersTab: SignupRoleKey;
   authError: string | null;
+  hasHydratedSession: boolean;
+  isLoggingOut: boolean;
+  isValidatingSession: boolean;
   securityMessage: string | null;
   settingsMessage: string | null;
   adminEmail: string;
@@ -92,6 +100,7 @@ type AdminStore = {
   auditLog: AdminAuditEntry[];
   stats: DashboardStats;
   lastLoginAt: string | null;
+  sessionExpiresAt: string | null;
   isLoadingUsers: boolean;
   deleteAccountRequests: AdminDeleteAccountRequest[];
   isLoadingDeleteAccountRequests: boolean;
@@ -101,6 +110,7 @@ type AdminStore = {
   fetchDeleteAccountRequests: () => Promise<void>;
   updateDeleteAccountRequestStatus: (requestId: number, status: AdminDeleteAccountRequest["status"]) => Promise<void>;
   logoutAdmin: () => Promise<void>;
+  markSessionHydrated: () => void;
   setActiveSidebarKey: (key: AdminSidebarKey) => void;
   setActiveUsersTab: (tab: SignupRoleKey) => void;
   loginAdmin: (email: string, password: string) => Promise<boolean>;
@@ -170,6 +180,10 @@ function cleanError(error: unknown, fallback: string) {
   return fallback;
 }
 
+function isAuthoritativeAdminRejection(error: unknown) {
+  return error instanceof ApiError && error.status === 401;
+}
+
 function toDeleteAccountRequest(item: ApiDeleteAccountRequest): AdminDeleteAccountRequest {
   return {
     id: item.id,
@@ -193,6 +207,9 @@ export const useAdminStore = create<AdminStore>()(
       activeSidebarKey: "overview",
       activeUsersTab: "customer",
       authError: null,
+      hasHydratedSession: false,
+      isLoggingOut: false,
+      isValidatingSession: false,
       securityMessage: "Sign in with your authorized administrator account.",
       settingsMessage: null,
       adminEmail: "",
@@ -202,28 +219,64 @@ export const useAdminStore = create<AdminStore>()(
       auditLog: [],
       stats: emptyStats,
       lastLoginAt: null,
+      sessionExpiresAt: null,
       isLoadingUsers: false,
       deleteAccountRequests: [],
       isLoadingDeleteAccountRequests: false,
+      markSessionHydrated: () => set({ hasHydratedSession: true }),
       fetchCurrentAdmin: async () => {
         const token = get().token;
 
         if (!token) {
+          set({
+            hasHydratedSession: true,
+            isAuthenticated: false,
+            isValidatingSession: false,
+          });
           return false;
         }
 
+        set({ isValidatingSession: true });
+
         try {
-          const response = await apiRequest<{ admin: ApiAdmin }>("/admin/me", { token });
+          const response = await apiRequest<ApiAdminSession>("/admin/me", { token });
+          if (get().token !== token) return false;
+
           set({
             screen: "dashboard",
             isAuthenticated: true,
+            hasHydratedSession: true,
+            isValidatingSession: false,
             adminEmail: response.admin.email,
             adminName: response.admin.name,
             authError: null,
+            securityMessage: null,
+            sessionExpiresAt: response.expires_at ?? get().sessionExpiresAt,
           });
           return true;
-        } catch {
-          set({ screen: "login", isAuthenticated: false, token: null });
+        } catch (error) {
+          if (get().token !== token) return false;
+
+          if (isAuthoritativeAdminRejection(error)) {
+            set({
+              screen: "login",
+              isAuthenticated: false,
+              hasHydratedSession: true,
+              isValidatingSession: false,
+              securityMessage: "Your administrator session has expired. Please sign in again.",
+              token: null,
+              sessionExpiresAt: null,
+            });
+            return false;
+          }
+
+          set({
+            screen: "dashboard",
+            isAuthenticated: true,
+            hasHydratedSession: true,
+            isValidatingSession: false,
+            securityMessage: "We could not verify your administrator session right now. Please try again shortly.",
+          });
           return false;
         }
       },
@@ -306,24 +359,33 @@ export const useAdminStore = create<AdminStore>()(
         await get().fetchDeleteAccountRequests();
       },
       logoutAdmin: async () => {
+        if (get().isLoggingOut) return;
         const token = get().token;
-
-        if (token) {
-          await apiRequest("/admin/logout", { method: "POST", token }).catch(() => undefined);
-        }
 
         set({
           screen: "login",
           isAuthenticated: false,
           authError: null,
+          hasHydratedSession: true,
+          isLoggingOut: true,
+          isValidatingSession: false,
           settingsMessage: "Admin session ended.",
           token: null,
+          sessionExpiresAt: null,
           adminEmail: "",
           adminName: "",
           users: [],
           stats: emptyStats,
           deleteAccountRequests: [],
         });
+
+        try {
+          if (token) {
+            await apiRequest("/admin/logout", { method: "POST", token }).catch(() => undefined);
+          }
+        } finally {
+          set({ isLoggingOut: false });
+        }
       },
       setActiveSidebarKey: (key) => set({ activeSidebarKey: key, authError: null, settingsMessage: null }),
       setActiveUsersTab: (tab) => {
@@ -332,7 +394,7 @@ export const useAdminStore = create<AdminStore>()(
       },
       loginAdmin: async (email, password) => {
         try {
-          const response = await apiRequest<{ token: string; admin: ApiAdmin }>("/admin/login", {
+          const response = await apiRequest<ApiAdminSession & { token: string }>("/admin/login", {
             method: "POST",
             body: { email, password },
           });
@@ -340,6 +402,9 @@ export const useAdminStore = create<AdminStore>()(
           set((state) => ({
             screen: "dashboard",
             isAuthenticated: true,
+            hasHydratedSession: true,
+            isLoggingOut: false,
+            isValidatingSession: false,
             activeSidebarKey: "overview",
             authError: null,
             settingsMessage: null,
@@ -347,6 +412,7 @@ export const useAdminStore = create<AdminStore>()(
             adminEmail: response.admin.email,
             adminName: response.admin.name,
             lastLoginAt: new Date().toISOString(),
+            sessionExpiresAt: response.expires_at ?? null,
             auditLog: [
               createAuditEntry("auth.success", `Admin signed in as ${response.admin.email}.`),
               ...state.auditLog,
@@ -406,12 +472,16 @@ export const useAdminStore = create<AdminStore>()(
         adminEmail: state.adminEmail,
         adminName: state.adminName,
         lastLoginAt: state.lastLoginAt,
+        sessionExpiresAt: state.sessionExpiresAt,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...(persistedState as Partial<AdminStore>),
         screen: "login",
         isAuthenticated: false,
+        hasHydratedSession: false,
+        isLoggingOut: false,
+        isValidatingSession: false,
         activeSidebarKey: "overview",
         activeUsersTab: "customer",
         authError: null,
@@ -422,6 +492,7 @@ export const useAdminStore = create<AdminStore>()(
         deleteAccountRequests: [],
         isLoadingDeleteAccountRequests: false,
       }),
+      onRehydrateStorage: () => (state) => state?.markSessionHydrated(),
     },
   ),
 );

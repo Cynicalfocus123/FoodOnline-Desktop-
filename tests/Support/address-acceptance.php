@@ -37,10 +37,10 @@ if ($command === 'seed-admin') {
     exit(0);
 }
 
-if ($command === 'inspect-customer') {
+if ($command === 'inspect-user') {
     $email = $argv[2] ?? '';
-    $customer = User::query()->where('email', strtolower($email))->firstOrFail();
-    $addresses = $customer->addresses()
+    $user = User::query()->where('email', strtolower($email))->firstOrFail();
+    $addresses = $user->addresses()
         ->orderByDesc('is_default')
         ->orderBy('id')
         ->get()
@@ -55,8 +55,8 @@ if ($command === 'inspect-customer') {
         ->values();
 
     echo json_encode([
-        'user_id' => $customer->id,
-        'email' => $customer->email,
+        'user_id' => $user->id,
+        'email' => $user->email,
         'addresses' => $addresses,
     ], JSON_THROW_ON_ERROR);
     exit(0);

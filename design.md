@@ -14,7 +14,7 @@ Keep catalog browsing, product details, search, cart, checkout, authentication, 
 
 Customer, Supplier, and Partner signup use the same authenticated-session contract as login. Success is never inferred from an HTTP response alone: it requires a valid token, canonical user ID, email, status, and matching account type. Validation errors remain field-specific, while offline/server failures use safe retry language and never expose endpoints or raw payloads.
 
-The signed-in account menu includes one clear logout action, and public logout clears account-owned state before late network responses can repopulate it. Address Book and checkout show persisted addresses only when the Laravel-authoritative record exists.
+The signed-in account menu includes one clear logout action, and public logout clears account-owned state before late network responses can repopulate it. Address Book and checkout show persisted addresses only when the Laravel-authoritative record exists for the signed-in Customer, Supplier, or Partner.
 
 ## Administration
 
@@ -22,11 +22,11 @@ The existing sidebar labels, ordering, dark-green surface, and orange active sta
 
 Category, brand, and product editors use the shared managed-media control. A user may select, replace, remove, and preview media before the first save; upload follows a successful parent save. Do not expose storage providers, buckets, paths, temporary-upload mechanics, or save-first warnings. Image failure is informational and retryable, not a reason to block an otherwise valid save.
 
-Administrator customer detail presents responsive, read-only Saved addresses and Payment methods sections. Address fields stay structured and country-aware. Payment copy is limited to safe, masked metadata such as brand, last four digits, expiry, default, status, and created time.
+Administrator Customer, Supplier, and Partner detail presents a responsive, read-only Saved addresses section. Customer detail also presents Payment methods. Address fields stay structured and country-aware; payment copy is limited to safe, masked metadata such as brand, last four digits, expiry, default, status, and created time.
 
-Each saved address is one separate card tied to the selected customer. Country-specific labels and populated values, stored phone number, delivery note, and summary remain visible. The Default badge appears only when `is_default` is true; loading, empty, or unrelated-user data must never substitute for returned address records, including after refreshing a direct Customer Edit URL.
+Each saved address is one separate card tied to the selected Customer, Supplier, or Partner. Country-specific labels and populated values, stored phone number, delivery note, and summary remain visible. The Default badge appears only when `is_default` is true; loading, empty, or unrelated-user data must never substitute for returned address records, including after refreshing a direct managed-user Edit URL.
 
-Customer, Supplier, and Partner edit routes keep one stable editor with the original identity, contact, LINE ID, company, status, source, and timestamp fields. The profile, saved-address, and payment-method requests have independent loading, empty, failure, and retry states; an optional-section failure must not replace or hide the profile editor. The URL module is authoritative for the expected role on direct navigation and refresh.
+Customer, Supplier, and Partner edit routes keep one stable editor with the original identity, contact, LINE ID, company, status, source, and timestamp fields. The profile and saved-address requests have independent loading, empty, failure, and retry states; Customer payment methods follow the same rule. An optional-section failure must not replace or hide the profile editor. The URL module is authoritative for the expected role on direct navigation and refresh. Admin session restoration stays on a neutral loading screen until persisted state is hydrated; retryable `/admin/me` failures do not force the Login view.
 
 ## Privacy and error presentation
 

@@ -122,12 +122,13 @@ class AdminUsersController extends Controller
         if ($this->referralSchemaIsReady()) {
             $relations = ['referralCode', 'referralReceived', 'referralsMade', 'referralRewards'];
         }
+        if (Schema::hasTable('user_addresses')) {
+            $relations['addresses'] = fn ($query) => $query
+                ->orderByDesc('is_default')
+                ->orderByDesc('id');
+        }
+
         if (($user->account_type ?: $user->role) === 'customer') {
-            if (Schema::hasTable('user_addresses')) {
-                $relations['addresses'] = fn ($query) => $query
-                    ->orderByDesc('is_default')
-                    ->orderByDesc('id');
-            }
             if (Schema::hasTable('user_payment_methods')) {
                 $relations['paymentMethods'] = fn ($query) => $query
                     ->where('status', 'active')

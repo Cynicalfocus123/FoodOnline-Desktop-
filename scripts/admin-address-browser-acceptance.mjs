@@ -76,11 +76,18 @@ function assert(condition, message) {
 }
 
 function assertRenderedState(state, config, phase) {
-  assert(state.url.endsWith(`/admin/customers/${config.customerId}/edit`), `${phase}: direct Admin URL changed.`);
-  assert(state.editorRecordId === String(config.customerId), `${phase}: editor is not bound to the selected customer.`);
-  assert(state.editorEmail === config.customerEmail, `${phase}: original customer-information editor did not render.`);
+  const accountRole = config.accountRole ?? "customer";
+  const adminModule = config.adminModule ?? "customers";
+  const userId = config.userId ?? config.customerId;
+  const userEmail = config.userEmail ?? config.customerEmail;
+  const forbiddenMarkers = config.forbiddenAddressMarkers ?? [config.otherCustomerMarker];
+  assert(state.url.endsWith(`/admin/${adminModule}/${userId}/edit`), `${phase}: direct Admin URL changed.`);
+  assert(state.editorRecordId === String(userId), `${phase}: editor is not bound to the selected ${accountRole}.`);
+  assert(state.editorEmail === userEmail, `${phase}: original ${accountRole} information editor did not render.`);
   assert(state.cards.length === 2, `${phase}: expected exactly two address cards, received ${state.cards.length}.`);
-  assert(!state.pageText.includes(config.otherCustomerMarker), `${phase}: another customer's address leaked into the page.`);
+  for (const marker of forbiddenMarkers) {
+    assert(!state.pageText.includes(marker), `${phase}: another user's address leaked into the page.`);
+  }
 
   const thailand = state.cards.find((card) => card.countryKey === "thailand");
   const usa = state.cards.find((card) => card.countryKey === "usa");
@@ -172,7 +179,7 @@ try {
 
   const readState = () => cdp.evaluate(`(() => {
     const editor = document.querySelector('[data-testid="managed-user-editor"]');
-    const section = document.querySelector('[data-testid="customer-addresses"]');
+    const section = document.querySelector(${JSON.stringify(`[data-testid="${config.addressSectionTestId ?? "customer-addresses"}"]`)});
     return {
       url: location.href,
       editorRecordId: editor?.getAttribute('data-record-id') ?? null,
@@ -191,6 +198,22 @@ try {
   const firstLoad = await readState();
   assertRenderedState(firstLoad, config, "initial load");
 
+  const navigationWorked = await cdp.evaluate(`(() => {
+    const overview = [...document.querySelectorAll('aside button')].find((button) => button.innerText.includes('Overview'));
+    if (!overview) return false;
+    overview.click();
+    return true;
+  })()`);
+  assert(navigationWorked, "Admin sidebar navigation is unavailable.");
+  await waitFor(
+    async () => await cdp.evaluate("location.pathname === '/admin' && !document.querySelector('input[type=email]')"),
+    "Admin sidebar navigation without login redirect",
+  );
+
+  await cdp.send("Page.navigate", { url: config.adminUrl });
+  await waitFor(async () => (await readState()).cards.length === 2, "two Admin address cards after internal route return");
+  assertRenderedState(await readState(), config, "return to direct edit route");
+
   await cdp.send("Page.reload", { ignoreCache: true });
   await waitFor(async () => (await readState()).cards.length === 2, "two Admin address cards after refresh");
   const refreshed = await readState();
@@ -199,7 +222,8 @@ try {
   process.stdout.write(JSON.stringify({
     browser: "headless Chrome via DevTools",
     directUrl: config.adminUrl,
-    customerId: String(config.customerId),
+    accountRole: config.accountRole ?? "customer",
+    userId: String(config.userId ?? config.customerId),
     firstLoad,
     refreshed,
   }));

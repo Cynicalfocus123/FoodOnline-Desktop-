@@ -6,6 +6,12 @@ Every completed change rebuilds and synchronizes authoritative source, `dist/`, 
 
 The permanent workflow adoption passed 77 Node tests, TypeScript, production build/audit, exact 1,036-file frontend mirror parity, and a 290-source-file backend manifest audit. Commit `39a81482f6707d20edd009b35599d7dfa1e3248d` was pushed and matched `origin/main` before the paired Live ZIP verification; only the two approved archives remained afterward. External Hostinger deployment was not performed.
 
+## Admin-session and managed-address follow-up (2026-07-22)
+
+The apparent Admin login loop was a frontend state race, not an automatic expiry timer: persisted state initialized as unauthenticated and the portal selected Login before hydration, while every failed `/admin/me` request discarded the token. Admin token responses now serialize `expires_at`; the hydrated session retains its token on retryable network, throttle, and server failures and clears it only for a matching current-token HTTP 401. Logout clears local state first and revokes remotely on a best-effort basis.
+
+Public Address Book routes already authorized Customer, Supplier, and Partner sessions and scoped records by `user_id`. The missing Admin representation was caused by Customer-only address eager loading and Customer-only address UI state/rendering. Admin detail now returns selected-user addresses for all three supported roles, with role-correct neutral empty states; payment metadata remains Customer-only. `npm run test:managed-user-address-acceptance` executes real Customer, Supplier, and Partner registration, persistence, selected-detail, refresh, and cross-role-isolation coverage.
+
 ## Urgent authentication and managed-user repair (2026-07-22)
 
 The referral rollout introduced mandatory referral-table reads into every registration and administrator managed-user detail request. Production evidence showed core health and request validation working while the public referral invite path returned a safe HTTP 500, identifying referral schema readiness as the shared failure boundary. The repaired services explicitly treat referral features as unavailable until all referral tables exist, so Customer/Supplier/Partner registration and Admin detail no longer fail with them.

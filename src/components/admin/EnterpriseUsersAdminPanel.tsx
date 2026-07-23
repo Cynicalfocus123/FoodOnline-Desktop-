@@ -167,7 +167,7 @@ export function EnterpriseUsersAdminPanel({
     setMessage("");
     setDetailMessage("");
     setProfilePhase(fallbackUser ? "loaded" : "loading");
-    setAddressPhase(role === "customer" ? "loading" : "unavailable");
+    setAddressPhase("loading");
     setPaymentPhase(role === "customer" ? "loading" : "unavailable");
     void usersApi
       .show(token, recordId)
@@ -200,16 +200,17 @@ export function EnterpriseUsersAdminPanel({
         setEditing(user);
         setForm(formForUser(user));
         setProfilePhase("loaded");
+        const returnedAddresses = Array.isArray(user.addresses)
+          ? user.addresses
+          : null;
+        setAddresses(returnedAddresses ?? []);
+        setAddressPhase(returnedAddresses ? "loaded" : "error");
+
         if (role === "customer") {
-          const returnedAddresses = Array.isArray(user.addresses)
-            ? user.addresses
-            : null;
           const returnedPayments = Array.isArray(user.payment_methods)
             ? user.payment_methods
             : null;
-          setAddresses(returnedAddresses ?? []);
           setPaymentMethods(returnedPayments ?? []);
-          setAddressPhase(returnedAddresses ? "loaded" : "error");
           setPaymentPhase(returnedPayments ? "loaded" : "error");
         }
       })
@@ -230,7 +231,7 @@ export function EnterpriseUsersAdminPanel({
           ),
         );
         setProfilePhase(fallbackUser ? "loaded" : "error");
-        setAddressPhase(role === "customer" ? "error" : "unavailable");
+        setAddressPhase("error");
         setPaymentPhase(role === "customer" ? "error" : "unavailable");
       });
     return () => {
@@ -688,13 +689,14 @@ export function EnterpriseUsersAdminPanel({
           <ReadOnlyDetail label="Updated" value={formatManagedUserDate(editing.updated_at)} />
         </section>
       ) : null}
-      {role === "customer" && editing ? (
-        <CustomerDetailSections
+      {editing ? (
+        <ManagedUserDetailSections
           addressPhase={addressPhase}
           addresses={addresses}
           onRetry={() => setDetailAttempt((attempt) => attempt + 1)}
           paymentMethods={paymentMethods}
           paymentPhase={paymentPhase}
+          role={role}
         />
       ) : null}
     </form>
@@ -763,31 +765,39 @@ function DetailLoadShell({
   );
 }
 
-function CustomerDetailSections({
+function ManagedUserDetailSections({
   addressPhase,
   addresses,
   onRetry,
   paymentMethods,
   paymentPhase,
+  role,
 }: {
   addressPhase: CustomerDetailPhase;
   addresses: ManagedUserAddress[];
   onRetry?: () => void;
   paymentMethods: ManagedUserPaymentMethod[];
   paymentPhase: CustomerDetailPhase;
+  role: SignupRoleKey;
 }) {
   const addressState = customerDetailSectionState(addressPhase, addresses.length);
-  const paymentState = customerDetailSectionState(paymentPhase, paymentMethods.length);
+  const paymentState = role === "customer" ? customerDetailSectionState(paymentPhase, paymentMethods.length) : "unavailable";
+  const roleLabel = labels[role];
+  const emptyAddressMessage = role === "supplier"
+    ? "No saved addresses for this supplier."
+    : role === "partner"
+      ? "No saved addresses for this partner."
+      : "No saved addresses for this customer.";
 
   return (
     <div className="grid gap-6">
       <section
         className="grid gap-4 rounded-2xl border border-neutral-200 p-5"
-        data-testid="customer-addresses"
+        data-testid={role === "customer" ? "customer-addresses" : `${role}-addresses`}
       >
         <div>
           <p className="text-sm font-black uppercase tracking-[0.16em] text-citrus-500">
-            Customer addresses
+            {roleLabel} addresses
           </p>
           <h3 className="mt-2 text-xl font-black">Saved addresses</h3>
         </div>
@@ -799,15 +809,16 @@ function CustomerDetailSections({
           </div>
         ) : (
           <DetailSectionMessage
-            emptyMessage="No saved addresses for this customer."
+            emptyMessage={emptyAddressMessage}
             loadingMessage="Loading saved addresses…"
             onRetry={onRetry}
+            roleLabel={roleLabel}
             state={addressState}
           />
         )}
       </section>
 
-      <section className="grid gap-4 rounded-2xl border border-neutral-200 p-5">
+      {role === "customer" ? <section className="grid gap-4 rounded-2xl border border-neutral-200 p-5">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.16em] text-citrus-500">
             Customer payments
@@ -846,10 +857,11 @@ function CustomerDetailSections({
             emptyMessage="No saved payment methods for this customer."
             loadingMessage="Loading payment methods…"
             onRetry={onRetry}
+            roleLabel="Customer"
             state={paymentState}
           />
         )}
-      </section>
+      </section> : null}
     </div>
   );
 }
@@ -912,11 +924,13 @@ function DetailSectionMessage({
   emptyMessage,
   loadingMessage,
   onRetry,
+  roleLabel,
   state,
 }: {
   emptyMessage: string;
   loadingMessage: string;
   onRetry?: () => void;
+  roleLabel: string;
   state: Exclude<CustomerDetailSectionState, "ready">;
 }) {
   const message =
@@ -925,8 +939,8 @@ function DetailSectionMessage({
       : state === "empty"
         ? emptyMessage
         : state === "unavailable"
-          ? "Customer information is unavailable."
-          : "Unable to load this customer information.";
+          ? `${roleLabel} information is unavailable.`
+          : `Unable to load this ${roleLabel.toLowerCase()} information.`;
 
   return (
     <div className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">

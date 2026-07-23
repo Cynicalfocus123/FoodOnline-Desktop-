@@ -260,6 +260,23 @@ To activate the preserved direct-upload provider later, back up the database and
 
 Restore the prior backend source and database backup only if required, but preserve the newest valid runtime media backup unless database references were also rolled back. Restore the previous `.env` media values, run `php artisan optimize:clear`, rebuild caches, and verify both old `r2://` and current `local://` references. Never roll back by deleting `storage/app/public/media`.
 
+## Admin session and managed-address deployment verification (2026-07-22)
+
+Deploy the matched source and mirrors only after the final commit is pushed. Admin login and `/api/v1/admin/me` now include an `expires_at` timestamp; do not add a browser-side expiry timer. On an authorized disposable Admin account, refresh a direct managed-user edit URL and confirm the neutral restore state resolves to the existing Admin shell rather than Login. Confirm retryable service failure behavior separately only in an authorized environment; an exact HTTP 401 is the sole automatic local-session logout condition.
+
+For Customer, Supplier, and Partner disposable accounts, use the existing public authenticated Address Book endpoint to save a default Thailand address and a non-default United States address. Verify each matching Admin edit route shows only its selected user’s two saved-address cards before and after refresh. Customer alone may show masked payment methods. Do not rely on Client-side role filtering for isolation: confirm that address markers from the other two roles are absent.
+
+Run the production cache commands from the private Laravel root after upload:
+
+```bash
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+No external Hostinger upload, migration, or cache rebuild is asserted by repository verification alone.
+
 ## Category administration repair deployment (2026-07-18)
 
 This release is prepared in two verified folders: `backend-live/` for the private Laravel application and `frontend-upload/` for the public storefront. When ZIP delivery is requested, their contents are packaged at archive root as `FoodOnlines_Backend_Live.zip` and `FoodOnlines_Frontend_Live.zip`. It has not been uploaded to Hostinger and it has not changed the production database.

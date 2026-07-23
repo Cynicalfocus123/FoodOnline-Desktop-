@@ -24,7 +24,7 @@ class AdminAuthTest extends TestCase
         $login = $this->postJson('/api/v1/admin/login', [
             'email' => 'admin@example.com',
             'password' => 'Adminpass123',
-        ])->assertOk()->assertJsonPath('admin.id', $admin->id);
+        ])->assertOk()->assertJsonPath('admin.id', $admin->id)->assertJsonStructure(['expires_at']);
 
         $token = (string) $login->json('token');
         $this->assertNotNull(AdminApiToken::query()->firstOrFail()->expires_at);
@@ -33,6 +33,12 @@ class AdminAuthTest extends TestCase
             ->getJson('/api/v1/admin/dashboard')
             ->assertOk()
             ->assertJsonPath('stats.customers', 1);
+
+        $this->withToken($token)
+            ->getJson('/api/v1/admin/me')
+            ->assertOk()
+            ->assertJsonPath('admin.id', $admin->id)
+            ->assertJsonPath('expires_at', AdminApiToken::query()->firstOrFail()->expires_at?->toIso8601String());
 
         $this->withToken($token)
             ->getJson('/api/v1/admin/users?account_type=customer')

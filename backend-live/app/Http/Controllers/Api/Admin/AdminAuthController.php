@@ -35,12 +35,15 @@ class AdminAuthController extends Controller
 
         $plainToken = Str::random(80);
 
-        AdminApiToken::query()->create([
+        $expiresAt = now()->addMinutes(max(1, (int) config('foodonlines.tokens.admin_ttl_minutes', 480)));
+        $adminToken = AdminApiToken::query()->create([
             'user_id' => $user->id,
             'name' => 'admin-dashboard',
             'token_hash' => hash('sha256', $plainToken),
             'last_used_at' => now(),
-            'expires_at' => now()->addMinutes(max(1, (int) config('foodonlines.tokens.admin_ttl_minutes', 480))), 'ip_address' => $request->ip(), 'user_agent' => substr((string) $request->userAgent(), 0, 1000),
+            'expires_at' => $expiresAt,
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string) $request->userAgent(), 0, 1000),
         ]);
         $user->forceFill(['last_login_at' => now()])->save();
 
@@ -48,6 +51,7 @@ class AdminAuthController extends Controller
             'message' => 'Login successful.',
             'token_type' => 'Bearer',
             'token' => $plainToken,
+            'expires_at' => $adminToken->expires_at?->toIso8601String(),
             'admin' => new AdminUserResource($user),
         ]);
     }
@@ -65,8 +69,11 @@ class AdminAuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
+        $token = $request->attributes->get('admin_api_token');
+
         return response()->json([
             'admin' => new AdminUserResource($request->user()),
+            'expires_at' => $token instanceof AdminApiToken ? $token->expires_at?->toIso8601String() : null,
         ]);
     }
 }

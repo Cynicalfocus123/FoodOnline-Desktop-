@@ -26,13 +26,15 @@ import { ReferralAdminPanel } from "./admin/ReferralAdminPanel";
 
 export function AdminPortal() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
+  const hasHydratedSession = useAdminStore((state) => state.hasHydratedSession);
+  const isValidatingSession = useAdminStore((state) => state.isValidatingSession);
   const token = useAdminStore((state) => state.token);
   const fetchCurrentAdmin = useAdminStore((state) => state.fetchCurrentAdmin);
   const fetchStats = useAdminStore((state) => state.fetchStats);
   const fetchUsers = useAdminStore((state) => state.fetchUsers);
 
   useEffect(() => {
-    if (!isAuthenticated && token) {
+    if (hasHydratedSession && !isAuthenticated && token && !isValidatingSession) {
       void fetchCurrentAdmin().then((success) => {
         if (success) {
           void fetchStats();
@@ -40,7 +42,21 @@ export function AdminPortal() {
         }
       });
     }
-  }, [fetchCurrentAdmin, fetchStats, fetchUsers, isAuthenticated, token]);
+  }, [fetchCurrentAdmin, fetchStats, fetchUsers, hasHydratedSession, isAuthenticated, isValidatingSession, token]);
+
+  useEffect(() => {
+    const storageKey = "foodonline-admin-store";
+    const reconcileStoredSession = (event: StorageEvent) => {
+      if (event.key === storageKey) void useAdminStore.persist.rehydrate();
+    };
+
+    window.addEventListener("storage", reconcileStoredSession);
+    return () => window.removeEventListener("storage", reconcileStoredSession);
+  }, []);
+
+  if (!hasHydratedSession || (token && isValidatingSession)) {
+    return <AdminSessionLoadingScreen />;
+  }
 
   if (!isAuthenticated) {
     return <AdminLoginScreen />;
@@ -487,6 +503,14 @@ function UsersPanel({
         </div>
       </div>
     </section>
+  );
+}
+
+function AdminSessionLoadingScreen() {
+  return (
+    <main className="grid min-h-screen place-items-center bg-[#f5f7f4] px-4 text-center text-ink">
+      <p className="text-sm font-semibold text-neutral-600">Restoring your administrator session…</p>
+    </main>
   );
 }
 

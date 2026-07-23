@@ -1,3 +1,8 @@
+param(
+    [ValidateSet("customer", "supplier", "partner")]
+    [string]$AccountType = "customer"
+)
+
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
@@ -88,6 +93,8 @@ try {
     $apiOrigin = "http://127.0.0.1:$apiPort"
     $frontendOrigin = "http://127.0.0.1:$frontendPort"
     $apiBase = "$apiOrigin/api/v1"
+    $accountLabel = $AccountType.Substring(0, 1).ToUpperInvariant() + $AccountType.Substring(1)
+    $adminModule = if ($AccountType -eq "customer") { "customers" } else { "${AccountType}s" }
 
     $env:APP_ENV = "testing"
     $env:APP_DEBUG = "false"
@@ -116,14 +123,14 @@ try {
         $laravelProcess = Start-Process -FilePath "php" -ArgumentList @("-S", "127.0.0.1:$apiPort", $laravelRouter) -WorkingDirectory (Join-Path $projectRoot "public") -PassThru -WindowStyle Hidden -RedirectStandardOutput $laravelOutput -RedirectStandardError $laravelError
         Wait-ForHttp "$apiBase/health" "Laravel API"
 
-        $customerEmail = "two-address-customer@example.test"
+        $customerEmail = "two-address-$AccountType@example.test"
         $registration = Invoke-JsonRequest -Method POST -Url "$apiBase/auth/register" -ExpectedStatus 201 -Body @{
-            account_type = "customer"
+            account_type = $AccountType
             email = $customerEmail
             first_name = "Acceptance"
-            last_name = "Customer"
+            last_name = $accountLabel
             contact_number = "+66 81 555 7788"
-            line_id = "acceptance.customer"
+            line_id = "acceptance.$AccountType"
             company_name = $null
             password = "Strongpass123"
             registered_from = "automated_address_acceptance"
@@ -134,7 +141,7 @@ try {
         $thailandPayload = @{
             country_key = "thailand"
             address_values = @{
-                fullName = "Acceptance Customer Thailand"
+                fullName = "Acceptance $accountLabel Thailand"
                 phoneNumber = "+66 81 234 5678"
                 houseBuilding = "88 FoodOnlines Tower"
                 unitFloorRoom = "Unit 12A"
@@ -153,7 +160,7 @@ try {
         $usaPayload = @{
             country_key = "usa"
             address_values = @{
-                fullName = "Acceptance Customer USA"
+                fullName = "Acceptance $accountLabel USA"
                 phoneNumber = "+1 213 555 0142"
                 streetAddress = "400 South Hope Street"
                 unitFloorRoom = "Suite 900"
@@ -167,30 +174,41 @@ try {
         }
         $usa = Invoke-JsonRequest -Method POST -Url "$apiBase/account/addresses" -ExpectedStatus 201 -Token $customerToken -Body $usaPayload
 
-        $otherMarker = "OTHER USER ADDRESS MUST NEVER RENDER"
-        $otherRegistration = Invoke-JsonRequest -Method POST -Url "$apiBase/auth/register" -ExpectedStatus 201 -Body @{
-            account_type = "customer"
-            email = "other-address-owner@example.test"
-            first_name = "Other"
-            last_name = "Customer"
-            contact_number = "+81 90 1111 2222"
-            line_id = $null
-            company_name = $null
-            password = "Strongpass123"
-            registered_from = "automated_address_acceptance"
+        $forbiddenRoles = switch ($AccountType) {
+            "customer" { @("supplier", "partner") }
+            "supplier" { @("customer", "partner") }
+            default { @("customer", "supplier") }
         }
-        $otherAddress = Invoke-JsonRequest -Method POST -Url "$apiBase/account/addresses" -ExpectedStatus 201 -Token ([string]$otherRegistration.Data.token) -Body @{
-            country_key = "japan"
-            address_values = @{ fullName = "Other Customer"; phoneNumber = "+81 90 1111 2222"; prefecture = "Tokyo"; deliveryNote = $otherMarker }
-            summary = $otherMarker
-            is_default = $true
+        $otherMarkers = @()
+        $otherAddressSaveStatuses = @()
+        foreach ($otherRole in $forbiddenRoles) {
+            $otherMarker = "OTHER $($otherRole.ToUpperInvariant()) ADDRESS MUST NEVER RENDER"
+            $otherMarkers += $otherMarker
+            $otherRegistration = Invoke-JsonRequest -Method POST -Url "$apiBase/auth/register" -ExpectedStatus 201 -Body @{
+                account_type = $otherRole
+                email = "other-$otherRole-address-$AccountType@example.test"
+                first_name = "Other"
+                last_name = $otherRole
+                contact_number = "+81 90 1111 2222"
+                line_id = $null
+                company_name = $null
+                password = "Strongpass123"
+                registered_from = "automated_address_acceptance"
+            }
+            $otherAddress = Invoke-JsonRequest -Method POST -Url "$apiBase/account/addresses" -ExpectedStatus 201 -Token ([string]$otherRegistration.Data.token) -Body @{
+                country_key = "japan"
+                address_values = @{ fullName = "Other $otherRole"; phoneNumber = "+81 90 1111 2222"; prefecture = "Tokyo"; deliveryNote = $otherMarker }
+                summary = $otherMarker
+                is_default = $true
+            }
+            $otherAddressSaveStatuses += $otherAddress.Status
         }
 
-        $databaseStateJson = & php tests/Support/address-acceptance.php inspect-customer $customerEmail
+        $databaseStateJson = & php tests/Support/address-acceptance.php inspect-user $customerEmail
         if ($LASTEXITCODE -ne 0) { throw "Acceptance database inspection failed." }
         $databaseState = $databaseStateJson | ConvertFrom-Json
         Assert-True ([string]$databaseState.user_id -eq $customerId) "Saved addresses are not attached to the registered users.id."
-        Assert-True (@($databaseState.addresses).Count -eq 2) "The authoritative database does not contain exactly two customer addresses."
+        Assert-True (@($databaseState.addresses).Count -eq 2) "The authoritative database does not contain exactly two $AccountType addresses."
         Assert-True (@($databaseState.addresses | Where-Object { [string]$_.user_id -eq $customerId }).Count -eq 2) "An address belongs to the wrong users.id."
 
         $adminLogin = Invoke-JsonRequest -Method POST -Url "$apiBase/admin/login" -ExpectedStatus 200 -Body @{ email = $adminEmail; password = $adminPassword }
@@ -203,7 +221,9 @@ try {
         Assert-True (@($addresses | Where-Object { $_.is_default }).Count -eq 1) "Admin API did not return exactly one default address."
         Assert-True ([string]$addresses[0].country_key -eq "thailand" -and [bool]$addresses[0].is_default) "Thailand is not the first/default Admin address."
         Assert-True (@($refreshedDetail.Data.user.addresses).Count -eq 2) "Repeated direct Admin detail request lost an address."
-        Assert-True (-not (($detail.Data | ConvertTo-Json -Depth 12) -like "*$otherMarker*")) "Another user's address leaked into the selected customer response."
+        foreach ($otherMarker in $otherMarkers) {
+            Assert-True (-not (($detail.Data | ConvertTo-Json -Depth 12) -like "*$otherMarker*")) "Another user's address leaked into the selected $AccountType response."
+        }
 
         & node node_modules/vite/bin/vite.js build --outDir $browserDist --emptyOutDir | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "Temporary production frontend build failed." }
@@ -224,16 +244,19 @@ try {
             chromePath = $chromePath
             debugPort = $debugPort
             chromeUserDataDirectory = $chromeProfile
-            adminUrl = "$frontendOrigin/admin/customers/$customerId/edit"
+            adminUrl = "$frontendOrigin/admin/$adminModule/$customerId/edit"
             adminEmail = $adminEmail
             adminPassword = $adminPassword
-            customerId = $customerId
-            customerEmail = $customerEmail
+            accountRole = $AccountType
+            adminModule = $adminModule
+            addressSectionTestId = "$AccountType-addresses"
+            userId = $customerId
+            userEmail = $customerEmail
             thailandAddressId = [string]$thailand.Data.address.id
             usaAddressId = [string]$usa.Data.address.id
-            otherCustomerMarker = $otherMarker
-            thailandRenderedValues = @("Thailand", "+66 81 234 5678", "88 FoodOnlines Tower", "Bangkok", "Watthana", "Khlong Toei Nuea", "10110", "Leave with the lobby concierge")
-            usaRenderedValues = @("United States", "+1 213 555 0142", "400 South Hope Street", "Los Angeles", "California", "90071", "Call from the loading entrance")
+            forbiddenAddressMarkers = $otherMarkers
+            thailandRenderedValues = @("Thailand", "Acceptance $accountLabel Thailand", "+66 81 234 5678", "88 FoodOnlines Tower", "Bangkok", "Watthana", "Khlong Toei Nuea", "10110", "Leave with the lobby concierge")
+            usaRenderedValues = @("United States", "Acceptance $accountLabel USA", "+1 213 555 0142", "400 South Hope Street", "Los Angeles", "California", "90071", "Call from the loading entrance")
         } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $browserConfigPath -Encoding UTF8
 
         $browserJson = & node scripts/admin-address-browser-acceptance.mjs $browserConfigPath
@@ -241,11 +264,12 @@ try {
         $browser = $browserJson | ConvertFrom-Json
 
         [pscustomobject]@{
-            customerId = $customerId
+            accountRole = $AccountType
+            userId = $customerId
             registrationStatus = $registration.Status
             thailandSaveStatus = $thailand.Status
             usaSaveStatus = $usa.Status
-            otherAddressSaveStatus = $otherAddress.Status
+            otherAddressSaveStatuses = $otherAddressSaveStatuses
             databaseAddressCount = @($databaseState.addresses).Count
             adminDetailStatus = $detail.Status
             adminRefreshStatus = $refreshedDetail.Status
