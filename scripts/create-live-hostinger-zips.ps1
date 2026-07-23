@@ -184,7 +184,7 @@ function Assert-LiveRepairContent([string]$Source, [string]$Kind) {
             "app/Http/Controllers/Api/Account/ReferralController.php" = @("ReferralSchema", "unavailableResponse", "function activity")
             "app/Http/Controllers/Api/Admin/AdminReferralController.php" = @("ReferralSchema", "unavailableResponse", "function findReferral")
             "app/Services/Referral/ReferralSchema.php" = @("Referral services are temporarily unavailable. Please try again later.", "referral_programs", "referral_rewards")
-            "app/Services/Referral/ReferralAttributionService.php" = @("codes->isReady", "Referral code is not available.")
+            "app/Services/Referral/ReferralAttributionService.php" = @("codes->isReady", "This referral code is not available.")
             "app/Services/Referral/ReferralQualificationService.php" = @("ReferralSchema", "handleFullRefund")
             "app/Services/Referral/ReferralRewardService.php" = @("fully refunded.", "Promotion::query")
             "public/index.php" = @("backend-path.php", "vendor/autoload.php", "bootstrap/app.php")
