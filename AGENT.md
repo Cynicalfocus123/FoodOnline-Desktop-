@@ -36,6 +36,8 @@ FoodOnlines has a Vite/TypeScript storefront and administrator interface plus a 
 
 The production interface must never expose API URLs, hostnames, endpoint paths, backend folders, environment names, credentials, tokens, database details, provider names, raw response bodies, stack traces, or technical errors. Use the shared error-normalization path and short, actionable customer-facing messages.
 
+Administrator authorization is Laravel-authoritative. `AdminPermissionCatalog` is the single source for permission definitions, preset role defaults, effective grants, and admin-route resolution; Super Admin is the only role allowed to manage staff accounts, permissions, status, passwords, or staff sessions. Frontend sidebar and direct-route guards are usability protections only and must never replace the backend checks. Staff resources return effective permissions and safe account metadata only.
+
 ## Design and data rules
 
 Follow `design.md` for visual and responsive decisions. Keep the existing dark-green/orange administration shell, responsive storefront behavior, and managed-media language. Category, brand, and product editors may retain local pre-save media previews, but media availability must not block a normal record save.

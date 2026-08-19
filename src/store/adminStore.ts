@@ -4,6 +4,7 @@ import { AdminAuditEntry, AdminSidebarKey, AdminUserRecord } from "../data/admin
 import { ApiError, apiRequest } from "../lib/apiClient";
 import { SignupRoleKey } from "../lib/registerSchema";
 import { toUserFacingErrorMessage } from "../lib/userFacingError";
+import { canAdminPermission, type AdminPermission } from "../lib/adminAccess";
 
 type AdminScreen = "login" | "dashboard";
 
@@ -12,6 +13,11 @@ type ApiAdmin = {
   name: string;
   email: string;
   role: "admin";
+  staff_role: string;
+  permissions: string[];
+  status: "active" | "disabled";
+  mfa_enabled: boolean;
+  last_login_at: string | null;
 };
 
 type ApiManagedUser = {
@@ -101,6 +107,10 @@ type AdminStore = {
   stats: DashboardStats;
   lastLoginAt: string | null;
   sessionExpiresAt: string | null;
+  staffRole: string | null;
+  permissions: string[];
+  mfaEnabled: boolean;
+  can: (permission: AdminPermission | string) => boolean;
   isLoadingUsers: boolean;
   deleteAccountRequests: AdminDeleteAccountRequest[];
   isLoadingDeleteAccountRequests: boolean;
@@ -220,6 +230,10 @@ export const useAdminStore = create<AdminStore>()(
       stats: emptyStats,
       lastLoginAt: null,
       sessionExpiresAt: null,
+      staffRole: null,
+      permissions: [],
+      mfaEnabled: false,
+      can: (permission) => canAdminPermission(permission, get().staffRole, get().permissions),
       isLoadingUsers: false,
       deleteAccountRequests: [],
       isLoadingDeleteAccountRequests: false,
@@ -249,6 +263,10 @@ export const useAdminStore = create<AdminStore>()(
             isValidatingSession: false,
             adminEmail: response.admin.email,
             adminName: response.admin.name,
+            staffRole: response.admin.staff_role,
+            permissions: response.admin.permissions ?? [],
+            mfaEnabled: response.admin.mfa_enabled,
+            lastLoginAt: response.admin.last_login_at ?? get().lastLoginAt,
             authError: null,
             securityMessage: null,
             sessionExpiresAt: response.expires_at ?? get().sessionExpiresAt,
@@ -283,7 +301,7 @@ export const useAdminStore = create<AdminStore>()(
       fetchUsers: async (role = get().activeUsersTab) => {
         const token = get().token;
 
-        if (!token) {
+        if (!token || !get().can("users.view")) {
           return;
         }
 
@@ -308,7 +326,7 @@ export const useAdminStore = create<AdminStore>()(
       fetchStats: async () => {
         const token = get().token;
 
-        if (!token) {
+        if (!token || !get().can("dashboard.view")) {
           return;
         }
 
@@ -322,7 +340,7 @@ export const useAdminStore = create<AdminStore>()(
       fetchDeleteAccountRequests: async () => {
         const token = get().token;
 
-        if (!token) {
+        if (!token || !get().can("users.view")) {
           return;
         }
 
@@ -374,6 +392,9 @@ export const useAdminStore = create<AdminStore>()(
           sessionExpiresAt: null,
           adminEmail: "",
           adminName: "",
+          staffRole: null,
+          permissions: [],
+          mfaEnabled: false,
           users: [],
           stats: emptyStats,
           deleteAccountRequests: [],
@@ -411,6 +432,9 @@ export const useAdminStore = create<AdminStore>()(
             token: response.token,
             adminEmail: response.admin.email,
             adminName: response.admin.name,
+            staffRole: response.admin.staff_role,
+            permissions: response.admin.permissions ?? [],
+            mfaEnabled: response.admin.mfa_enabled,
             lastLoginAt: new Date().toISOString(),
             sessionExpiresAt: response.expires_at ?? null,
             auditLog: [
@@ -473,6 +497,9 @@ export const useAdminStore = create<AdminStore>()(
         adminName: state.adminName,
         lastLoginAt: state.lastLoginAt,
         sessionExpiresAt: state.sessionExpiresAt,
+        staffRole: state.staffRole,
+        permissions: state.permissions,
+        mfaEnabled: state.mfaEnabled,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,
@@ -482,6 +509,9 @@ export const useAdminStore = create<AdminStore>()(
         hasHydratedSession: false,
         isLoggingOut: false,
         isValidatingSession: false,
+        staffRole: null,
+        permissions: [],
+        mfaEnabled: false,
         activeSidebarKey: "overview",
         activeUsersTab: "customer",
         authError: null,

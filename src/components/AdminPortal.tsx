@@ -12,6 +12,7 @@ import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 import { catalogApi } from "../services/admin/catalogApi";
 import { adminPath, adminUserRoleForModule, readAdminRoute, type AdminRoute } from "../lib/adminRouting";
+import { sidebarHasAccess } from "../lib/adminAccess";
 import type { MediaStorageState } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
@@ -102,12 +103,14 @@ function AdminLoginScreen() {
             <label className="grid gap-2">
               <span className="text-sm font-bold text-neutral-700">Email</span>
               <input
+                id="admin-login-email"
                 autoComplete="username"
                 className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
                 inputMode="email"
                 maxLength={254}
                 onChange={(event) => setEmail(event.target.value)}
                 type="email"
+                required
                 value={email}
               />
             </label>
@@ -115,11 +118,13 @@ function AdminLoginScreen() {
             <label className="grid gap-2">
               <span className="text-sm font-bold text-neutral-700">Password</span>
               <input
+                id="admin-login-password"
                 autoComplete="current-password"
                 className="min-h-14 rounded-2xl border border-neutral-200 px-4 text-base font-semibold text-ink outline-none ring-2 ring-transparent transition focus:border-leaf-500 focus:ring-leaf-500/15"
                 maxLength={128}
                 onChange={(event) => setPassword(event.target.value)}
                 type="password"
+                required
                 value={password}
               />
             </label>
@@ -163,11 +168,15 @@ function AdminDashboard() {
   const fetchDeleteAccountRequests = useAdminStore((state) => state.fetchDeleteAccountRequests);
   const updateDeleteAccountRequestStatus = useAdminStore((state) => state.updateDeleteAccountRequestStatus);
   const token = useAdminStore((state) => state.token);
+  const staffRole = useAdminStore((state) => state.staffRole);
+  const permissions = useAdminStore((state) => state.permissions);
+  const can = useAdminStore((state) => state.can);
   const [mediaStorage, setMediaStorage] = useState<MediaStorageState>({ phase: "checking", status: null });
   const [route, setRoute] = useState<AdminRoute>(() => readAdminRoute());
   const activeSidebarKey = route.sidebarKey;
   const routeUsersRole = adminUserRoleForModule(route.module);
   const effectiveUsersRole = routeUsersRole ?? activeUsersTab;
+  const routeAllowed = sidebarHasAccess(activeSidebarKey, staffRole, permissions);
 
   const navigate = (path: string, replace = false) => {
     if (replace) window.history.replaceState({}, "", path);
@@ -203,13 +212,14 @@ function AdminDashboard() {
   }, [activeSidebarKey, fetchDeleteAccountRequests]);
 
   useEffect(() => {
-    if (token) {
+    const canManageMedia = ["categories.manage", "brands.manage", "product_media.manage", "reviews.moderate", "returns.manage", "support.manage"].some(can);
+    if (token && canManageMedia && ["categories", "brands", "products", "returns", "reviews", "support"].includes(activeSidebarKey)) {
       setMediaStorage({ phase: "checking", status: null });
       void catalogApi.storageStatus(token)
         .then((status) => setMediaStorage({ phase: status.uploads_available ? "available" : "unavailable", status }))
         .catch(() => setMediaStorage({ phase: "unavailable", status: null }));
     }
-  }, [token]);
+  }, [activeSidebarKey, can, token]);
 
   const filteredUsers = useMemo(
     () => users.filter((user) => user.selectedRole === effectiveUsersRole),
@@ -229,22 +239,29 @@ function AdminDashboard() {
           <div className="mt-8 grid gap-3">
             {adminSidebarItems.map((item) => {
               const isActive = activeSidebarKey === item.key;
+              const hasAccess = sidebarHasAccess(item.key, staffRole, permissions);
               return (
                 <button
-                  className={`rounded-3xl border px-4 py-4 text-left transition ${
-                    isActive
-                      ? "border-citrus-400 bg-citrus-500 text-white shadow-lg shadow-orange-950/20"
-                      : "border-white/10 bg-white/5 text-emerald-50 hover:border-emerald-300/40 hover:bg-white/10"
-                  }`}
-                  key={item.key}
-                  onClick={() => navigate(adminPath(item.key))}
-                  type="button"
-                >
-                  <p className="text-sm font-black">{item.label}</p>
-                  <p className={`mt-1 text-sm leading-6 ${isActive ? "text-white/85" : "text-emerald-50/70"}`}>
-                    {item.description}
-                  </p>
-                </button>
+                   className={`rounded-3xl border px-4 py-4 text-left transition ${
+                     isActive
+                       ? "border-citrus-400 bg-citrus-500 text-white shadow-lg shadow-orange-950/20"
+                       : hasAccess
+                         ? "border-white/10 bg-white/5 text-emerald-50 hover:border-emerald-300/40 hover:bg-white/10"
+                         : "cursor-not-allowed border-white/5 bg-white/[0.02] text-white/35"
+                   }`}
+                   key={item.key}
+                   aria-disabled={!hasAccess}
+                   disabled={!hasAccess}
+                   tabIndex={hasAccess ? 0 : -1}
+                   title={hasAccess ? item.description : "No access"}
+                   onClick={() => { if (hasAccess) navigate(adminPath(item.key)); }}
+                   type="button"
+                 >
+                   <p className="text-sm font-black">{item.label}</p>
+                   <p className={`mt-1 text-sm leading-6 ${isActive ? "text-white/85" : hasAccess ? "text-emerald-50/70" : "text-white/35"}`}>
+                     {hasAccess ? item.description : "No access"}
+                   </p>
+                 </button>
               );
             })}
           </div>
@@ -275,7 +292,7 @@ function AdminDashboard() {
         </aside>
 
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          {activeSidebarKey === "overview" ? <><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+           {!routeAllowed ? <AdminAccessDenied /> : <>{activeSidebarKey === "overview" ? <><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="All signup records" value={String(stats.total_users)} light />
             <MetricCard label="Customers" value={String(stats.customers)} light />
             <MetricCard label="Suppliers" value={String(stats.suppliers)} light />
@@ -321,7 +338,7 @@ function AdminDashboard() {
                 updateStatus={updateDeleteAccountRequestStatus}
               />
             ) : null}
-            {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
+             {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token && can("commerce_settings.view") ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
             {activeSidebarKey === "categories" && token ? <CategoryAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "brands" && token ? <BrandAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "products" && token ? <ProductAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
@@ -336,8 +353,8 @@ function AdminDashboard() {
             {activeSidebarKey === "reports" && token ? <ReportsAdminPanel token={token} /> : null}
             {activeSidebarKey === "staff" && token ? <StaffAdminPanel token={token} /> : null}
             {activeSidebarKey === "operations" && token ? <OperationsAdminPanel token={token} /> : null}
-          </div>
-        </section>
+           </div></>}
+         </section>
       </div>
     </main>
   );
@@ -502,6 +519,18 @@ function UsersPanel({
           </table>
         </div>
       </div>
+    </section>
+  );
+}
+
+function AdminAccessDenied() {
+  return (
+    <section className="rounded-[32px] border border-amber-200 bg-white p-8 shadow-soft sm:p-10" role="status">
+      <p className="text-sm font-black uppercase tracking-[0.18em] text-citrus-500">No access</p>
+      <h2 className="mt-3 text-3xl font-black text-ink">This administrator area is restricted.</h2>
+      <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-600">
+        Your current administrator permissions do not include this module. Ask a Super Admin if you need access.
+      </p>
     </section>
   );
 }

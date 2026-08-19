@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { toUserFacingErrorMessage } from "../../lib/userFacingError";
 import { catalogApi, uploadManagedImage } from "../../services/admin/catalogApi";
 import { operationsApi } from "../../services/admin/operationsApi";
@@ -190,10 +190,133 @@ export function ReportsAdminPanel({ token }: { token: string }) {
   return <Shell title="Reports and exports"><p className="mt-3 text-sm text-neutral-600">Collected and outstanding Cash on Delivery totals are shown separately. Export access follows staff permissions.</p>{message && !report && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}{report ? <><div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(([label, value]) => <div className="rounded-2xl border bg-neutral-50 p-4" key={label}><p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-500">{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}</div><div className="mt-6 rounded-2xl border p-4"><p className="font-black">Top products</p>{report.top_products?.length ? report.top_products.map((product) => <div className="mt-3 flex justify-between gap-3 border-t pt-3 text-sm" key={product.product_name}><span>{product.product_name ?? "Product"} · {product.units ?? 0} units</span><strong>{reportMoney(product.value_minor)}</strong></div>) : <p className="mt-2 text-sm text-neutral-500">No product activity for this period.</p>}</div></> : null}<button className="mt-5 inline-flex rounded-full bg-neutral-900 px-5 py-3 text-sm font-black text-white" onClick={() => void operationsApi.downloadOrdersCsv(token).catch((error) => setMessage(errorOf(error)))} type="button">Export order CSV</button></Shell>;
 }
 
+const staffRoles = ["super_admin", "catalog_manager", "order_manager", "inventory_manager", "customer_support", "marketing_manager", "read_only"] as const;
+const staffPermissionOptions = [
+  "dashboard.view", "dashboard.manage", "users.view", "users.manage", "categories.view", "categories.manage", "brands.view", "brands.manage",
+  "products.view", "products.manage", "product_media.manage", "orders.view", "orders.manage", "inventory.view", "inventory.manage",
+  "promotions.view", "promotions.manage", "referrals.view", "referrals.manage", "audit.view", "returns.view", "returns.manage",
+  "reviews.view", "reviews.moderate", "support.view", "support.manage", "reports.view", "reports.export", "staff.view", "staff.manage", "operations.view", "operations.manage",
+  "commerce_settings.view", "commerce_settings.manage", "own_profile.manage", "own_mfa.manage",
+];
+const staffRoleDefaults: Record<string, string[]> = {
+  super_admin: staffPermissionOptions,
+  catalog_manager: ["categories.view", "categories.manage", "brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  order_manager: ["orders.view", "orders.manage", "inventory.view", "inventory.manage", "returns.view", "returns.manage", "own_profile.manage", "own_mfa.manage"],
+  inventory_manager: ["inventory.view", "inventory.manage", "own_profile.manage", "own_mfa.manage"],
+  customer_support: ["users.view", "support.view", "support.manage", "returns.view", "reviews.view", "reviews.moderate", "own_profile.manage", "own_mfa.manage"],
+  marketing_manager: ["promotions.view", "promotions.manage", "referrals.view", "referrals.manage", "reports.view", "reports.export", "own_profile.manage", "own_mfa.manage"],
+  read_only: ["dashboard.view", "users.view", "categories.view", "brands.view", "products.view", "orders.view", "inventory.view", "promotions.view", "referrals.view", "audit.view", "returns.view", "reviews.view", "support.view", "reports.view", "operations.view", "own_profile.manage", "own_mfa.manage"],
+};
+
+function permissionLabel(permission: string) {
+  return permission.replaceAll("_", " ").replace(".", " · ");
+}
+
 export function StaffAdminPanel({ token }: { token: string }) {
   const [rows, setRows] = useState<Array<Record<string, unknown>>>([]);
-  useEffect(() => { void operationsApi.staff(token).then((result) => setRows(result.data)).catch(() => setRows([])); }, [token]);
-  return <Shell title="Staff permissions and MFA"><p className="mt-3 text-sm text-neutral-600">Staff access follows assigned permissions. Existing administrators keep full access until a narrower role is selected.</p><div className="mt-6 grid gap-3">{rows.map((row) => <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4" key={String(row.id)}><span><strong>{String(row.name)}</strong> · {String(row.email)}<small className="ml-2 text-neutral-500">{String(row.role)} · MFA {row.mfa_enabled ? "on" : "off"}</small></span><select className="rounded-full border px-3 py-2 text-xs font-black" defaultValue={String(row.role)} onChange={(event) => void operationsApi.updateStaff(token, Number(row.id), { staff_role: event.target.value }).catch(() => undefined)}><option>super_admin</option><option>order_manager</option><option>inventory_manager</option><option>catalog_manager</option><option>customer_support</option><option>marketing_manager</option><option>read_only</option></select></div>)}</div></Shell>;
+  const [sessions, setSessions] = useState<Array<Record<string, unknown>>>([]);
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
+  const [role, setRole] = useState("read_only");
+  const [status, setStatus] = useState("active");
+  const [permissions, setPermissions] = useState<string[]>(staffRoleDefaults.read_only);
+  const [createForm, setCreateForm] = useState({ name: "", email: "", password: "", password_confirmation: "", staff_role: "read_only", status: "active" });
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetConfirmation, setResetConfirmation] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const [staff, sessionResponse] = await Promise.all([operationsApi.staff(token), operationsApi.staffSessions(token)]);
+      setRows(staff.data);
+      setSessions(sessionResponse.data);
+    } catch (loadError) {
+      setError(errorOf(loadError));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { void load(); }, [token]);
+
+  const choose = (row: Record<string, unknown>) => {
+    setSelected(row);
+    setRole(String(row.staff_role ?? "read_only"));
+    setStatus(String(row.status ?? "active"));
+    setPermissions(Array.isArray(row.permissions) ? row.permissions.map(String) : []);
+    setResetPassword("");
+    setResetConfirmation("");
+    setMessage("");
+    setError("");
+  };
+
+  const togglePermission = (permission: string) => {
+    setPermissions((current) => current.includes(permission) ? current.filter((item) => item !== permission) : [...current, permission]);
+  };
+
+  const createStaff = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true); setMessage(""); setError("");
+    try {
+      await operationsApi.createStaff(token, { ...createForm, staff_permissions: staffRoleDefaults[createForm.staff_role] ?? [] });
+      setCreateForm({ name: "", email: "", password: "", password_confirmation: "", staff_role: "read_only", status: "active" });
+      setMessage("Administrator created.");
+      await load();
+    } catch (createError) { setError(errorOf(createError)); }
+    finally { setSaving(false); }
+  };
+
+  const saveStaff = async () => {
+    if (!selected) return;
+    setSaving(true); setMessage(""); setError("");
+    try {
+      await operationsApi.updateStaff(token, Number(selected.id), { staff_role: role, status, staff_permissions: permissions });
+      setMessage("Administrator permissions updated.");
+      await load();
+    } catch (saveError) { setError(errorOf(saveError)); }
+    finally { setSaving(false); }
+  };
+
+  const resetStaffPassword = async () => {
+    if (!selected) return;
+    setSaving(true); setMessage(""); setError("");
+    try {
+      await operationsApi.resetStaffPassword(token, Number(selected.id), { password: resetPassword, password_confirmation: resetConfirmation });
+      setResetPassword(""); setResetConfirmation(""); setMessage("Administrator password reset.");
+      await load();
+    } catch (resetError) { setError(errorOf(resetError)); }
+    finally { setSaving(false); }
+  };
+
+  return <Shell title="Staff & MFA administration">
+    <p className="mt-3 text-sm leading-7 text-neutral-600">Only Super Admins can create administrators, change access, reset passwords, or revoke staff sessions. Passwords and security secrets are never displayed.</p>
+    {message ? <p className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-800" role="status">{message}</p> : null}
+    {error ? <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-800" role="alert">{error}</p> : null}
+    <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <form className="rounded-3xl border border-neutral-200 p-5" onSubmit={createStaff}>
+        <h3 className="text-xl font-black">Create administrator</h3>
+        <div className="mt-4 grid gap-3">
+          {([["name", "Display name", "text"], ["email", "Email address", "email"], ["password", "Password", "password"], ["password_confirmation", "Confirm password", "password"]] as const).map(([key, label, type]) => <label className="grid gap-1" key={key}><span className="text-sm font-bold text-neutral-700">{label}</span><input className="min-h-11 rounded-2xl border border-neutral-200 px-3 outline-none focus:border-leaf-500 focus:ring-2 focus:ring-leaf-500/15" autoComplete={key === "email" ? "username" : key.startsWith("password") ? "new-password" : "name"} required type={type} value={createForm[key]} onChange={(event) => setCreateForm((current) => ({ ...current, [key]: event.target.value }))} /></label>)}
+          <label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border border-neutral-200 px-3" value={createForm.staff_role} onChange={(event) => setCreateForm((current) => ({ ...current, staff_role: event.target.value }))}>{staffRoles.map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Status</span><select className="min-h-11 rounded-2xl border border-neutral-200 px-3" value={createForm.status} onChange={(event) => setCreateForm((current) => ({ ...current, status: event.target.value }))}><option value="active">Active</option><option value="disabled">Disabled</option></select></label>
+          <button className="min-h-12 rounded-full bg-citrus-500 px-5 text-sm font-black text-white disabled:bg-neutral-300" disabled={saving} type="submit">{saving ? "Saving..." : "Create administrator"}</button>
+        </div>
+      </form>
+      <div className="rounded-3xl border border-neutral-200 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-xl font-black">Administrator accounts</h3><p className="mt-1 text-sm text-neutral-500">{loading ? "Loading accounts..." : `${rows.length} administrator${rows.length === 1 ? "" : "s"}`}</p></div><button className="rounded-full border px-4 py-2 text-sm font-black" onClick={() => void load()} type="button">Refresh</button></div>
+        <div className="mt-4 grid gap-3">{rows.map((row) => <button className={`rounded-2xl border p-4 text-left transition ${selected?.id === row.id ? "border-citrus-500 bg-orange-50" : "border-neutral-200 hover:border-leaf-500"}`} key={String(row.id)} onClick={() => choose(row)} type="button"><span className="flex flex-wrap items-center justify-between gap-2"><strong>{String(row.name)}</strong><span className="rounded-full bg-neutral-100 px-2 py-1 text-xs font-black">{String(row.status)}</span></span><span className="mt-1 block break-all text-sm text-neutral-600">{String(row.email)} · {String(row.staff_role)} · {String(row.permission_count ?? 0)} permissions</span><span className="mt-1 block text-xs text-neutral-500">MFA {row.mfa_enabled ? "enabled" : "not enabled"} · Last login {row.last_login_at ? String(row.last_login_at) : "Not yet"}</span></button>)}{!loading && rows.length === 0 ? <p className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">No administrator accounts found.</p> : null}</div>
+      </div>
+    </div>
+    {selected ? <div className="mt-6 grid gap-6 rounded-3xl border border-neutral-200 p-5 xl:grid-cols-[1fr_0.8fr]">
+      <div><h3 className="text-xl font-black">Edit {String(selected.name)}</h3><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border px-3" value={role} onChange={(event) => { setRole(event.target.value); setPermissions(staffRoleDefaults[event.target.value] ?? []); }}>{staffRoles.map((item) => <option key={item}>{item}</option>)}</select></label><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Status</span><select className="min-h-11 rounded-2xl border px-3" value={status} onChange={(event) => setStatus(event.target.value)}><option value="active">Active</option><option value="disabled">Disabled</option></select></label></div><div className="mt-4 grid max-h-72 gap-2 overflow-y-auto rounded-2xl bg-neutral-50 p-3 sm:grid-cols-2">{staffPermissionOptions.map((permission) => <label className="flex min-h-9 items-center gap-2 text-sm" key={permission}><input checked={permissions.includes(permission)} onChange={() => togglePermission(permission)} type="checkbox" /><span>{permissionLabel(permission)}</span></label>)}</div><button className="mt-4 rounded-full bg-leaf-600 px-5 py-3 text-sm font-black text-white disabled:bg-neutral-300" disabled={saving} onClick={() => void saveStaff()} type="button">Save role and permissions</button></div>
+      <form className="rounded-2xl bg-neutral-50 p-4" onSubmit={(event) => { event.preventDefault(); void resetStaffPassword(); }}><h3 className="font-black">Reset password</h3><p className="mt-1 text-sm text-neutral-600">All active sessions for this administrator will be revoked.</p><div className="mt-3 grid gap-3"><input className="min-h-11 rounded-2xl border px-3" autoComplete="new-password" minLength={10} placeholder="New password" required type="password" value={resetPassword} onChange={(event) => setResetPassword(event.target.value)} /><input className="min-h-11 rounded-2xl border px-3" autoComplete="new-password" minLength={10} placeholder="Confirm new password" required type="password" value={resetConfirmation} onChange={(event) => setResetConfirmation(event.target.value)} /><button className="rounded-full border border-leaf-500 px-4 py-3 text-sm font-black text-leaf-700 disabled:opacity-50" disabled={saving} type="submit">Reset password</button></div></form>
+    </div> : null}
+    <div className="mt-6 rounded-3xl border border-neutral-200 p-5"><div className="flex items-center justify-between gap-3"><div><h3 className="text-xl font-black">Active staff sessions</h3><p className="mt-1 text-sm text-neutral-500">Session identifiers are never shown.</p></div><button className="rounded-full border px-4 py-2 text-sm font-black" onClick={() => void load()} type="button">Refresh</button></div><div className="mt-4 grid gap-3">{sessions.map((session) => <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-neutral-50 p-4" key={String(session.id)}><span><strong>{String(session.admin_name ?? "Administrator")}</strong><span className="ml-2 text-sm text-neutral-500">{String(session.admin_email ?? "")}</span><small className="mt-1 block text-xs text-neutral-500">Expires {String(session.expires_at ?? "Not set")}</small></span><button className="rounded-full border border-rose-300 px-3 py-2 text-xs font-black text-rose-700" onClick={() => void operationsApi.revokeStaffSession(token, Number(session.id)).then(load).catch((sessionError) => setError(errorOf(sessionError)))} type="button">Revoke</button></div>)}{!loading && sessions.length === 0 ? <p className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">No active staff sessions.</p> : null}</div></div>
+  </Shell>;
 }
 
 export function OperationsAdminPanel({ token }: { token: string }) {

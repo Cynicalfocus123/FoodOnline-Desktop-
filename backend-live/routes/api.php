@@ -157,7 +157,7 @@ Route::prefix('v1')->group(function (): void {
             ->middleware(['throttle:api', 'throttle:admin-login'])
             ->name('api.v1.admin.login');
 
-        Route::middleware(['admin.token', 'throttle:api'])->group(function (): void {
+        Route::middleware(['admin.token', 'throttle:api', 'admin.permission'])->group(function (): void {
             Route::post('/logout', [AdminAuthController::class, 'logout'])->name('api.v1.admin.logout');
             Route::get('/me', [AdminAuthController::class, 'me'])->name('api.v1.admin.me');
             Route::get('/users', [AdminUsersController::class, 'index'])->name('api.v1.admin.users');
@@ -248,16 +248,18 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/support-tickets/{ticket}/close', [AdminSupportController::class, 'close'])->middleware('admin.permission:support.manage')->name('api.v1.admin.support.close');
             Route::get('/reports/summary', [AdminReportController::class, 'summary'])->middleware('admin.permission:reports.view')->name('api.v1.admin.reports.summary');
             Route::get('/reports/orders.csv', [AdminReportController::class, 'ordersCsv'])->middleware('admin.permission:reports.export')->name('api.v1.admin.reports.orders');
-            Route::get('/operations', [AdminOperationsController::class, 'show'])->middleware('admin.permission:dashboard.view')->name('api.v1.admin.operations.show');
-            Route::get('/failed-jobs', [AdminFailedJobController::class, 'index'])->middleware('admin.permission:dashboard.view')->name('api.v1.admin.failed-jobs.index');
-            Route::post('/failed-jobs/{uuid}/retry', [AdminFailedJobController::class, 'retry'])->middleware('admin.permission:dashboard.manage')->name('api.v1.admin.failed-jobs.retry');
-            Route::get('/staff', [AdminSecurityController::class, 'staff'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.index');
-            Route::patch('/staff/{user}', [AdminSecurityController::class, 'updateStaff'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.update');
-            Route::get('/staff/sessions', [AdminSecurityController::class, 'sessions'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.sessions');
-            Route::delete('/staff/sessions/{token}', [AdminSecurityController::class, 'revokeSession'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.sessions.revoke');
-            Route::post('/mfa/setup', [AdminSecurityController::class, 'mfaSetup'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.setup');
-            Route::post('/mfa/enable', [AdminSecurityController::class, 'mfaEnable'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.enable');
-            Route::post('/mfa/disable', [AdminSecurityController::class, 'mfaDisable'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.mfa.disable');
+             Route::get('/operations', [AdminOperationsController::class, 'show'])->middleware('admin.permission:operations.view')->name('api.v1.admin.operations.show');
+             Route::get('/failed-jobs', [AdminFailedJobController::class, 'index'])->middleware('admin.permission:operations.view')->name('api.v1.admin.failed-jobs.index');
+             Route::post('/failed-jobs/{uuid}/retry', [AdminFailedJobController::class, 'retry'])->middleware('admin.permission:operations.manage')->name('api.v1.admin.failed-jobs.retry');
+             Route::get('/staff', [AdminSecurityController::class, 'staff'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.index');
+             Route::post('/staff', [AdminSecurityController::class, 'storeStaff'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.store');
+             Route::get('/staff/sessions', [AdminSecurityController::class, 'sessions'])->middleware('admin.permission:staff.view')->name('api.v1.admin.staff.sessions');
+             Route::delete('/staff/sessions/{token}', [AdminSecurityController::class, 'revokeSession'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.sessions.revoke');
+             Route::patch('/staff/{user}', [AdminSecurityController::class, 'updateStaff'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.update');
+             Route::post('/staff/{user}/password', [AdminSecurityController::class, 'resetStaffPassword'])->middleware('admin.permission:staff.manage')->name('api.v1.admin.staff.password');
+             Route::post('/mfa/setup', [AdminSecurityController::class, 'mfaSetup'])->middleware('admin.permission:own_mfa.manage')->name('api.v1.admin.mfa.setup');
+             Route::post('/mfa/enable', [AdminSecurityController::class, 'mfaEnable'])->middleware('admin.permission:own_mfa.manage')->name('api.v1.admin.mfa.enable');
+             Route::post('/mfa/disable', [AdminSecurityController::class, 'mfaDisable'])->middleware('admin.permission:own_mfa.manage')->name('api.v1.admin.mfa.disable');
         });
     });
 
