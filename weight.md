@@ -9,10 +9,10 @@ The active shared Customer/Supplier/Partner referral repair was rebuilt from aut
 | Item | Verified result |
 | --- | --- |
 | Production build | 143 transformed modules |
-| Production audit | 28 routes; 1,016 files / 89,889,337 bytes; zero missing local references or placeholder links |
+| Production audit | 28 routes; 1,016 files / 89,889,174 bytes; zero missing local references or placeholder links |
 | Hero video | 6,653,131 bytes; 50.1 seconds; 1600×682; H.264 High, 30 fps; 481,248 bytes / 6.75% smaller than the previous 7,134,379-byte encode |
-| `dist/` | 1,016 files / 89,889,337 bytes |
-| `frontend-upload/` | 1,016 files / 89,889,337 bytes; exact SHA-256 parity with `dist/` |
+| `dist/` | 1,016 files / 89,889,174 bytes |
+| `frontend-upload/` | 1,016 files / 89,889,174 bytes; exact SHA-256 parity with `dist/` |
 | `backend-live/` | 358 source files plus `SHA256SUMS`, including staff authorization tests; manifest/safety clean |
 | Live archives | Frontend: 1,016 files / 88,954,858 bytes / SHA-256 `070782acf058f8218e14e3421442a03a26fc90faeb43078f33662be03e126c06`; Backend: 359 entries / 390,841 bytes / SHA-256 `4bb8a4e242d540b0876b03ceade666ecba62115d3edf9de3135d1e4275ea6879`; Deflate ZIP32, CRC/listing, Windows/PHP extraction parity, and backend manifest checks passed |
 

@@ -62,9 +62,6 @@ final class AdminPermissionCatalog
                 'categories.view', 'brands.view', 'brands.manage',
                 'products.view', 'products.manage', 'product_media.manage', 'own_profile.manage', 'own_mfa.manage',
             ],
-            'product_manager' => [
-                'categories.view', 'brands.view', 'products.view', 'products.manage', 'product_media.manage', 'own_profile.manage', 'own_mfa.manage',
-            ],
             'custom' => [],
             'order_manager' => [
                 'orders.view', 'orders.manage', 'inventory.view', 'inventory.manage',
