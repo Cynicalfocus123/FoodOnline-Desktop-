@@ -37,6 +37,14 @@ test("super admin staff management is available inside Admin Settings", () => {
   assert.match(portal, /activeSidebarKey === "settings"[\s\S]*isSuperAdminRole\(staffRole\)[\s\S]*StaffAdminPanel/);
 });
 
+test("staff editor stays hidden until a specific administrator is selected", () => {
+  const panel = readFileSync("src/components/admin/OperationalAdminPanels.tsx", "utf8");
+  assert.match(panel, /onClick=\{\(\) => choose\(row\)\}/);
+  assert.match(panel, /role="dialog"/);
+  assert.match(panel, /Close administrator editor/);
+  assert.match(panel, /selected \? <div aria-labelledby="edit-admin-title"/);
+});
+
 test("legacy admin sessions without staff_role retain Super Admin access", () => {
   assert.equal(isSuperAdminRole(null), true);
   assert.equal(isSuperAdminRole(undefined), true);
