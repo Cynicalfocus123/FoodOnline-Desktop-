@@ -29,4 +29,10 @@ test("staff workspace uses dedicated staff endpoints and exposes no secrets", ()
   assert.match(api, /\/admin\/staff\/sessions/);
   assert.match(panel, /Staff & MFA administration/);
   assert.match(panel, /Passwords and security secrets are never displayed/);
+  assert.match(panel, /<table/);
+});
+
+test("super admin staff management is available inside Admin Settings", () => {
+  const portal = readFileSync("src/components/AdminPortal.tsx", "utf8");
+  assert.match(portal, /activeSidebarKey === "settings"[\s\S]*isSuperAdminRole\(staffRole\)[\s\S]*StaffAdminPanel/);
 });
