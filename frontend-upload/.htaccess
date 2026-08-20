@@ -5,6 +5,24 @@
   # of SPA routing even when the host does not report it as a normal directory.
   RewriteRule ^api(?:/|$) - [L]
 
+  # Exact duplicate catalog assets are stored once. Keep old database/catalog
+  # URLs working while they migrate to the canonical copy.
+  RewriteRule ^assets/chicken-meat-fish-mockups/chicken-meat-fish-22\.avif$ assets/vegan-foods-mockups/vegan-foods-14.avif [L]
+  RewriteRule ^assets/frozen-mockups/frozen-26\.avif$ assets/bakery-biscuits-mockups/bakery-biscuits-17.avif [L]
+  RewriteRule ^assets/sauces-spreads-mockups/sauces-spreads-16\.avif$ assets/masala-oil-more-mockups/masala-oil-more-15.avif [L]
+  RewriteRule ^assets/frozen-mockups/frozen-03\.avif$ assets/chicken-meat-fish-mockups/chicken-meat-fish-05.avif [L]
+  RewriteRule ^assets/frozen-mockups/frozen-53\.avif$ assets/categories/frozen.jfif [L]
+  RewriteRule ^assets/frozen-mockups/frozen-02\.avif$ assets/bakery-biscuits-mockups/bakery-biscuits-02.avif [L]
+  RewriteRule ^assets/vegan-foods-mockups/vegan-foods-38\.avif$ assets/sauces-spreads-mockups/sauces-spreads-38.avif [L]
+  RewriteRule ^assets/organic-healthy-living-mockups/organic-healthy-living-02\.avif$ assets/masala-oil-more-mockups/masala-oil-more-06.avif [L]
+  RewriteRule ^assets/chicken-meat-fish-mockups/chicken-meat-fish-37\.avif$ assets/atta-rice-dal-mockups/atta-rice-dal-37.avif [L]
+  RewriteRule ^assets/sauces-spreads-mockups/sauces-spreads-09\.avif$ assets/organic-healthy-living-mockups/organic-healthy-living-09.avif [L]
+  RewriteRule ^assets/categories/snacks-munchies\.jpg$ assets/categories/bakery-biscuits.jpg [L]
+  RewriteRule ^assets/frozen-mockups/frozen-01\.avif$ assets/chicken-meat-fish-mockups/chicken-meat-fish-03.avif [L]
+  RewriteRule ^assets/sauces-spreads-mockups/sauces-spreads-36\.avif$ assets/masala-oil-more-mockups/masala-oil-more-44.avif [L]
+  RewriteRule ^assets/vegan-foods-mockups/vegan-foods-35\.avif$ assets/frozen-mockups/frozen-40.avif [L]
+  RewriteRule ^assets/sauces-spreads-mockups/sauces-spreads-27\.avif$ assets/masala-oil-more-mockups/masala-oil-more-35.avif [L]
+
   # Never turn a missing production asset into HTML. Module and media requests
   # must fail as real 404 responses so browsers do not cache index.html as a file.
   RewriteCond %{REQUEST_FILENAME} !-f

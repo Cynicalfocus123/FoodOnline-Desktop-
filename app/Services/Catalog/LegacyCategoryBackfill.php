@@ -70,7 +70,7 @@ class LegacyCategoryBackfill
             ['Dairy, Bread & Eggs', 'dairy-bread-eggs', 'dairy-bread-eggs.jpg'],
             ['Fruits & Vegetables', 'fruits-vegetables', 'fruits-vegetables.jpg'],
             ['Cold Drinks & Juices', 'cold-drinks-juices', 'cold-drinks-juices.jpg'],
-            ['Snacks & Munchies', 'snacks-munchies', 'snacks-munchies.jpg'],
+            ['Snacks & Munchies', 'snacks-munchies', 'bakery-biscuits.jpg'],
             ['Breakfast & Instant Food', 'breakfast-instant-food', 'breakfast-instant-food.jpg'],
             ['Sweet Tooth', 'sweet-tooth', 'sweet-tooth.jpg'],
             ['Bakery & Biscuits', 'bakery-biscuits', 'bakery-biscuits.jpg'],

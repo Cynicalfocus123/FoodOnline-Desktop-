@@ -31,7 +31,24 @@ export type {
 };
 export type { Category as CategoryTile, Product as ProductItem } from "../types/catalog";
 
-const localAsset = resolveMediaUrl;
+const LOCAL_ASSET_ALIASES: Record<string, string> = {
+  "assets/chicken-meat-fish-mockups/chicken-meat-fish-22.avif": "assets/vegan-foods-mockups/vegan-foods-14.avif",
+  "assets/frozen-mockups/frozen-26.avif": "assets/bakery-biscuits-mockups/bakery-biscuits-17.avif",
+  "assets/sauces-spreads-mockups/sauces-spreads-16.avif": "assets/masala-oil-more-mockups/masala-oil-more-15.avif",
+  "assets/frozen-mockups/frozen-03.avif": "assets/chicken-meat-fish-mockups/chicken-meat-fish-05.avif",
+  "assets/frozen-mockups/frozen-53.avif": "assets/categories/frozen.jfif",
+  "assets/frozen-mockups/frozen-02.avif": "assets/bakery-biscuits-mockups/bakery-biscuits-02.avif",
+  "assets/vegan-foods-mockups/vegan-foods-38.avif": "assets/sauces-spreads-mockups/sauces-spreads-38.avif",
+  "assets/organic-healthy-living-mockups/organic-healthy-living-02.avif": "assets/masala-oil-more-mockups/masala-oil-more-06.avif",
+  "assets/chicken-meat-fish-mockups/chicken-meat-fish-37.avif": "assets/atta-rice-dal-mockups/atta-rice-dal-37.avif",
+  "assets/sauces-spreads-mockups/sauces-spreads-09.avif": "assets/organic-healthy-living-mockups/organic-healthy-living-09.avif",
+  "assets/frozen-mockups/frozen-01.avif": "assets/chicken-meat-fish-mockups/chicken-meat-fish-03.avif",
+  "assets/sauces-spreads-mockups/sauces-spreads-36.avif": "assets/masala-oil-more-mockups/masala-oil-more-44.avif",
+  "assets/vegan-foods-mockups/vegan-foods-35.avif": "assets/frozen-mockups/frozen-40.avif",
+  "assets/sauces-spreads-mockups/sauces-spreads-27.avif": "assets/masala-oil-more-mockups/masala-oil-more-35.avif",
+};
+
+const localAsset = (path: string) => resolveMediaUrl(LOCAL_ASSET_ALIASES[path] ?? path);
 
 const PRODUCT_SIZES = [
   "500 g",
@@ -811,7 +828,7 @@ const categoryImageByName: Record<string, string> = {
   "Dairy, Bread & Eggs": "dairy-bread-eggs.jpg",
   "Fruits & Vegetables": "fruits-vegetables.jpg",
   "Cold Drinks & Juices": "cold-drinks-juices.jpg",
-  "Snacks & Munchies": "snacks-munchies.jpg",
+  "Snacks & Munchies": "bakery-biscuits.jpg",
   "Breakfast & Instant Food": "breakfast-instant-food.jpg",
   "Sweet Tooth": "sweet-tooth.jpg",
   "Bakery & Biscuits": "bakery-biscuits.jpg",

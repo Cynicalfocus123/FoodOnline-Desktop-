@@ -141,6 +141,22 @@ for (const file of files) {
 const textExtensions = new Set([".css", ".html", ".js"]);
 const localReferencePattern = /(?:["'`(=:]|url\(["']?)(\/?(?:assets|images)\/[A-Za-z0-9@_.,+%()\-/' ]+\.(?:avif|css|gif|ico|jfif|jpe?g|js|mp4|png|svg|webm|webp))(?:[?#][^"'`) ]*)?/gi;
 const forbiddenReferencePattern = /(?:\.\.\/)+(?:assets|images)\/|[A-Za-z]:\\|file:\/\/|\/public\/(?:assets|images)\//i;
+const assetAliases = new Map([
+  ["assets/chicken-meat-fish-mockups/chicken-meat-fish-22.avif", "assets/vegan-foods-mockups/vegan-foods-14.avif"],
+  ["assets/frozen-mockups/frozen-26.avif", "assets/bakery-biscuits-mockups/bakery-biscuits-17.avif"],
+  ["assets/sauces-spreads-mockups/sauces-spreads-16.avif", "assets/masala-oil-more-mockups/masala-oil-more-15.avif"],
+  ["assets/frozen-mockups/frozen-03.avif", "assets/chicken-meat-fish-mockups/chicken-meat-fish-05.avif"],
+  ["assets/frozen-mockups/frozen-53.avif", "assets/categories/frozen.jfif"],
+  ["assets/frozen-mockups/frozen-02.avif", "assets/bakery-biscuits-mockups/bakery-biscuits-02.avif"],
+  ["assets/vegan-foods-mockups/vegan-foods-38.avif", "assets/sauces-spreads-mockups/sauces-spreads-38.avif"],
+  ["assets/organic-healthy-living-mockups/organic-healthy-living-02.avif", "assets/masala-oil-more-mockups/masala-oil-more-06.avif"],
+  ["assets/chicken-meat-fish-mockups/chicken-meat-fish-37.avif", "assets/atta-rice-dal-mockups/atta-rice-dal-37.avif"],
+  ["assets/sauces-spreads-mockups/sauces-spreads-09.avif", "assets/organic-healthy-living-mockups/organic-healthy-living-09.avif"],
+  ["assets/frozen-mockups/frozen-01.avif", "assets/chicken-meat-fish-mockups/chicken-meat-fish-03.avif"],
+  ["assets/sauces-spreads-mockups/sauces-spreads-36.avif", "assets/masala-oil-more-mockups/masala-oil-more-44.avif"],
+  ["assets/vegan-foods-mockups/vegan-foods-35.avif", "assets/frozen-mockups/frozen-40.avif"],
+  ["assets/sauces-spreads-mockups/sauces-spreads-27.avif", "assets/masala-oil-more-mockups/masala-oil-more-35.avif"],
+]);
 const missingReferences = new Set();
 const forbiddenReferences = new Set();
 
@@ -169,7 +185,7 @@ function auditBuiltReferences(directory) {
       } catch {
         // Keep malformed URL text intact so the missing-reference error reports it.
       }
-      if (!existsSync(join(distRoot, relativePath))) {
+      if (!existsSync(join(distRoot, relativePath)) && !existsSync(join(distRoot, assetAliases.get(relativePath) ?? relativePath))) {
         missingReferences.add(relativePath);
       }
     }
