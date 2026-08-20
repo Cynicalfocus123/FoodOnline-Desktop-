@@ -42,7 +42,9 @@ export function canAdminAny(allowed: readonly string[], role: string | null | un
 }
 
 export function isSuperAdminRole(role: string | null | undefined) {
-  return role === "super_admin" || role === null;
+  // Older admin records/API responses may not have staff_role yet. The
+  // backend treats that legacy value as Super Admin until it is assigned.
+  return role === "super_admin" || role == null;
 }
 
 export function sidebarHasAccess(key: AdminSidebarKey, role: string | null | undefined, permissions: readonly string[]) {

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { canAdminPermission, sidebarHasAccess } from "../src/lib/adminAccess.ts";
+import { canAdminPermission, isSuperAdminRole, sidebarHasAccess } from "../src/lib/adminAccess.ts";
 
 test("category-only admins receive one enabled sidebar module", () => {
   const permissions = ["categories.view", "categories.manage"];
@@ -35,4 +35,10 @@ test("staff workspace uses dedicated staff endpoints and exposes no secrets", ()
 test("super admin staff management is available inside Admin Settings", () => {
   const portal = readFileSync("src/components/AdminPortal.tsx", "utf8");
   assert.match(portal, /activeSidebarKey === "settings"[\s\S]*isSuperAdminRole\(staffRole\)[\s\S]*StaffAdminPanel/);
+});
+
+test("legacy admin sessions without staff_role retain Super Admin access", () => {
+  assert.equal(isSuperAdminRole(null), true);
+  assert.equal(isSuperAdminRole(undefined), true);
+  assert.equal(isSuperAdminRole("read_only"), false);
 });
