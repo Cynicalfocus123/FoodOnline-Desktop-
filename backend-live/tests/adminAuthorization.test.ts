@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { canAdminPermission, sidebarHasAccess } from "../src/lib/adminAccess.ts";
+import { canAdminPermission, isSuperAdminRole, sidebarHasAccess } from "../src/lib/adminAccess.ts";
 
 test("category-only admins receive one enabled sidebar module", () => {
   const permissions = ["categories.view", "categories.manage"];
@@ -35,4 +35,27 @@ test("staff workspace uses dedicated staff endpoints and exposes no secrets", ()
 test("super admin staff management is available inside Admin Settings", () => {
   const portal = readFileSync("src/components/AdminPortal.tsx", "utf8");
   assert.match(portal, /activeSidebarKey === "settings"[\s\S]*isSuperAdminRole\(staffRole\)[\s\S]*StaffAdminPanel/);
+});
+
+test("legacy admin sessions without staff_role retain Super Admin access", () => {
+  assert.equal(isSuperAdminRole(null), true);
+  assert.equal(isSuperAdminRole(undefined), true);
+  assert.equal(isSuperAdminRole("read_only"), false);
+});
+
+test("product manager role is distinct from inventory manager", () => {
+  const panel = readFileSync("src/components/admin/OperationalAdminPanels.tsx", "utf8");
+  const backend = readFileSync("app/Services/Security/AdminPermissionCatalog.php", "utf8");
+  assert.match(panel, /product_manager/);
+  assert.match(panel, /product_manager:\s*\["products\.view", "products\.manage", "product_media\.manage"/);
+  assert.match(backend, /'product_manager'\s*=>\s*\[[\s\S]*?'products\.view', 'products\.manage', 'product_media\.manage'/);
+  assert.doesNotMatch(backend.match(/'product_manager'[\s\S]*?\n\s*\],/)?.[0] ?? "", /inventory\.manage/);
+});
+
+test("catalog manager is limited to brands and products", () => {
+  const panel = readFileSync("src/components/admin/OperationalAdminPanels.tsx", "utf8");
+  const backend = readFileSync("app/Services/Security/AdminPermissionCatalog.php", "utf8");
+  assert.doesNotMatch(panel.match(/catalog_manager:\s*\[[^\]]+\]/)?.[0] ?? "", /categories\.|inventory\./);
+  assert.doesNotMatch(backend.match(/'catalog_manager'[\s\S]*?\n\s*\],/)?.[0] ?? "", /categories\.|inventory\./);
+  assert.match(panel, /catalog_manager:\s*\["brands\.view", "brands\.manage", "products\.view", "products\.manage"/);
 });

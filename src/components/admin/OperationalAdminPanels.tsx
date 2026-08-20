@@ -190,7 +190,7 @@ export function ReportsAdminPanel({ token }: { token: string }) {
   return <Shell title="Reports and exports"><p className="mt-3 text-sm text-neutral-600">Collected and outstanding Cash on Delivery totals are shown separately. Export access follows staff permissions.</p>{message && !report && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}{report ? <><div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(([label, value]) => <div className="rounded-2xl border bg-neutral-50 p-4" key={label}><p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-500">{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}</div><div className="mt-6 rounded-2xl border p-4"><p className="font-black">Top products</p>{report.top_products?.length ? report.top_products.map((product) => <div className="mt-3 flex justify-between gap-3 border-t pt-3 text-sm" key={product.product_name}><span>{product.product_name ?? "Product"} · {product.units ?? 0} units</span><strong>{reportMoney(product.value_minor)}</strong></div>) : <p className="mt-2 text-sm text-neutral-500">No product activity for this period.</p>}</div></> : null}<button className="mt-5 inline-flex rounded-full bg-neutral-900 px-5 py-3 text-sm font-black text-white" onClick={() => void operationsApi.downloadOrdersCsv(token).catch((error) => setMessage(errorOf(error)))} type="button">Export order CSV</button></Shell>;
 }
 
-const staffRoles = ["super_admin", "catalog_manager", "order_manager", "inventory_manager", "customer_support", "marketing_manager", "read_only"] as const;
+const staffRoles = ["super_admin", "catalog_manager", "product_manager", "order_manager", "inventory_manager", "customer_support", "marketing_manager", "read_only"] as const;
 const staffPermissionOptions = [
   "dashboard.view", "dashboard.manage", "users.view", "users.manage", "categories.view", "categories.manage", "brands.view", "brands.manage",
   "products.view", "products.manage", "product_media.manage", "orders.view", "orders.manage", "inventory.view", "inventory.manage",
@@ -200,7 +200,8 @@ const staffPermissionOptions = [
 ];
 const staffRoleDefaults: Record<string, string[]> = {
   super_admin: staffPermissionOptions,
-  catalog_manager: ["categories.view", "categories.manage", "brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  catalog_manager: ["brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  product_manager: ["products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
   order_manager: ["orders.view", "orders.manage", "inventory.view", "inventory.manage", "returns.view", "returns.manage", "own_profile.manage", "own_mfa.manage"],
   inventory_manager: ["inventory.view", "inventory.manage", "own_profile.manage", "own_mfa.manage"],
   customer_support: ["users.view", "support.view", "support.manage", "returns.view", "reviews.view", "reviews.moderate", "own_profile.manage", "own_mfa.manage"],

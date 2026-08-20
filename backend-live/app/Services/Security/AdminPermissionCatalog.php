@@ -59,7 +59,10 @@ final class AdminPermissionCatalog
         return [
             self::SUPER_ADMIN => array_keys(self::definitions()),
             'catalog_manager' => [
-                'categories.view', 'categories.manage', 'brands.view', 'brands.manage',
+                'brands.view', 'brands.manage',
+                'products.view', 'products.manage', 'product_media.manage', 'own_profile.manage', 'own_mfa.manage',
+            ],
+            'product_manager' => [
                 'products.view', 'products.manage', 'product_media.manage', 'own_profile.manage', 'own_mfa.manage',
             ],
             'order_manager' => [
