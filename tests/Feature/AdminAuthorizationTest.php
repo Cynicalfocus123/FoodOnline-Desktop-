@@ -98,6 +98,17 @@ class AdminAuthorizationTest extends TestCase
         $this->assertSame('active', $admin->fresh()->status);
     }
 
+    public function test_manage_grants_include_required_read_access_for_feature_admins(): void
+    {
+        [, $token] = $this->adminToken([
+            'staff_role' => 'custom',
+            'staff_permissions' => ['categories.manage', 'products.manage'],
+        ]);
+
+        $this->withToken($token)->getJson('/api/v1/admin/categories')->assertOk();
+        $this->withToken($token)->getJson('/api/v1/admin/products')->assertOk();
+    }
+
     public function test_non_super_admin_cannot_manage_staff_or_escalate_permissions(): void
     {
         [$restricted, $restrictedToken] = $this->adminToken([

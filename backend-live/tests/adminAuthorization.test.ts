@@ -47,7 +47,7 @@ test("product manager role is distinct from inventory manager", () => {
   const panel = readFileSync("src/components/admin/OperationalAdminPanels.tsx", "utf8");
   const backend = readFileSync("app/Services/Security/AdminPermissionCatalog.php", "utf8");
   assert.match(panel, /product_manager/);
-  assert.match(panel, /product_manager:\s*\["products\.view", "products\.manage", "product_media\.manage"/);
+  assert.match(panel, /product_manager:\s*\["categories\.view", "brands\.view", "products\.view", "products\.manage", "product_media\.manage"/);
   assert.match(backend, /'product_manager'\s*=>\s*\[[\s\S]*?'products\.view', 'products\.manage', 'product_media\.manage'/);
   assert.doesNotMatch(backend.match(/'product_manager'[\s\S]*?\n\s*\],/)?.[0] ?? "", /inventory\.manage/);
 });

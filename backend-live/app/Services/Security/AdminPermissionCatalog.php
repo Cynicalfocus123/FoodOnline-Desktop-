@@ -65,6 +65,7 @@ final class AdminPermissionCatalog
             'product_manager' => [
                 'categories.view', 'brands.view', 'products.view', 'products.manage', 'product_media.manage', 'own_profile.manage', 'own_mfa.manage',
             ],
+            'custom' => [],
             'order_manager' => [
                 'orders.view', 'orders.manage', 'inventory.view', 'inventory.manage',
                 'returns.view', 'returns.manage', 'own_profile.manage', 'own_mfa.manage',
@@ -120,7 +121,34 @@ final class AdminPermissionCatalog
             ? $user->staff_permissions
             : (self::roleDefaults()[$user->staff_role] ?? []);
 
-        return array_values(array_intersect(self::all(), array_values(array_unique($grants))));
+        return self::withDependencies($grants);
+    }
+
+    /** @param array<int, string> $grants @return array<int, string> */
+    private static function withDependencies(array $grants): array
+    {
+        $permissions = array_fill_keys(array_intersect(self::all(), array_values(array_unique($grants))), true);
+        foreach ([
+            'dashboard.manage' => 'dashboard.view',
+            'users.manage' => 'users.view',
+            'categories.manage' => 'categories.view',
+            'brands.manage' => 'brands.view',
+            'products.manage' => 'products.view',
+            'orders.manage' => 'orders.view',
+            'inventory.manage' => 'inventory.view',
+            'promotions.manage' => 'promotions.view',
+            'referrals.manage' => 'referrals.view',
+            'returns.manage' => 'returns.view',
+            'reviews.moderate' => 'reviews.view',
+            'support.manage' => 'support.view',
+            'reports.export' => 'reports.view',
+            'operations.manage' => 'operations.view',
+            'commerce_settings.manage' => 'commerce_settings.view',
+        ] as $manage => $view) {
+            if (isset($permissions[$manage])) $permissions[$view] = true;
+        }
+
+        return array_values(array_intersect(self::all(), array_keys($permissions)));
     }
 
     public static function allows(?User $user, string $permission): bool

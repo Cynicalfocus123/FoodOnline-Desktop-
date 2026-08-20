@@ -190,7 +190,7 @@ export function ReportsAdminPanel({ token }: { token: string }) {
   return <Shell title="Reports and exports"><p className="mt-3 text-sm text-neutral-600">Collected and outstanding Cash on Delivery totals are shown separately. Export access follows staff permissions.</p>{message && !report && <p className="mt-4 rounded-2xl bg-neutral-50 p-3 text-sm">{message}</p>}{report ? <><div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(([label, value]) => <div className="rounded-2xl border bg-neutral-50 p-4" key={label}><p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-500">{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}</div><div className="mt-6 rounded-2xl border p-4"><p className="font-black">Top products</p>{report.top_products?.length ? report.top_products.map((product) => <div className="mt-3 flex justify-between gap-3 border-t pt-3 text-sm" key={product.product_name}><span>{product.product_name ?? "Product"} · {product.units ?? 0} units</span><strong>{reportMoney(product.value_minor)}</strong></div>) : <p className="mt-2 text-sm text-neutral-500">No product activity for this period.</p>}</div></> : null}<button className="mt-5 inline-flex rounded-full bg-neutral-900 px-5 py-3 text-sm font-black text-white" onClick={() => void operationsApi.downloadOrdersCsv(token).catch((error) => setMessage(errorOf(error)))} type="button">Export order CSV</button></Shell>;
 }
 
-const staffRoles = ["super_admin", "catalog_manager", "product_manager", "order_manager", "inventory_manager", "customer_support", "marketing_manager", "read_only"] as const;
+const staffRoles = ["super_admin", "catalog_manager", "product_manager", "custom", "order_manager", "inventory_manager", "customer_support", "marketing_manager", "read_only"] as const;
 const staffPermissionOptions = [
   "dashboard.view", "dashboard.manage", "users.view", "users.manage", "categories.view", "categories.manage", "brands.view", "brands.manage",
   "products.view", "products.manage", "product_media.manage", "orders.view", "orders.manage", "inventory.view", "inventory.manage",
@@ -202,12 +202,32 @@ const staffRoleDefaults: Record<string, string[]> = {
   super_admin: staffPermissionOptions,
   catalog_manager: ["categories.view", "brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
   product_manager: ["categories.view", "brands.view", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  custom: [],
   order_manager: ["orders.view", "orders.manage", "inventory.view", "inventory.manage", "returns.view", "returns.manage", "own_profile.manage", "own_mfa.manage"],
   inventory_manager: ["inventory.view", "inventory.manage", "own_profile.manage", "own_mfa.manage"],
   customer_support: ["users.view", "support.view", "support.manage", "returns.view", "reviews.view", "reviews.moderate", "own_profile.manage", "own_mfa.manage"],
   marketing_manager: ["promotions.view", "promotions.manage", "referrals.view", "referrals.manage", "reports.view", "reports.export", "own_profile.manage", "own_mfa.manage"],
   read_only: ["dashboard.view", "users.view", "categories.view", "brands.view", "products.view", "orders.view", "inventory.view", "promotions.view", "referrals.view", "audit.view", "returns.view", "reviews.view", "support.view", "reports.view", "operations.view", "own_profile.manage", "own_mfa.manage"],
 };
+
+const permissionDependencies: Record<string, string> = {
+  "dashboard.manage": "dashboard.view", "users.manage": "users.view", "categories.manage": "categories.view",
+  "brands.manage": "brands.view", "products.manage": "products.view", "orders.manage": "orders.view",
+  "inventory.manage": "inventory.view", "promotions.manage": "promotions.view", "referrals.manage": "referrals.view",
+  "returns.manage": "returns.view", "reviews.moderate": "reviews.view", "support.manage": "support.view",
+  "reports.export": "reports.view", "operations.manage": "operations.view", "commerce_settings.manage": "commerce_settings.view",
+};
+
+function roleLabel(role: string) {
+  return role === "custom" ? "Custom permissions" : role.replaceAll("_", " ");
+}
+
+function togglePermissionSelection(current: string[], permission: string) {
+  const dependency = permissionDependencies[permission];
+  const dependentManage = Object.entries(permissionDependencies).find(([, view]) => view === permission)?.[0];
+  if (current.includes(permission)) return current.filter((item) => item !== permission && item !== dependentManage);
+  return Array.from(new Set([...current, permission, ...(dependency ? [dependency] : [])]));
+}
 
 function permissionLabel(permission: string) {
   return permission.replaceAll("_", " ").replace(".", " · ");
@@ -221,6 +241,7 @@ export function StaffAdminPanel({ token }: { token: string }) {
   const [status, setStatus] = useState("active");
   const [permissions, setPermissions] = useState<string[]>(staffRoleDefaults.read_only);
   const [createForm, setCreateForm] = useState({ name: "", email: "", password: "", password_confirmation: "", staff_role: "read_only", status: "active" });
+  const [createPermissions, setCreatePermissions] = useState<string[]>(staffRoleDefaults.read_only);
   const [resetPassword, setResetPassword] = useState("");
   const [resetConfirmation, setResetConfirmation] = useState("");
   const [message, setMessage] = useState("");
@@ -256,15 +277,20 @@ export function StaffAdminPanel({ token }: { token: string }) {
   };
 
   const togglePermission = (permission: string) => {
-    setPermissions((current) => current.includes(permission) ? current.filter((item) => item !== permission) : [...current, permission]);
+    setPermissions((current) => togglePermissionSelection(current, permission));
+  };
+
+  const toggleCreatePermission = (permission: string) => {
+    setCreatePermissions((current) => togglePermissionSelection(current, permission));
   };
 
   const createStaff = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaving(true); setMessage(""); setError("");
     try {
-      await operationsApi.createStaff(token, { ...createForm, staff_permissions: staffRoleDefaults[createForm.staff_role] ?? [] });
+      await operationsApi.createStaff(token, { ...createForm, staff_permissions: createForm.staff_role === "custom" ? createPermissions : staffRoleDefaults[createForm.staff_role] ?? [] });
       setCreateForm({ name: "", email: "", password: "", password_confirmation: "", staff_role: "read_only", status: "active" });
+      setCreatePermissions(staffRoleDefaults.read_only);
       setMessage("Administrator created.");
       await load();
     } catch (createError) { setError(errorOf(createError)); }
@@ -302,8 +328,9 @@ export function StaffAdminPanel({ token }: { token: string }) {
         <h3 className="text-xl font-black">Create administrator</h3>
         <div className="mt-4 grid gap-3">
           {([["name", "Display name", "text"], ["email", "Email address", "email"], ["password", "Password", "password"], ["password_confirmation", "Confirm password", "password"]] as const).map(([key, label, type]) => <label className="grid gap-1" key={key}><span className="text-sm font-bold text-neutral-700">{label}</span><input className="min-h-11 rounded-2xl border border-neutral-200 px-3 outline-none focus:border-leaf-500 focus:ring-2 focus:ring-leaf-500/15" autoComplete={key === "email" ? "username" : key.startsWith("password") ? "new-password" : "name"} required type={type} value={createForm[key]} onChange={(event) => setCreateForm((current) => ({ ...current, [key]: event.target.value }))} /></label>)}
-          <label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border border-neutral-200 px-3" value={createForm.staff_role} onChange={(event) => setCreateForm((current) => ({ ...current, staff_role: event.target.value }))}>{staffRoles.map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border border-neutral-200 px-3" value={createForm.staff_role} onChange={(event) => { const nextRole = event.target.value; setCreateForm((current) => ({ ...current, staff_role: nextRole })); setCreatePermissions(staffRoleDefaults[nextRole] ?? []); }}>{staffRoles.map((item) => <option key={item} value={item}>{roleLabel(item)}</option>)}</select></label>
           <label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Status</span><select className="min-h-11 rounded-2xl border border-neutral-200 px-3" value={createForm.status} onChange={(event) => setCreateForm((current) => ({ ...current, status: event.target.value }))}><option value="active">Active</option><option value="disabled">Disabled</option></select></label>
+          {createForm.staff_role === "custom" ? <div className="rounded-2xl bg-neutral-50 p-3"><p className="text-sm font-black">Custom permissions</p><p className="mt-1 text-xs leading-5 text-neutral-500">Choose only the features this administrator needs. Manage permissions automatically include read access.</p><div className="mt-3 grid max-h-64 gap-2 overflow-y-auto sm:grid-cols-2">{staffPermissionOptions.map((permission) => <label className="flex min-h-8 items-center gap-2 text-xs" key={permission}><input checked={createPermissions.includes(permission)} onChange={() => toggleCreatePermission(permission)} type="checkbox" /><span>{permissionLabel(permission)}</span></label>)}</div></div> : null}
           <button className="min-h-12 rounded-full bg-citrus-500 px-5 text-sm font-black text-white disabled:bg-neutral-300" disabled={saving} type="submit">{saving ? "Saving..." : "Create administrator"}</button>
         </div>
       </form>
@@ -313,7 +340,7 @@ export function StaffAdminPanel({ token }: { token: string }) {
       </div>
     </div>
     {selected ? <div className="mt-6 grid gap-6 rounded-3xl border border-neutral-200 p-5 xl:grid-cols-[1fr_0.8fr]">
-      <div><h3 className="text-xl font-black">Edit {String(selected.name)}</h3><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border px-3" value={role} onChange={(event) => { setRole(event.target.value); setPermissions(staffRoleDefaults[event.target.value] ?? []); }}>{staffRoles.map((item) => <option key={item}>{item}</option>)}</select></label><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Status</span><select className="min-h-11 rounded-2xl border px-3" value={status} onChange={(event) => setStatus(event.target.value)}><option value="active">Active</option><option value="disabled">Disabled</option></select></label></div><div className="mt-4 grid max-h-72 gap-2 overflow-y-auto rounded-2xl bg-neutral-50 p-3 sm:grid-cols-2">{staffPermissionOptions.map((permission) => <label className="flex min-h-9 items-center gap-2 text-sm" key={permission}><input checked={permissions.includes(permission)} onChange={() => togglePermission(permission)} type="checkbox" /><span>{permissionLabel(permission)}</span></label>)}</div><button className="mt-4 rounded-full bg-leaf-600 px-5 py-3 text-sm font-black text-white disabled:bg-neutral-300" disabled={saving} onClick={() => void saveStaff()} type="button">Save role and permissions</button></div>
+      <div><h3 className="text-xl font-black">Edit {String(selected.name)}</h3><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Preset role</span><select className="min-h-11 rounded-2xl border px-3" value={role} onChange={(event) => { setRole(event.target.value); setPermissions(staffRoleDefaults[event.target.value] ?? []); }}>{staffRoles.map((item) => <option key={item} value={item}>{roleLabel(item)}</option>)}</select></label><label className="grid gap-1"><span className="text-sm font-bold text-neutral-700">Status</span><select className="min-h-11 rounded-2xl border px-3" value={status} onChange={(event) => setStatus(event.target.value)}><option value="active">Active</option><option value="disabled">Disabled</option></select></label></div><div className="mt-4 grid max-h-72 gap-2 overflow-y-auto rounded-2xl bg-neutral-50 p-3 sm:grid-cols-2">{staffPermissionOptions.map((permission) => <label className="flex min-h-9 items-center gap-2 text-sm" key={permission}><input checked={permissions.includes(permission)} onChange={() => togglePermission(permission)} type="checkbox" /><span>{permissionLabel(permission)}</span></label>)}</div><button className="mt-4 rounded-full bg-leaf-600 px-5 py-3 text-sm font-black text-white disabled:bg-neutral-300" disabled={saving} onClick={() => void saveStaff()} type="button">Save role and permissions</button></div>
       <form className="rounded-2xl bg-neutral-50 p-4" onSubmit={(event) => { event.preventDefault(); void resetStaffPassword(); }}><h3 className="font-black">Reset password</h3><p className="mt-1 text-sm text-neutral-600">All active sessions for this administrator will be revoked.</p><div className="mt-3 grid gap-3"><input className="min-h-11 rounded-2xl border px-3" autoComplete="new-password" minLength={10} placeholder="New password" required type="password" value={resetPassword} onChange={(event) => setResetPassword(event.target.value)} /><input className="min-h-11 rounded-2xl border px-3" autoComplete="new-password" minLength={10} placeholder="Confirm new password" required type="password" value={resetConfirmation} onChange={(event) => setResetConfirmation(event.target.value)} /><button className="rounded-full border border-leaf-500 px-4 py-3 text-sm font-black text-leaf-700 disabled:opacity-50" disabled={saving} type="submit">Reset password</button></div></form>
     </div> : null}
     <div className="mt-6 rounded-3xl border border-neutral-200 p-5"><div className="flex items-center justify-between gap-3"><div><h3 className="text-xl font-black">Active staff sessions</h3><p className="mt-1 text-sm text-neutral-500">Session identifiers are never shown.</p></div><button className="rounded-full border px-4 py-2 text-sm font-black" onClick={() => void load()} type="button">Refresh</button></div><div className="mt-4 grid gap-3">{sessions.map((session) => <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-neutral-50 p-4" key={String(session.id)}><span><strong>{String(session.admin_name ?? "Administrator")}</strong><span className="ml-2 text-sm text-neutral-500">{String(session.admin_email ?? "")}</span><small className="mt-1 block text-xs text-neutral-500">Expires {String(session.expires_at ?? "Not set")}</small></span><button className="rounded-full border border-rose-300 px-3 py-2 text-xs font-black text-rose-700" onClick={() => void operationsApi.revokeStaffSession(token, Number(session.id)).then(load).catch((sessionError) => setError(errorOf(sessionError)))} type="button">Revoke</button></div>)}{!loading && sessions.length === 0 ? <p className="rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">No active staff sessions.</p> : null}</div></div>
