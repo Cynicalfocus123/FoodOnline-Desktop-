@@ -6,6 +6,17 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+// Hostinger deployments replace application source while preserving writable
+// runtime folders. Remove a route cache created before the current API source
+// so a new route cannot remain hidden behind an older cached route table.
+$foodOnlinesRoutesSource = __DIR__.'/../routes/api.php';
+foreach (glob(__DIR__.'/cache/routes-*.php') ?: [] as $foodOnlinesRouteCache) {
+    if (is_file($foodOnlinesRoutesSource) && is_file($foodOnlinesRouteCache)
+        && filemtime($foodOnlinesRoutesSource) > filemtime($foodOnlinesRouteCache)) {
+        @unlink($foodOnlinesRouteCache);
+    }
+}
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

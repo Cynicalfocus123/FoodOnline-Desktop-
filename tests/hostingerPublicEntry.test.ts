@@ -4,6 +4,7 @@ import test from "node:test";
 
 const entry = readFileSync("deployment/hostinger/backend-public/index.php", "utf8");
 const template = readFileSync("deployment/hostinger/backend-public/backend-path.php.example", "utf8");
+const bootstrap = readFileSync("bootstrap/app.php", "utf8");
 const syncScript = readFileSync("scripts/sync-backend-live.mjs", "utf8");
 const frontendRewrite = readFileSync("public/.htaccess", "utf8");
 const releaseScript = readFileSync("scripts/create-live-hostinger-zips.ps1", "utf8");
@@ -22,6 +23,12 @@ test("Hostinger public API entry resolves a separate private Laravel root safely
 test("Hostinger path template is shipped with the generated backend mirror", () => {
   assert.match(template, /return '\/home\/ACCOUNT_USERNAME\/FoodOnlines-backend';/);
   assert.match(syncScript, /backend-path\.php\.example/);
+});
+
+test("Laravel bootstrap invalidates stale route caches after source updates", () => {
+  assert.match(bootstrap, /routes-\*\.php/);
+  assert.match(bootstrap, /filemtime\(\$foodOnlinesRoutesSource\) > filemtime\(\$foodOnlinesRouteCache\)/);
+  assert.match(bootstrap, /unlink\(\$foodOnlinesRouteCache\)/);
 });
 
 test("frontend Hostinger rewrite preserves the API and avoids restricted Options directives", () => {
