@@ -14,7 +14,7 @@ The active shared Customer/Supplier/Partner referral repair was rebuilt from aut
 | `dist/` | 1,016 files / 89,889,174 bytes |
 | `frontend-upload/` | 1,016 files / 89,889,174 bytes; exact SHA-256 parity with `dist/` |
 | `backend-live/` | 358 source files plus `SHA256SUMS`, including staff authorization tests; manifest/safety clean |
-| Live archives | Frontend: 1,016 files / 88,954,858 bytes / SHA-256 `070782acf058f8218e14e3421442a03a26fc90faeb43078f33662be03e126c06`; Backend: 359 entries / 390,841 bytes / SHA-256 `4bb8a4e242d540b0876b03ceade666ecba62115d3edf9de3135d1e4275ea6879`; Deflate ZIP32, CRC/listing, Windows/PHP extraction parity, and backend manifest checks passed |
+| Live archives | Frontend: 1,016 files / 88,954,844 bytes / SHA-256 `7f241e28a88a230e3fef8fcca573d212aabdc037deb7f819b2a9439dcc6b791b`; Backend: 359 entries / 390,893 bytes / SHA-256 `69a106a3e6d217af1627cbabeaeed0915835234d881db0a46decdfef33a4a449`; Deflate ZIP32, CRC/listing, Windows/PHP extraction parity, and backend manifest checks passed |
 
 The final `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` must use standard Deflate ZIP32 entries at archive root and pass CRC/listing, Windows extraction parity, PHP extraction parity, address and referral repair-content checks inside both extractions, path/metadata safety, forbidden-content checks, and backend-manifest verification. No external Hostinger deployment was performed or verified.
 
