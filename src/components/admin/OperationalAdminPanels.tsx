@@ -200,8 +200,8 @@ const staffPermissionOptions = [
 ];
 const staffRoleDefaults: Record<string, string[]> = {
   super_admin: staffPermissionOptions,
-  catalog_manager: ["brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
-  product_manager: ["products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  catalog_manager: ["categories.view", "brands.view", "brands.manage", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
+  product_manager: ["categories.view", "brands.view", "products.view", "products.manage", "product_media.manage", "own_profile.manage", "own_mfa.manage"],
   order_manager: ["orders.view", "orders.manage", "inventory.view", "inventory.manage", "returns.view", "returns.manage", "own_profile.manage", "own_mfa.manage"],
   inventory_manager: ["inventory.view", "inventory.manage", "own_profile.manage", "own_mfa.manage"],
   customer_support: ["users.view", "support.view", "support.manage", "returns.view", "reviews.view", "reviews.moderate", "own_profile.manage", "own_mfa.manage"],
