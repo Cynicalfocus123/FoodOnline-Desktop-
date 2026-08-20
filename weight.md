@@ -9,12 +9,12 @@ The active shared Customer/Supplier/Partner referral repair was rebuilt from aut
 | Item | Verified result |
 | --- | --- |
 | Production build | 143 transformed modules |
-| Production audit | 28 routes; 1,016 files / 89,889,926 bytes; zero missing local references or placeholder links |
+| Production audit | 28 routes; 1,016 files / 89,889,274 bytes; zero missing local references or placeholder links |
 | Hero video | 6,653,131 bytes; 50.1 seconds; 1600×682; H.264 High, 30 fps; 481,248 bytes / 6.75% smaller than the previous 7,134,379-byte encode |
-| `dist/` | 1,016 files / 89,889,926 bytes |
-| `frontend-upload/` | 1,016 files / 89,889,926 bytes; exact SHA-256 parity with `dist/` |
+| `dist/` | 1,016 files / 89,889,274 bytes |
+| `frontend-upload/` | 1,016 files / 89,889,274 bytes; exact SHA-256 parity with `dist/` |
 | `backend-live/` | 358 source files plus `SHA256SUMS`, including staff authorization tests; manifest/safety clean |
-| Live archives | Frontend: 1,016 files / 88,955,039 bytes / SHA-256 `d6ad08ad5f25025f3dd6ff6ecda1ddc4f7e7b759294de6787d340fbbead2a42b`; Backend: 359 entries / 391,012 bytes / SHA-256 `f9761147f326736bd2859c91ef6827da2bde67f754045b9dda54a0768da53e00`; Deflate ZIP32, CRC/listing, Windows/PHP extraction parity, and backend manifest checks passed |
+| Live archives | Frontend: 1,016 files / 88,954,888 bytes / SHA-256 `9d55cdb0e84f54701d775a1a411f7e47a5529c72384e20c7c564433579e3b828`; Backend: 359 entries / 391,004 bytes / SHA-256 `c0cde43560901c5cf74f6741a4c0e477e8359b734a2bb0c90c03bb42c74692f7`; Deflate ZIP32, CRC/listing, Windows/PHP extraction parity, and backend manifest checks passed |
 
 The final `FoodOnlines_Frontend_Live.zip` and `FoodOnlines_Backend_Live.zip` must use standard Deflate ZIP32 entries at archive root and pass CRC/listing, Windows extraction parity, PHP extraction parity, address and referral repair-content checks inside both extractions, path/metadata safety, forbidden-content checks, and backend-manifest verification. No external Hostinger deployment was performed or verified.
 

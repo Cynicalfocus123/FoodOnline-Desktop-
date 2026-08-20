@@ -6,7 +6,7 @@ The backend archive uses regular Deflate ZIP32 file records only and omits expli
 
 ## Split `public_html/api` entry requirement (2026-07-22)
 
-The current backend ZIP deploys the Laravel application to its private root. After extraction, copy `public/index.php` and `public/.htaccess` from that private root into the existing `public_html/api/` directory. Copy `public/backend-path.php.example` to `public_html/api/backend-path.php` and set its returned string to the real absolute private Laravel root, for example `/home/ACCOUNT_USERNAME/foodonlines-backend`. Keep `backend-path.php` server-only and preserve it across future updates.
+The current backend ZIP deploys the Laravel application to its private root. After extraction, copy `public/index.php` and `public/.htaccess` from that private root into the existing `public_html/api/` directory. Copy `public/backend-path.php.example` to `public_html/api/backend-path.php` and set its returned string to the real absolute private Laravel root, for example `/home/ACCOUNT_USERNAME/FoodOnlines-backend`. Keep `backend-path.php` server-only and preserve it across future updates.
 
 The API entry returns a safe configuration error instead of a PHP fatal when the root cannot be found. A remaining 500 means inspect `storage/logs/laravel.log` and Hostinger's PHP error log; confirm PHP 8.2+, PDO MySQL, and the preserved `vendor/` directory. Do not extract the backend ZIP into `public_html` and never replace live `.env`, vendor, database, storage, or media.
 

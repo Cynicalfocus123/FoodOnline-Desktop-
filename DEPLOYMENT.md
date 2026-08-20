@@ -105,7 +105,7 @@ The split API adapter remains required: copy `public/backend-path.php.example` t
 
 The backend archive's `public/index.php` is a controlled API entry file, but in the Hostinger split layout it must be copied to the existing `public_html/api/index.php`; it must not remain only under the private application's `public/` directory. The entry now supports a non-versioned path file so it can locate the private Laravel root safely instead of assuming `public_html` itself is the application.
 
-After extracting the backend ZIP into the private Laravel root, copy `public/backend-path.php.example` to `public_html/api/backend-path.php`, replace `ACCOUNT_USERNAME/foodonlines-backend` with the actual absolute private application path, then copy `public/index.php` and `public/.htaccess` to `public_html/api/`. Preserve `backend-path.php`, the live `.env`, `vendor/`, database, storage/media, uploads, permissions, and runtime state on future updates. The server must use PHP 8.2+ with the required Laravel/PDO MySQL extensions and an installed production `vendor/` directory; the backend ZIP intentionally does not replace dependencies.
+After extracting the backend ZIP into the private Laravel root, copy `public/backend-path.php.example` to `public_html/api/backend-path.php`, replace `ACCOUNT_USERNAME/FoodOnlines-backend` with the actual absolute private application path, then copy `public/index.php` and `public/.htaccess` to `public_html/api/`. Preserve `backend-path.php`, the live `.env`, `vendor/`, database, storage/media, uploads, permissions, and runtime state on future updates. The server must use PHP 8.2+ with the required Laravel/PDO MySQL extensions and an installed production `vendor/` directory; the backend ZIP intentionally does not replace dependencies.
 
 If a 500 remains after those files are in place, inspect the private Laravel `storage/logs/laravel.log` and Hostinger PHP error log for the timestamped exception before changing source or database data. Do not extract the backend ZIP into `public_html`.
 
@@ -445,7 +445,7 @@ Keep the complete backend outside a public document root whenever possible:
 
 ```text
 /home/ACCOUNT/domains/api.foodonlines.com/
-├── foodonlines-backend/       # complete Git checkout; not web-accessible
+├── FoodOnlines-backend/       # complete Git checkout; not web-accessible
 └── public_html/               # public files only
 ```
 

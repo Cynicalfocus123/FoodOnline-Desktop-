@@ -69,7 +69,8 @@ test("super admin can create an exact custom permission set", () => {
   const panel = readFileSync("src/components/admin/OperationalAdminPanels.tsx", "utf8");
   const backend = readFileSync("app/Services/Security/AdminPermissionCatalog.php", "utf8");
   assert.match(panel, /"custom"/);
-  assert.match(panel, /createForm\.staff_role === "custom" \? createPermissions/);
-  assert.match(panel, /Custom permissions/);
+  assert.match(panel, /Access permissions/);
+  assert.match(panel, /staff_role: "read_only"/);
+  assert.doesNotMatch(panel, /createForm\.staff_role/);
   assert.match(backend, /'custom'\s*=> \[\]/);
 });

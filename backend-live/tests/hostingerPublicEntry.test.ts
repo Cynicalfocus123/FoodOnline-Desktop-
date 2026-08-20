@@ -20,7 +20,7 @@ test("Hostinger public API entry resolves a separate private Laravel root safely
 });
 
 test("Hostinger path template is shipped with the generated backend mirror", () => {
-  assert.match(template, /return '\/home\/ACCOUNT_USERNAME\/foodonlines-backend';/);
+  assert.match(template, /return '\/home\/ACCOUNT_USERNAME\/FoodOnlines-backend';/);
   assert.match(syncScript, /backend-path\.php\.example/);
 });
 

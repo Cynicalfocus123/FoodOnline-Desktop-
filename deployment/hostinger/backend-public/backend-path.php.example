@@ -4,4 +4,4 @@
 // with the absolute Hostinger path of the private Laravel application root.
 // This file is intentionally not included as backend-path.php in the release.
 
-return '/home/ACCOUNT_USERNAME/foodonlines-backend';
+return '/home/ACCOUNT_USERNAME/FoodOnlines-backend';
