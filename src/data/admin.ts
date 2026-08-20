@@ -35,12 +35,12 @@ export const adminSidebarItems = [
   { key: "reviews", label: "Reviews", description: "Moderate customer reviews and reports" },
   { key: "support", label: "Support", description: "Order-linked customer support tickets" },
   { key: "reports", label: "Reports", description: "Operational metrics and protected exports" },
-  { key: "staff", label: "Staff & MFA", description: "Permissions, sessions, and administrator MFA" },
+  { key: "staff", label: "Staff & MFA", description: "Shortcut to administrator accounts and roles" },
   { key: "operations", label: "Operations", description: "Service readiness and task recovery" },
   {
     key: "settings",
     label: "Admin Settings",
-    description: "Rotate admin profile and password",
+    description: "Profile, password, and administrator accounts",
   },
   {
     key: "deleteAccount",

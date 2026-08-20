@@ -9,8 +9,8 @@ The active shared Customer/Supplier/Partner referral repair was rebuilt from aut
 | Item | Verified result |
 | --- | --- |
 | Production build | 143 transformed modules |
-| Production audit | 28 routes; 1,016 files / 90,367,367 bytes; zero missing local references or placeholder links |
-| `dist/` | 1,016 files / 90,367,367 bytes |
+| Production audit | 28 routes; 1,016 files / 90,368,849 bytes; zero missing local references or placeholder links |
+| `dist/` | 1,016 files / 90,368,849 bytes |
 | `frontend-upload/` | 1,016 files; exact SHA-256 parity with `dist/` |
 | `backend-live/` | 358 source files plus `SHA256SUMS`, including staff authorization tests; manifest/safety clean |
 | Live archives | Generated only after the candidate commit is pushed and remote equality is proven; exact counts, sizes, and hashes belong in the release handoff |

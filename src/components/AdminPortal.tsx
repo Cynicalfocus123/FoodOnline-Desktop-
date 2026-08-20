@@ -12,7 +12,7 @@ import { formatDateTime } from "../lib/security";
 import { useAdminStore } from "../store/adminStore";
 import { catalogApi } from "../services/admin/catalogApi";
 import { adminPath, adminUserRoleForModule, readAdminRoute, type AdminRoute } from "../lib/adminRouting";
-import { sidebarHasAccess } from "../lib/adminAccess";
+import { isSuperAdminRole, sidebarHasAccess } from "../lib/adminAccess";
 import type { MediaStorageState } from "../types/adminCatalog";
 import { BrandAdminPanel } from "./admin/BrandAdminPanel";
 import { CategoryAdminPanel } from "./admin/CategoryAdminPanel";
@@ -338,7 +338,7 @@ function AdminDashboard() {
                 updateStatus={updateDeleteAccountRequestStatus}
               />
             ) : null}
-             {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token && can("commerce_settings.view") ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
+            {activeSidebarKey === "settings" ? <div className="grid gap-6"><AdminSettingsPanel />{token && isSuperAdminRole(staffRole) ? <StaffAdminPanel token={token} /> : null}{token && can("commerce_settings.view") ? <CommerceSettingsPanel token={token} /> : null}</div> : null}
             {activeSidebarKey === "categories" && token ? <CategoryAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "brands" && token ? <BrandAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
             {activeSidebarKey === "products" && token ? <ProductAdminPanel mode={route.mode} onNavigate={navigate} recordId={route.recordId} storage={mediaStorage} token={token} /> : null}
